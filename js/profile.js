@@ -209,8 +209,12 @@ class ProfileStore {
     }
 
     removeSearchParams() {
-        const newUrl = window.location.origin + window.location.pathname;
-        window.history.replaceState({}, "", newUrl);
+        try {
+            const newUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, "", newUrl);
+        } catch (e) {
+            // ponytail: history API is blocked on file://, nothing to strip there anyway
+        }
     }
 
     loadUrl() {
