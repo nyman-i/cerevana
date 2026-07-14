@@ -126,6 +126,9 @@ function appStateStartup() {
     const appStateObj = getLocalStorageObj(appStateKey);
     if (appStateObj) {
         Object.assign(appState, appStateObj);
+        // Migrate old game-area color defaults to the new transparent default
+        if (appState.gameAreaColor === "#293247CC") appState.gameAreaColor = "transparent";
+        if (appState.gameAreaLightColor === "#EFEFEF") appState.gameAreaLightColor = "transparent";
         setLocalStorageObj(appStateKey, appState);
     }
 }

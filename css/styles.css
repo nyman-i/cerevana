@@ -329,8 +329,6 @@ button.delete:hover {
     height: 100%;
     letter-spacing: 0.1em;
     justify-content: space-evenly;
-    max-width: 1200px;
-    margin: 0 auto;
     overflow: hidden;
     position: relative;
 }
@@ -400,7 +398,7 @@ button.delete:hover {
 }
 .timer__bar {
     background-color: #2bdef9;
-    height: 20px;
+    height: 8px;
     transition: width .25s ease;
 }
 
@@ -621,7 +619,7 @@ input[type="number"]::-moz-inner-spin-button {
     display: flex;
     gap: 1rem;
     justify-content: center;
-    margin: 0.5rem 0;
+    margin: 0.5rem 0 1.5rem;
     transition: all 0.3s ease-out;
 }
 
@@ -673,6 +671,7 @@ input[type="number"]::-moz-inner-spin-button {
 
 .display-outer {
     width: fit-content;
+    margin-bottom: 1.5rem;
 }
 
 .display-inner {
@@ -1799,8 +1798,12 @@ table.distinction {
     cursor: pointer;
 }
 
-#error-close-popup:hover, #graph-close-popup:hover {
+#error-close-popup:hover {
     background-color: #744;
+}
+
+#graph-close-popup:hover {
+    box-shadow: 0 3px 5px 0 #7448;
 }
 
 #error-close-popup {
