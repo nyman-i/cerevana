@@ -1,8 +1,28 @@
-# Syllogimous v3
+# Syllogimous v3+
 
-Modified version of Syllogimous-v3, created to support new theories and experiments on relational reasoning training.
+Personal fork of [soamsy/Syllogimous-v3](https://github.com/soamsy/Syllogimous-v3), a relational reasoning trainer built to support new theories and experiments on relational reasoning training.
 
-[Try it](https://soamsy.github.io/Syllogimous-v3/)
+[Try the original](https://soamsy.github.io/Syllogimous-v3/)
+
+## What's different in v3+
+
+- **History export/import** — back up your score, question history and progress-graph data to a JSON file and load it on another device. Import either *merges* with the device's existing history (timestamp-deduplicated, nothing lost) or *overwrites* it. Found under Settings → Import / Export.
+- **Reset App fixed** — no longer hangs on a blocked IndexedDB delete, and asks twice before wiping.
+- Assorted UI polish: full-width layout, transparent game area, repositioned timer control, consistent buttons.
+
+## Running locally
+
+No build step, no dependencies — it's a static site. Serve the folder over localhost (the History API and IndexedDB behave better than on `file://`):
+
+```bash
+python3 -m http.server 8080
+```
+
+then open http://localhost:8080. For an app-like window:
+
+```bash
+chromium --app=http://localhost:8080
+```
 
 # Contribution
 
