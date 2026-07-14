@@ -902,6 +902,25 @@
 							</div>
 						</div>
 						<div class="mb-1">
+							<button onclick="exportHistory()">Export History</button>
+							<ul class="explainer">
+								<li>Saves score, history and progress-graph data to a file</li>
+							</ul>
+						</div>
+						<div class="mb-1">
+							<button onclick="pickImportFile('merge')">Import (merge)</button>
+							<ul class="explainer">
+								<li>Combines a file with this device's history (no duplicates)</li>
+							</ul>
+						</div>
+						<div class="mb-1">
+							<button onclick="pickImportFile('overwrite')">Import (overwrite)</button>
+							<ul class="explainer">
+								<li>Replaces this device's history with the file's contents</li>
+							</ul>
+							<input type="file" id="history-import" accept=".json,application/json" style="display:none" onchange="handleHistoryImport(event)">
+						</div>
+						<div class="mb-1">
 							<button id="reset-app" onclick="resetApp()">Reset App</button>
 							<ul class="explainer">
 								<li>Resets score, history and settings</li>

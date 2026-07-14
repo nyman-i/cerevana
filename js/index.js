@@ -785,6 +785,63 @@ function clearHistory() {
     }
 }
 
+let importMode;
+
+function exportHistory() {
+    getAllRRTProgress().then(rrtHistory => {
+        const data = { exportVersion: 1, exportedAt: Date.now(),
+                       score: appState.score, questions: appState.questions, rrtHistory };
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' }));
+        a.download = `syllogimous-history-${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+    });
+}
+
+function pickImportFile(mode) {
+    importMode = mode;
+    const input = document.getElementById('history-import');
+    input.value = ''; // re-selecting the same file re-fires change
+    input.click();
+}
+
+async function handleHistoryImport(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    let data;
+    try { data = JSON.parse(await file.text()); } catch { alert('Not a valid JSON file.'); return; }
+
+    const valid = data && data.exportVersion === 1
+        && Array.isArray(data.questions) && data.questions.every(q => typeof q?.answeredAt === 'number')
+        && Array.isArray(data.rrtHistory) && data.rrtHistory.every(r => typeof r?.timestamp === 'number');
+    if (!valid) { alert('Not a Syllogimous history export.'); return; }
+
+    const overwrite = importMode === 'overwrite';
+    if (overwrite && !confirm('Replace ALL local history with the file contents? This cannot be undone.')) return;
+
+    const base = overwrite ? [] : appState.questions;
+    const seen = new Set(base.map(q => q.answeredAt));
+    const questions = base.concat(data.questions.filter(q => !seen.has(q.answeredAt)));
+    questions.sort((a, b) => a.answeredAt - b.answeredAt);
+
+    const existing = overwrite ? [] : await getAllRRTProgress();
+    const seenRRT = new Set(existing.map(r => `${r.key}|${r.timestamp}`));
+    const rows = data.rrtHistory.filter(r => !seenRRT.has(`${r.key}|${r.timestamp}`));
+
+    try {
+        await importRRTRows(rows, overwrite); // atomic IDB write first; localStorage only after it commits
+    } catch (e) {
+        alert('Import failed, nothing was changed: ' + e);
+        return;
+    }
+    appState.questions = questions;
+    appState.score = questions.reduce((s, q) => s + (q.correctness === 'right' ? 1 : -1), 0);
+    save();
+    renderHQL();
+    alert(`Import complete: ${questions.length - base.length} new questions, ${rows.length} new graph entries.`);
+}
+
 function deleteQuestion(i, isRight) {
     appState.score += (isRight ? -1 : 1);
     appState.questions.splice(i, 1);

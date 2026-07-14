@@ -174,6 +174,19 @@ const getWeekRRTProgress = async () => {
     return getRRTProgressFrom(weekStart.getTime());
 };
 
+const importRRTRows = async (rows, clearFirst) => {
+    const db = await initDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction('RRTHistory', 'readwrite');
+        const store = tx.objectStore('RRTHistory');
+        if (clearFirst) store.clear();
+        rows.forEach(({ id, ...row }) => store.add(row));
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error);
+    });
+};
+
 const getRRTProgressFrom = async (startTime) => {
     const db = await initDB();
     return new Promise((resolve, reject) => {
