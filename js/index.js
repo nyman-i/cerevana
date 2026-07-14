@@ -995,9 +995,16 @@ function toggleExperimentalFolder() {
     save();
 }
 
+function toggleBackupFolder() {
+    appState.isBackupOpen = !appState.isBackupOpen;
+    renderFolders();
+    save();
+}
+
 function renderFolders() {
     renderFolder('legacy-folder-arrow', 'legacy-folder-content', appState.isLegacyOpen);
     renderFolder('experimental-folder-arrow', 'experimental-folder-content', appState.isExperimentalOpen);
+    renderFolder('backup-folder-arrow', 'backup-folder-content', appState.isBackupOpen);
 }
 
 function renderFolder(arrowId, contentId, isOpen) {

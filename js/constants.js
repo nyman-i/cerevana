@@ -12,6 +12,7 @@ let appState = {
     "gameAreaLightColor": "transparent",
     "isExperimentalOpen": false,
     "isLegacyOpen": false,
+    "isBackupOpen": false,
     "sfx": "none",
     "fastUi": true,
     "staticButtons": true,
