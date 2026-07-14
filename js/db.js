@@ -26,8 +26,19 @@ const openDatabase = () => {
     });
 };
 
+let dbPromise = null;
 const initDB = async () => {
-    return await openDatabase();
+    if (!dbPromise) {
+        dbPromise = openDatabase().then(db => {
+            // close ourselves when deleteDatabase (Reset App) asks, or it blocks forever
+            db.onversionchange = () => {
+                db.close();
+                dbPromise = null;
+            };
+            return db;
+        });
+    }
+    return dbPromise;
 };
 
 const storeImage = async (id, image) => {

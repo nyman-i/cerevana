@@ -761,7 +761,8 @@ function timeElapsed() {
 }
 
 function resetApp() {
-    const confirmed = confirm("Are you sure?");
+    const confirmed = confirm("Reset the app? This permanently deletes your score, history, progress-graph data and all settings. Tip: Export History first to keep a backup.")
+        && confirm("Last chance: this cannot be undone. Really reset everything?");
     if (confirmed) {
         localStorage.removeItem(oldSettingsKey);
         localStorage.removeItem(imageKey);
