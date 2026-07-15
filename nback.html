@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Cerevana — N-Back</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#2bdef9" />
+		<link rel="icon" type="image/png" href="favicon.png">
+		<link rel="stylesheet" href="fonts/cool/coolicons.css">
+		<link rel="stylesheet" href="css/styles.css">
+	</head>
+	<body class="nback-mode">
+
+		<div class="main-view">
+
+			<input id="offcanvas-settings"
+				   type="checkbox"
+				   hidden>
+			<div id="sidebar-settings" class="offcanvas offcanvas--left">
+				<div class="offcanvas-body ffmono">
+					<div style="direction: ltr;">
+						<div class="mb-1"></div>
+						<div class="mb-1">
+							<span class="mb-05">Current Profile</span>
+							<div class="profile-container">
+							  <div class="profile-dropdown">
+							    <input type="text" class="profile-input" id="profile-input" placeholder="">
+							    <span class="profile-arrow" id="profile-arrow">▼</span>
+							    <div class="profile-list" id="profile-list">
+							    </div>
+								</div>
+								<div class="profile-plus" id="profile-plus" role="button" tabindex="0" aria-label="Add profile">+</div>
+							</div>
+						</div>
+						<div class="mb-2">
+							<label class="mb-05" for="p-70">Game Mode</label>
+							<select id="p-70" name="nback-mode" class="form-select ffmono">
+								<option value="dual">Dual (position + sound)</option>
+								<option value="position">Position only</option>
+								<option value="sound">Sound only</option>
+								<option value="position-color">Position + Color</option>
+								<option value="color-sound">Color + Sound</option>
+								<option value="triple">Triple (position + color + sound)</option>
+								<option value="dual-combo">Dual Combination (cross-modal)</option>
+								<option value="tri-combo">Tri Combination (+ position)</option>
+								<option value="quad-combo">Quad Combination (+ position + color)</option>
+								<option value="tri-combo-color">Tri Combination (Color)</option>
+							</select>
+						</div>
+						<div class="mb-2">
+							<label class="mb-05" for="p-84">Simultaneous Squares (Dual only)</label>
+							<select id="p-84" name="nback-multi" class="form-select ffmono">
+								<option value="1">1 (normal)</option>
+								<option value="2">2 squares</option>
+								<option value="3">3 squares</option>
+								<option value="4">4 squares</option>
+							</select>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer big-input">
+								Trial Duration
+								<span class="inline-input__inner">
+									<input id="p-71" type="number" min="1.5" max="10" step="0.1" value="2.8" style="width: 6ch">sec
+								</span>
+							</div>
+						</div>
+						<div class="mb-1">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="p-72" type="checkbox">
+									<label class="switch" for="p-72"></label>
+								</div>
+								<label for="p-72">Show Trial Feedback</label>
+							</div>
+						</div>
+						<div class="mb-1">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="p-73" type="checkbox">
+									<label class="switch" for="p-73"></label>
+								</div>
+								<label for="p-73">Jaeggi Mode</label>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										Original-study protocol (Dual only):<br>
+										fixed 4+4+2 matches per session,<br>
+										stricter scoring, level up at 90%,<br>
+										down below 75%, no trial feedback.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mb-1">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="p-74" type="checkbox">
+									<label class="switch" for="p-74"></label>
+								</div>
+								<label for="p-74">Manual Mode</label>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										Play any level freely.<br>
+										Sessions don't change your level.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer big-input">
+								Manual N
+								<span class="inline-input__inner">
+									<input id="p-75" type="number" min="1" max="9" step="1" value="2" style="width: 5ch">
+								</span>
+							</div>
+						</div>
+						<div class="mb-1">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="p-76" type="checkbox">
+									<label class="switch" for="p-76"></label>
+								</div>
+								<label for="p-76">Variable N-Back</label>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										Each trial has its own N<br>
+										(1 up to your level, shown on<br>
+										screen). Match against that<br>
+										many trials back.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mb-1">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="p-77" type="checkbox">
+									<label class="switch" for="p-77"></label>
+								</div>
+								<label for="p-77">Crab Mode</label>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										Match each block of N stimuli<br>
+										in reverse order (effective N<br>
+										cycles 1, 3, 5...).<br>
+										Overrides Variable N-Back.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mb-1">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="p-78" type="checkbox">
+									<label class="switch" for="p-78"></label>
+								</div>
+								<label for="p-78">Self-Paced</label>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										No trial timer — press Enter<br>
+										when you're ready for the<br>
+										next stimulus.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer big-input">
+								Advance at
+								<span class="inline-input__inner">
+									<input id="p-79" type="number" min="1" max="101" step="1" value="80" style="width: 5ch">%
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer big-input">
+								Fall back below
+								<span class="inline-input__inner">
+									<input id="p-80" type="number" min="0" max="100" step="1" value="50" style="width: 5ch">%
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer big-input">
+								Fallback sessions
+								<span class="inline-input__inner">
+									<input id="p-81" type="number" min="1" max="9" step="1" value="3" style="width: 5ch">
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer big-input">
+								Match chance
+								<span class="inline-input__inner">
+									<input id="p-82" type="number" min="0" max="100" step="0.5" value="12.5" style="width: 6ch">%
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer big-input">
+								Interference chance
+								<span class="inline-input__inner">
+									<input id="p-83" type="number" min="0" max="100" step="0.5" value="12.5" style="width: 6ch">%
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="offcanvas-side">
+					<label class="offcanvas-close" for="offcanvas-settings" tabindex="0">✕</label>
+				</div>
+			</div>
+
+			<input id="offcanvas-progress"
+				   type="checkbox"
+				   hidden>
+			<div id="sidebar-progress" class="offcanvas offcanvas--right">
+				<div class="offcanvas-side">
+					<label class="offcanvas-close" for="offcanvas-progress" tabindex="0">✕</label>
+				</div>
+				<div class="offcanvas-body ffmono">
+					<div class="nback__graph"><canvas id="nback-graph-canvas"></canvas></div>
+				</div>
+			</div>
+
+			<input id="offcanvas-history"
+				   type="checkbox"
+				   hidden>
+			<div id="sidebar-history" class="offcanvas offcanvas--right">
+				<div class="offcanvas-side">
+					<label class="offcanvas-close" for="offcanvas-history" tabindex="0">✕</label>
+				</div>
+				<div class="offcanvas-body ffmono">
+					<div id="nback-history-list"></div>
+				</div>
+			</div>
+
+			<input id="offcanvas-credits"
+				   type="checkbox"
+				   hidden>
+			<div id="sidebar-credits" class="offcanvas offcanvas--left">
+				<div class="offcanvas-side">
+					<label class="offcanvas-close" for="offcanvas-credits" tabindex="0">✕</label>
+				</div>
+				<div class="offcanvas-body ffmono">
+					<div style="direction: ltr;">
+						<div class="mb-1">
+							<div class="explainer">
+								<h4>Keyboard Shortcuts:</h4>
+								<div class="shortcuts">
+								<p class="keyboard-shortcut"><span>A</span><span>Position Match (Blue square)</span></p>
+								<p class="keyboard-shortcut"><span>S</span><span>Green Square / Vis↔Vis</span></p>
+								<p class="keyboard-shortcut"><span>D</span><span>Yellow Square / Vis↔Aud</span></p>
+								<p class="keyboard-shortcut"><span>F</span><span>Color / Red Square</span></p>
+								<p class="keyboard-shortcut"><span>J</span><span>Aud↔Vis (combination)</span></p>
+								<p class="keyboard-shortcut"><span>L</span><span>Sound Match</span></p>
+								<p class="keyboard-shortcut"><span>P</span><span>Pause</span></p>
+								<p class="keyboard-shortcut"><span>⏎</span><span>Next Trial (Self-Paced)</span></p>
+								<p class="keyboard-shortcut"><span>Esc</span><span>Cancel Session</span></p>
+								</div>
+							</div>
+						</div>
+						<div class="mb-1">
+							<div class="explainer">
+								<h4>Credits:</h4>
+								<p>Dual n-back protocol from <a href="https://brainworkshop.sourceforge.net/" target="_blank" rel="noopener">Brain Workshop</a> by Paul Hoskinson &amp; Jonathan Toomim (<a href="https://github.com/brain-workshop/brainworkshop" target="_blank" rel="noopener">GitHub</a>).</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<label class="open metal-gear open--top-left" for="offcanvas-settings" tabindex="0"><span class="sidebar-button settings-label"></span></label>
+			<label class="open metal-gear open--top-right" for="offcanvas-history" tabindex="0"><span class="sidebar-button history-label"></span></label>
+			<label class="open metal-gear open--bottom-left" for="offcanvas-credits" tabindex="0"><span class="sidebar-button credits-label"></span></label>
+			<label class="open metal-gear open--bottom-right" for="offcanvas-progress" tabindex="0"><span class="sidebar-button graph-label"></span></label>
+
+			<nav class="game-menu metal-gear">
+				<a class="game-menu__item" href="index.html">MENU</a>
+				<a class="game-menu__item" href="rrt.html">RRT</a>
+				<a class="game-menu__item selected" href="nback.html">N-BACK</a>
+			</nav>
+
+			<div class="background-image"></div>
+
+			<div class="overlay"></div>
+
+			<div id="nback-area" class="nback">
+				<div class="display-inner">
+					<div class="bracket-lip-top-left"></div>
+					<div class="border-left"></div>
+					<div class="bracket-lip-bottom-left"></div>
+					<div class="bracket-lip-top-right"></div>
+					<div class="border-right"></div>
+					<div class="bracket-lip-bottom-right"></div>
+					<h2>
+						<span class="display_label_type" id="nback-mode-label">Dual</span>
+						<span class="display_label_level"><span id="nback-level">N = 2</span> <span id="nback-trial"></span></span>
+					</h2>
+					<div id="nback-grid" class="nback__grid">
+						<div class="nback__cell"></div>
+						<div class="nback__cell"></div>
+						<div class="nback__cell"></div>
+						<div class="nback__cell"></div>
+						<div class="nback__cell nback__cell--center">+</div>
+						<div class="nback__cell"></div>
+						<div class="nback__cell"></div>
+						<div class="nback__cell"></div>
+						<div class="nback__cell"></div>
+					</div>
+				</div>
+				<div class="nback__buttons">
+					<button id="nback-pos-btn" class="nback__match" onclick="nbackPress('position')" tabindex="-1">Position (A)</button>
+					<button id="nback-pos2-btn" class="nback__match" onclick="nbackPress('position2')" tabindex="-1" hidden>Green (S)</button>
+					<button id="nback-pos3-btn" class="nback__match" onclick="nbackPress('position3')" tabindex="-1" hidden>Yellow (D)</button>
+					<button id="nback-pos4-btn" class="nback__match" onclick="nbackPress('position4')" tabindex="-1" hidden>Red (F)</button>
+					<button id="nback-color-btn" class="nback__match" onclick="nbackPress('color')" tabindex="-1" hidden>Color (F)</button>
+					<button id="nback-visvis-btn" class="nback__match" onclick="nbackPress('visvis')" tabindex="-1" hidden>Vis↔Vis (S)</button>
+					<button id="nback-visaudio-btn" class="nback__match" onclick="nbackPress('visaudio')" tabindex="-1" hidden>Vis↔Aud (D)</button>
+					<button id="nback-audiovis-btn" class="nback__match" onclick="nbackPress('audiovis')" tabindex="-1" hidden>Aud↔Vis (J)</button>
+					<button id="nback-audio-btn" class="nback__match" onclick="nbackPress('audio')" tabindex="-1">Sound (L)</button>
+				</div>
+				<div id="nback-result" class="nback__result" hidden></div>
+				<button id="nback-start" class="nback__start" onclick="nbackStartStop()">START</button>
+			</div>
+
+		</div>
+
+		<div id="error-popup" class="error-popup">
+			<div class="error-popup-content">
+				<p id="error-message"></p>
+				<button id="error-close-popup" class="error-close-popup">Close</button>
+				<textarea id="error-stack" readonly></textarea>
+			</div>
+		</div>
+
+		<script src="js/lib/chart.min.js"></script>
+		<script src="js/lib/chartjs-adapter-date-fns.min.js"></script>
+		<script src="js/lib/date-fns.min.js"></script>
+		<script src="js/shared/constants.js"></script>
+		<script src="js/shared/backwards-compatibility.js"></script>
+		<script src="js/shared/db.js"></script>
+		<script src="js/shared/sounds.js"></script>
+		<script src="js/shared/error-handling.js"></script>
+		<script src="js/shared/background.js"></script>
+		<script src="js/shared/sidebar-events.js"></script>
+		<script src="js/nback/game.js"></script>
+		<script src="js/nback/graph.js"></script>
+		<script src="js/nback/profiles.js"></script>
+		<script src="js/nback/page.js"></script>
+	</body>
+</html>
