@@ -4,6 +4,8 @@ const profileList = document.getElementById('profile-list');
 const profileDropdown = document.querySelector('.profile-dropdown');
 const profilePlus = document.getElementById('profile-plus');
 const profileShare = document.getElementById('profile-share');
+const profileImport = document.getElementById('profile-import');
+const profileImportInput = document.getElementById('profile-import-input');
 const profileCopied = document.getElementById('profile-copied');
 
 class ProfileStore {
@@ -218,14 +220,17 @@ class ProfileStore {
     }
 
     loadUrl() {
-        const url = window.location.href;
-        const urlObj = new URL(url);
+        const urlObj = new URL(window.location.href);
         this.removeSearchParams();
+        this.importFromUrl(urlObj);
+    }
+
+    importFromUrl(urlObj) {
         const encodedId = urlObj.searchParams.get("id");
         const encodedSavedata = urlObj.searchParams.get("savedata");
         const encodedName = urlObj.searchParams.get("name");
         if (!encodedId || !encodedSavedata || !encodedName) {
-            return;
+            return false;
         }
 
         function sanitizeInput(value) {
@@ -234,7 +239,7 @@ class ProfileStore {
 
         let id = sanitizeInput(decodeURIComponent(encodedId));
         if (!id) {
-            return;
+            return false;
         }
         let name = sanitizeInput(decodeURIComponent(encodedName));
         if (!name) {
@@ -243,34 +248,38 @@ class ProfileStore {
 
         for (const profile of this.profiles) {
             if (profile.id === id) {
-                return;
+                return false;
             }
 
             if (profile.name === name) {
-                name = this.updateNameNumber(encodedName);
+                name = this.updateNameNumber(name);
             }
         }
-        const savedataString = decodeURIComponent(encodedSavedata);
-        const savedataObj = JSON.parse(savedataString);
+        let savedataObj;
+        try {
+            savedataObj = JSON.parse(decodeURIComponent(encodedSavedata));
+        } catch (e) {
+            return false;
+        }
         if (!savedataObj) {
-            return;
+            return false;
         }
 
         this.uncompressSavedata(savedataObj);
 
-        const unsafeKeys = Object.keys(savedataObj);
-        for (const key in unsafeKeys) {
+        for (const key of Object.keys(savedataObj)) {
             if (!defaultSavedata.hasOwnProperty(key)) {
                 delete savedataObj[key];
                 continue;
             }
 
             if (typeof savedataObj[key] === "string") {
-                savedataObj[key] = sanitizeInput(savedataObj[key]);
+                // No length cap here: legit values (e.g. linearWording) exceed 40 chars
+                savedataObj[key] = savedataObj[key].replace(/<[^>]*>/g, "");
             }
         }
 
-        for (const [key, defaultValue] in Object.entries(defaultSavedata)) {
+        for (const [key, defaultValue] of Object.entries(defaultSavedata)) {
             if (!savedataObj.hasOwnProperty(key)) {
                 savedataObj[key] = defaultValue;
             }
@@ -286,6 +295,7 @@ class ProfileStore {
         this.selectedProfile = this.profiles.length - 1;
         this.handleProfileChange();
         this.renderDropdown();
+        return true;
     }
 
     uncompressSavedata(savedataObj) {
@@ -320,13 +330,52 @@ profilePlus.addEventListener('click', e => {
     PROFILE_STORE.copySelectedProfile();
 });
 
-profileShare.addEventListener('click', e => {
-    const url = PROFILE_STORE.generateUrl();
-    navigator.clipboard.writeText(url);
+function profileToast(message) {
+    profileCopied.textContent = message;
     profileCopied.classList.add('toast');
     setTimeout(() => {
         profileCopied.classList.remove('toast');
-    }, 1000);
+    }, 1500);
+}
+
+profileShare.addEventListener('click', e => {
+    const url = PROFILE_STORE.generateUrl();
+    navigator.clipboard.writeText(url);
+    profileToast('URL copied to clipboard');
+});
+
+// ponytail: inline input instead of prompt()/alert() — Chrome suppresses those in --app windows
+profileImport.addEventListener('click', e => {
+    const visible = profileImportInput.style.display === 'block';
+    profileImportInput.style.display = visible ? 'none' : 'block';
+    if (!visible) {
+        profileImportInput.value = '';
+        profileImportInput.focus();
+    }
+});
+
+function tryImportUrl(showError) {
+    let imported = false;
+    try {
+        imported = PROFILE_STORE.importFromUrl(new URL(profileImportInput.value.trim()));
+    } catch (err) {
+        // fall through
+    }
+    if (imported) {
+        profileImportInput.style.display = 'none';
+        profileToast('Profile imported');
+    } else if (showError) {
+        profileToast('Not a valid share URL (or profile already exists)');
+    }
+}
+
+profileImportInput.addEventListener('input', () => tryImportUrl(false));
+profileImportInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+        tryImportUrl(true);
+    } else if (e.key === 'Escape') {
+        profileImportInput.style.display = 'none';
+    }
 });
 
 function debounce(func, delay) {

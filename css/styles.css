@@ -1598,10 +1598,6 @@ table.distinction {
     font-size: var(--step-1);
 }
 
-.profile-share .text {
-    font-size: var(--step--1);
-}
-
 .profile-copied {
     pointer-events: none;
     opacity: 0;
@@ -1616,6 +1612,23 @@ table.distinction {
 
 .profile-copied.toast {
     opacity: 0.92;
+}
+
+.profile-import-input {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 2px;
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: var(--step--1);
+    color: var(--text-color);
+    background-color: var(--profile-bg);
+    border: var(--profile-border);
+    z-index: 1000;
 }
 
 .profile-list {
