@@ -117,22 +117,6 @@ function registerEventHandlers() {
     }
 }
 
-function save() {
-    PROFILE_STORE.saveProfiles();
-    setLocalStorageObj(appStateKey, appState);
-}
-
-function appStateStartup() {
-    const appStateObj = getLocalStorageObj(appStateKey);
-    if (appStateObj) {
-        Object.assign(appState, appStateObj);
-        // Migrate old game-area color defaults to the new transparent default
-        if (appState.gameAreaColor === "#293247CC") appState.gameAreaColor = "transparent";
-        if (appState.gameAreaLightColor === "#EFEFEF") appState.gameAreaLightColor = "transparent";
-        setLocalStorageObj(appStateKey, appState);
-    }
-}
-
 function load() {
     appStateStartup();
     PROFILE_STORE.startup();
@@ -579,53 +563,6 @@ function renderConclusionSpoiler() {
     }
 }
 
-const DEFAULT_SOUNDS = {
-    success: { audio: new Audio('sounds/default/success.mp3'), time: 2000},
-    failure: { audio: new Audio('sounds/default/failure.mp3'), time: 1400},
-    missed: { audio: new Audio('sounds/default/missed.mp3'), time: 1400},
-}
-
-const ZEN_SOUNDS = {
-    success: { audio: new Audio('sounds/zen/success.mp3'), time: 2000 },
-    failure: { audio: new Audio('sounds/zen/failure.mp3'), time: 1400 },
-    missed: { audio: new Audio('sounds/zen/missed.mp3'), time: 1400 },
-}
-
-function playSoundFor(sound, duration) {
-    sound.currentTime = 0;
-    sound.volume = 0.6;
-    sound.play();
-
-    setTimeout(() => {
-        let fadeOut = setInterval(() => {
-            if (sound.volume > 0.10) {
-                sound.volume -= 0.10;
-            } else {
-                clearInterval(fadeOut);
-                sound.pause();
-                sound.currentTime = 0;
-                sound.volume = 0.6;
-            }
-        }, 100);
-    }, duration - 600);
-}
-
-function getCurrentSoundPack() {
-    if (appState.sfx === 'sfx1') {
-        return DEFAULT_SOUNDS;
-    } else if (appState.sfx === 'sfx2') {
-        return ZEN_SOUNDS;
-    }
-    return null;
-}
-
-function playSound(property) {
-    const sounds = getCurrentSoundPack();
-    if (sounds) {
-        playSoundFor(sounds[property].audio, sounds[property].time);
-    }
-}
-
 function removeFastFeedback() {
     gameArea.classList.remove('right');
     gameArea.classList.remove('wrong');
@@ -764,7 +701,7 @@ function timeElapsed() {
 }
 
 function resetApp() {
-    const confirmed = confirm("Reset the app? This permanently deletes your score, history, progress-graph data and all settings. Tip: Export History first to keep a backup.")
+    const confirmed = confirm("Reset the app? This permanently deletes your score, history, progress-graph data and all settings. Tip: Export History from the main menu first to keep a backup.")
         && confirm("Last chance: this cannot be undone. Really reset everything?");
     if (confirmed) {
         localStorage.removeItem(oldSettingsKey);
@@ -787,63 +724,6 @@ function clearHistory() {
         save();
         renderHQL();
     }
-}
-
-let importMode;
-
-function exportHistory() {
-    getAllRRTProgress().then(rrtHistory => {
-        const data = { exportVersion: 1, exportedAt: Date.now(),
-                       score: appState.score, questions: appState.questions, rrtHistory };
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' }));
-        a.download = `syllogimous-history-${new Date().toISOString().slice(0, 10)}.json`;
-        a.click();
-        URL.revokeObjectURL(a.href);
-    });
-}
-
-function pickImportFile(mode) {
-    importMode = mode;
-    const input = document.getElementById('history-import');
-    input.value = ''; // re-selecting the same file re-fires change
-    input.click();
-}
-
-async function handleHistoryImport(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    let data;
-    try { data = JSON.parse(await file.text()); } catch { alert('Not a valid JSON file.'); return; }
-
-    const valid = data && data.exportVersion === 1
-        && Array.isArray(data.questions) && data.questions.every(q => typeof q?.answeredAt === 'number')
-        && Array.isArray(data.rrtHistory) && data.rrtHistory.every(r => typeof r?.timestamp === 'number');
-    if (!valid) { alert('Not a Syllogimous history export.'); return; }
-
-    const overwrite = importMode === 'overwrite';
-    if (overwrite && !confirm('Replace ALL local history with the file contents? This cannot be undone.')) return;
-
-    const base = overwrite ? [] : appState.questions;
-    const seen = new Set(base.map(q => q.answeredAt));
-    const questions = base.concat(data.questions.filter(q => !seen.has(q.answeredAt)));
-    questions.sort((a, b) => a.answeredAt - b.answeredAt);
-
-    const existing = overwrite ? [] : await getAllRRTProgress();
-    const seenRRT = new Set(existing.map(r => `${r.key}|${r.timestamp}`));
-    const rows = data.rrtHistory.filter(r => !seenRRT.has(`${r.key}|${r.timestamp}`));
-
-    try {
-        await importRRTRows(rows, overwrite); // atomic IDB write first; localStorage only after it commits
-    } catch (e) {
-        alert('Import failed, nothing was changed: ' + e);
-        return;
-    }
-    appState.questions = questions;
-    appState.score = questions.reduce((s, q) => s + (q.correctness === 'right' ? 1 : -1), 0);
-    save();
-    renderHQL();
-    alert(`Import complete: ${questions.length - base.length} new questions, ${rows.length} new graph entries.`);
 }
 
 function deleteQuestion(i, isRight) {
@@ -995,16 +875,9 @@ function toggleExperimentalFolder() {
     save();
 }
 
-function toggleBackupFolder() {
-    appState.isBackupOpen = !appState.isBackupOpen;
-    renderFolders();
-    save();
-}
-
 function renderFolders() {
     renderFolder('legacy-folder-arrow', 'legacy-folder-content', appState.isLegacyOpen);
     renderFolder('experimental-folder-arrow', 'experimental-folder-content', appState.isExperimentalOpen);
-    renderFolder('backup-folder-arrow', 'backup-folder-content', appState.isBackupOpen);
 }
 
 function renderFolder(arrowId, contentId, isOpen) {

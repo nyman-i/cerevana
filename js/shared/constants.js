@@ -12,12 +12,41 @@ let appState = {
     "gameAreaLightColor": "transparent",
     "isExperimentalOpen": false,
     "isLegacyOpen": false,
-    "isBackupOpen": false,
     "sfx": "none",
     "fastUi": true,
     "staticButtons": true,
     "darkMode": true,
 };
+
+function getLocalStorageObj(key) {
+    const entry = localStorage.getItem(key);
+    if (entry) {
+        return JSON.parse(entry);
+    } else {
+        return null;
+    }
+}
+
+function setLocalStorageObj(key, obj) {
+    localStorage.setItem(key, JSON.stringify(obj));
+}
+
+function save() {
+    // PROFILE_STORE only exists on pages that load profile.js (rrt.html)
+    if (typeof PROFILE_STORE !== 'undefined') PROFILE_STORE.saveProfiles();
+    setLocalStorageObj(appStateKey, appState);
+}
+
+function appStateStartup() {
+    const appStateObj = getLocalStorageObj(appStateKey);
+    if (appStateObj) {
+        Object.assign(appState, appStateObj);
+        // Migrate old game-area color defaults to the new transparent default
+        if (appState.gameAreaColor === "#293247CC") appState.gameAreaColor = "transparent";
+        if (appState.gameAreaLightColor === "#EFEFEF") appState.gameAreaLightColor = "transparent";
+        setLocalStorageObj(appStateKey, appState);
+    }
+}
 
 let savedata = {
     "version": 3,

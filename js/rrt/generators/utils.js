@@ -125,19 +125,6 @@ function repeatArrayUntil(arr, n) {
     return result.slice(0, n); // Trim the array to exactly 'n' elements
 }
 
-function getLocalStorageObj(key) {
-    const entry = localStorage.getItem(key);
-    if (entry) {
-        return JSON.parse(entry);
-    } else {
-        return null;
-    }
-}
-
-function setLocalStorageObj(key, obj) {
-    localStorage.setItem(key, JSON.stringify(obj));
-}
-
 function normalizeString(input) {
     return input
         .toLowerCase()
