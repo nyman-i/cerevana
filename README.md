@@ -1,18 +1,51 @@
-# Syllogimous v3+
+# Cerevana
 
-Personal fork of [soamsy/Syllogimous-v3](https://github.com/soamsy/Syllogimous-v3), a relational reasoning trainer built to support new theories and experiments on relational reasoning training.
+Cerevana is a local-first cognitive training app with two exercises: **RRT**
+(relational reasoning) and **Dual N-Back** (working memory). It is a plain
+static site — no build step, no dependencies, no accounts — and all of your
+data stays in your browser (localStorage and IndexedDB).
 
-[Try the original](https://soamsy.github.io/Syllogimous-v3/)
+## The exercises
 
-## What's different in v3+
+### RRT
 
-- **History export/import** — back up your score, question history and progress-graph data to a JSON file and load it on another device. Import either *merges* with the device's existing history (timestamp-deduplicated, nothing lost) or *overwrites* it. Found under Settings → Import / Export.
-- **Reset App fixed** — no longer hangs on a blocked IndexedDB delete, and asks twice before wiping.
-- Assorted UI polish: full-width layout, transparent game area, repositioned timer control, consistent buttons.
+Relational reasoning training: read a set of premises like "A is north-east
+of B", hold the relations in mind, and judge whether a conclusion follows.
+Question types include distinction (same/opposite), linear orderings,
+syllogisms, and spatial reasoning in 2D, 3D and 4D, with optional transforms,
+negation, and anti-strategy scrambling. Play untimed, or against a timer with
+auto-progression that raises premise count and tightens the clock as your
+accuracy holds up.
+
+### Dual N-Back
+
+The classic dual n-back protocol: squares light up on a 3×3 grid while
+letters are spoken, and you signal whenever the position or the sound matches
+the one from N trials back. The level adapts per mode (dual, position-only,
+sound-only) based on your session scores; a Jaeggi mode reproduces the
+original-study protocol, and a manual mode lets you play any level freely.
+
+## Features
+
+- Main menu with a live overview of both exercises: active profile, totals,
+  accuracy and recent results at a glance.
+- Per-exercise profiles, each with its own settings and progress.
+- Profile sharing via URL — copy a share link on one device, paste it into
+  the Import box on another.
+- History export/import to a JSON file, with **merge** (timestamp-deduplicated)
+  or **overwrite** semantics, covering score, question history, progress-graph
+  data and n-back sessions.
+- Progress graphs: time spent, average correct times, premise speed and totals
+  for RRT; per-mode level and score history for N-Back.
+- Timers with auto-progression (RRT) and adaptive levels (N-Back).
+- Dark and light themes, custom background image, sound effects.
+- Desktop launcher installer for Linux (`create-shortcut.sh`) that serves the
+  app locally and opens it in its own app window.
 
 ## Running locally
 
-No build step, no dependencies — it's a static site. Serve the folder over localhost (the History API and IndexedDB behave better than on `file://`):
+No build step, no dependencies — it's a static site. Serve the folder over
+localhost (the History API and IndexedDB behave better than on `file://`):
 
 ```bash
 python3 -m http.server 8080
@@ -24,15 +57,36 @@ then open http://localhost:8080. For an app-like window:
 chromium --app=http://localhost:8080
 ```
 
-# Contribution
+Or run `./create-shortcut.sh` once to install a "Cerevana" entry in your
+application launcher that does both.
 
-[4skinSkywalker](https://github.com/4skinSkywalker/)
-[ikokusovereignty](https://github.com/ikokusovereignty/)
-[soamsy](https://github.com/soamsy/)
-[giladkingsley](https://github.com/giladkingsley/)
+## Credits
 
+**RRT** is built directly on **Syllogimous**: created by
+[4skinSkywalker](https://github.com/4skinSkywalker/), developed into
+Syllogimous-v3 by [ikokusovereignty](https://github.com/ikokusovereignty/),
+and forked and refined by [soamsy](https://github.com/soamsy/) —
+[soamsy/Syllogimous-v3](https://github.com/soamsy/Syllogimous-v3) is the
+codebase Cerevana grew from
+([playable original](https://soamsy.github.io/Syllogimous-v3/)).
+[giladkingsley](https://github.com/giladkingsley/) is also a credited
+Syllogimous contributor.
 
-# Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0)
+**Dual N-Back** is inspired by **Brain Workshop** by Paul Hoskinson with
+Jonathan Toomim ([brainworkshop.sourceforge.net](https://brainworkshop.sourceforge.net/),
+[maintained fork](https://github.com/brain-workshop/brainworkshop)).
+Cerevana reimplements the protocol in JavaScript and shares no code with
+Brain Workshop.
+
+The menu background photo is by
+[Simon Berger on Pexels](https://www.pexels.com/photo/photography-of-mountains-under-cloudy-sky-1183099/)
+(Pexels License, free to use), bundled locally as `img/menu-bg.jpg`.
+
+The body typeface is [Space Grotesk](https://github.com/floriankarsten/space-grotesk)
+by Florian Karsten, licensed under the
+[SIL Open Font License 1.1](fonts/OFL-SpaceGrotesk.txt) and bundled locally.
+
+## License: Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0)
 
 ## You are free to:
 ### Share — copy and redistribute the material in any medium or format
