@@ -65,12 +65,12 @@ onMount(() => {
 </script>
 
 <div class="relative flex flex-col h-svh overflow-hidden">
-  <div class="w-full h-16 lg:h-10 grid grid-cols-3 items-center bg-base-200 border-b-1 py-1 text-lg"
+  <div class="w-full h-16 lg:h-10 grid grid-cols-3 items-center bg-base-200 border-b-1 py-1 text-lg font-hud"
   class:text-2xl={$mobile}
   class:grid-cols-[1fr_3fr_1fr]={$mobile}
   class:grid-cols-[3fr_2fr_3fr]={!$mobile}
   >
-    <div class="flex gap-2">
+    <div class="flex gap-2 items-center">
       <div on:click|stopPropagation={toggle} bind:this={panelButtonRef}>
         {#if open}
           <PanelLeftClose class="btn btn-square btn-ghost h-8 lg:h-6" />
@@ -78,6 +78,9 @@ onMount(() => {
           <PanelLeftOpen class="btn btn-square btn-ghost h-8 lg:h-6" />
         {/if}
       </div>
+      {#if !$mobile}
+      <a href="../../index.html" class="btn btn-ghost h-8 lg:h-6 px-1 text-sm font-normal" title="Back to Cerevana menu">&larr; CEREVANA</a>
+      {/if}
     </div>
     <div class="justify-self-center flex gap-4 select-none px-6 whitespace-nowrap max-w-[70svw] overflow-hidden"
       class:advance={$autoProgression.advance}
@@ -176,7 +179,7 @@ onMount(() => {
       <div class="my-10"></div>
     </nav>
 
-    <div class="relative w-screen h-full transition-transform duration-150 dark:bg-[#232323] bg-[#FBFBFB]">
+    <div class="relative w-screen h-full transition-transform duration-150 dark:bg-[#131312] bg-[#faf9f7]">
       <slot />
     </div>
   </div>

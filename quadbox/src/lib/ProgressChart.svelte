@@ -6,7 +6,7 @@
   import { settings } from '../stores/settingsStore'
 
   Chart.register(...registerables)
-  Chart.defaults.font.family = 'Go Mono'
+  Chart.defaults.font.family = 'JetBrains Mono'
   Chart.defaults.font.size = 16
   Chart.defaults.font.weight = 'normal'
   let chart

@@ -1,11 +1,80 @@
 @import "tailwindcss";
 @import 'tailwindcss/utilities';
 @plugin "daisyui" {
-  themes: black --dark, bumblebee --light;
+  themes: false;
 }
 
-@custom-variant dark (&:where([data-theme=black], [data-theme=black] *));
-@custom-variant light (&:where([data-theme=bumblebee], [data-theme=bumblebee] *));
+/* Cerevana themes — colors mirror css/styles.css :root / .light-mode tokens */
+@plugin "daisyui/theme" {
+  name: "cerevana-dark";
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+  --color-base-100: #131312;
+  --color-base-200: #191918;
+  --color-base-300: #222221;
+  --color-base-content: #fffffd;
+  --color-primary: #7cb6a8;
+  --color-primary-content: #131312;
+  --color-secondary: #4f7d72;
+  --color-secondary-content: #fffffd;
+  --color-accent: #3c6c64;
+  --color-accent-content: #dfe9ec;
+  --color-neutral: #191918;
+  --color-neutral-content: #fffffd;
+  --color-info: #7cb6a8;
+  --color-info-content: #131312;
+  --color-success: #4c8434;
+  --color-success-content: #fffffd;
+  --color-warning: #a6712c;
+  --color-warning-content: #fffffd;
+  --color-error: #8a5264;
+  --color-error-content: #fffffd;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: "cerevana-light";
+  color-scheme: light;
+  --color-base-100: #faf9f7;
+  --color-base-200: #e6e4e0;
+  --color-base-300: #d8d5d0;
+  --color-base-content: #171613;
+  --color-primary: #2f6b5c;
+  --color-primary-content: #faf9f7;
+  --color-secondary: #5c8f81;
+  --color-secondary-content: #171613;
+  --color-accent: #3c6c64;
+  --color-accent-content: #dfe9ec;
+  --color-neutral: #e6e4e0;
+  --color-neutral-content: #3f3d38;
+  --color-info: #2f6b5c;
+  --color-info-content: #faf9f7;
+  --color-success: #307e2c;
+  --color-success-content: #faf9f7;
+  --color-warning: #b07d2e;
+  --color-warning-content: #faf9f7;
+  --color-error: #582234;
+  --color-error-content: #faf9f7;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+@custom-variant dark (&:where([data-theme=cerevana-dark], [data-theme=cerevana-dark] *));
+@custom-variant light (&:where([data-theme=cerevana-light], [data-theme=cerevana-light] *));
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -22,14 +91,28 @@
 }
 
 @font-face {
-  font-family: 'Go Mono';
-  src: url('/fonts/Go-Mono.ttf') format('truetype');
-  font-weight: normal;
+  font-family: 'Space Grotesk';
+  src: url('/fonts/SpaceGrotesk-VariableFont.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Oxanium';
+  src: url('/fonts/Oxanium-VariableFont.woff2') format('woff2');
+  font-weight: 200 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/JetBrainsMono-VariableFont.woff2') format('woff2');
+  font-weight: 100 800;
   font-style: normal;
 }
 
 html, body {
-  background-color: #222;
+  background-color: #131312;
   overscroll-behavior-y: contain;
   touch-action: pan-x pan-y;
 }
@@ -39,10 +122,16 @@ html {
 }
 
 body {
-  font-family: 'Go Mono', monospace;
+  font-family: 'Space Grotesk', sans-serif;
   margin: 0;
   min-width: 320px;
   min-height: 100svh;
+}
+
+/* Cerevana HUD styling for the top status bar */
+.font-hud {
+  font-family: 'Oxanium', 'Space Grotesk', sans-serif;
+  letter-spacing: 0.05em;
 }
 
 @utility game-button {
@@ -61,24 +150,25 @@ body {
   @apply absolute left-0 top-0 w-full h-full;
 }
 
+/* Feedback flashes use Cerevana's verdict pair (--correct-color / --wrong-color) */
 button.light-success, button.light-success:hover {
-  background-color: #93C82E;
+  background-color: #a8d5a4;
 }
 
 button.dark-success {
-  background-color: #386D38;
+  background-color: #4c8434;
 }
 
 button.light-failure, button.light-failure:hover {
-  background-color: #EE3527;
+  background-color: #dba8b8;
 }
 
 button.dark-failure {
-  background-color: #9F2323;
+  background-color: #8a5264;
 }
 
 button.light-late-failure, button.light-late-failure:hover {
-  background-color: #F49F31;
+  background-color: #ecc98e;
 }
 
 button.dark-late-failure {

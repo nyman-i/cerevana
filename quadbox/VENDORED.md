@@ -29,4 +29,17 @@ Excluded from upstream: `.git/`, `.github/`, `netlify/`, `.vscode/`.
 Styling/integration only — game mechanics, stores, gamedb, migrations are
 untouched. Keep this list current with any new change.
 
-(populated by the retheme commit)
+- `src/app.css` — custom daisyUI themes `cerevana-dark`/`cerevana-light`
+  (colors from Cerevana's design tokens), Cerevana @font-faces (Space
+  Grotesk/Oxanium/JetBrains Mono) replacing Go Mono, body font, `.font-hud`
+  utility, feedback-flash colors mapped to Cerevana's verdict hues.
+- `src/App.svelte` — theme names `black`/`bumblebee` → `cerevana-dark`/`-light`.
+- `src/lib/Drawer.svelte` — "← CEREVANA" back link in the top bar (desktop
+  only; mobile uses browser back), game-area bg hexes → Cerevana bg tokens,
+  `font-hud` on the top bar.
+- `src/lib/ProgressChart.svelte` — Chart.js default font → JetBrains Mono.
+- `src/main.js` — one-time read of host localStorage `sllgms-v3-app-state`
+  to follow Cerevana's dark/light mode at load (read-only).
+- `index.html` — title "Quad Box — Cerevana".
+- `public/fonts/` — Go-Mono.ttf removed; Cerevana woff2 fonts added
+  (SIL OFL 1.1, license files in repo-root `fonts/`).

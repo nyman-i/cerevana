@@ -7,7 +7,7 @@ import { settings } from "./stores/settingsStore"
 import { setMobile } from "./stores/mobileStore"
 import { onMount, onDestroy } from "svelte"
 
-$: theme = $settings.theme === 'dark' ? 'black' : 'bumblebee'
+$: theme = $settings.theme === 'dark' ? 'cerevana-dark' : 'cerevana-light'
 
 onMount(() => {
   setMobile()
