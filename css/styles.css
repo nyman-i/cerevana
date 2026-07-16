@@ -1542,6 +1542,10 @@ table.distinction {
     content: 'SHORTCUTS';
 }
 
+.info-label::before {
+    content: 'INFO';
+}
+
 .graph-label::before {
     content: 'GRAPH';
 }
@@ -2200,6 +2204,7 @@ table.distinction {
     padding: 1rem;
     text-decoration: none;
     border-bottom: 3px solid transparent;
+    white-space: nowrap;
 }
 
 .game-menu__item:hover { opacity: 0.9; }
