@@ -251,7 +251,7 @@ onDestroy(async () => {
   </div>
 </div>
 {:else}
-<div class="stretch grid grid-cols-[1fr_3fr_3fr_1fr] grid-rows-[1fr_6fr_1fr]">
+<div class="stretch grid grid-cols-[1fr_3fr_3fr_1fr] grid-rows-[1fr_6fr_1fr] px-20">
   <div class="w-full h-full flex items-center justify-between col-start-1 col-span-4 px-2">
     <div></div>
     <button class="game-button text-5xl px-12 py-10 max-w-[90%] mr-4"
@@ -262,13 +262,13 @@ onDestroy(async () => {
       tabindex="-1"
     >{#if $isPlaying} Stop {:else} Play {/if}</button>
   </div>
-  <div class="game-button-lg-group row-start-2 col-start-1 pr-24">
+  <div class="game-button-lg-group row-start-2 col-start-1 pr-8">
     {#if !gameSettings.enableImage}
     <LargeKey field="color" display="Color" isPlaying={$isPlaying} {checkForMatch}></LargeKey>
     {/if}
     <LargeKey field="position" display="Position" isPlaying={$isPlaying} {checkForMatch}></LargeKey>
   </div>
-  <div class="game-button-lg-group row-start-2 col-start-4 pl-24">
+  <div class="game-button-lg-group row-start-2 col-start-4 pl-8">
     {#if gameSettings.enableImage}
     <LargeKey field="image" display="Image" isPlaying={$isPlaying} {checkForMatch}></LargeKey>
     {:else}

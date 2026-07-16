@@ -112,11 +112,17 @@
 }
 
 /* Transparent page: the game is embedded in quadbox.html's iframe and the
-   host's .background-image/.overlay must show through. */
+   host's .background-image/.overlay must show through. daisyUI paints
+   base-100 on the themed container — kill that too or the page reads
+   grey (#131312) instead of the host's near-black. */
 html, body {
   background-color: transparent;
   overscroll-behavior-y: contain;
   touch-action: pan-x pan-y;
+}
+
+main[data-theme] {
+  background-color: transparent;
 }
 
 html {
@@ -168,7 +174,6 @@ body {
 }
 
 .settings-heading {
-  font-family: 'Oxanium', 'Space Grotesk', sans-serif;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -273,6 +278,8 @@ body {
 
 .offcanvas-skin .range {
   height: 1.1rem;
+  color: var(--cv-switch-sel);
+  accent-color: var(--cv-switch-sel);
 }
 
 /* Match N-Back's settings type size (styles.css uses --step--1 there) */
@@ -288,14 +295,14 @@ body {
   box-shadow: none;
 }
 
-/* Section headings inside the drawer, like .panel-heading */
+/* Section headings inside the drawer — exact .panel-heading semantics
+   from ../../css/styles.css (bold uppercase, inherits the panel's mono
+   font and text color, no accent) */
 .panel-heading {
-  font-family: 'Oxanium', 'Space Grotesk', sans-serif;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.8rem;
-  color: var(--cv-label);
   margin-top: 0.5rem;
 }
 
@@ -305,26 +312,28 @@ body {
   background-color: var(--cv-select-bg);
   border: 1px solid var(--cv-border);
   color: var(--cv-label);
-  font-family: 'Oxanium', 'Space Grotesk', sans-serif;
   letter-spacing: 0.08em;
 }
 
-/* Popups (chart, info, keybindings, tally help): Cerevana panel look */
+/* Popups (chart, info, keybindings, tally help): exact material of
+   N-Back's .graph-popup (flat --background-color, radius 8, soft shadow) */
 .modal-box {
-  background: radial-gradient(circle at top center, #0c0c0b, #131312);
-  border: 1px solid #3c6c64;
-  border-radius: 2px;
+  background: #131312;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   font-family: 'JetBrains Mono', monospace;
 }
 
 [data-theme=cerevana-light] .modal-box {
-  background: radial-gradient(circle at top center, #faf9f7, #e8efec);
+  background: #faf9f7;
 }
 
 .modal-box .tab {
-  font-family: 'Oxanium', 'Space Grotesk', sans-serif;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 .game-button-lg {
@@ -354,6 +363,17 @@ body {
   font-family: 'Oxanium', 'Space Grotesk', sans-serif;
   letter-spacing: 0.05em;
   box-shadow: none;
+  font-size: 1.6rem;
+  padding: 0.75rem 1.5rem;
+}
+
+/* Large stimulus keys: smaller than upstream's full-height text-8xl slabs */
+.game-button-lg {
+  font-size: 2.75rem;
+  padding: 1rem;
+  max-width: 11rem;
+  max-height: 12rem;
+  margin-inline: auto;
 }
 
 .game-button:hover,

@@ -48,7 +48,7 @@
 </div>
 {/if}
 {#if grid === 'static2D'}
-<div class="flex absolute items-center justify-center w-full h-full select-none overflow-hidden">
+<div class="flex absolute items-center justify-center w-full h-full select-none overflow-hidden scale-[0.82]">
   <div class="absolute w-[81.3svmin] h-[81.3svmin] mb-10">
     {#if trial.position0}
       {#each range(gameDisplayInfo.getMaxWidth()) as i (i)}
@@ -79,7 +79,7 @@
   </div>
 </div>
 {:else}
-<div class="flex absolute items-center justify-center w-full h-full select-none perspective-[60svmin] overflow-hidden">
+<div class="flex absolute items-center justify-center w-full h-full select-none perspective-[60svmin] overflow-hidden scale-[0.82]">
   <div class="scene absolute w-[60.3svmin] h-[60.3svmin] transform-3d -translate-z-[10svmin]"
   class:mb-10={$mobile}
   style="

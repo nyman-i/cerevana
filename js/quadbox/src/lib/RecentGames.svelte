@@ -14,9 +14,9 @@
   const getStatusColor = (status) => {
     switch (status) {
       case "completed":
-        return $settings.theme === "light" ? "bg-green-400" : "bg-green-700"
+        return $settings.theme === "light" ? "bg-[#307e2c]" : "bg-[#4c8434]"
       case "cancelled":
-        return $settings.theme === "light" ? "bg-red-400" : "bg-red-700"
+        return $settings.theme === "light" ? "bg-[#582234]" : "bg-[#8a5264]"
       default:
         return $settings.theme === "light" ? "bg-gray-400" : "bg-gray-700"
     }
@@ -28,17 +28,18 @@
     return className
   }
 
+  // Score tiers on Cerevana's verdict palette (correct/warning/wrong hues)
   const getPercentColor = (percent) => {
     if (percent > 0.7) {
-      return $settings.theme === "light" ? "bg-[#2BFF24]" : "bg-[#0BaF04]"
+      return $settings.theme === "light" ? "bg-[#307e2c]" : "bg-[#4c8434]"
     } if (percent > 0.6) {
-      return $settings.theme === "light" ? "bg-[#B9FF24]" : "bg-[#60AF00]"
+      return $settings.theme === "light" ? "bg-[#5c8f34]" : "bg-[#6f9440]"
     } if (percent > 0.5) {
-      return $settings.theme === "light" ? "bg-[#FFFF24]" : "bg-[#8E8E08]"
+      return $settings.theme === "light" ? "bg-[#b07d2e]" : "bg-[#a6712c]"
     } else if (percent > 0.4) {
-      return $settings.theme === "light" ? "bg-[#FFA324]" : "bg-[#A95C00]"
+      return $settings.theme === "light" ? "bg-[#a3552e]" : "bg-[#9c5a3a]"
     } else {
-      return $settings.theme === "light" ? "bg-[#FF3131]" : "bg-[#CC2525]"
+      return $settings.theme === "light" ? "bg-[#582234]" : "bg-[#8a5264]"
     }
   }
 
