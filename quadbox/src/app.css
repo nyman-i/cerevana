@@ -1,0 +1,131 @@
+@import "tailwindcss";
+@import 'tailwindcss/utilities';
+@plugin "daisyui" {
+  themes: black --dark, bumblebee --light;
+}
+
+@custom-variant dark (&:where([data-theme=black], [data-theme=black] *));
+@custom-variant light (&:where([data-theme=bumblebee], [data-theme=bumblebee] *));
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: 'Go Mono';
+  src: url('/fonts/Go-Mono.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+html, body {
+  background-color: #222;
+  overscroll-behavior-y: contain;
+  touch-action: pan-x pan-y;
+}
+
+html {
+  scrollbar-gutter: auto;
+}
+
+body {
+  font-family: 'Go Mono', monospace;
+  margin: 0;
+  min-width: 320px;
+  min-height: 100svh;
+}
+
+@utility game-button {
+  @apply btn light:btn-soft btn-accent opacity-90 light:hover:bg-base-200 light:hover:text-neutral-950 duration-0;
+}
+
+.game-button-lg {
+  @apply game-button w-full text-8xl p-6 flex-auto;
+}
+
+.game-button-lg-group {
+  @apply w-full h-full flex flex-col gap-2 items-center justify-around py-1;
+}
+
+.stretch {
+  @apply absolute left-0 top-0 w-full h-full;
+}
+
+button.light-success, button.light-success:hover {
+  background-color: #93C82E;
+}
+
+button.dark-success {
+  background-color: #386D38;
+}
+
+button.light-failure, button.light-failure:hover {
+  background-color: #EE3527;
+}
+
+button.dark-failure {
+  background-color: #9F2323;
+}
+
+button.light-late-failure, button.light-late-failure:hover {
+  background-color: #F49F31;
+}
+
+button.dark-late-failure {
+  background-color: #a6712c;
+}
+
+.advance {
+  @apply bg-emerald-600 text-neutral-50 dark:bg-green-300 dark:text-neutral-900;
+}
+
+.fallback {
+  @apply bg-amber-600 text-neutral-50 dark:bg-amber-500 dark:text-neutral-900;
+}
+
+.modal-box {
+  @apply dark:bg-[#090909];
+}
+
+.help-box {
+  @apply dark:border-black dark:border-4
+}
+
+/* ------------------------
+Address weird user agent styles being applied in older versions of Safari.
+From what I've seen, newer versions of safari don't do this, but BrowserStack's
+iPhones seem to run into it, suggesting they reflect unupdated iPhones.
+--------------------------- */
+.grid, .modal {
+  display: grid !important;
+}
+
+.flex, .divider {
+  display: flex !important;
+}
+
+.inline-block {
+  display: inline-block !important;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.group-hover\:block {
+  &:is(:where(.group):hover *) {
+    @media (hover: hover) {
+      display: block !important;
+    }
+  }
+}
