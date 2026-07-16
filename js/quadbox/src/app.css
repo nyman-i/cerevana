@@ -188,6 +188,145 @@ body {
   @apply btn light:btn-soft btn-accent opacity-90 light:hover:bg-base-200 light:hover:text-neutral-950 duration-0;
 }
 
+/* ===== Cerevana control language =====================================
+   Values mirror ../../css/styles.css design tokens (dark / .light-mode)
+   so the game's controls read exactly like RRT's and N-Back's. */
+[data-theme=cerevana-dark] {
+  --cv-text: #fffffd;
+  --cv-label: #7cb6a8;
+  --cv-label-bg: #0009;
+  --cv-select-bg: #191918;
+  --cv-border: #444;
+  --cv-switch-bg: #333;
+  --cv-switch-unsel: #444;
+  --cv-switch-sel: #7cb6a8;
+  --cv-switch-border: #666;
+  --cv-input-bg: #282828;
+}
+
+[data-theme=cerevana-light] {
+  --cv-text: #171613;
+  --cv-label: #2f6b5c;
+  --cv-label-bg: #FFF9;
+  --cv-select-bg: #e6e4e0;
+  --cv-border: #999;
+  --cv-switch-bg: #DDD;
+  --cv-switch-unsel: #FFF;
+  --cv-switch-sel: #2f6b5c;
+  --cv-switch-border: #888;
+  --cv-input-bg: #FAFAFA;
+}
+
+/* Settings drawer controls → Cerevana's switch / select-item /
+   inline-input styling, applied to the existing daisyUI classes so
+   templates (and bindings) stay untouched. */
+.offcanvas-skin .select,
+.offcanvas-skin .input {
+  background-color: var(--cv-select-bg);
+  color: var(--cv-text);
+  border: 1px solid var(--cv-border);
+  border-radius: 2px;
+  box-shadow: none;
+  outline: none;
+  height: 2rem;
+  font-size: 0.85rem;
+}
+
+.offcanvas-skin .select:focus,
+.offcanvas-skin .input:focus {
+  border-color: #888;
+}
+
+.offcanvas-skin .toggle {
+  appearance: none;
+  width: 1.7rem;
+  height: 1.7rem;
+  min-height: 0;
+  padding: 0;
+  border: 2px solid var(--cv-switch-border);
+  border-radius: 0;
+  background: var(--cv-switch-bg);
+  position: relative;
+  cursor: pointer;
+  transition: all 1s ease-out;
+}
+
+.offcanvas-skin .toggle::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 0.65rem;
+  height: 0.65rem;
+  background-color: var(--cv-switch-unsel);
+  transition: all 0.1s ease-out;
+}
+
+.offcanvas-skin .toggle:checked {
+  border-color: var(--cv-switch-sel);
+  box-shadow: 0 0 4px var(--cv-switch-sel);
+}
+
+.offcanvas-skin .toggle:checked::after {
+  background-color: var(--cv-switch-sel);
+}
+
+.offcanvas-skin .range {
+  height: 1.1rem;
+}
+
+/* Match N-Back's settings type size (styles.css uses --step--1 there) */
+.offcanvas-skin .text-base {
+  font-size: 0.85rem;
+}
+
+.offcanvas-skin .btn {
+  background: var(--cv-label-bg);
+  color: var(--cv-label);
+  border: 1px solid var(--cv-switch-border);
+  border-radius: 0.25rem;
+  box-shadow: none;
+}
+
+/* Section headings inside the drawer, like .panel-heading */
+.panel-heading {
+  font-family: 'Oxanium', 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  color: var(--cv-label);
+  margin-top: 0.5rem;
+}
+
+/* Mode pill in the drawer: single-accent Cerevana styling instead of
+   upstream's per-mode rainbow */
+.cv-mode-pill {
+  background-color: var(--cv-select-bg);
+  border: 1px solid var(--cv-border);
+  color: var(--cv-label);
+  font-family: 'Oxanium', 'Space Grotesk', sans-serif;
+  letter-spacing: 0.08em;
+}
+
+/* Popups (chart, info, keybindings, tally help): Cerevana panel look */
+.modal-box {
+  background: radial-gradient(circle at top center, #0c0c0b, #131312);
+  border: 1px solid #3c6c64;
+  border-radius: 2px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+[data-theme=cerevana-light] .modal-box {
+  background: radial-gradient(circle at top center, #faf9f7, #e8efec);
+}
+
+.modal-box .tab {
+  font-family: 'Oxanium', 'Space Grotesk', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .game-button-lg {
   @apply game-button w-full text-8xl p-6 flex-auto;
 }
@@ -198,6 +337,37 @@ body {
 
 .stretch {
   @apply absolute left-0 top-0 w-full h-full;
+}
+
+/* Game-zone buttons (stimulus keys, Play/Stop, tally number keys):
+   N-Back's .nback__match / .nback__start language instead of filled
+   daisyUI accent blocks. Must come AFTER the .game-button-lg definition
+   above so it wins the cascade; feedback flash classes below still win
+   (higher specificity). */
+.game-button,
+.game-button-lg {
+  background-color: var(--cv-label-bg);
+  color: var(--cv-text);
+  border: 1px solid var(--cv-switch-border);
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+  font-family: 'Oxanium', 'Space Grotesk', sans-serif;
+  letter-spacing: 0.05em;
+  box-shadow: none;
+}
+
+.game-button:hover,
+.game-button-lg:hover {
+  background-color: var(--cv-label-bg);
+  color: var(--cv-label);
+  border-color: var(--cv-label);
+}
+
+.game-button:disabled,
+.game-button-lg:disabled {
+  background-color: transparent;
+  border-color: var(--cv-border);
+  opacity: 0.35;
 }
 
 /* Feedback flashes use Cerevana's verdict pair (--correct-color / --wrong-color) */
@@ -231,10 +401,6 @@ button.dark-late-failure {
 
 .fallback {
   @apply bg-amber-600 text-neutral-50 dark:bg-amber-500 dark:text-neutral-900;
-}
-
-.modal-box {
-  @apply dark:bg-[#090909];
 }
 
 .help-box {

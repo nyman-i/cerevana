@@ -25,6 +25,10 @@ const unsubPanel = panelRequest.subscribe(r => {
   if (r?.panel === 'settings') toggle()
 })
 
+// Tell the Cerevana host when the drawer is open so it can fade its
+// corner tabs out of the way (same-origin embed).
+$: window.parent !== window && window.parent.postMessage({ cerevana: 'panelState', panel: 'settings', open }, '*')
+
 const handleClickOutside = (event) => {
   if (open && !drawerRef.contains(event.target)) {
     close()
@@ -107,9 +111,12 @@ onMount(() => {
           <button class="offcanvas-close-btn" on:click={close} title="Close settings">✕</button>
         </div>
         <div class="w-full border-b-1 my-1"></div>
+        <div class="panel-heading">Mode</div>
         <ModeSwapper />
+        <div class="panel-heading">Session</div>
         <GameSettings />
         <div class="my-0 divider"></div>
+        <div class="panel-heading">Display</div>
         <div class="grid grid-cols-[4fr_6fr] items-center gap-4">
           <span class="text-base">Feedback:</span>
           <select bind:value={$settings.feedback} id="feedback-select" class="select">
@@ -129,6 +136,7 @@ onMount(() => {
         {/if}
         <div class="divider"></div>
         {#if $settings.mode !== 'tally' && $settings.mode !== 'vtally'}
+        <div class="panel-heading">Progression</div>
         <div class="grid grid-cols-[8fr_2fr] items-center">
           <label for="enable-auto-progression" class="text-base">Auto progression:</label>
           <input id="enable-auto-progression" type="checkbox" bind:checked={$settings.enableAutoProgression} class="toggle" />

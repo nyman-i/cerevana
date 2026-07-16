@@ -26,6 +26,14 @@
     src: url("../fonts/ZenDots-Regular.woff2") format("woff2");
 }
 
+/* wordmark only — the CEREVANA logo on the menu; never for UI text */
+@font-face {
+    font-family: "Format 1452";
+    font-style: normal;
+    font-weight: normal;
+    src: url("../fonts/Format1452.woff2") format("woff2");
+}
+
 ::-webkit-scrollbar {
     width: 4px;
 }
@@ -433,6 +441,13 @@ button.delete:hover {
     border: 0;
     background: transparent;
     z-index: 0;
+}
+
+/* Quad Box host: fade corner tabs while a panel is open inside the frame */
+label.open.tabs-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;
 }
 
 .metal-gear {
@@ -2362,8 +2377,8 @@ body.menu-mode .main-view {
 
 .menu__title {
     color: var(--label-color);
-    font-family: "Zen Dots", sans-serif;
-    letter-spacing: 0.3em;
+    font-family: "Format 1452", "Zen Dots", sans-serif;
+    letter-spacing: 0.22em;
     font-size: var(--step-4);
     margin: 0;
     text-shadow: var(--text-outline);

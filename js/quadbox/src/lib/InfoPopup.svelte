@@ -22,6 +22,7 @@
     if (r?.panel === 'info') show ? closeModal() : openModal()
   })
   onDestroy(unsubPanel)
+  $: window.parent !== window && window.parent.postMessage({ cerevana: 'panelState', panel: 'info', open: show }, '*')
 
   const handleKeydown = (event) => {
     if (event.key === "Escape") closeModal()

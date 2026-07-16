@@ -60,6 +60,19 @@
 					if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); send(); }
 				});
 			});
+
+			// While a panel is open inside the frame, fade the corner tabs out
+			// of its way (the panel covers them, like offcanvases do on the
+			// other game pages). Close via ✕, backdrop or click-outside.
+			const openPanels = new Set();
+			window.addEventListener('message', (e) => {
+				const d = e.data;
+				if (d && d.cerevana === 'panelState') {
+					d.open ? openPanels.add(d.panel) : openPanels.delete(d.panel);
+					document.querySelectorAll('label.open').forEach((l) =>
+						l.classList.toggle('tabs-hidden', openPanels.size > 0));
+				}
+			});
 		</script>
 	</body>
 </html>

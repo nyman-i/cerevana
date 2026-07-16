@@ -57,3 +57,14 @@ untouched. Keep this list current with any new change.
   (SIL OFL 1.1, license files in repo-root `fonts/`).
 - `src/lib/ThemeSwapper.svelte` — no longer mounted (file kept to minimize
   the diff vs upstream).
+- `src/lib/ModeSwapper.svelte` — per-mode rainbow colors replaced by the
+  single-accent `.cv-mode-pill` (logic/cycling untouched).
+- `public/frame-dark.svg` / `frame-light.svg` — lattice lines tinted to
+  Cerevana's sage accent (#7cb6a8 / #2f6b5c, slight opacity).
+- `src/app.css` (Cerevana control language section) — `.game-button`
+  reskinned to N-Back's button style (translucent bg, thin border,
+  Oxanium uppercase); drawer `.toggle`/`.select`/`.input`/`.btn`
+  restyled as Cerevana's `.switch`/`.select-item`/inline-input;
+  `.panel-heading` section titles (added in Drawer.svelte: Mode /
+  Session / Display / Progression); modals (`.modal-box`, tabs)
+  restyled as Cerevana panels.

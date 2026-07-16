@@ -11,23 +11,17 @@
   let showModeDropdown = false
   let showTallyExplanation = false
 
+  // Cerevana: one accent, no per-mode rainbow (see .cv-mode-pill in app.css)
   const darkColors = new Map([
-    ['quad', 'bg-rose-900'],
-    ['dual', 'bg-cyan-800'],
-    ['custom', 'bg-orange-800'],
-    ['customB', 'bg-yellow-700'],
-    ['tally', 'bg-indigo-800'],
-    ['vtally', 'bg-emerald-800'],
+    ['quad', 'cv-mode-pill'],
+    ['dual', 'cv-mode-pill'],
+    ['custom', 'cv-mode-pill'],
+    ['customB', 'cv-mode-pill'],
+    ['tally', 'cv-mode-pill'],
+    ['vtally', 'cv-mode-pill'],
   ])
 
-  const lightColors = new Map([
-    ['quad', 'bg-rose-400'],
-    ['dual', 'bg-cyan-400'],
-    ['custom', 'bg-orange-400'],
-    ['customB', 'bg-yellow-400'],
-    ['tally', 'bg-indigo-400'],
-    ['vtally', 'bg-emerald-400'],
-  ])
+  const lightColors = darkColors
 
   const allModes = [...lightColors.keys()]
 
