@@ -2,10 +2,10 @@
 
 Cerevana is an open, local-first brain-training app that unites multiple
 evidence-based cognitive exercises under one roof. Today that's **RRT**
-(relational reasoning) and **Dual N-Back** (working memory); the ambition is
-one place for the whole training stack. It is a plain static site — no build
-step, no dependencies, no accounts — and all of your data stays in your
-browser (localStorage and IndexedDB).
+(relational reasoning), **Dual N-Back** (working memory) and **Quad Box**
+(3D quad n-back); the ambition is one place for the whole training stack.
+It is a plain static site — no build step, no dependencies, no accounts —
+and all of your data stays in your browser (localStorage and IndexedDB).
 
 ## The exercises
 
@@ -32,6 +32,17 @@ multi-square tracking, and anti-strategy options like variable-N, crab and
 self-paced play, with tunable progression thresholds and an optional daily
 level reset.
 
+### Quad Box
+
+The modern community n-back, built to resist the strategies that make the
+classic protocol gameable: positions on a rotating 3D cube, audio, colors,
+shapes and unnameable generated images tracked simultaneously, deliberate
+n±1 interference lures, variable N, and self-paced tally modes where you
+enter the *count* of matches instead of reacting to each one. Includes
+tunable auto-progression, a progress chart and a year activity heatmap.
+Vendored from soamsy's Quad Box and restyled to match Cerevana — the game
+itself is unchanged.
+
 ## Roadmap
 
 The goal is to grow Cerevana into one roof for the training methods the
@@ -42,8 +53,10 @@ task, and UFOV. Suggestions and implementations are welcome.
 
 ## Features
 
-- Main menu with a live overview of both exercises: active profile, totals,
+- Main menu with a live overview of the exercises: active profile, totals,
   accuracy and recent results at a glance.
+- Quad Box: the community's modern 3D quad n-back, vendored whole (see
+  Credits) with all of its modes, stats and settings intact.
 - Studies library: browse, search and filter the research behind cognitive
   training, collected by the Mindbuilding community.
 - In-app Credits page with the full attribution: exercise lineage, protocol
@@ -70,7 +83,10 @@ localhost (the History API and IndexedDB behave better than on `file://`):
 python3 -m http.server 8080
 ```
 
-then open http://localhost:8080. For an app-like window:
+then open http://localhost:8080. (Quad Box's built output is committed at
+`quadbox/dist/`, so no npm/build is needed to serve; rebuilding it is only
+required when changing `quadbox/src/` — see `quadbox/VENDORED.md`.)
+For an app-like window:
 
 ```bash
 chromium --app=http://localhost:8080
@@ -104,12 +120,23 @@ Jonathan Toomim ([brainworkshop.sourceforge.net](https://brainworkshop.sourcefor
 Cerevana reimplements the protocol in JavaScript and shares no code with
 Brain Workshop.
 
+**Quad Box** is [soamsy/quad-box](https://github.com/soamsy/quad-box)
+(MIT, [playable original](https://quad-box.netlify.app)) by
+[soamsy](https://github.com/soamsy/) — the same developer behind the
+Syllogimous-v3 fork RRT grew from. It is vendored into `quadbox/` and
+restyled to match Cerevana; the game mechanics are unchanged and its MIT
+license is kept at `quadbox/LICENSE` (details in `quadbox/VENDORED.md`).
+
 The menu background photo is by
 [Simon Berger on Pexels](https://www.pexels.com/photo/photography-of-mountains-under-cloudy-sky-1183099/)
 (Pexels License, free to use), bundled locally as `img/menu-bg.jpg`.
 
-The favicon and app icon are the Cerevana circuit-head logo, provided by the
-project maintainer and bundled locally as `favicon.png` and `img/icon-512.png`.
+The favicon and app icon are the Cerevana head logo, created with
+[Canva Pro](https://www.canva.com/) and used under the
+[Canva Content License](https://www.canva.com/policies/content-license-agreement/);
+bundled as `favicon.png` and `img/icon-512.png`. Note: the logo is licensed
+separately from the app — the repository's CC BY-NC license does not apply
+to it.
 
 The body typeface is [Space Grotesk](https://github.com/floriankarsten/space-grotesk)
 by Florian Karsten, licensed under the

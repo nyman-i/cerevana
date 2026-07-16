@@ -33,6 +33,12 @@ dual n-back protocol popularized by Brain Workshop (Paul Hoskinson and
 Jonathan Toomim, GPL-2.0). It shares no code with Brain Workshop, which
 is credited as inspiration.
 
+The Quad Box exercise is vendored from soamsy/quad-box
+(https://github.com/soamsy/quad-box), MIT-licensed; its license is kept
+at quadbox/LICENSE and the modifications (styling/integration only) are
+listed in quadbox/VENDORED.md. The MIT-licensed Quad Box code is not
+subject to this repository's CC BY-NC terms.
+
 Bundled third-party assets carry their own licenses: Space Grotesk and
 Zen Dots typefaces (SIL OFL 1.1, see fonts/), menu background photo by
 Simon Berger (Pexels License), Chart.js (MIT, vendored in js/lib/).
