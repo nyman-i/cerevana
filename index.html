@@ -29,45 +29,60 @@
 
 			<div class="menu__cards">
 				<a class="menu-card" href="rrt.html">
-					<h2 class="menu-card__name">RRT</h2>
+					<h2 class="menu-card__name">RRT
+						<div class="tooltip-container" tabindex="0" onclick="event.preventDefault()">?
+							<div class="tooltip-text">
+								Read premises like &ldquo;A is north-east of B&rdquo;, hold the
+								relations in mind, and judge whether the conclusion follows.
+								Distinction, syllogisms, spatial reasoning in 2D/3D/4D, and more
+								&mdash; against the clock.<br><br>
+								<strong>Trains:</strong> fluid reasoning &mdash; relational
+								integration, logical inference and mental-model building under
+								time pressure.<br><br>
+								Based on Syllogimous by 4skinSkywalker, continued by
+								ikokusovereignty and soamsy.
+							</div>
+						</div>
+					</h2>
 					<div id="menu-rrt-player" class="menu-card__player"></div>
-					<div class="menu-card__info">
-						<p>Read premises like &ldquo;A is north-east of B&rdquo;, hold the
-						relations in mind, and judge whether the conclusion follows.
-						Distinction, syllogisms, spatial reasoning in 2D/3D/4D, and more
-						&mdash; against the clock. Based on Syllogimous by 4skinSkywalker,
-						continued by ikokusovereignty and soamsy.</p>
-						<p><strong>Trains:</strong> fluid reasoning &mdash; relational
-						integration, logical inference and mental-model building under
-						time pressure.</p>
-					</div>
+					<p class="menu-card__info">Relational reasoning under time pressure.</p>
 					<div id="menu-rrt-stats" class="menu-card__stats"></div>
 					<div id="menu-rrt-recent" class="menu-card__recent"></div>
 					<span class="menu-card__enter">ENTER &rarr;</span>
 				</a>
 				<a class="menu-card" href="nback.html">
-					<h2 class="menu-card__name">N-BACK</h2>
+					<h2 class="menu-card__name">N-BACK
+						<div class="tooltip-container" tabindex="0" onclick="event.preventDefault()">?
+							<div class="tooltip-text">
+								Watch squares light up on a grid while letters are spoken.
+								Signal whenever a position or sound repeats from N trials back
+								&mdash; the level adapts to your performance.<br><br>
+								<strong>Trains:</strong> working memory &mdash; continuous
+								updating, attention control and interference resolution.<br><br>
+								The classic dual n-back protocol from Paul Hoskinson's
+								Brain Workshop.
+							</div>
+						</div>
+					</h2>
 					<div id="menu-nback-player" class="menu-card__player"></div>
-					<div class="menu-card__info">
-						<p>Watch squares light up on a grid while letters are spoken.
-						Signal whenever a position or sound repeats from N trials back
-						&mdash; the classic dual n-back protocol from Paul
-						Hoskinson's Brain Workshop. The level adapts to your
-						performance.</p>
-						<p><strong>Trains:</strong> working memory &mdash; continuous
-						updating, attention control and interference resolution.</p>
-					</div>
+					<p class="menu-card__info">Adaptive n-back for working memory.</p>
 					<div id="menu-nback-stats" class="menu-card__stats"></div>
 					<div id="menu-nback-recent" class="menu-card__recent"></div>
 					<span class="menu-card__enter">ENTER &rarr;</span>
 				</a>
 			</div>
 
+			<nav class="menu__pages">
+				<a href="studies.html" title="Research library — brain endurance, working memory and cognitive control studies collected by the Mindbuilding community">STUDIES</a>
+				<a href="credits.html" title="The people and projects Cerevana builds on — lineage, protocol sources, assets, license">CREDITS</a>
+			</nav>
+
 			<div class="menu__footer">
 				<div class="menu__backup">
-					<button onclick="exportHistory()">Export History</button>
-					<button onclick="pickImportFile('merge')">Import (merge)</button>
-					<button onclick="pickImportFile('overwrite')">Import (overwrite)</button>
+					<button onclick="exportHistory()" title="Save all RRT and N-Back history to a JSON file">Export History</button>
+					<button onclick="pickImportFile('merge')" title="Combine a file with this device's history — no duplicates, nothing deleted">Import (merge)</button>
+					<button onclick="pickImportFile('overwrite')" title="Replace this device's history with the file's contents">Import (overwrite)</button>
+					<button class="delete" onclick="resetEverything()" title="Permanently erase ALL data for every exercise">Reset App</button>
 					<input type="file" id="history-import" accept=".json,application/json" style="display:none" onchange="handleHistoryImport(event)">
 				</div>
 			</div>
@@ -86,6 +101,7 @@
 		<script src="js/shared/constants.js"></script>
 		<script src="js/shared/backwards-compatibility.js"></script>
 		<script src="js/shared/db.js"></script>
+		<script src="js/shared/rename-db.js"></script>
 		<script src="js/shared/history-transfer.js"></script>
 		<script src="js/shared/error-handling.js"></script>
 		<script src="js/shared/background.js"></script>

@@ -18,6 +18,13 @@ const NBACK_SETTING_INPUTS = {
     'p-82': 'nbackChanceMatch',
     'p-83': 'nbackChanceInterference',
     'p-84': 'nbackMultiStim',
+    'p-85': 'nbackResetLevel',
+    'p-86': 'nbackArithMaxNumber',
+    'p-87': 'nbackArithNegatives',
+    'p-88': 'nbackArithAdd',
+    'p-89': 'nbackArithSub',
+    'p-90': 'nbackArithMul',
+    'p-91': 'nbackArithDiv',
 };
 
 function populateSettings() {
@@ -59,26 +66,69 @@ function registerEventHandlers() {
         nbackHandleKey(event);
     });
 
-    document.getElementById('offcanvas-progress').addEventListener('change', event => {
-        if (event.target.checked) renderNBackChart();
-    });
-
     document.getElementById('offcanvas-history').addEventListener('change', event => {
         if (event.target.checked) renderNBackHistory();
     });
 }
 
-async function renderNBackHistory() {
-    const list = document.getElementById('nback-history-list');
-    const sessions = (await getAllNBackSessions()).sort((a, b) => b.timestamp - a.timestamp);
-    list.textContent = sessions.length ? '' : 'No sessions yet.';
-    for (const s of sessions) {
-        const row = document.createElement('div');
-        row.className = 'mb-05';
-        const flags = [s.manual && 'manual', s.jaeggi && 'jaeggi'].filter(Boolean).join(', ');
-        row.textContent = `${new Date(s.timestamp).toLocaleString()}  ${s.modeName} ${s.n}-back  ${s.score}%${flags ? ` (${flags})` : ''}`;
-        list.appendChild(row);
+function resetNBack() {
+    const confirmed = confirm("Reset N-Back? This permanently deletes your N-Back profiles, settings, levels and session history. RRT data and the background image are kept. Tip: Export History from the main menu first to keep a backup.")
+        && confirm("Last chance: this cannot be undone. Really reset N-Back?");
+    if (confirmed) {
+        localStorage.removeItem(nbackProfilesKey);
+        localStorage.removeItem(nbackSelectedKey);
+        document.getElementById("reset-nback").innerText = 'Resetting...';
+        importNBackRows([], true).then(() => {
+            window.location.reload();
+        });
     }
+}
+
+// one session → an RRT-style .hqli history card (classes from js/rrt/index.js createHQLI)
+function createNBackHQLI(s, num) {
+    const advance = s.jaeggi ? 90 : 80;
+    const fallback = s.jaeggi ? 75 : 50;
+    const classModifier = s.manual ? '' : s.score >= advance ? 'hqli--right' : s.score < fallback ? 'hqli--wrong' : '';
+    const modeLabel = (s.multi > 1 ? s.multi + 'x ' : '') + (NBACK_MODES[s.modeName]?.label || s.modeName);
+    const modalityRows = Object.entries(s.percents || {})
+        .map(([mod, pct]) => `<div class="hqli-premise">${mod}: ${pct}%</div>`)
+        .join('\n');
+    const flags = [s.jaeggi && 'jaeggi', s.manual && 'manual', s.crab && 'crab',
+        s.variable && 'variable', (s.mode & 1024) && 'self-paced'].filter(Boolean).join(' · ');
+
+    const parent = document.createElement('DIV');
+    parent.innerHTML =
+`<div class="hqli ${classModifier}">
+    <div class="inner">
+        <div class="index"></div>
+        <div class="hqli-premises">
+            <div class="hqli-preamble">${modeLabel} · N = ${s.n}</div>
+            ${modalityRows}
+        </div>
+        <div class="hqli-postamble">Score</div>
+        <div class="hqli-conclusion">${s.score}%</div>
+        <div class="hqli-footer">
+            <div>${new Date(s.timestamp).toLocaleString()}${flags ? ' · ' + flags : ''}</div>
+        </div>
+    </div>
+</div>`;
+    parent.querySelector('.index').textContent = num;
+    return parent.firstElementChild;
+}
+
+async function renderNBackHistory() {
+    const sessions = (await getAllNBackSessions()).sort((a, b) => b.timestamp - a.timestamp);
+
+    const avg = sessions.length ? Math.round(sessions.reduce((a, s) => a + s.score, 0) / sessions.length) : 0;
+    const advanced = sessions.filter(s => !s.manual && s.score >= (s.jaeggi ? 90 : 80)).length;
+    document.getElementById('nback-total-display').textContent = sessions.length;
+    document.getElementById('nback-average-display').textContent = avg + '%';
+    document.getElementById('nback-best-display').textContent = sessions.length ? 'N = ' + Math.max(...sessions.map(s => s.n)) : '—';
+    document.getElementById('nback-advanced-display').textContent = sessions.length ? Math.round(100 * advanced / sessions.length) + '%' : '—';
+
+    const list = document.getElementById('nback-history-list');
+    list.innerHTML = sessions.length ? '' : '<div class="panel-empty">No sessions yet &mdash; finished sessions appear here.</div>';
+    sessions.forEach((s, i) => list.appendChild(createNBackHQLI(s, sessions.length - i)));
 }
 
 function load() {

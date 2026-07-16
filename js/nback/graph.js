@@ -1,6 +1,49 @@
-// N-back progress chart (N level + score % per mode, per session)
+// N-back graph popup: same .graph-popup shell as RRT's (js/rrt/graph.js),
+// tabs = Score and Level (per session) + Time Spent (per day)
 
 let nbackChart = null;
+let nbackTimeChart = null;
+
+// same day boundary as RRT's ProgressGraph.findDay (04:00 rollover)
+function nbackFindDay(timestamp) {
+    const date = new Date(timestamp - 4 * 60 * 60 * 1000);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+async function renderNBackTimeChart() {
+    const sessions = await getAllNBackSessions();
+    if (!sessions || sessions.length === 0) return;
+
+    const byDay = {};
+    for (const s of sessions) {
+        const day = nbackFindDay(s.timestamp);
+        byDay[day] = (byDay[day] || 0) + (s.trials * (s.ticks || 30) * 0.1) / 60; // minutes
+    }
+    const data = Object.keys(byDay).sort().map(day => ({ x: day, y: byDay[day] }));
+    const total = data.reduce((a, e) => a + e.y, 0);
+    const subtitle = `Total = ${Math.floor(total / 60)}h ${(total % 60).toFixed(0)}m`;
+
+    const existing = Chart.getChart('nback-graph-canvas-time');
+    if (existing) existing.destroy();
+    const ctx = document.getElementById('nback-graph-canvas-time').getContext('2d');
+    nbackTimeChart = new Chart(ctx, {
+        type: 'bar',
+        data: { datasets: [{ label: 'Time Spent (Minutes)', data, backgroundColor: '#4cf' }] },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 0 },
+            scales: {
+                x: { type: 'time', time: { unit: 'day', tooltipFormat: 'yyyy-MM-dd' }, title: { display: true, text: 'Day' } },
+                y: { title: { display: true, text: 'Time Spent' }, ticks: { callback: v => v.toFixed(1) } },
+            },
+            plugins: {
+                tooltip: { callbacks: { label: item => `${item.dataset.label}: ${item.raw.y.toFixed(2)}` } },
+                subtitle: { display: true, text: subtitle, align: 'end', color: '#EEEEEE' },
+            },
+        },
+    });
+}
 
 async function renderNBackChart() {
     const sessions = await getAllNBackSessions();
@@ -10,7 +53,8 @@ async function renderNBackChart() {
     sessions.sort((a, b) => a.timestamp - b.timestamp);
 
     const modeColors = { dual: '#4cf', position: '#fc4', sound: '#f7a', 'position-color': '#8e6', 'color-sound': '#e94', triple: '#b8f',
-        'dual-combo': '#6de', 'tri-combo': '#de6', 'quad-combo': '#e6d', 'tri-combo-color': '#9e9' };
+        'dual-combo': '#6de', 'tri-combo': '#de6', 'quad-combo': '#e6d', 'tri-combo-color': '#9e9',
+        arithmetic: '#f96', 'dual-arithmetic': '#6f9', 'triple-arithmetic': '#96f' };
     const datasets = [];
     for (const modeName in modeColors) {
         const rows = sessions.filter(s => s.modeName === modeName);
@@ -70,3 +114,48 @@ async function renderNBackChart() {
         },
     });
 }
+
+// --- popup shell wiring, mirroring js/rrt/graph.js ---
+
+const graphPopup = document.getElementById('graph-popup');
+const graphClose = document.getElementById('graph-close-popup');
+const graphButton = document.getElementById('graph-label');
+
+const graphProgress = document.getElementById('graph-popup-progress');
+const graphTime = document.getElementById('graph-popup-time');
+const graphs = [graphProgress, graphTime];
+
+const graphProgressSelect = document.getElementById('graph-select-progress');
+const graphTimeSelect = document.getElementById('graph-select-time');
+const graphSelects = [graphProgressSelect, graphTimeSelect];
+
+graphProgressSelect.addEventListener('click', () => {
+    graphs.forEach(graph => graph.classList.remove('visible'));
+    graphSelects.forEach(select => select.classList.remove('selected'));
+    graphProgress.classList.add('visible');
+    graphProgressSelect.classList.add('selected');
+});
+
+graphTimeSelect.addEventListener('click', () => {
+    graphs.forEach(graph => graph.classList.remove('visible'));
+    graphSelects.forEach(select => select.classList.remove('selected'));
+    graphTime.classList.add('visible');
+    graphTimeSelect.classList.add('selected');
+});
+
+graphButton.addEventListener('click', async () => {
+    graphPopup.classList.add('visible');
+    document.getElementById('graph-empty').hidden = (await getAllNBackSessions()).length > 0;
+    renderNBackChart();
+    renderNBackTimeChart();
+});
+
+graphClose.addEventListener('click', () => {
+    graphPopup.classList.remove('visible');
+});
+
+document.addEventListener('click', (event) => {
+    if (graphPopup.classList.contains('visible') && !graphPopup.contains(event.target) && !graphButton.contains(event.target)) {
+        graphPopup.classList.remove('visible');
+    }
+});

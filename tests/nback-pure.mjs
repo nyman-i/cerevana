@@ -9,7 +9,7 @@ const src = readFileSync(join(root, 'js/nback/game.js'), 'utf8');
 const stubEl = new Proxy({}, { get: (t, p) => p === 'classList' ? { add() {}, remove() {} } : (p === 'forEach' ? () => {} : stubEl) });
 global.document = { getElementById: () => stubEl, querySelectorAll: () => [] };
 global.savedata = {};
-(0, eval)(src.replace(/const (nbackArea|nbackGridCells|nbackModeLabel|nbackLevelLabel|nbackTrialLabel|nbackResult|nbackStartButton|nbackMatchButtons) =/g, 'var $1 ='));
+(0, eval)(src.replace(/const (nbackArea|nbackGridCells|nbackModeLabel|nbackLevelLabel|nbackTrialLabel|nbackResult|nbackAnswerEl|nbackStartButton|nbackMatchButtons) =/g, 'var $1 ='));
 
 let fail = 0;
 const assert = (c, l) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + l); if (!c) fail++; };
@@ -148,6 +148,62 @@ assert(nbackScore({ m: [{ match: true, pressed: true }, { match: false, pressed:
   const rate = m / tot;
   assert(rate > 0.09 && rate < 0.16, 'nbackGenCombo chances=0: baseline ~1/8 per relation (' + (100 * rate).toFixed(1) + '%)');
 }
+
+// --- arithmetic: divisor legality (BW acceptable-decimals rule, exact) ---
+assert(nbackDivisorOk(6, 4), 'nbackDivisorOk(6,4): 1.5 legal');
+assert(nbackDivisorOk(7, 8), 'nbackDivisorOk(7,8): 0.875 legal');
+assert(nbackDivisorOk(3, 20), 'nbackDivisorOk(3,20): 0.15 legal');
+assert(!nbackDivisorOk(1, 3), 'nbackDivisorOk(1,3): 0.333... illegal');
+assert(!nbackDivisorOk(1, 7), 'nbackDivisorOk(1,7): 0.142... illegal');
+assert(!nbackDivisorOk(5, 0), 'nbackDivisorOk(x,0): zero divisor illegal');
+assert([-12, -3, 1, 5, 12].every(x => nbackDivisorOk(0, x)), 'nbackDivisorOk(0,x): everything divides 0');
+assert(nbackDivisorOk(-6, 4) && nbackDivisorOk(6, -4), 'nbackDivisorOk: sign-independent (±1.5)');
+assert(!nbackDivisorOk(1, 20), 'nbackDivisorOk(1,20): 0.05 not in BW list');
+
+// --- arithmetic: answers + float-exactness of typed comparison ---
+assert(nbackArithAnswer(8, 'add', 4) === 12 && nbackArithAnswer(5, 'subtract', 7) === -2
+  && nbackArithAnswer(3, 'multiply', 4) === 12, 'nbackArithAnswer: integer op fixtures');
+assert(nbackArithAnswer(9, 'divide', 12) === 0.75, 'nbackArithAnswer: 9/12 = 0.75');
+assert(parseFloat('0.3') === nbackArithAnswer(3, 'divide', 10)
+  && parseFloat('1.5') === nbackArithAnswer(6, 'divide', 4)
+  && parseFloat('0.875') === nbackArithAnswer(7, 'divide', 8),
+  'typed decimal parses to the exact quotient double (IEEE correctly-rounded)');
+
+// --- arithmetic: generation ranges + divide legality over 10k trials ---
+{
+  const OPS = ['add', 'subtract', 'multiply', 'divide'];
+  let ok = true, sawNeg = false, detail = '';
+  for (let run = 0; run < 400 && ok; run++) {
+    const negatives = run % 2 === 1;
+    const numbers = [];
+    for (let t = 0; t < 24; t++) {
+      const { number, op } = nbackGenArith(numbers, 2, t, OPS, 12, negatives);
+      if (!Number.isInteger(number) || number > 12 || number < (negatives ? -12 : 0)) { ok = false; detail = `range ${number}`; }
+      if (number < 0) sawNeg = true;
+      if (op === 'divide') {
+        if (t >= 2 && !nbackDivisorOk(numbers[t - 2], number)) { ok = false; detail = `illegal divisor ${numbers[t - 2]}/${number}`; }
+        if (t < 2 && number === 0) { ok = false; detail = 'zero divisor before n'; }
+      }
+      numbers.push(number);
+    }
+  }
+  assert(ok, 'nbackGenArith: 10k trials in range, every divide divisor legal ' + detail);
+  assert(sawNeg, 'nbackGenArith: negatives toggle produces negative numbers');
+  let onlyDiv = true;
+  for (let i = 0; i < 200; i++) if (nbackGenArith([5], 1, 1, ['divide'], 12, false).op !== 'divide') onlyDiv = false;
+  assert(onlyDiv, 'nbackGenArith: op drawn from the enabled set only');
+}
+
+// --- arithmetic scoring maps onto nbackScore as right/(right+wrong) ---
+assert(nbackScore({ arithmetic: [{ match: true, pressed: true }, { match: true, pressed: true }, { match: true, pressed: false }] }).score === 66,
+  'arithmetic scoring: 2 right 1 wrong → 66');
+
+// --- day rollover boundary (04:00, getTodayRRTProgress pattern) ---
+assert(nbackDayStart(new Date(2026, 0, 5, 3, 59)) === nbackDayStart(new Date(2026, 0, 4, 12, 0)),
+  'nbackDayStart: 03:59 still belongs to the previous day');
+assert(nbackDayStart(new Date(2026, 0, 5, 4, 0)) === new Date(2026, 0, 5, 4, 0).getTime()
+  && nbackDayStart(new Date(2026, 0, 5, 4, 0)) !== nbackDayStart(new Date(2026, 0, 5, 3, 59)),
+  'nbackDayStart: 04:00 starts the new day');
 
 console.log(fail ? fail + ' FAILURES' : 'ALL PASS');
 process.exit(fail ? 1 : 0);

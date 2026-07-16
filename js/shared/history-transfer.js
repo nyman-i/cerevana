@@ -3,6 +3,17 @@
 
 let importMode;
 
+function resetEverything() {
+    const confirmed = confirm("Reset the ENTIRE app? This permanently deletes ALL data for every exercise: RRT and N-Back profiles, settings, scores, session history, progress graphs, and the background image. Tip: Export History first — the button is right next to this one.")
+        && confirm("Last chance: this cannot be undone. Really erase all RRT and N-Back data?");
+    if (!confirmed) return;
+    // prefix sweep covers oldSettingsKey ("sllgms-v3") and every sllgms-v3-* key, present and future
+    Object.keys(localStorage)
+        .filter(key => key.startsWith('sllgms-v3'))
+        .forEach(key => localStorage.removeItem(key));
+    deleteDatabase("SyllDB").then(() => window.location.reload());
+}
+
 function exportHistory() {
     Promise.all([getAllRRTProgress(), getAllNBackSessions()]).then(([rrtHistory, nbackHistory]) => {
         const data = { exportVersion: 2, exportedAt: Date.now(),

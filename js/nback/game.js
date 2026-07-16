@@ -7,7 +7,7 @@ const NBACK_COLORS = ['#26f', '#0cc', '#2c2', '#dc2', '#e82', '#d22', '#c3c', '#
 // multi-stim stream identity colors, BW convention: 1 blue, 2 green, 3 yellow, 4 red
 const NBACK_STREAM_COLORS = ['#26f', '#2c2', '#dc2', '#d22'];
 const NBACK_POS_MODS = ['position', 'position2', 'position3', 'position4'];
-// hud: letters/digits only — the HUD renders in Espionage, whose +/./-/( glyphs draw as ornaments
+// hud: compact label for the HUD's narrow display line (long names overflow the game zone)
 const NBACK_MODES = {
     dual:     { bw: 2,  label: 'Dual',     hud: 'Dual',     modalities: ['position', 'audio'], levelKey: 'nbackLevelDual',     failsKey: 'nbackFailsDual' },
     position: { bw: 10, label: 'Position', hud: 'Position', modalities: ['position'],          levelKey: 'nbackLevelPosition', failsKey: 'nbackFailsPosition' },
@@ -19,7 +19,15 @@ const NBACK_MODES = {
     'tri-combo':       { bw: 5,  label: 'Tri Combination',  hud: 'TC', modalities: ['position', 'visvis', 'visaudio', 'audiovis', 'audio'],          levelKey: 'nbackLevelTC',  failsKey: 'nbackFailsTC',  bonusMs: 500 },
     'quad-combo':      { bw: 6,  label: 'Quad Combination', hud: 'QC', modalities: ['position', 'visvis', 'visaudio', 'color', 'audiovis', 'audio'], levelKey: 'nbackLevelQC',  failsKey: 'nbackFailsQC',  bonusMs: 500 },
     'tri-combo-color': { bw: 12, label: 'Tri Combination (Color)', hud: 'TCC', modalities: ['visvis', 'visaudio', 'color', 'audiovis', 'audio'],     levelKey: 'nbackLevelTCC', failsKey: 'nbackFailsTCC' },
+    // arithmetic modes: 40 BW ticks (+1s) and start at n=1 (BW BACK_7..9)
+    arithmetic:          { bw: 7, label: 'Arithmetic',        hud: 'Arith', modalities: ['arithmetic'],                      levelKey: 'nbackLevelA',  failsKey: 'nbackFailsA',  bonusMs: 1000, defaultN: 1 },
+    'dual-arithmetic':   { bw: 8, label: 'Dual Arithmetic',   hud: 'DA',    modalities: ['position', 'arithmetic'],          levelKey: 'nbackLevelDA', failsKey: 'nbackFailsDA', bonusMs: 1000, defaultN: 1 },
+    'triple-arithmetic': { bw: 9, label: 'Triple Arithmetic', hud: 'TA',    modalities: ['position', 'arithmetic', 'color'], levelKey: 'nbackLevelTA', failsKey: 'nbackFailsTA', bonusMs: 1000, defaultN: 1 },
 };
+
+// BW's ARITHMETIC_ACCEPTABLE_DECIMALS (tenths, odd twentieths, eighths) — every
+// value is m/40, so divisor legality reduces to exact integer math (no float eq).
+const NBACK_ARITH_DECIMALS = new Set([4, 5, 6, 8, 10, 12, 14, 15, 16, 18, 20, 22, 24, 25, 26, 28, 30, 32, 34, 35, 36, 38]);
 
 // combination modalities read across two streams: [currentStream, referenceStream]
 const NBACK_COMBO = {
@@ -46,6 +54,10 @@ const NB = {
     advancing: false,
     pMatch: 0.125,
     pLure: 0.125,
+    arith: false,
+    ops: [],
+    answer: { digits: '', negative: false },
+    streams: [],
     mode: null,
     n: 0,
     trials: 0,
@@ -63,6 +75,7 @@ const nbackModeLabel = document.getElementById('nback-mode-label');
 const nbackLevelLabel = document.getElementById('nback-level');
 const nbackTrialLabel = document.getElementById('nback-trial');
 const nbackResult = document.getElementById('nback-result');
+const nbackAnswerEl = document.getElementById('nback-answer');
 const nbackStartButton = document.getElementById('nback-start');
 const nbackMatchButtons = {
     position: document.getElementById('nback-pos-btn'),
@@ -93,6 +106,69 @@ function nbackVariableN(n) {
     return Math.floor(Math.pow(Math.random(), 2 / n) * n + 1);
 }
 
+// division legality (spec §4): x divides a, or |a|/|x| has a fractional part in
+// BW's acceptable-decimals list. All list values are m/40 → exact via integers.
+function nbackDivisorOk(a, x) {
+    if (x === 0) return false;
+    if (a % x === 0) return true;
+    const a40 = Math.abs(a) * 40, ax = Math.abs(x);
+    return a40 % ax === 0 && NBACK_ARITH_DECIMALS.has((a40 / ax) % 40);
+}
+
+// one arithmetic trial (spec §4): op uniform from the enabled set; number uniform
+// in [0, max] ([-max, max] with negatives). Divide draws only legal divisors of the
+// n-back number (plain n, matching BW — not the crab/variable effective back);
+// before trial n, divide numbers are just nonzero.
+function nbackGenArith(numbers, n, t, ops, maxNumber, negatives) {
+    const op = ops[Math.floor(Math.random() * ops.length)];
+    const min = negatives ? -maxNumber : 0;
+    const range = () => min + Math.floor(Math.random() * (maxNumber - min + 1));
+    let number;
+    if (op === 'divide') {
+        if (t >= n) {
+            const legal = [];
+            for (let x = min; x <= maxNumber; x++) {
+                if (nbackDivisorOk(numbers[t - n], x)) legal.push(x);
+            }
+            number = legal[Math.floor(Math.random() * legal.length)];
+        } else {
+            do { number = range(); } while (number === 0);
+        }
+    } else {
+        number = range();
+    }
+    return { number, op };
+}
+
+function nbackArithAnswer(a, op, b) {
+    if (op === 'add') return a + b;
+    if (op === 'subtract') return a - b;
+    if (op === 'multiply') return a * b;
+    return a / b;
+}
+
+// typed answer per BW's ArithmeticAnswerLabel: digits append, '.' once, '-' toggles,
+// no backspace, reset each trial; empty or '.' parses as 0
+function nbackParseAnswer() {
+    const d = NB.answer.digits;
+    const v = (d === '' || d === '.') ? 0 : parseFloat(d);
+    return NB.answer.negative ? -v : v;
+}
+
+function nbackArithInput(ch) {
+    if (ch === '-') NB.answer.negative = !NB.answer.negative;
+    else if (ch === '.') { if (!NB.answer.digits.includes('.')) NB.answer.digits += '.'; }
+    else NB.answer.digits += ch;
+    nbackAnswerEl.textContent = 'Answer: ' + (NB.answer.negative ? '-' : '') + (NB.answer.digits || '0');
+}
+
+// last 04:00 day boundary (same rollover math as getTodayRRTProgress in shared/db.js)
+function nbackDayStart(now) {
+    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 4, 0, 0);
+    if (now.getHours() < 4) start.setDate(start.getDate() - 1);
+    return start.getTime();
+}
+
 // effective back for trial t: crab reverses each block of n; variable uses the
 // pregenerated per-trial list; otherwise plain n
 function nbEffBack(t) {
@@ -111,10 +187,12 @@ function nbMatch(mod, t) {
     return cur[t] === ref[t - back];
 }
 
-// stimulus streams underlying a modality list (combos collapse onto vis/audio)
+// stimulus streams underlying a modality list (combos collapse onto vis/audio;
+// arithmetic isn't a 1-8 stream — its number/op arrays live outside this list)
 function nbackStreams(mods) {
     const streams = [];
     for (const m of mods) {
+        if (m === 'arithmetic') continue;
         const s = NBACK_COMBO[m] ? NBACK_COMBO[m][0] : m;
         if (!streams.includes(s)) streams.push(s);
     }
@@ -337,12 +415,14 @@ function nbackRenderView() {
         nbackMatchButtons[mod].hidden = !mods.includes(mod);
     }
     nbackMatchButtons.position.textContent = multi > 1 ? 'Blue (A)' : 'Position (A)';
+    nbackAnswerEl.hidden = !mods.includes('arithmetic');
 }
 
 function nbackClearFeedback() {
     for (const mod in nbackMatchButtons) {
         nbackMatchButtons[mod].classList.remove('nback__match--right', 'nback__match--wrong', 'nback__match--missed');
     }
+    nbackAnswerEl.classList.remove('nback__answer--right', 'nback__answer--wrong');
 }
 
 function nbackResetUi() {
@@ -354,6 +434,7 @@ function nbackResetUi() {
     });
     nbackTrialLabel.textContent = '';
     nbackStartButton.textContent = 'START';
+    nbackAnswerEl.textContent = 'Answer: 0';
     nbackRenderView();
 }
 
@@ -368,6 +449,21 @@ function nbackCancel() {
 
 function nbackStartStop() {
     if (NB.running) return nbackCancel();
+
+    // RESET_LEVEL (spec §7/§9): first session after the 04:00 boundary restarts
+    // every mode at its default N (arithmetic modes at 1, per NBACK_DEFAULT_DATA)
+    if (savedata.nbackResetLevel) {
+        const today = nbackDayStart(new Date());
+        if (savedata.nbackLastResetDay !== today) {
+            for (const key in NBACK_DEFAULT_DATA) {
+                if (key.startsWith('nbackLevel') || key.startsWith('nbackFails')) {
+                    savedata[key] = NBACK_DEFAULT_DATA[key];
+                }
+            }
+            savedata.nbackLastResetDay = today;
+            save();
+        }
+    }
 
     const cfg = nbackModeConfig();
     NB.running = true;
@@ -387,13 +483,23 @@ function nbackStartStop() {
     NB.pressed = {};
     NB.mods = nbackActiveModalities(cfg, NB.multi);
     NB.combo = NB.mods.includes('visvis');
+    NB.arith = NB.mods.includes('arithmetic');
     NB.bonusMs = cfg.bonusMs || 0;
     for (const mod of NB.mods) {
         NB.scored[mod] = [];
         NB.pressed[mod] = false;
     }
-    for (const stream of nbackStreams(NB.mods)) {
+    NB.streams = nbackStreams(NB.mods);
+    for (const stream of NB.streams) {
         NB.seq[stream] = [];
+    }
+    if (NB.arith) {
+        NB.seq.number = [];
+        NB.seq.op = [];
+        NB.ops = [savedata.nbackArithAdd && 'add', savedata.nbackArithSub && 'subtract',
+            savedata.nbackArithMul && 'multiply', savedata.nbackArithDiv && 'divide'].filter(Boolean);
+        if (!NB.ops.length) NB.ops = ['add'];
+        NB.answer = { digits: '', negative: false };
     }
     NB.letters = nbackShuffle(NBACK_LETTERS.slice());
     NB.jaeggiSeq = NB.jaeggi ? nbackJaeggiSequence(NB.n, NB.trials) : null;
@@ -419,6 +525,13 @@ function nbackFinalizePrev() {
     const t = NB.trial;
     if (t < NB.n) return;
     for (const mod of NB.mods) {
+        if (mod === 'arithmetic') {
+            // every trial demands an answer: right/wrong only, no TN (BW §6) —
+            // match:true makes nbackScore count exactly right/(right+wrong)
+            const correct = nbackArithAnswer(NB.seq.number[t - nbEffBack(t)], NB.seq.op[t], NB.seq.number[t]);
+            NB.scored[mod].push({ match: true, pressed: nbackParseAnswer() === correct });
+            continue;
+        }
         NB.scored[mod].push({
             match: nbMatch(mod, t),
             pressed: NB.pressed[mod],
@@ -437,6 +550,11 @@ function nbackRunTrial() {
     nbackClearFeedback();
     NB.advancing = false;
     for (const mod in NB.pressed) NB.pressed[mod] = false;
+    if (NB.arith) {
+        // typed answer resets every trial (BW reset_input); recorded at finalize
+        NB.answer = { digits: '', negative: false };
+        nbackAnswerEl.textContent = 'Answer: 0';
+    }
 
     if (NB.multi > 1) {
         const cells = nbackGenMulti(NB.posMods.map(m => NB.seq[m]), NB.n, t, back, NB.pMatch, NB.pLure);
@@ -446,9 +564,15 @@ function nbackRunTrial() {
         const cur = nbackGenCombo(NB.seq, NB.mods, NB.n, t, back, NB.pMatch, NB.pLure);
         for (const stream in NB.seq) NB.seq[stream].push(cur[stream]);
     } else {
-        for (const mod in NB.seq) {
+        for (const mod of NB.streams) {
             NB.seq[mod].push(NB.jaeggi ? NB.jaeggiSeq[mod][t]
                 : nbackGen(NB.seq[mod], NB.n, t, back, NB.pMatch, NB.pLure));
+        }
+        if (NB.arith) {
+            const { number, op } = nbackGenArith(NB.seq.number, NB.n, t, NB.ops,
+                savedata.nbackArithMaxNumber ?? 12, !!savedata.nbackArithNegatives);
+            NB.seq.number.push(number);
+            NB.seq.op.push(op);
         }
     }
     nbackTrialLabel.textContent = (t + 1) + ' / ' + NB.trials;
@@ -467,20 +591,24 @@ function nbackRunTrial() {
                 cell.style.backgroundColor = '';
             }, hideMs);
         });
-    } else if ('position' in NB.seq || 'color' in NB.seq || 'vis' in NB.seq) {
+    } else if ('position' in NB.seq || 'color' in NB.seq || 'vis' in NB.seq || NB.arith) {
         // position-less modes show the stimulus in the center cell (BW position 0)
         const isCenter = !('position' in NB.seq);
         const cell = nbackGridCells[isCenter ? 4 : NBACK_CELLS[NB.seq.position[t] - 1]];
         cell.classList.add('nback__cell--on');
         if ('color' in NB.seq) cell.style.backgroundColor = NBACK_COLORS[NB.seq.color[t] - 1];
         if ('vis' in NB.seq) cell.textContent = NB.letters[NB.seq.vis[t] - 1].toUpperCase();
+        if (NB.arith) cell.textContent = NB.seq.number[t];
         nbSchedule(() => {
             cell.classList.remove('nback__cell--on');
             cell.style.backgroundColor = '';
-            if ('vis' in NB.seq) cell.textContent = isCenter ? '+' : '';
+            if ('vis' in NB.seq || NB.arith) cell.textContent = isCenter ? '+' : '';
         }, 500);
     }
-    if ('audio' in NB.seq) {
+    if (NB.arith) {
+        // the operation is spoken, and only once answers are expected (BW §4)
+        if (t >= NB.n) nbackSpeak(NB.seq.op[t]);
+    } else if ('audio' in NB.seq) {
         nbackSpeak(NB.letters[NB.seq.audio[t] - 1]);
     }
 
@@ -495,6 +623,12 @@ function nbackMissedCheck() {
     const t = NB.trial;
     if (t < NB.n) return;
     for (const mod of NB.mods) {
+        if (mod === 'arithmetic') {
+            // no button — tint the answer line right/wrong (BW's answer label)
+            const correct = nbackArithAnswer(NB.seq.number[t - nbEffBack(t)], NB.seq.op[t], NB.seq.number[t]);
+            nbackAnswerEl.classList.add(nbackParseAnswer() === correct ? 'nback__answer--right' : 'nback__answer--wrong');
+            continue;
+        }
         if (!NB.pressed[mod] && nbMatch(mod, t)) {
             nbackMatchButtons[mod].classList.add('nback__match--missed');
         }
@@ -512,6 +646,12 @@ function nbackPress(mod) {
 }
 
 function nbackHandleKey(event) {
+    if (NB.running && NB.arith && !NB.paused && NB.trial >= 0) {
+        const code = event.code;
+        if (/^(Digit|Numpad)[0-9]$/.test(code)) return nbackArithInput(code.slice(-1));
+        if (code === 'Minus' || code === 'NumpadSubtract') return nbackArithInput('-');
+        if (code === 'Period' || code === 'NumpadDecimal' || code === 'Comma') return nbackArithInput('.');
+    }
     switch (event.code) {
         case 'KeyA': nbackPress('position'); break;
         case 'KeyS': nbackPress('position2'); nbackPress('visvis'); break; // each is a no-op when inactive
@@ -587,7 +727,8 @@ function nbackEndSession() {
         score,
         percents,
         trials: NB.trials,
-        ticks: Math.round(savedata.nbackTrialTime * 10) + 2,
+        // real BW ticks incl. combo/arithmetic/multi bonus, so the time chart is honest
+        ticks: Math.round((savedata.nbackTrialTime * 1000 + NB.bonusMs + 500 * (NB.multi - 1)) / 100) + 2,
         manual: NB.manual ? 1 : 0,
         jaeggi: NB.jaeggi ? 1 : 0,
         crab: NB.crab ? 1 : 0,

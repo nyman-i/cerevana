@@ -21,7 +21,7 @@
 					<div style="direction: ltr;">
 						<div class="mb-1"></div>
 						<div class="mb-1">
-							<span class="mb-05">Current Profile</span>
+							<span class="mb-05 panel-heading">Current Profile</span>
 							<div class="profile-container">
 							  <div class="profile-dropdown">
 							    <input type="text" class="profile-input" id="profile-input" placeholder="">
@@ -32,30 +32,46 @@
 								<div class="profile-plus" id="profile-plus" role="button" tabindex="0" aria-label="Add profile">+</div>
 							</div>
 						</div>
+						<div class="mb-05 panel-heading">Mode</div>
 						<div class="mb-2">
-							<label class="mb-05" for="p-70">Game Mode</label>
-							<select id="p-70" name="nback-mode" class="form-select ffmono">
-								<option value="dual">Dual (position + sound)</option>
-								<option value="position">Position only</option>
-								<option value="sound">Sound only</option>
-								<option value="position-color">Position + Color</option>
-								<option value="color-sound">Color + Sound</option>
-								<option value="triple">Triple (position + color + sound)</option>
-								<option value="dual-combo">Dual Combination (cross-modal)</option>
-								<option value="tri-combo">Tri Combination (+ position)</option>
-								<option value="quad-combo">Quad Combination (+ position + color)</option>
-								<option value="tri-combo-color">Tri Combination (Color)</option>
-							</select>
+							<div class="ctrl__inner">
+								<span>Game Mode</span>
+								<select id="p-70" name="nback-mode" class="select-item">
+									<option value="dual">Dual (position + sound)</option>
+									<option value="position">Position only</option>
+									<option value="sound">Sound only</option>
+									<option value="position-color">Position + Color</option>
+									<option value="color-sound">Color + Sound</option>
+									<option value="triple">Triple (position + color + sound)</option>
+									<option value="dual-combo">Dual Combination (cross-modal)</option>
+									<option value="tri-combo">Tri Combination (+ position)</option>
+									<option value="quad-combo">Quad Combination (+ position + color)</option>
+									<option value="tri-combo-color">Tri Combination (Color)</option>
+									<option value="arithmetic">Arithmetic</option>
+									<option value="dual-arithmetic">Dual Arithmetic (+ position)</option>
+									<option value="triple-arithmetic">Triple Arithmetic (+ color)</option>
+								</select>
+							</div>
 						</div>
 						<div class="mb-2">
-							<label class="mb-05" for="p-84">Simultaneous Squares (Dual only)</label>
-							<select id="p-84" name="nback-multi" class="form-select ffmono">
-								<option value="1">1 (normal)</option>
-								<option value="2">2 squares</option>
-								<option value="3">3 squares</option>
-								<option value="4">4 squares</option>
-							</select>
+							<div class="ctrl__inner">
+								<span>Multi Squares</span>
+								<select id="p-84" name="nback-multi" class="select-item">
+									<option value="1">1 (normal)</option>
+									<option value="2">2 squares</option>
+									<option value="3">3 squares</option>
+									<option value="4">4 squares</option>
+								</select>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										Simultaneous squares to track.<br>
+										Dual mode only.<br>
+									</div>
+								</div>
+							</div>
 						</div>
+						<div class="mb-05 panel-heading">Session</div>
 						<div class="mb-2">
 							<div class="inline-input__outer big-input">
 								Trial Duration
@@ -107,8 +123,8 @@
 								</div>
 							</div>
 						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer big-input">
+						<div class="mb-2" style="margin-left: 2rem;">
+							<div class="inline-input__outer">
 								Manual N
 								<span class="inline-input__inner">
 									<input id="p-75" type="number" min="1" max="9" step="1" value="2" style="width: 5ch">
@@ -168,8 +184,27 @@
 								</div>
 							</div>
 						</div>
+						<div class="mb-1">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="p-85" type="checkbox">
+									<label class="switch" for="p-85"></label>
+								</div>
+								<label for="p-85">Daily Level Reset</label>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										Start each day back at the<br>
+										default level in every mode.<br>
+										The day flips at 04:00.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Progression</div>
 						<div class="mb-2">
-							<div class="inline-input__outer big-input">
+							<div class="inline-input__outer">
 								Advance at
 								<span class="inline-input__inner">
 									<input id="p-79" type="number" min="1" max="101" step="1" value="80" style="width: 5ch">%
@@ -177,7 +212,7 @@
 							</div>
 						</div>
 						<div class="mb-2">
-							<div class="inline-input__outer big-input">
+							<div class="inline-input__outer">
 								Fall back below
 								<span class="inline-input__inner">
 									<input id="p-80" type="number" min="0" max="100" step="1" value="50" style="width: 5ch">%
@@ -185,7 +220,7 @@
 							</div>
 						</div>
 						<div class="mb-2">
-							<div class="inline-input__outer big-input">
+							<div class="inline-input__outer">
 								Fallback sessions
 								<span class="inline-input__inner">
 									<input id="p-81" type="number" min="1" max="9" step="1" value="3" style="width: 5ch">
@@ -193,7 +228,7 @@
 							</div>
 						</div>
 						<div class="mb-2">
-							<div class="inline-input__outer big-input">
+							<div class="inline-input__outer">
 								Match chance
 								<span class="inline-input__inner">
 									<input id="p-82" type="number" min="0" max="100" step="0.5" value="12.5" style="width: 6ch">%
@@ -201,29 +236,95 @@
 							</div>
 						</div>
 						<div class="mb-2">
-							<div class="inline-input__outer big-input">
+							<div class="inline-input__outer">
 								Interference chance
 								<span class="inline-input__inner">
 									<input id="p-83" type="number" min="0" max="100" step="0.5" value="12.5" style="width: 6ch">%
 								</span>
 							</div>
 						</div>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Arithmetic</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Arithmetic Max Number
+								<span class="inline-input__inner">
+									<input id="p-86" type="number" min="2" max="99" step="1" value="12" style="width: 5ch">
+								</span>
+							</div>
+						</div>
+						<div class="mb-1">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="p-87" type="checkbox">
+									<label class="switch" for="p-87"></label>
+								</div>
+								<label for="p-87">Negative Numbers</label>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										Arithmetic modes: numbers range<br>
+										from -max to max instead of<br>
+										0 to max.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mb-1">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="p-88" type="checkbox">
+									<label class="switch" for="p-88"></label>
+								</div>
+								<label for="p-88">Addition</label>
+							</div>
+						</div>
+						<div class="mb-1">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="p-89" type="checkbox">
+									<label class="switch" for="p-89"></label>
+								</div>
+								<label for="p-89">Subtraction</label>
+							</div>
+						</div>
+						<div class="mb-1">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="p-90" type="checkbox">
+									<label class="switch" for="p-90"></label>
+								</div>
+								<label for="p-90">Multiplication</label>
+							</div>
+						</div>
+						<div class="mb-1">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="p-91" type="checkbox">
+									<label class="switch" for="p-91"></label>
+								</div>
+								<label for="p-91">Division</label>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										Division only asks for answers<br>
+										that are whole or end in an<br>
+										easy decimal (quarters, eighths,<br>
+										tenths...).<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mb-1">
+							<button id="reset-nback" onclick="resetNBack()">Reset N-Back</button>
+							<ul class="explainer">
+								<li>Resets N-Back only: levels, sessions and settings. RRT is untouched. Full reset lives on the main menu.</li>
+							</ul>
+						</div>
 					</div>
 				</div>
 				<div class="offcanvas-side">
 					<label class="offcanvas-close" for="offcanvas-settings" tabindex="0">✕</label>
-				</div>
-			</div>
-
-			<input id="offcanvas-progress"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-progress" class="offcanvas offcanvas--right">
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-progress" tabindex="0">✕</label>
-				</div>
-				<div class="offcanvas-body ffmono">
-					<div class="nback__graph"><canvas id="nback-graph-canvas"></canvas></div>
 				</div>
 			</div>
 
@@ -234,8 +335,12 @@
 				<div class="offcanvas-side">
 					<label class="offcanvas-close" for="offcanvas-history" tabindex="0">✕</label>
 				</div>
-				<div class="offcanvas-body ffmono">
-					<div id="nback-history-list"></div>
+				<div class="offcanvas-body ffmono hql-frame">
+					<div>Total sessions: <span id="nback-total-display"></span></div>
+					<div>Avg score: <span id="nback-average-display"></span></div>
+					<div>Best level reached: <span id="nback-best-display"></span></div>
+					<div>% sessions advanced: <span id="nback-advanced-display"></span></div>
+					<div id="nback-history-list" class="hql"></div>
 				</div>
 			</div>
 
@@ -258,6 +363,7 @@
 								<p class="keyboard-shortcut"><span>F</span><span>Color / Red Square</span></p>
 								<p class="keyboard-shortcut"><span>J</span><span>Aud↔Vis (combination)</span></p>
 								<p class="keyboard-shortcut"><span>L</span><span>Sound Match</span></p>
+								<p class="keyboard-shortcut"><span>0-9 . -</span><span>Type Answer (Arithmetic)</span></p>
 								<p class="keyboard-shortcut"><span>P</span><span>Pause</span></p>
 								<p class="keyboard-shortcut"><span>⏎</span><span>Next Trial (Self-Paced)</span></p>
 								<p class="keyboard-shortcut"><span>Esc</span><span>Cancel Session</span></p>
@@ -265,10 +371,7 @@
 							</div>
 						</div>
 						<div class="mb-1">
-							<div class="explainer">
-								<h4>Credits:</h4>
-								<p>Dual n-back protocol from <a href="https://brainworkshop.sourceforge.net/" target="_blank" rel="noopener">Brain Workshop</a> by Paul Hoskinson &amp; Jonathan Toomim (<a href="https://github.com/brain-workshop/brainworkshop" target="_blank" rel="noopener">GitHub</a>).</p>
-							</div>
+							<a href="credits.html">Credits</a>
 						</div>
 					</div>
 				</div>
@@ -277,7 +380,7 @@
 			<label class="open metal-gear open--top-left" for="offcanvas-settings" tabindex="0"><span class="sidebar-button settings-label"></span></label>
 			<label class="open metal-gear open--top-right" for="offcanvas-history" tabindex="0"><span class="sidebar-button history-label"></span></label>
 			<label class="open metal-gear open--bottom-left" for="offcanvas-credits" tabindex="0"><span class="sidebar-button credits-label"></span></label>
-			<label class="open metal-gear open--bottom-right" for="offcanvas-progress" tabindex="0"><span class="sidebar-button graph-label"></span></label>
+			<label id="graph-label" class="open metal-gear open--bottom-right" for="offcanvas-graph" tabindex="0"><span class="sidebar-button graph-label"></span></label>
 
 			<nav class="game-menu metal-gear">
 				<a class="game-menu__item" href="index.html">MENU</a>
@@ -324,10 +427,25 @@
 					<button id="nback-audiovis-btn" class="nback__match" onclick="nbackPress('audiovis')" tabindex="-1" hidden>Aud↔Vis (J)</button>
 					<button id="nback-audio-btn" class="nback__match" onclick="nbackPress('audio')" tabindex="-1">Sound (L)</button>
 				</div>
+				<div id="nback-answer" class="nback__answer ffmono" hidden>Answer: 0</div>
 				<div id="nback-result" class="nback__result" hidden></div>
 				<button id="nback-start" class="nback__start" onclick="nbackStartStop()">START</button>
 			</div>
 
+		</div>
+
+		<div id="graph-popup" class="graph-popup">
+			<div class="graph-controls">
+				<button id="graph-select-progress" class="graph-select selected">Score and Level</button>
+				<button id="graph-select-time" class="graph-select">Time Spent</button>
+			</div>
+			<div id="graph-empty" class="panel-empty" hidden>No sessions yet &mdash; finish a session and the graphs appear here.</div>
+			<div id="graph-popup-progress" class="graph-popup-content visible"><canvas id="nback-graph-canvas"></canvas></div>
+			<div id="graph-popup-time" class="graph-popup-content"><canvas id="nback-graph-canvas-time"></canvas></div>
+			<div class="graph-end-controls">
+				<div>* All completed sessions are displayed</div>
+				<button id="graph-close-popup" class="graph-close-popup">Close</button>
+			</div>
 		</div>
 
 		<div id="error-popup" class="error-popup">

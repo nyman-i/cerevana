@@ -295,8 +295,9 @@ graphClose.addEventListener('click', () => {
     PROGRESS_GRAPH.clearGraph();
 });
 
-graphButton.addEventListener('click', () => {
+graphButton.addEventListener('click', async () => {
     PROGRESS_GRAPH.createGraph();
+    document.getElementById('graph-empty').hidden = (await getAllRRTProgress()).length > 0;
 });
 
 document.addEventListener('click', (event) => {

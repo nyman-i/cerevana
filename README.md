@@ -26,9 +26,11 @@ letters are spoken, and you signal whenever the position or the sound matches
 the one from N trials back. The level adapts per mode based on your session
 scores; a Jaeggi mode reproduces the original-study protocol, and a manual
 mode lets you play any level freely. Beyond the classic dual mode there are
-color and combination variants, multi-square tracking, and anti-strategy
-options like variable-N, crab and self-paced play, with tunable progression
-thresholds.
+color and combination variants, arithmetic modes (a number is shown, an
+operation is spoken, and you type the answer against the number from N back),
+multi-square tracking, and anti-strategy options like variable-N, crab and
+self-paced play, with tunable progression thresholds and an optional daily
+level reset.
 
 ## Roadmap
 
@@ -42,6 +44,10 @@ task, and UFOV. Suggestions and implementations are welcome.
 
 - Main menu with a live overview of both exercises: active profile, totals,
   accuracy and recent results at a glance.
+- Studies library: browse, search and filter the research behind cognitive
+  training, collected by the Mindbuilding community.
+- In-app Credits page with the full attribution: exercise lineage, protocol
+  sources and bundled assets.
 - Per-exercise profiles, each with its own settings and progress.
 - Profile sharing via URL — copy a share link on one device, paste it into
   the Import box on another.
@@ -102,12 +108,20 @@ The menu background photo is by
 [Simon Berger on Pexels](https://www.pexels.com/photo/photography-of-mountains-under-cloudy-sky-1183099/)
 (Pexels License, free to use), bundled locally as `img/menu-bg.jpg`.
 
+The favicon and app icon are the Cerevana circuit-head logo, provided by the
+project maintainer and bundled locally as `favicon.png` and `img/icon-512.png`.
+
 The body typeface is [Space Grotesk](https://github.com/floriankarsten/space-grotesk)
 by Florian Karsten, licensed under the
 [SIL Open Font License 1.1](fonts/OFL-SpaceGrotesk.txt) and bundled locally.
 The header/logo typeface is [Zen Dots](https://fonts.google.com/specimen/Zen+Dots)
-by Yoshimichi Ohira, licensed under the
-[SIL Open Font License 1.1](fonts/OFL-ZenDots.txt) and bundled locally.
+by Yoshimichi Ohira, the display/HUD typeface is
+[Oxanium](https://github.com/sevmeyer/oxanium) by Severin Meyer, and the
+monospace typeface is
+[JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) by JetBrains —
+all licensed under the SIL Open Font License 1.1
+([Zen Dots](fonts/OFL-ZenDots.txt), [Oxanium](fonts/OFL-Oxanium.txt),
+[JetBrains Mono](fonts/OFL-JetBrainsMono.txt)) and bundled locally.
 
 ## License
 

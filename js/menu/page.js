@@ -2,7 +2,8 @@
 // the menu just reads both stores from localStorage and shows who's active.
 
 const NBACK_SHORT = { dual: 'D', position: 'Po', sound: 'Au', 'position-color': 'PC', 'color-sound': 'CA', triple: 'PCA',
-    'dual-combo': 'DC', 'tri-combo': 'TC', 'quad-combo': 'QC', 'tri-combo-color': 'TCC' };
+    'dual-combo': 'DC', 'tri-combo': 'TC', 'quad-combo': 'QC', 'tri-combo-color': 'TCC',
+    arithmetic: 'A', 'dual-arithmetic': 'DA', 'triple-arithmetic': 'TA' };
 
 // mirrors NBACK_MODES labels/levelKeys in js/nback/game.js
 const NBACK_MODE_INFO = {
@@ -16,6 +17,9 @@ const NBACK_MODE_INFO = {
     'tri-combo': ['Tri Combination', 'nbackLevelTC'],
     'quad-combo': ['Quad Combination', 'nbackLevelQC'],
     'tri-combo-color': ['Tri Combination (Color)', 'nbackLevelTCC'],
+    arithmetic: ['Arithmetic', 'nbackLevelA'],
+    'dual-arithmetic': ['Dual Arithmetic', 'nbackLevelDA'],
+    'triple-arithmetic': ['Triple Arithmetic', 'nbackLevelTA'],
 };
 
 function menuPlayerName(profilesKey, selectedKey) {

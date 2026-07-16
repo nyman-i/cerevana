@@ -6,17 +6,24 @@
 }
 
 @font-face {
-    font-family: "Espionage";
+    font-family: "Oxanium";
     font-style: normal;
-    font-weight: normal;
-    src: url("../fonts/Espionage.woff") format("woff");
+    font-weight: 200 800;
+    src: url("../fonts/Oxanium-VariableFont.woff2") format("woff2");
 }
 
 @font-face {
-    font-family: "Metal Gear";
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 100 800;
+    src: url("../fonts/JetBrainsMono-VariableFont.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Zen Dots";
     font-style: normal;
     font-weight: normal;
-    src: url("../fonts/Metal Gear.woff") format("woff");
+    src: url("../fonts/ZenDots-Regular.woff2") format("woff2");
 }
 
 ::-webkit-scrollbar {
@@ -228,7 +235,22 @@ button.delete:hover {
 }
 
 .ffmono {
-    font-family: monospace;
+    font-family: "JetBrains Mono", monospace;
+}
+
+/* section headers inside panels — bold caps so settings can be skimmed */
+.offcanvas-body h4,
+.panel-heading {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+/* empty-state one-liner for panels/popups with no data yet */
+.panel-empty {
+    color: var(--preamble-color);
+    font-size: var(--step--1);
+    padding: 1rem 0;
 }
 /* end of Utils */
 
@@ -284,7 +306,7 @@ button.delete:hover {
 }
 
 .feedback span {
-    font-family: "metal gear", sans-serif;
+    font-family: "Zen Dots", sans-serif;
     font-size: var(--step-5);
     letter-spacing: 0.75rem;
     padding: 0.75rem;
@@ -364,7 +386,7 @@ button.delete:hover {
 }
 
 .metal-gear {
-    font-family: "Espionage", sans-serif;
+    font-family: "Oxanium", sans-serif;
     letter-spacing: 0.25em;
 }
 
@@ -385,7 +407,7 @@ button.delete:hover {
 }
 
 .metal-gear h1 {
-    font-family: "Metal Gear", serif;
+    font-family: "Zen Dots", sans-serif;
     letter-spacing: 0.3em;
 }
 
@@ -413,7 +435,7 @@ button.delete:hover {
 
 .custom-time-info {
     display: none;
-    font-family: monospace;
+    font-family: "JetBrains Mono", monospace;
     position: absolute;
     height: 100%;
     width: 100%;
@@ -432,7 +454,7 @@ button.delete:hover {
     align-items: center;
     background-color: var(--big-input-bg-color);
     display: flex;
-    font-family: "Espionage", sans-serif;
+    font-family: "Oxanium", sans-serif;
     gap: 1.25rem;
     justify-content: space-between;
     padding: .25rem 1rem;
@@ -567,7 +589,7 @@ input[type="number"]::-moz-inner-spin-button {
 
 .game-area:before {
     display: none;
-    font-family: "Espionage", sans-serif;
+    font-family: "Oxanium", sans-serif;
     position: absolute;
     bottom: 100%;
     width: calc(100% + 4px);
@@ -689,7 +711,7 @@ input[type="number"]::-moz-inner-spin-button {
 
 .carousel_display_label-wrapper h2, .display-inner h2 {
     display: flex;
-    font-family: "Espionage", sans-serif;
+    font-family: "Oxanium", sans-serif;
     font-size: var(--step-0);
     letter-spacing: 0.15em;
     justify-content: space-between;
@@ -705,11 +727,10 @@ input[type="number"]::-moz-inner-spin-button {
 }
 
 .carousel_display_label_progress, .display_label_level {
-    font-family: monospace;
+    font-family: "JetBrains Mono", monospace;
     white-space: nowrap;
 }
 
-/* hard clip, no text-overflow ellipsis: Espionage draws '.'/'…' as ornament boxes */
 .display_label_type {
     white-space: nowrap;
     overflow: hidden;
@@ -1022,7 +1043,7 @@ input[type="number"]::-moz-inner-spin-button {
     bottom: 0.5em;
     left: 50%;
     transform: translateX(-50%);
-    font-family: "Metal Gear", serif;
+    font-family: "Zen Dots", sans-serif;
     color: #444;
     text-decoration: none;
 }
@@ -1480,7 +1501,7 @@ table.distinction {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-family: monospace;
+    font-family: "JetBrains Mono", monospace;
     width: 20px;
     height: 20px;
     padding-left: 2px;
@@ -1543,7 +1564,7 @@ table.distinction {
 .profile-dropdown {
     position: relative;
     font-size: var(--step-0);
-    font-family: monospace;
+    font-family: "JetBrains Mono", monospace;
     width: 250px;
 }
 
@@ -1792,13 +1813,13 @@ table.distinction {
     color: #eee;
     background: #111;
     border-radius: 4px;
-    font-family: monospace;
+    font-family: "JetBrains Mono", monospace;
     font-size: var(--step--2);
     resize: none;
 }
 
 #error-close-popup, #graph-close-popup {
-    font-family: "Espionage";
+    font-family: "Oxanium";
     font-size: var(--step-1);
     background-color: #633;
     color: white;
@@ -1941,7 +1962,7 @@ table.distinction {
     top: 50%;
     transform: translateY(-50%);
     z-index: 100;
-    font-family: "Espionage", sans-serif;
+    font-family: "Oxanium", sans-serif;
 }
 
 .progress-container.visible {
@@ -2125,8 +2146,8 @@ table.distinction {
 .game-menu__item {
     display: block;
     color: var(--label-color);
-    opacity: 0.5;
-    font-family: "Metal Gear", serif;
+    opacity: 0.7; /* 0.5 washes out on the light theme */
+    font-family: "Zen Dots", sans-serif;
     font-size: var(--step-0);
     font-weight: bold;
     padding: 1rem;
@@ -2134,16 +2155,25 @@ table.distinction {
     border-bottom: 3px solid transparent;
 }
 
-.game-menu__item:hover { opacity: 0.8; }
+.game-menu__item:hover { opacity: 0.9; }
 
 .game-menu__item.selected {
     opacity: 1;
     border-bottom-color: var(--label-color);
 }
 
-.nback__graph {
-    height: 300px;
-    width: min(90vw, 420px);
+/* keep the top nav clear of the corner tabs and on one line each
+   (after the base rules above so the overrides win at equal specificity) */
+@media (max-width: 500px) {
+    .game-menu {
+        max-width: calc(100vw - 6.5rem);
+    }
+
+    .game-menu__item {
+        font-size: var(--step--1);
+        padding: 0.75rem 0.5rem;
+        white-space: nowrap;
+    }
 }
 
 #nback-area {
@@ -2208,6 +2238,11 @@ body.nback-mode .progress-container { display: none; }
 .nback__match--right { background-color: var(--correct-color); }
 .nback__match--wrong { background-color: var(--wrong-color); }
 .nback__match--missed { background-color: #28c; }
+
+/* typed answer readout for the arithmetic modes */
+.nback__answer { font-size: var(--step-0); }
+.nback__answer--right { color: var(--correct-color); }
+.nback__answer--wrong { color: var(--wrong-color); }
 
 .nback__start {
     background-color: var(--label-background-color);
@@ -2275,7 +2310,7 @@ body.menu-mode .main-view {
 
 .menu__title {
     color: var(--label-color);
-    font-family: "Metal Gear", serif;
+    font-family: "Zen Dots", sans-serif;
     letter-spacing: 0.3em;
     font-size: var(--step-4);
     margin: 0;
@@ -2303,18 +2338,20 @@ body.menu-mode .main-view {
 }
 
 .menu__cards {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
     align-items: stretch;
     gap: 1.5rem;
-    width: min(100%, 40rem);
+    width: min(100%, 72rem);
 }
 
 .menu-card {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    padding: 0.5rem 0;
+    padding: 1rem 1.25rem;
+    background-color: var(--label-background-color);
+    position: relative; /* anchors the "?" tooltip bubble */
     color: var(--text-color);
     text-decoration: none;
     opacity: 0.8;
@@ -2322,13 +2359,35 @@ body.menu-mode .main-view {
 }
 
 .menu-card:hover,
-.menu-card:focus-visible {
+.menu-card:focus-visible,
+.menu-card:focus-within {
     opacity: 1;
+    z-index: 2; /* keep the "?" bubble above sibling cards */
+}
+
+/* "?" next to the card name: bubble anchors to the card, drops below the
+   name and wraps, so it never clips at the viewport top or right edge */
+.menu-card .tooltip-container {
+    position: static;
+    vertical-align: middle;
+    letter-spacing: normal;
+}
+
+.menu-card .tooltip-text {
+    top: calc(0.5rem + 1.4 * var(--step-2));
+    bottom: auto;
+    left: 0;
+    white-space: normal;
+    letter-spacing: normal;
+    line-height: 1.5;
+    width: max-content;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .menu-card__name {
     color: var(--label-color);
-    font-family: "Metal Gear", serif;
+    font-family: "Zen Dots", sans-serif;
     letter-spacing: 0.25em;
     font-size: var(--step-2);
     margin: 0;
@@ -2365,13 +2424,33 @@ body.menu-mode .main-view {
     color: var(--label-color);
     font-weight: bold;
     align-self: flex-end;
-    opacity: 0.5;
+    margin-top: auto; /* pins ENTER to the card's bottom edge in the grid */
+    opacity: 0.8;
     transition: opacity 0.15s ease;
 }
 
 .menu-card:hover .menu-card__enter,
 .menu-card:focus-visible .menu-card__enter {
     opacity: 1;
+}
+
+/* second tier: quiet links to non-game pages (reference/utility) */
+.menu__pages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding-top: 1.5rem;
+    font-size: var(--step--1);
+    letter-spacing: 0.15em;
+}
+
+.menu__pages a {
+    color: var(--preamble-color);
+}
+
+.menu__pages a:hover,
+.menu__pages a:focus-visible {
+    color: var(--label-color);
 }
 
 .menu__footer {
@@ -2397,6 +2476,13 @@ body.menu-mode .main-view {
     padding: 0.25em 0.75em;
 }
 
+/* the destructive one stands apart: pushed right, tinted like button.delete */
+.menu__backup button.delete {
+    margin-left: 1.5rem;
+    color: var(--wrong-color);
+    border-color: var(--wrong-color);
+}
+
 .menu__backup button:hover {
     box-shadow: none;
     color: var(--label-color);
@@ -2409,4 +2495,66 @@ body.menu-mode .main-view {
     text-align: left;
     max-width: min(90vw, 44rem);
     text-shadow: var(--text-outline);
+}
+
+/* ---- Studies page (studies.html) ---- */
+
+.studies-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    width: min(100%, 46rem);
+}
+
+.studies-filters .select-item[type="search"] {
+    flex: 1 1 12rem;
+    cursor: text;
+}
+
+.studies-count {
+    font-size: var(--step--1);
+    color: var(--preamble-color);
+    text-shadow: var(--text-outline);
+}
+
+.studies-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: min(100%, 46rem);
+    padding-bottom: 2rem;
+}
+
+.study-card {
+    background-color: var(--background-color);
+    border: 1px solid #333;
+    box-shadow: 0 1px 10px 5px #0004;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.study-card__title {
+    font-size: var(--step-0);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.study-card__meta {
+    font-size: var(--step--2);
+    letter-spacing: 0.05em;
+    color: var(--preamble-color);
+}
+
+.study-card__summary {
+    margin: 0;
+    font-size: var(--step--1);
+    line-height: 1.5;
+}
+
+.studies-empty {
+    font-size: var(--step--1);
+    color: var(--preamble-color);
 }

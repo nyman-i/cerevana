@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Cerevana — Studies</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#2bdef9" />
+		<link rel="icon" type="image/png" href="favicon.png">
+		<link rel="stylesheet" href="fonts/cool/coolicons.css">
+		<link rel="stylesheet" href="css/styles.css">
+	</head>
+	<body class="menu-mode">
+
+		<div class="main-view">
+
+		<div class="background-image"></div>
+
+		<div class="overlay"></div>
+
+		<div class="menu ffmono">
+			<header class="menu__header">
+				<h1 class="menu__title">STUDIES</h1>
+				<p class="menu__subtitle">Research behind cognitive training, collected by the Mindbuilding community. <a href="index.html">&larr; Back to menu</a></p>
+			</header>
+
+			<div class="studies-filters">
+				<input type="search" id="studies-search" class="select-item" placeholder="Search studies&hellip;" autocomplete="off">
+				<select id="studies-category" class="select-item">
+					<option value="all">All categories</option>
+				</select>
+				<select id="studies-control" class="select-item">
+					<option value="all">Any control group</option>
+					<option value="active">Active control</option>
+					<option value="passive">Passive control</option>
+					<option value="none">No control</option>
+				</select>
+				<span id="studies-count" class="studies-count"></span>
+			</div>
+
+			<div id="studies-list" class="studies-list"></div>
+		</div>
+
+		</div>
+
+		<div id="error-popup" class="error-popup">
+			<div class="error-popup-content">
+				<p id="error-message"></p>
+				<button id="error-close-popup" class="error-close-popup">Close</button>
+				<textarea id="error-stack" readonly></textarea>
+			</div>
+		</div>
+
+		<script src="js/shared/constants.js"></script>
+		<script src="js/shared/backwards-compatibility.js"></script>
+		<script src="js/shared/db.js"></script>
+		<script src="js/shared/error-handling.js"></script>
+		<script src="js/shared/background.js"></script>
+		<script src="js/studies/page.js"></script>
+	</body>
+</html>

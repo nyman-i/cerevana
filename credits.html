@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Cerevana — Credits</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#2bdef9" />
+		<link rel="icon" type="image/png" href="favicon.png">
+		<link rel="stylesheet" href="fonts/cool/coolicons.css">
+		<link rel="stylesheet" href="css/styles.css">
+	</head>
+	<body class="menu-mode">
+
+		<div class="main-view">
+
+		<div class="background-image"></div>
+
+		<div class="overlay"></div>
+
+		<div class="menu ffmono">
+			<header class="menu__header">
+				<h1 class="menu__title">CREDITS</h1>
+				<p class="menu__subtitle">The people and projects Cerevana builds on. <a href="index.html">&larr; Back to menu</a></p>
+			</header>
+
+			<div class="studies-list">
+				<section class="study-card">
+					<h2 class="study-card__title panel-heading">RRT — the Syllogimous lineage</h2>
+					<p class="study-card__summary">Cerevana's RRT is built directly on
+					Syllogimous: created by
+					<a href="https://github.com/4skinSkywalker/" target="_blank" rel="noopener">4skinSkywalker</a>,
+					developed into Syllogimous-v3 by
+					<a href="https://github.com/ikokusovereignty/" target="_blank" rel="noopener">ikokusovereignty</a>,
+					and forked and refined by
+					<a href="https://github.com/soamsy/" target="_blank" rel="noopener">soamsy</a> &mdash;
+					<a href="https://github.com/soamsy/Syllogimous-v3" target="_blank" rel="noopener">soamsy/Syllogimous-v3</a>
+					(<a href="https://soamsy.github.io/Syllogimous-v3/" target="_blank" rel="noopener">playable original</a>)
+					is the codebase Cerevana grew from.
+					<a href="https://github.com/giladkingsley/" target="_blank" rel="noopener">giladkingsley</a>
+					is also a credited Syllogimous contributor.</p>
+				</section>
+
+				<section class="study-card">
+					<h2 class="study-card__title panel-heading">N-Back — Brain Workshop</h2>
+					<p class="study-card__summary">The dual n-back protocol Cerevana
+					reimplements comes from Brain Workshop by Paul Hoskinson with
+					Jonathan Toomim
+					(<a href="https://brainworkshop.sourceforge.net/" target="_blank" rel="noopener">brainworkshop<wbr>.sourceforge.net</a>,
+					<a href="https://github.com/brain-workshop/brainworkshop" target="_blank" rel="noopener">maintained fork</a>).
+					Cerevana shares no code with Brain Workshop (GPL-2.0) and credits it
+					as protocol source and inspiration.</p>
+				</section>
+
+				<section class="study-card">
+					<h2 class="study-card__title panel-heading">Community</h2>
+					<p class="study-card__summary">The Mindbuilding community
+					(<a href="https://discord.gg/brain" target="_blank" rel="noopener">discord.gg/brain</a>)
+					&mdash; the training knowledge this app is built on.</p>
+				</section>
+
+				<section class="study-card">
+					<h2 class="study-card__title panel-heading">Assets</h2>
+					<p class="study-card__summary">Menu background photo by Simon Berger
+					(<a href="https://www.pexels.com/photo/photography-of-mountains-under-cloudy-sky-1183099/" target="_blank" rel="noopener">Pexels</a>,
+					Pexels License).</p>
+					<p class="study-card__summary">Favicon and app icon: the Cerevana
+					circuit-head logo, provided by the project maintainer.</p>
+					<p class="study-card__summary">Typefaces, all under the SIL Open Font
+					License 1.1 and bundled locally:
+					<a href="https://github.com/floriankarsten/space-grotesk" target="_blank" rel="noopener">Space Grotesk</a>
+					by Florian Karsten (<a href="fonts/OFL-SpaceGrotesk.txt">OFL</a>),
+					<a href="https://fonts.google.com/specimen/Zen+Dots" target="_blank" rel="noopener">Zen Dots</a>
+					by Yoshimichi Ohira (<a href="fonts/OFL-ZenDots.txt">OFL</a>),
+					<a href="https://github.com/sevmeyer/oxanium" target="_blank" rel="noopener">Oxanium</a>
+					by Severin Meyer (<a href="fonts/OFL-Oxanium.txt">OFL</a>), and
+					<a href="https://github.com/JetBrains/JetBrainsMono" target="_blank" rel="noopener">JetBrains Mono</a>
+					by JetBrains (<a href="fonts/OFL-JetBrainsMono.txt">OFL</a>).</p>
+					<p class="study-card__summary">Charts drawn with
+					<a href="https://www.chartjs.org/" target="_blank" rel="noopener">Chart.js</a>
+					(MIT, vendored in <code>js/lib/</code>).</p>
+				</section>
+
+				<section class="study-card">
+					<h2 class="study-card__title panel-heading">License</h2>
+					<p class="study-card__summary">Cerevana is licensed under
+					<a href="LICENSE">CC BY-NC 3.0</a>, inherited from the Syllogimous
+					lineage.</p>
+				</section>
+			</div>
+		</div>
+
+		</div>
+
+		<div id="error-popup" class="error-popup">
+			<div class="error-popup-content">
+				<p id="error-message"></p>
+				<button id="error-close-popup" class="error-close-popup">Close</button>
+				<textarea id="error-stack" readonly></textarea>
+			</div>
+		</div>
+
+		<script src="js/shared/constants.js"></script>
+		<script src="js/shared/backwards-compatibility.js"></script>
+		<script src="js/shared/db.js"></script>
+		<script src="js/shared/error-handling.js"></script>
+		<script src="js/shared/background.js"></script>
+	</body>
+</html>

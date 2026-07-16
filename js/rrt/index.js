@@ -700,17 +700,16 @@ function timeElapsed() {
     wowFeedback();
 }
 
-function resetApp() {
-    const confirmed = confirm("Reset the app? This permanently deletes your score, history, progress-graph data and all settings. Tip: Export History from the main menu first to keep a backup.")
-        && confirm("Last chance: this cannot be undone. Really reset everything?");
+function resetRRT() {
+    const confirmed = confirm("Reset RRT? This permanently deletes your RRT profiles, settings, score, question history and progress-graph data. N-Back data and the background image are kept. Tip: Export History from the main menu first to keep a backup.")
+        && confirm("Last chance: this cannot be undone. Really reset RRT?");
     if (confirmed) {
         localStorage.removeItem(oldSettingsKey);
-        localStorage.removeItem(imageKey);
         localStorage.removeItem(profilesKey);
         localStorage.removeItem(selectedProfileKey);
         localStorage.removeItem(appStateKey);
-        document.getElementById("reset-app").innerText = 'Resetting...';
-        deleteDatabase("SyllDB").then(() => {
+        document.getElementById("reset-rrt").innerText = 'Resetting...';
+        importRRTRows([], true).then(() => {
             window.location.reload();
         });
     }
@@ -740,7 +739,8 @@ function renderHQL(didAddSingleQuestion=false) {
         const firstChild = historyList.firstElementChild;
         historyList.insertBefore(createHQLI(recentQuestion, index), firstChild);
     } else {
-        historyList.innerHTML = "";
+        historyList.innerHTML = appState.questions.length ? ""
+            : '<div class="panel-empty">No history yet &mdash; answered questions appear here.</div>';
 
         const len = appState.questions.length;
         const reverseChronological = appState.questions.slice().reverse();

@@ -5,14 +5,6 @@
 		<title>Cerevana — RRT</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<!-- ios support -->
-		<link rel="apple-touch-icon" href="icons/icon-72x72.png" />
-		<link rel="apple-touch-icon" href="icons/icon-96x96.png" />
-		<link rel="apple-touch-icon" href="icons/icon-128x128.png" />
-		<link rel="apple-touch-icon" href="icons/icon-144x144.png" />
-		<link rel="apple-touch-icon" href="icons/icon-152x152.png" />
-		<link rel="apple-touch-icon" href="icons/icon-192x192.png" />
-		<link rel="apple-touch-icon" href="icons/icon-384x384.png" />
-		<link rel="apple-touch-icon" href="icons/icon-512x512.png" />
 		<meta name="apple-mobile-web-app-status-bar" content="#2bdef9" />
 		<meta name="theme-color" content="#2bdef9" />
 
@@ -51,7 +43,7 @@
 					<div style="direction: ltr;">
 						<div class="mb-1"></div>
 						<div class="mb-1">
-							<span class="mb-05">Current Profile</span>
+							<span class="mb-05 panel-heading">Current Profile</span>
 							<div class="profile-container">
 							  <div class="profile-dropdown">
 							    <input type="text" class="profile-input" id="profile-input" placeholder="">
@@ -66,6 +58,7 @@
 								<input type="text" class="profile-import-input" id="profile-import-input" placeholder="Paste share URL, press Enter">
 							</div>
 						</div>
+						<div class="mb-05 panel-heading">Training</div>
 						<div class="mb-2">
 							<div class="inline-input__outer big-input">
 								Global Premises
@@ -179,6 +172,7 @@
 						  </div>
 						</div>
 
+						<div class="mb-05 panel-heading">Words &amp; Stimuli</div>
 						<div class="mb-1">
 							<div class="ctrl__inner">
 								<div>
@@ -271,6 +265,7 @@
 							</div>
 						</div>
 						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Anti-Strategy</div>
 						<div class="mb-1">
 							<div class="inline-input__outer">
 								Scramble Factor
@@ -332,6 +327,7 @@
 							</div>
 						</div>
 						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Question Types</div>
 						<div class="mb-1">
 							<div class="ctrl__inner">
 								<div>
@@ -496,6 +492,7 @@
 							</div>
 						</div>
 						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Appearance</div>
 						<div class="mb-2">
 							<div class="inline-input__outer">
 								Image
@@ -734,7 +731,7 @@
 									</span>
 								</div>
 							</div>
-							<div class="mb-05">Transforms:</div>
+							<div class="mb-05 panel-heading">Transforms:</div>
 							<div class="mb-1">
 								<div class="multi-input">
 									<span class="single-input">
@@ -905,9 +902,9 @@
 							</div>
 						</div>
 						<div class="mb-1">
-							<button id="reset-app" onclick="resetApp()">Reset App</button>
+							<button id="reset-rrt" onclick="resetRRT()">Reset RRT</button>
 							<ul class="explainer">
-								<li>Resets score, history and settings</li>
+								<li>Resets RRT only: score, history and settings. N-Back is untouched. Full reset lives on the main menu.</li>
 							</ul>
 						</div>
 					</div>
@@ -943,14 +940,6 @@
 					<div style="direction: ltr;">
 						<div class="mb-2">
 							<div class="explainer">
-								<h4>Credits:</h4>
-								<p>RRT builds directly on <a href="https://github.com/soamsy/Syllogimous-v3" target="_blank" rel="noopener">soamsy's Syllogimous-v3</a> (<a href="https://soamsy.github.io/Syllogimous-v3/" target="_blank" rel="noopener">play the original</a>).</p>
-								<p>Syllogimous was created by <a href="https://github.com/4skinSkywalker/" target="_blank" rel="noopener">4skinSkywalker</a> and developed further as Syllogimous-v3 by <a href="https://github.com/ikokusovereignty/" target="_blank" rel="noopener">ikokusovereignty</a>, with contributions from <a href="https://github.com/giladkingsley/" target="_blank" rel="noopener">giladkingsley</a>.</p>
-								<p>License: CC BY-NC 3.0.</p>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="explainer">
 								<h4>Keyboard Shortcuts:</h4>
 								<div class="shortcuts">
 								<p class="keyboard-shortcut"><span>Space</span><span>Toggle Timer</span></p>
@@ -961,6 +950,9 @@
 								<p class="keyboard-shortcut"><span>d</span><span>Next (Carousel)</span></p>
 								</div>
 							</div>
+						</div>
+						<div class="mb-2">
+							<a href="credits.html">Credits</a>
 						</div>
 					</div>
 				</div>
@@ -990,7 +982,8 @@
 						<span class="inline-input__inner">
 							<input id="timer-input" type="number" min="1" value="30" style="width: 6ch">sec
 						</span>
-						<input id="timer-toggle" type="checkbox">
+						<input hidden id="timer-toggle" type="checkbox">
+						<label class="switch" for="timer-toggle" tabindex="0" aria-label="Enable timer"></label>
 					</div>
 				</div>
 
@@ -1083,6 +1076,7 @@
 				<button id="graph-select-time-per-premise" class="graph-select">Premise Speed</button>
 				<button id="graph-select-count" class="graph-select">Total Answered</button>
 			</div>
+			<div id="graph-empty" class="panel-empty" hidden>No graph data yet &mdash; answer questions with the timer on and it appears here.</div>
 			<div id="graph-popup-time" class="graph-popup-content visible"><canvas id="graph-canvas-time"></canvas></div>
 			<div id="graph-popup-count" class="graph-popup-content"><canvas id="graph-canvas-count"></canvas></div>
 			<div id="graph-popup-time-per-premise" class="graph-popup-content"><canvas id="graph-canvas-time-per-premise"></canvas></div>

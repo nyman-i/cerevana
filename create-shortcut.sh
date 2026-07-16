@@ -13,7 +13,7 @@ cat > ~/.local/share/applications/cerevana.desktop <<EOF
 Type=Application
 Name=Cerevana
 Comment=Cognitive training: RRT and Dual N-Back
-Icon=$DIR/icons/icon-512x512.png
+Icon=$DIR/img/icon-512.png
 Exec=bash -c "cd '$DIR' && (python3 -m http.server $PORT >/dev/null 2>&1 &) ; sleep 0.5 ; exec '$BROWSER' --app=http://localhost:$PORT --class=Cerevana --user-data-dir=$HOME/.config/cerevana-app"
 StartupWMClass=Cerevana
 Categories=Education;
