@@ -111,8 +111,10 @@
   font-style: normal;
 }
 
+/* Transparent page: the game is embedded in quadbox.html's iframe and the
+   host's .background-image/.overlay must show through. */
 html, body {
-  background-color: #131312;
+  background-color: transparent;
   overscroll-behavior-y: contain;
   touch-action: pan-x pan-y;
 }
@@ -132,6 +134,54 @@ body {
 .font-hud {
   font-family: 'Oxanium', 'Space Grotesk', sans-serif;
   letter-spacing: 0.05em;
+}
+
+/* Floating HUD pill, sitting below the host page's .game-menu nav —
+   same translucent backing as Cerevana's --label-background-color. */
+.hud-strip {
+  position: absolute;
+  top: 4.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.35rem 1.25rem;
+  background-color: #0009;
+}
+
+[data-theme=cerevana-light] .hud-strip {
+  background-color: #FFF9;
+}
+
+/* Settings drawer skinned like Cerevana's .offcanvas (--offcanvas-bg/fg) */
+.offcanvas-skin {
+  background: radial-gradient(circle at top center, #0c0c0b, #131312);
+  color: #fffffd;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+[data-theme=cerevana-light] .offcanvas-skin {
+  background: radial-gradient(circle at top center, #faf9f7, #e8efec);
+  color: #171613;
+}
+
+.settings-heading {
+  font-family: 'Oxanium', 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.offcanvas-close-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 0.25rem 0.4rem;
 }
 
 @utility game-button {

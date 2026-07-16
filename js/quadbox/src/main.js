@@ -13,6 +13,16 @@ try {
   }
 } catch { /* host state unreadable — keep Quad Box's own theme */ }
 
+// Cerevana host bridge: the quadbox.html corner tabs postMessage panel
+// toggles into this frame (same-origin embed).
+import { panelRequest } from './stores/panelRequestStore'
+window.addEventListener('message', (e) => {
+  const d = e.data
+  if (d && d.cerevana === 'toggle' && ['settings', 'chart', 'info'].includes(d.panel)) {
+    panelRequest.request(d.panel)
+  }
+})
+
 window.addEventListener('error', (e) => {
   error.set({ message: e.message, stacktrace: e.stack })
 })

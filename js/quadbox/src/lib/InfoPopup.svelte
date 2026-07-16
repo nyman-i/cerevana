@@ -16,6 +16,13 @@
     confirmResetAll = false
   }
 
+  import { onDestroy } from 'svelte'
+  import { panelRequest } from '../stores/panelRequestStore'
+  const unsubPanel = panelRequest.subscribe(r => {
+    if (r?.panel === 'info') show ? closeModal() : openModal()
+  })
+  onDestroy(unsubPanel)
+
   const handleKeydown = (event) => {
     if (event.key === "Escape") closeModal()
   }
@@ -41,7 +48,8 @@
   }
 </script>
 
-<button class="flex items-center justify-center" on:click={openModal}>
+<!-- Trigger hidden: the Cerevana host page's info corner tab opens this via postMessage -->
+<button class="hidden items-center justify-center" on:click={openModal}>
   <CircleHelp class="btn btn-square btn-ghost h-8 lg:h-6" />
 </button>
 {#if show}

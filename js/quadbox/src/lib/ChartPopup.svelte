@@ -17,6 +17,13 @@
     show = false
   }
 
+  import { onDestroy } from 'svelte'
+  import { panelRequest } from '../stores/panelRequestStore'
+  const unsubPanel = panelRequest.subscribe(r => {
+    if (r?.panel === 'chart') show ? closeModal() : openModal()
+  })
+  onDestroy(unsubPanel)
+
   const handleKeydown = (event) => {
     if (event.key === "Escape") closeModal()
   }
@@ -27,7 +34,8 @@
 
 </script>
 
-<button class="flex items-center justify-center" on:click={openModal}>
+<!-- Trigger hidden: the Cerevana host page's graph corner tab opens this via postMessage -->
+<button class="hidden items-center justify-center" on:click={openModal}>
   <ChartColumn class="btn btn-square btn-ghost h-8 lg:h-6" />
 </button>
 {#if show}

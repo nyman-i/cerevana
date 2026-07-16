@@ -1,5 +1,4 @@
 <script>
-import { PanelLeftClose, PanelLeftOpen } from '@lucide/svelte'
 import { onMount } from 'svelte'
 import { get } from 'svelte/store'
 import { settings } from '../stores/settingsStore'
@@ -11,20 +10,23 @@ import { autoProgression } from '../stores/autoProgressionStore'
 import { isPlaying, title } from "../stores/gameRunningStore"
 import GameSettings from './GameSettings.svelte'
 import ModeSwapper from './ModeSwapper.svelte'
-import ThemeSwapper from './ThemeSwapper.svelte'
 import ChartPopup from "./ChartPopup.svelte"
 import KeybindingsPopup from "./KeybindingsPopup.svelte"
 import InfoPopup from './InfoPopup.svelte'
+import { panelRequest } from '../stores/panelRequestStore'
 
 let open = false
 const toggle = () => open = !open
 const close = () => open = false
 
 let drawerRef
-let panelButtonRef
+
+const unsubPanel = panelRequest.subscribe(r => {
+  if (r?.panel === 'settings') toggle()
+})
 
 const handleClickOutside = (event) => {
-  if (open && !drawerRef.contains(event.target) && !panelButtonRef.contains(event.target)) {
+  if (open && !drawerRef.contains(event.target)) {
     close()
   }
 }
@@ -59,71 +61,50 @@ onMount(() => {
   document.addEventListener('click', handleClickOutside)
   return () => {
     document.removeEventListener('click', handleClickOutside)
+    unsubPanel()
   }
 })
 
 </script>
 
 <div class="relative flex flex-col h-svh overflow-hidden">
-  <div class="w-full h-16 lg:h-10 grid grid-cols-3 items-center bg-base-200 border-b-1 py-1 text-lg font-hud"
-  class:text-2xl={$mobile}
-  class:grid-cols-[1fr_3fr_1fr]={$mobile}
-  class:grid-cols-[3fr_2fr_3fr]={!$mobile}
-  >
-    <div class="flex gap-2 items-center">
-      <div on:click|stopPropagation={toggle} bind:this={panelButtonRef}>
-        {#if open}
-          <PanelLeftClose class="btn btn-square btn-ghost h-8 lg:h-6" />
-        {:else}
-          <PanelLeftOpen class="btn btn-square btn-ghost h-8 lg:h-6" />
-        {/if}
-      </div>
-      {#if !$mobile}
-      <a href="../../index.html" class="btn btn-ghost h-8 lg:h-6 px-1 text-sm font-normal" title="Back to Cerevana menu">&larr; CEREVANA</a>
+  <div class="hud-strip font-hud select-none whitespace-nowrap max-w-[92svw] overflow-hidden"
+    class:text-2xl={$mobile}
+    class:advance={$autoProgression.advance}
+    class:fallback={$autoProgression.fallback}>
+    <div>N {$gameSettings.rules === 'variable' ? '≤' : '='} {$gameSettings.nBack}</div>
+    {#if $settings.mode === 'tally'}
+    <div>W = {getPositionWidthDisplay()}</div>
+    {/if}
+    <div>{$title.toUpperCase()}</div>
+    {#if $scores.total && $mobile}
+      <div>{($scores.total.percent * 100).toFixed(0)}%</div>
+      {#if $scores.total.averageTrialTime}
+        <div>{($scores.total.averageTrialTime / 1000).toFixed(2)}s/t</div>
       {/if}
-    </div>
-    <div class="justify-self-center flex gap-4 select-none px-6 whitespace-nowrap max-w-[70svw] overflow-hidden"
-      class:advance={$autoProgression.advance}
-      class:fallback={$autoProgression.fallback}>
-      <div>N {$gameSettings.rules === 'variable' ? '≤' : '='} {$gameSettings.nBack}</div>
-      {#if $settings.mode === 'tally'}
-      <div>W = {getPositionWidthDisplay()}</div>
+    {/if}
+    {#if $scores.total && !$isPlaying && !$mobile}
+      <div>Last: {($scores.total.percent * 100).toFixed(0)}%</div>
+      {#if $scores.total.averageTrialTime}
+        <div>{($scores.total.averageTrialTime / 1000).toFixed(2)}s/t</div>
       {/if}
-      <div>{$title.toUpperCase()}</div>
-      {#if $scores.total && $mobile}
-        <div>{($scores.total.percent * 100).toFixed(0)}%</div>
-        {#if $scores.total.averageTrialTime}
-          <div>{($scores.total.averageTrialTime / 1000).toFixed(2)}s/t</div>
-        {/if}
-      {/if}
-    </div>
-    <div class="justify-self-end flex items-center gap-4 pr-2 whitespace-nowrap">
-      {#if !$isPlaying && !$mobile && $analytics.playTime}
-      <div>Today: {$analytics.playTime}</div>
-      {/if}
-      {#if $scores.total && !$isPlaying && !$mobile}
-        <div>Last: {($scores.total.percent * 100).toFixed(0)}%</div>
-        {#if $scores.total.averageTrialTime}
-          <div>{($scores.total.averageTrialTime / 1000).toFixed(2)}s/t</div>
-        {/if}
-      {/if}
-      <div class="flex">
-        <InfoPopup />
-        <ChartPopup />
-      </div>
-    </div>
+    {/if}
+    {#if !$isPlaying && !$mobile && $analytics.playTime}
+    <div>Today: {$analytics.playTime}</div>
+    {/if}
   </div>
+  <span><InfoPopup /><ChartPopup /></span>
 
   <div class="flex-auto flex relative overflow-x-hidden w-fit duration-0">
     <nav
       bind:this={drawerRef}
-      class="absolute top-0 left-0 h-full overflow-y-auto w-86 sm:w-80 bg-base-200 border-r-1 shadow-lg transform transition-transform duration-150 z-50"
+      class="offcanvas-skin absolute top-0 left-0 h-full overflow-y-auto w-86 sm:w-80 transform transition-transform duration-150 z-50"
       class:-translate-x-86={!open} class:sm:-translate-x-80={!open}
       >
       <div class="flex w-full flex-col px-4 gap-2">
-        <div class="text-xl font-semibold flex justify-between items-center pt-4">
+        <div class="text-lg settings-heading flex justify-between items-center pt-3">
           <span>Settings</span>
-          <ThemeSwapper />
+          <button class="offcanvas-close-btn" on:click={close} title="Close settings">✕</button>
         </div>
         <div class="w-full border-b-1 my-1"></div>
         <ModeSwapper />
@@ -179,7 +160,7 @@ onMount(() => {
       <div class="my-10"></div>
     </nav>
 
-    <div class="relative w-screen h-full transition-transform duration-150 dark:bg-[#131312] bg-[#faf9f7]">
+    <div class="relative w-screen h-full transition-transform duration-150">
       <slot />
     </div>
   </div>
