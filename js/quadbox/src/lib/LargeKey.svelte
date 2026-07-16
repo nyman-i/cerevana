@@ -10,13 +10,7 @@
   $: hotkeyField = field === 'image' ? 'shape' : field
 </script>
 
-<button tabindex="-1" disabled={$feedback[field] === 'disabled'} class="game-button-lg stimulus-button grid grid-rows-[4fr_2fr_10fr_6fr] {$settings.theme}-{$feedback[field]}" on:click={() => checkForMatch(field)}>
-  <span class="text-xl">{display}</span>
-  <div class="flex gap-4">
-    {#if score && !isPlaying}
-    <span class="text-xl">{score.hits}/{score.possible}</span>
-    <span class="text-xl">{(score.percent * 100).toFixed(0)}%</span>
-    {/if}
-  </div>
-  {$settings.hotkeys[hotkeyField]}
+<!-- Compact one-liner like N-Back's match buttons ("Position (A)") -->
+<button tabindex="-1" disabled={$feedback[field] === 'disabled'} class="game-button-lg stimulus-button {$settings.theme}-{$feedback[field]}" on:click={() => checkForMatch(field)}>
+  {display} ({$settings.hotkeys[hotkeyField]})
 </button>

@@ -209,28 +209,29 @@ onDestroy(async () => {
 {#if isMobile}
   <div class="w-full h-full flex items-center justify-center text-4xl row-start-1 col-start-1 select-none opacity-30 p-8 pl-10">{trialDisplay}</div>
   <div class="w-full h-full flex items-center justify-center row-start-1 col-start-4 col-span-1 p-8">
-    <button class="game-button text-4xl p-8"
+    <button class="qb-start"
       on:click={toggleGame}
       on:keydown={suppressKey}
       on:keypress={suppressKey}
       on:keyup={suppressKey}
       tabindex="-1"
-    >{#if $isPlaying} Stop {:else} Play {/if}</button>
+    >{#if $isPlaying} STOP {:else} START {/if}</button>
   </div>
 {:else}
-  <div class="w-full h-full flex items-center justify-center text-6xl row-start-1 col-start-1 select-none opacity-30">{trialDisplay}</div>
+  <div class="w-full h-full flex items-center justify-center text-4xl row-start-1 col-start-1 select-none opacity-30">{trialDisplay}</div>
   <div class="w-full h-full flex items-center justify-between row-start-1 col-start-4 col-span-1 px-2">
     <div></div>
-    <button class="game-button text-5xl px-12 py-10 max-w-[90%] mr-4"
+    <button class="qb-start"
       on:click={toggleGame}
       on:keydown={suppressKey}
       on:keypress={suppressKey}
       on:keyup={suppressKey}
       tabindex="-1"
-    >{#if $isPlaying} Stop {:else} Play {/if}</button>
+    >{#if $isPlaying} STOP {:else} START {/if}</button>
   </div>
 {/if}
-  <div class="w-full h-full flex gap-1 items-center justify-around py-1 row-start-3"
+  <!-- Centered compact count keys, like N-Back's button row -->
+  <div class="w-full h-full flex gap-4 items-center justify-center py-1 row-start-3"
     class:col-start-2={!isMobile}
     class:col-span-2={!isMobile}
     class:coll-start-1={isMobile}

@@ -1,36 +1,22 @@
 <script>
   import { settings } from '../stores/settingsStore'
-  import { Triangle } from '@lucide/svelte'
-  import { CircleHelp } from '@lucide/svelte'
   import { onDestroy } from 'svelte'
   $: mode = $settings.mode
 
-  const formatMode = (mode) => {
-    return (mode === 'custom' ? 'custom a' : (mode === 'customB' ? 'custom b' : mode)).toUpperCase()
-  }
-  let showModeDropdown = false
-  let showTallyExplanation = false
-
-  // Cerevana: one accent, no per-mode rainbow (see .cv-mode-pill in app.css)
-  const darkColors = new Map([
-    ['quad', 'cv-mode-pill'],
-    ['dual', 'cv-mode-pill'],
-    ['custom', 'cv-mode-pill'],
-    ['customB', 'cv-mode-pill'],
-    ['tally', 'cv-mode-pill'],
-    ['vtally', 'cv-mode-pill'],
+  const allModes = ['quad', 'dual', 'custom', 'customB', 'tally', 'vtally']
+  const modeLabels = new Map([
+    ['quad', 'Quad'],
+    ['dual', 'Dual'],
+    ['custom', 'Custom A'],
+    ['customB', 'Custom B'],
+    ['tally', 'Tally'],
+    ['vtally', 'Visual Tally'],
   ])
 
-  const lightColors = darkColors
+  let showTallyExplanation = false
 
-  const allModes = [...lightColors.keys()]
-
+  // PageUp/PageDown still cycle through the enabledModes rotation
   $: modes = [...$settings.enabledModes].sort((a, b) => allModes.indexOf(a) - allModes.indexOf(b))
-  $: displayModes = new Map(
-    allModes.map(m => [m, modes.includes(m)]),
-  )
-
-  $: bg = $settings.theme === 'light' ? lightColors.get(mode) : darkColors.get(mode)
 
   const nextMode = () => {
     if (modes.length <= 1) return
@@ -61,72 +47,45 @@
     }
   }
 
-  const handleClickOutside = (event) => {
-    if (!event.target.closest('#mode-dropdown')) {
-      showModeDropdown = false
-    }
-  }
-
   document.addEventListener('keydown', handleKey)
-  document.addEventListener('click', handleClickOutside)
 
   onDestroy(async () => {
     document.removeEventListener('keydown', handleKey)
-    document.removeEventListener('click', handleClickOutside)
   })
 </script>
 
-<div class="flex bg- items-center justify-around relative">
-  <div on:click={prevMode} class="btn rounded border-0 px-2 -rotate-90"><Triangle class="fill-base-100" /></div>
-  <div class="flex-grow flex items-center justify-center mx-2 p-1 text-2xl select-none transition-colors duration-100 cursor-pointer relative {bg}" on:click|stopPropagation={() => {
-    showModeDropdown = !showModeDropdown
-  }}>
-  {formatMode(mode)}
-  {#if mode.includes('tally')}
-    <div class="absolute right-6 top-1/2 -translate-y-1/2" on:click|stopPropagation={() => {
-      showTallyExplanation = true
-    }}>
-      <CircleHelp class="h-5 mb-2 dark:hover:text-cyan-300 light:hover:text-cyan-100" />
+<div class="mb-2">
+  <div class="ctrl__inner">
+    <span>Game Mode</span>
+    <select value={mode} on:change={(e) => settings.update('mode', e.target.value)} class="select-item">
+      {#each allModes as m (m)}
+        <option value={m}>{modeLabels.get(m)}</option>
+      {/each}
+    </select>
+    {#if mode.includes('tally')}
+    <div class="tooltip-container" tabindex="0" on:click={() => showTallyExplanation = true}>
+      ?
+      <div class="tooltip-text">
+        Enter the count of matches per<br>
+        trial instead of per-stimulus<br>
+        keys. Click for details.<br>
+      </div>
     </div>
-  {/if}
-  </div>
-  {#if showModeDropdown}
-  <div id='mode-dropdown' class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-60 rounded shadow-lg z-10 grid grid-cols-10 items-center justify-center place-items-center { $settings.theme === 'light' ? 'bg-base-200 text-base-content' : 'bg-base-300 text-base-content' }">
-  {#each Array.from(displayModes) as [m, enabled] (m)}
-    <input class="duration-0 checkbox m-0 w-10 h-10 col-span-2" type="checkbox" id={m} checked={enabled} on:click={() => {
-      settings.update('enabledModes', $settings.enabledModes.includes(m) ? $settings.enabledModes.filter(mode => mode !== m) : [...$settings.enabledModes, m])
-    }} />
-    <div
-      on:click={e => {
-        e.stopPropagation()
-        settings.update('mode', m)
-        showModeDropdown = false
-      }}
-      class="p-2 w-full col-span-8 text-center text-xl select-none transition-colors duration-100 cursor-pointer relative { $settings.theme === 'light' ? lightColors.get(m) : darkColors.get(m) }"
-    >
-      {formatMode(m)}
-
-      {#if m.includes('tally')}
-        <div class="absolute right-1 top-1/2 -translate-y-1/2" on:click|stopPropagation={() => {
-          showTallyExplanation = true
-        }}>
-          <CircleHelp class="dark:hover:text-cyan-300 light:hover:text-cyan-100" />
-        </div>
-      {/if}
-    </div>
-  {/each}
-  </div>
-  {/if}
-  <div on:click={nextMode} class="btn rounded border-0 px-2 rotate-90"><Triangle class="fill-base-100" /></div>
-</div>
-
-<div class="fixed inset-0 bg-opacity-50 flex items-center justify-center z-20" class:hidden={!showTallyExplanation} on:click={() => showTallyExplanation = false}>
-  <div class="bg-base-200 text-base-content p-6 rounded shadow-lg max-w-lg mx-4" on:click|stopPropagation>
-    <h2 class="text-xl font-bold mb-4">Tally Modes</h2>
-    <div class="prose text-sm flex flex-col gap-2 ml-4">
-      <p>Tally mode changes how matches are handled. Instead of pressing a hotkey for every stimulus that matches during a trial, you enter the <italic>count</italic> of how many stimuli matched.</p>
-      <p>Because only one input is needed per trial, there’s no fixed trial timer. The game advances when you enter a number, and will be as fast as you're able to keep up.</p>
-    </div>
-    <div class="flex justify-end w-full"><button class="btn btn-primary mt-4" on:click={() => showTallyExplanation = false}>Close</button></div>
+    {/if}
   </div>
 </div>
+
+{#if showTallyExplanation}
+<div class="cv-popup-backdrop" on:click={() => showTallyExplanation = false}></div>
+<div class="cv-popup" style="width: 40vw; min-height: 0; left: 30%; top: 25%;">
+  <div class="panel-heading">Tally Modes</div>
+  <div class="cv-popup-body">
+    <p>Tally mode changes how matches are handled. Instead of pressing a hotkey for every stimulus that matches during a trial, you enter the <em>count</em> of how many stimuli matched.</p>
+    <p style="margin-top: 0.5rem;">Because only one input is needed per trial, there&rsquo;s no fixed trial timer. The game advances when you enter a number, and will be as fast as you&rsquo;re able to keep up.</p>
+  </div>
+  <div class="graph-end-controls">
+    <div></div>
+    <button class="cv-popup-close" on:click={() => showTallyExplanation = false}>Close</button>
+  </div>
+</div>
+{/if}

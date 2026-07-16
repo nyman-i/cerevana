@@ -6,16 +6,13 @@
   $: className = $settings.theme + '-' + $tallyFeedback[count]
 </script>
 
-<button class="game-button flex-1 h-full text-4xl grid grid-rows-[1fr 1fr 1fr] {className}" on:click={() => handleCount(count)}>
+<!-- Compact tally count key in the N-Back style -->
+<button class="game-button qb-number-key {className}" on:click={() => handleCount(count)}>
   <slot></slot>
 </button>
 
 
 <style>
-.game-button.grid {
-  display: grid !important;
-}
-
 .game-button.disabled {
   display: none !important;
 }

@@ -36,6 +36,7 @@ const handleClickOutside = (event) => {
 }
 
 const updateSuccessCriteria = (value) => {
+  if (isNaN(value) || value < 0 || 100 < value) return
   settings.update('successCriteria', value)
   if ($settings.failureCriteria > value) {
     settings.update('failureCriteria', value)
@@ -43,10 +44,21 @@ const updateSuccessCriteria = (value) => {
 }
 
 const updateFailureCriteria = (value) => {
+  if (isNaN(value) || value < 0 || 100 < value) return
   settings.update('failureCriteria', value)
   if ($settings.successCriteria < value) {
     settings.update('successCriteria', value)
   }
+}
+
+const updateCombo = (field, value) => {
+  if (isNaN(value) || value < 1 || 9 < value) return
+  settings.update(field, value)
+}
+
+const updateRotationSpeed = (value) => {
+  if (isNaN(value) || value < 0 || 999 < value) return
+  settings.update('rotationSpeed', value)
 }
 
 const getPositionWidthDisplay = () => {
@@ -102,70 +114,96 @@ onMount(() => {
   <div class="flex-auto flex relative overflow-x-hidden w-fit duration-0">
     <nav
       bind:this={drawerRef}
-      class="offcanvas-skin absolute top-0 left-0 h-full overflow-y-auto w-86 sm:w-80 transform transition-transform duration-150 z-50"
+      class="offcanvas-skin absolute top-0 left-0 h-full w-86 sm:w-80 flex transform transition-transform duration-150 z-50"
       class:-translate-x-86={!open} class:sm:-translate-x-80={!open}
       >
-      <div class="flex w-full flex-col px-4 gap-2">
-        <div class="text-lg settings-heading flex justify-between items-center pt-3">
-          <span>Settings</span>
-          <button class="offcanvas-close-btn" on:click={close} title="Close settings">✕</button>
-        </div>
-        <div class="w-full border-b-1 my-1"></div>
-        <div class="panel-heading">Mode</div>
+      <div class="offcanvas-body">
+        <div class="mb-1"></div>
+        <div class="mb-05 panel-heading">Mode</div>
         <ModeSwapper />
-        <div class="panel-heading">Session</div>
+        <div class="mb-05 panel-heading">Session</div>
         <GameSettings />
-        <div class="my-0 divider"></div>
-        <div class="panel-heading">Display</div>
-        <div class="grid grid-cols-[4fr_6fr] items-center gap-4">
-          <span class="text-base">Feedback:</span>
-          <select bind:value={$settings.feedback} id="feedback-select" class="select">
-            <option value="show">Show</option>
-            <option value="hide">Hide</option>
-            <option value="hide-counter">Hide counter only</option>
-          </select>
+        <hr class="cv-divider">
+        <div class="mb-05 panel-heading">Display</div>
+        <div class="mb-2">
+          <div class="ctrl__inner">
+            <span>Feedback</span>
+            <select bind:value={$settings.feedback} id="feedback-select" class="select-item">
+              <option value="show">Show</option>
+              <option value="hide">Hide</option>
+              <option value="hide-counter">Hide counter only</option>
+            </select>
+          </div>
         </div>
         {#if $settings.mode !== 'vtally'}
-        <div class="flex flex-col gap-1">
-          <div class="grid grid-cols-[3fr_1fr] items-center">
-            <label for="rotation-speed-range" class="text-base">Rotation speed:</label>
-            <input type="number" min="0" max="999" bind:value={$settings.rotationSpeed} step="1" class="input" />
+        <div class="mb-2">
+          <div class="inline-input__outer">
+            Rotation speed
+            <span class="inline-input__inner">
+              <input type="number" min="0" max="999" step="1" value={$settings.rotationSpeed} on:input={(e) => updateRotationSpeed(+e.target.value)} style="width: 5ch">
+            </span>
           </div>
-          <input id="rotation-speed-range" type="range" min="0" max="140" bind:value={$settings.rotationSpeed} step="1" class="range" />
         </div>
         {/if}
-        <div class="divider"></div>
         {#if $settings.mode !== 'tally' && $settings.mode !== 'vtally'}
-        <div class="panel-heading">Progression</div>
-        <div class="grid grid-cols-[8fr_2fr] items-center">
-          <label for="enable-auto-progression" class="text-base">Auto progression:</label>
-          <input id="enable-auto-progression" type="checkbox" bind:checked={$settings.enableAutoProgression} class="toggle" />
+        <hr class="cv-divider">
+        <div class="mb-05 panel-heading">Progression</div>
+        <div class="mb-1">
+          <div class="ctrl__inner">
+            <div>
+              <input hidden id="enable-auto-progression" type="checkbox" bind:checked={$settings.enableAutoProgression}>
+              <label class="switch" for="enable-auto-progression"></label>
+            </div>
+            <label for="enable-auto-progression">Auto Progression</label>
+            <div class="tooltip-container" tabindex="0">
+              ?
+              <div class="tooltip-text">
+                Raises or lowers N based on<br>
+                your recent scores.<br>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="flex flex-col gap-1">
-          <label class="text-base">When ≥ {$settings.successCriteria}%
-            <input disabled={!$settings.enableAutoProgression} type="range" min="0" max="100" value={$settings.successCriteria} on:input={(e) => updateSuccessCriteria(+e.target.value)} step="1" class="range" />
-          </label>
+        <div class="mb-2">
+          <div class="inline-input__outer">
+            Advance at
+            <span class="inline-input__inner">
+              <input disabled={!$settings.enableAutoProgression} type="number" min="0" max="100" step="1" value={$settings.successCriteria} on:input={(e) => updateSuccessCriteria(+e.target.value)} style="width: 5ch">%
+            </span>
+          </div>
         </div>
-        <div class="flex flex-col gap-1">
-          <label class="text-base">Win after: {$settings.successComboRequired} in a row
-            <input disabled={!$settings.enableAutoProgression} type="range" min="1" max="9" bind:value={$settings.successComboRequired} step="1" class="range" />
-          </label>
+        <div class="mb-2">
+          <div class="inline-input__outer">
+            Win after
+            <span class="inline-input__inner">
+              <input disabled={!$settings.enableAutoProgression} type="number" min="1" max="9" step="1" value={$settings.successComboRequired} on:input={(e) => updateCombo('successComboRequired', +e.target.value)} style="width: 4ch">in a row
+            </span>
+          </div>
         </div>
-        <div class="flex flex-col gap-1 mt-4">
-          <label class="text-base">When &lt; {$settings.failureCriteria}%
-            <input disabled={!$settings.enableAutoProgression} type="range" min="0" max="100" value={$settings.failureCriteria} on:input={(e) => updateFailureCriteria(+e.target.value)} step="1" class="range" />
-          </label>
+        <div class="mb-2">
+          <div class="inline-input__outer">
+            Drop below
+            <span class="inline-input__inner">
+              <input disabled={!$settings.enableAutoProgression} type="number" min="0" max="100" step="1" value={$settings.failureCriteria} on:input={(e) => updateFailureCriteria(+e.target.value)} style="width: 5ch">%
+            </span>
+          </div>
         </div>
-        <div class="flex flex-col gap-1">
-          <label class="text-base">Lose after: {$settings.failureComboRequired} in a row
-            <input disabled={!$settings.enableAutoProgression} type="range" min="1" max="9" bind:value={$settings.failureComboRequired} step="1" class="range" />
-          </label>
+        <div class="mb-2">
+          <div class="inline-input__outer">
+            Lose after
+            <span class="inline-input__inner">
+              <input disabled={!$settings.enableAutoProgression} type="number" min="1" max="9" step="1" value={$settings.failureComboRequired} on:input={(e) => updateCombo('failureComboRequired', +e.target.value)} style="width: 4ch">in a row
+            </span>
+          </div>
         </div>
         {/if}
-        <div class="my-1"></div>
+        <hr class="cv-divider">
         <KeybindingsPopup />
+        <div class="my-10"></div>
       </div>
-      <div class="my-10"></div>
+      <div class="offcanvas-side">
+        <label class="offcanvas-close" on:click={close} on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && close()} tabindex="0" title="Close settings">✕</label>
+      </div>
     </nav>
 
     <div class="relative w-screen h-full transition-transform duration-150">

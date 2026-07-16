@@ -121,6 +121,13 @@ html, body {
   touch-action: pan-x pan-y;
 }
 
+/* daisyUI paints base-100 via `:root,[data-theme]{background-color:
+   var(--root-bg, var(--color-base-100))}` — :root outranks an `html`
+   selector, so use its --root-bg hook to actually go transparent. */
+:root, [data-theme] {
+  --root-bg: transparent;
+}
+
 main[data-theme] {
   background-color: transparent;
 }
@@ -173,20 +180,30 @@ body {
   color: #171613;
 }
 
-.settings-heading {
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+
+/* Exact offcanvas anatomy (styles.css .offcanvas-body/-side/-close) */
+.offcanvas-body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1rem;
+  width: calc(100% - 2rem);
+  font-size: 0.85rem;
 }
 
-.offcanvas-close-btn {
-  background: none;
-  border: none;
-  color: inherit;
+.offcanvas-side {
+  width: 2rem;
+  position: relative;
+}
+
+.offcanvas-close {
   cursor: pointer;
-  font-size: 1.4rem;
+  font-size: 2rem;
   line-height: 1;
-  padding: 0.25rem 0.4rem;
+  padding: 0.5rem;
+  padding-bottom: 300%;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 @utility game-button {
@@ -222,82 +239,158 @@ body {
   --cv-input-bg: #FAFAFA;
 }
 
-/* Settings drawer controls → Cerevana's switch / select-item /
-   inline-input styling, applied to the existing daisyUI classes so
-   templates (and bindings) stay untouched. */
-.offcanvas-skin .select,
-.offcanvas-skin .input {
-  background-color: var(--cv-select-bg);
-  color: var(--cv-text);
-  border: 1px solid var(--cv-border);
-  border-radius: 2px;
-  box-shadow: none;
-  outline: none;
-  height: 2rem;
-  font-size: 0.85rem;
+/* ---- Extra tokens (verbatim from styles.css) ---- */
+[data-theme=cerevana-dark] {
+  --cv-panel-bg: #131312;
+  --cv-single-input-bg: #222a;
+  --cv-big-input-bg: #000a;
+  --cv-small-input-bg: #111a;
+  --cv-inline-input-bg: #282828;
+  --cv-accent-deep: #3c6c64;
+  --cv-accent-dim: #4f7d72;
+  --cv-button-fg: #dfe9ec;
+  --cv-danger: #7d2f38;
+  --cv-danger-glow: #8a4d55;
 }
 
-.offcanvas-skin .select:focus,
-.offcanvas-skin .input:focus {
-  border-color: #888;
+[data-theme=cerevana-light] {
+  --cv-panel-bg: #faf9f7;
+  --cv-single-input-bg: #eeea;
+  --cv-big-input-bg: #AAAa;
+  --cv-small-input-bg: #fffa;
+  --cv-inline-input-bg: #FAFAFA;
+  --cv-accent-deep: #3c6c64;
+  --cv-accent-dim: #5c8f81;
+  --cv-button-fg: #dfe9ec;
+  --cv-danger: #7d2f38;
+  --cv-danger-glow: #a8737a;
 }
 
-.offcanvas-skin .toggle {
-  appearance: none;
-  width: 1.7rem;
-  height: 1.7rem;
-  min-height: 0;
-  padding: 0;
-  border: 2px solid var(--cv-switch-border);
+/* ---- Cerevana buttons (styles.css `button` / `button.delete`) ---- */
+.cv-button {
+  padding: 0.25em 0.75em;
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--cv-button-fg);
+  border: 0;
   border-radius: 0;
-  background: var(--cv-switch-bg);
-  position: relative;
+  background-color: var(--cv-accent-deep);
   cursor: pointer;
+}
+
+.cv-button:not(:disabled):hover {
+  box-shadow: 0 2px 4px var(--cv-accent-dim);
+}
+
+.cv-button.delete {
+  background-color: var(--cv-danger);
+}
+
+.cv-button.delete:hover {
+  box-shadow: 0 2px 4px var(--cv-danger-glow);
+}
+
+/* ---- Rows: .ctrl__inner (styles.css:1210) ---- */
+.ctrl__inner {
+  align-items: center;
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* ---- Switch (styles.css:1220, exact) ---- */
+.switch {
+  align-items: center;
+  border: 2px solid var(--cv-switch-border);
+  background-color: var(--cv-switch-bg);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
   transition: all 1s ease-out;
+  height: 2rem;
+  width: 2rem;
+  flex: none;
 }
 
-.offcanvas-skin .toggle::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  width: 0.65rem;
-  height: 0.65rem;
+.switch::after {
   background-color: var(--cv-switch-unsel);
+  content: "";
+  height: 0.75rem;
+  position: absolute;
   transition: all 0.1s ease-out;
+  width: 0.75rem;
 }
 
-.offcanvas-skin .toggle:checked {
+input[type="checkbox"]:checked + .switch {
   border-color: var(--cv-switch-sel);
   box-shadow: 0 0 4px var(--cv-switch-sel);
+  transition-timing-function: ease-in;
 }
 
-.offcanvas-skin .toggle:checked::after {
+input[type="checkbox"]:checked + .switch::after {
   background-color: var(--cv-switch-sel);
 }
 
-.offcanvas-skin .range {
-  height: 1.1rem;
-  color: var(--cv-switch-sel);
-  accent-color: var(--cv-switch-sel);
+/* ---- Select (styles.css .select-item, exact) ---- */
+.select-item {
+  background-color: var(--cv-select-bg);
+  color: var(--cv-text);
+  border: 1px solid #444;
+  padding: 8px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  appearance: none;
+  font-family: inherit;
+  font-size: inherit;
 }
 
-/* Match N-Back's settings type size (styles.css uses --step--1 there) */
-.offcanvas-skin .text-base {
+.select-item:focus {
+  border-color: #888;
+  outline: none;
+}
+
+/* ---- Numeric rows (styles.css .inline-input__*, exact) ---- */
+.inline-input__outer {
+  align-items: center;
+  background-color: var(--cv-big-input-bg);
+  display: flex;
+  font-family: 'Oxanium', 'Space Grotesk', sans-serif;
+  gap: 1.25rem;
+  justify-content: space-between;
+  padding: 0.25rem 1rem;
+}
+
+.inline-input__inner {
+  background-color: var(--cv-small-input-bg);
+  font-family: 'Space Grotesk', sans-serif;
+  padding: 0.25rem;
+  white-space: nowrap;
+}
+
+.inline-input__inner > input {
+  text-align: right;
+  background-color: var(--cv-inline-input-bg);
+  border: none;
+  border-bottom: 1px solid #050505;
+  margin: 0 3px;
+  color: var(--cv-text);
   font-size: 0.85rem;
+  box-shadow: 0px 0px 2px #112a;
+  appearance: textfield;
 }
 
-.offcanvas-skin .btn {
-  background: var(--cv-label-bg);
-  color: var(--cv-label);
-  border: 1px solid var(--cv-switch-border);
-  border-radius: 0.25rem;
-  box-shadow: none;
+.inline-input__inner > input:focus {
+  outline: none;
 }
 
-/* Section headings inside the drawer — exact .panel-heading semantics
-   from ../../css/styles.css (bold uppercase, inherits the panel's mono
-   font and text color, no accent) */
+/* ---- Cerevana spacing utilities (styles.css .mb-*), scoped to the
+   panel so Tailwind's own mb-1/mb-2 elsewhere stay untouched ---- */
+.offcanvas-skin .mb-05 { margin-bottom: 1rem; }
+.offcanvas-skin .mb-1 { margin-bottom: 1.5rem; }
+.offcanvas-skin .mb-2 { margin-bottom: 2.5rem; }
+
+/* ---- Section headings (styles.css .panel-heading semantics) ---- */
 .panel-heading {
   font-weight: 700;
   text-transform: uppercase;
@@ -306,34 +399,142 @@ body {
   margin-top: 0.5rem;
 }
 
-/* Mode pill in the drawer: single-accent Cerevana styling instead of
-   upstream's per-mode rainbow */
-.cv-mode-pill {
-  background-color: var(--cv-select-bg);
-  border: 1px solid var(--cv-border);
-  color: var(--cv-label);
-  letter-spacing: 0.08em;
+/* ---- Divider (thin rule, like the game pages' hr separators) ---- */
+.cv-divider {
+  border: none;
+  border-top: 1px solid #333;
+  margin: 0.75rem 0;
+  width: 100%;
 }
 
-/* Popups (chart, info, keybindings, tally help): exact material of
-   N-Back's .graph-popup (flat --background-color, radius 8, soft shadow) */
-.modal-box {
-  background: #131312;
-  border: none;
+[data-theme=cerevana-light] .cv-divider {
+  border-top-color: #bbb;
+}
+
+/* ---- Tooltip "?" (styles.css .tooltip-container/.tooltip-text) ---- */
+.tooltip-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  width: 20px;
+  height: 20px;
+  padding-left: 2px;
+  background-color: #404E4D;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border-radius: 50%;
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
+  flex: none;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  background-color: var(--cv-panel-bg);
+  color: var(--cv-text);
+  text-align: left;
+  padding: 8px;
+  border-radius: 4px;
+  position: absolute;
+  z-index: 100;
+  bottom: 120%;
+  left: 0;
+  white-space: nowrap;
+  font-size: 0.7rem;
+  font-weight: normal;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.tooltip-container:hover .tooltip-text,
+.tooltip-container:focus-within .tooltip-text {
+  visibility: visible;
+}
+
+/* ---- Popup panel (exact styles.css .graph-popup) ---- */
+.cv-popup {
+  position: fixed;
+  z-index: 1000;
+  padding: 20px;
+  background-color: var(--cv-panel-bg);
+  color: var(--cv-text);
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  top: 10%;
+  left: 10%;
+  width: 80vw;
+  min-height: 75vh;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
 }
 
-[data-theme=cerevana-light] .modal-box {
-  background: #faf9f7;
+.cv-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
 }
 
-.modal-box .tab {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+.cv-popup-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+/* tab row (styles.css .graph-controls / .graph-select) */
+.graph-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.graph-select {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.graph-select.selected {
+  background: #1c3c30;
+}
+
+.graph-select.selected:hover {
+  background: #316154;
+}
+
+/* footer (styles.css .graph-end-controls / #graph-close-popup) */
+.graph-end-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.cv-popup-close {
+  font-family: 'Oxanium', 'Space Grotesk', sans-serif;
+  font-size: 1.1rem;
+  background-color: #633;
+  color: white;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  padding: 0.25em 0.75em;
+  position: relative;
+  max-width: 300px;
+  min-width: 150px;
+  align-self: flex-end;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-left: auto;
+}
+
+.cv-popup-close:hover {
+  box-shadow: 0 3px 5px 0 #7448;
 }
 
 .game-button-lg {
@@ -348,39 +549,35 @@ body {
   @apply absolute left-0 top-0 w-full h-full;
 }
 
-/* Game-zone buttons (stimulus keys, Play/Stop, tally number keys):
-   N-Back's .nback__match / .nback__start language instead of filled
-   daisyUI accent blocks. Must come AFTER the .game-button-lg definition
-   above so it wins the cascade; feedback flash classes below still win
-   (higher specificity). */
+/* Game-zone stimulus keys: EXACT styles.css .nback__match recipe.
+   Must come AFTER the .game-button-lg definition above so it wins the
+   cascade; feedback flash classes below still win (higher specificity). */
 .game-button,
 .game-button-lg {
-  background-color: var(--cv-label-bg);
+  background-color: var(--cv-single-input-bg);
   color: var(--cv-text);
   border: 1px solid var(--cv-switch-border);
   border-radius: 0.25rem;
-  text-transform: uppercase;
-  font-family: 'Oxanium', 'Space Grotesk', sans-serif;
-  letter-spacing: 0.05em;
   box-shadow: none;
-  font-size: 1.6rem;
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: normal;
   padding: 0.75rem 1.5rem;
+  width: auto;
+  max-width: none;
+  height: auto;
+  min-height: 0;
+  flex: none;
 }
 
-/* Large stimulus keys: smaller than upstream's full-height text-8xl slabs */
-.game-button-lg {
-  font-size: 2.75rem;
-  padding: 1rem;
-  max-width: 11rem;
-  max-height: 12rem;
-  margin-inline: auto;
-}
-
-.game-button:hover,
-.game-button-lg:hover {
-  background-color: var(--cv-label-bg);
-  color: var(--cv-label);
-  border-color: var(--cv-label);
+.game-button:not(:disabled):hover,
+.game-button-lg:not(:disabled):hover {
+  background-color: var(--cv-single-input-bg);
+  color: var(--cv-text);
+  border-color: var(--cv-switch-border);
+  box-shadow: 0 2px 4px var(--cv-accent-dim);
 }
 
 .game-button:disabled,
@@ -390,9 +587,34 @@ body {
   opacity: 0.35;
 }
 
-/* Feedback flashes use Cerevana's verdict pair (--correct-color / --wrong-color) */
+/* Play/Stop: EXACT styles.css .nback__start recipe */
+.qb-start {
+  background-color: var(--cv-label-bg);
+  color: var(--cv-label);
+  border: 1px solid var(--cv-switch-border);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 0.75rem 2.5rem;
+  box-shadow: none;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.qb-start:not(:disabled):hover {
+  box-shadow: 0 2px 4px var(--cv-accent-dim);
+}
+
+.qb-number-key {
+  min-width: 4.5rem;
+}
+
+/* Feedback flashes: EXACT nback verdict colors (.nback__match--right/
+   --wrong per theme; late-failure keeps its amber, no nback equivalent) */
 button.light-success, button.light-success:hover {
-  background-color: #a8d5a4;
+  background-color: #307e2c;
 }
 
 button.dark-success {
@@ -400,7 +622,8 @@ button.dark-success {
 }
 
 button.light-failure, button.light-failure:hover {
-  background-color: #dba8b8;
+  background-color: #582234;
+  color: #faf9f7;
 }
 
 button.dark-failure {
@@ -408,7 +631,7 @@ button.dark-failure {
 }
 
 button.light-late-failure, button.light-late-failure:hover {
-  background-color: #ecc98e;
+  background-color: #b07d2e;
 }
 
 button.dark-late-failure {

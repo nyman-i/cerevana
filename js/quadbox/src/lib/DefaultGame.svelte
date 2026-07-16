@@ -234,13 +234,13 @@ onDestroy(async () => {
 <div class="stretch grid grid-rows-[1fr_7fr_2fr] md:grid-rows-[1fr_8fr_2fr] gap-1">
   <div class="w-full h-full flex items-center justify-between row-start-1 p-8">
     <div class="text-4xl ml-2 select-none opacity-30" >{trialDisplay}</div>
-    <button class="game-button text-4xl p-8 md:p-10"
+    <button class="qb-start"
       on:click={toggleGame}
       on:keydown={suppressKey}
       on:keypress={suppressKey}
       on:keyup={suppressKey}
       tabindex="-1"
-    >{#if $isPlaying} Stop {:else} Play {/if}</button>
+    >{#if $isPlaying} STOP {:else} START {/if}</button>
   </div>
   <div class="grid grid-cols-[repeat(auto-fit,minmax(0,1fr))] grid-rows-1 max-w-full gap-1 row-start-3 md:mt-6">
     <SmallKey field="position" display="Position" isPlaying={$isPlaying} {checkForMatch}></SmallKey>
@@ -251,31 +251,29 @@ onDestroy(async () => {
   </div>
 </div>
 {:else}
-<div class="stretch grid grid-cols-[1fr_3fr_3fr_1fr] grid-rows-[1fr_6fr_1fr] px-20">
-  <div class="w-full h-full flex items-center justify-between col-start-1 col-span-4 px-2">
-    <div></div>
-    <button class="game-button text-5xl px-12 py-10 max-w-[90%] mr-4"
+<!-- N-Back-style layout: match buttons in a centered row, START beneath -->
+<div class="stretch grid grid-rows-[8fr_2fr]">
+  <div class="row-start-2 flex flex-col items-center justify-end gap-3 pb-5">
+    <div class="flex gap-4 flex-wrap justify-center">
+      <LargeKey field="position" display="Position" isPlaying={$isPlaying} {checkForMatch}></LargeKey>
+      {#if !gameSettings.enableImage}
+      <LargeKey field="color" display="Color" isPlaying={$isPlaying} {checkForMatch}></LargeKey>
+      {/if}
+      {#if gameSettings.enableImage}
+      <LargeKey field="image" display="Image" isPlaying={$isPlaying} {checkForMatch}></LargeKey>
+      {:else}
+      <LargeKey field="shape" display="Shape" isPlaying={$isPlaying} {checkForMatch}></LargeKey>
+      {/if}
+      <LargeKey field="audio" display="Audio" isPlaying={$isPlaying} {checkForMatch}></LargeKey>
+    </div>
+    <button class="qb-start"
       on:click={toggleGame}
       on:keydown={suppressKey}
       on:keypress={suppressKey}
       on:keyup={suppressKey}
       tabindex="-1"
-    >{#if $isPlaying} Stop {:else} Play {/if}</button>
+    >{#if $isPlaying} STOP {:else} START {/if}</button>
   </div>
-  <div class="game-button-lg-group row-start-2 col-start-1 pr-8">
-    {#if !gameSettings.enableImage}
-    <LargeKey field="color" display="Color" isPlaying={$isPlaying} {checkForMatch}></LargeKey>
-    {/if}
-    <LargeKey field="position" display="Position" isPlaying={$isPlaying} {checkForMatch}></LargeKey>
-  </div>
-  <div class="game-button-lg-group row-start-2 col-start-4 pl-8">
-    {#if gameSettings.enableImage}
-    <LargeKey field="image" display="Image" isPlaying={$isPlaying} {checkForMatch}></LargeKey>
-    {:else}
-    <LargeKey field="shape" display="Shape" isPlaying={$isPlaying} {checkForMatch}></LargeKey>
-    {/if}
-    <LargeKey field="audio" display="Audio" isPlaying={$isPlaying} {checkForMatch}></LargeKey>
-  </div>
-  <div class="w-full h-full flex items-center justify-center text-6xl ml-6 row-start-3 col-start-4 select-none opacity-30">{trialDisplay}</div>
+  <div class="absolute bottom-3 right-16 text-4xl select-none opacity-30">{trialDisplay}</div>
 </div>
 {/if}

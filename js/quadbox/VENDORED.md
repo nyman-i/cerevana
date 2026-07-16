@@ -40,11 +40,28 @@ untouched. Keep this list current with any new change.
 - `src/lib/Drawer.svelte` — top bar replaced by the floating `.hud-strip`
   (panel-toggle/back-link/Info/Chart trigger buttons removed — the host
   page's corner tabs drive panels via postMessage); drawer opens on
-  `panelRequest` 'settings'; drawer restyled `.offcanvas-skin` with a ✕
-  close; ThemeSwapper removed (theme follows the Cerevana host);
-  game-area background made transparent.
-- `src/lib/ChartPopup.svelte`, `src/lib/InfoPopup.svelte` — trigger buttons
-  hidden; open/close on `panelRequest` 'chart'/'info'.
+  `panelRequest` 'settings'; drawer rebuilt as an exact Cerevana offcanvas
+  (`.offcanvas-body`/`.offcanvas-side` ✕, panel-heading sections Mode/
+  Session/Stimuli/Display/Progression, inline-input numeric rows replacing
+  ALL sliders, switch toggles); ThemeSwapper removed (theme follows the
+  Cerevana host); game-area background made transparent.
+- `src/lib/GameSettings.svelte` — full row rewrite to Cerevana controls
+  (switch/select-item/inline-input/tooltip "?"), sliders and the
+  variable-N gear popup REMOVED (Variable N-Back is an inline switch);
+  all bindings/handlers unchanged.
+- `src/lib/ChartPopup.svelte`, `src/lib/InfoPopup.svelte`,
+  `src/lib/KeybindingsPopup.svelte` — trigger buttons hidden/restyled;
+  open/close on `panelRequest`; daisyUI modals replaced with the
+  `.cv-popup` panel (exact nback `.graph-popup` material) with
+  `.graph-select` tab buttons and the `#graph-close-popup`-style Close.
+- `src/lib/LargeKey.svelte`/`SmallKey.svelte`/`NumberKey.svelte` — compact
+  N-Back-style match buttons ("Position (A)"); giant hotkey letters and
+  per-key score readouts REMOVED (scores live in the HUD and history).
+- `src/lib/DefaultGame.svelte`/`TallyGame.svelte` — keys in a bottom
+  centered row with a START/STOP button (`.qb-start`, exact
+  `.nback__start`); trial counter as a small bottom-right ghost.
+- `src/lib/RecentGames.svelte` — score/status chips on Cerevana's verdict
+  palette instead of traffic-light colors.
 - `src/lib/ProgressChart.svelte` — Chart.js default font → JetBrains Mono.
 - `src/main.js` — one-time read of host localStorage `sllgms-v3-app-state`
   to follow Cerevana's dark/light mode at load (read-only); postMessage
@@ -68,10 +85,12 @@ untouched. Keep this list current with any new change.
   max corner magnification ~1.2×) so the rotating cube stays clear of
   the host nav/HUD/keys at every rotation phase. Purely visual — trial
   logic untouched.
-- `src/app.css` (Cerevana control language section) — `.game-button`
-  reskinned to N-Back's button style (translucent bg, thin border,
-  Oxanium uppercase); drawer `.toggle`/`.select`/`.input`/`.btn`
-  restyled as Cerevana's `.switch`/`.select-item`/inline-input;
-  `.panel-heading` section titles (added in Drawer.svelte: Mode /
-  Session / Display / Progression); modals (`.modal-box`, tabs)
-  restyled as Cerevana panels.
+- `src/app.css` (Cerevana control language section) — verbatim ports of
+  styles.css recipes: `.nback__match` (game buttons), `.nback__start`
+  (`.qb-start`), `.switch`, `.select-item`, `.inline-input__*`,
+  `.ctrl__inner`, `.panel-heading`, `.tooltip-container/-text`,
+  `.graph-popup` (`.cv-popup`), `.graph-controls/.graph-select`,
+  `#graph-close-popup` (`.cv-popup-close`), Cerevana `button`/`.delete`
+  (`.cv-button`), `.mb-*` spacing scoped to the panel; daisyUI's
+  `:root` base-100 paint disabled via its `--root-bg` hook so the page
+  shows the host's black background.

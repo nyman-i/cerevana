@@ -1,5 +1,4 @@
 <script>
-  import { Keyboard } from "@lucide/svelte"
   import Keybindings from "./Keybindings.svelte"
   let show = false
   const openModal = async () => {
@@ -20,22 +19,27 @@
   }
 </script>
 
-<button class="btn btn-primary flex items-center justify-center" on:click={openModal}>
+<button class="cv-button" on:click={openModal}>
   Keybindings
-  <Keyboard class="btn btn-square btn-ghost h-8 lg:h-6" />
 </button>
 
 
 {#if show}
-  <div class="modal modal-open" on:click={handleBackdropClick} on:keydown={handleKeydown} tabindex="0">
-    <div class="modal-box">
+  <div class="cv-popup-backdrop" on:click={closeModal}></div>
+  <div class="cv-popup" style="width: 40vw; min-height: 0; left: 30%; top: 20%;" on:keydown={handleKeydown} tabindex="0">
+    <div class="panel-heading">Keybindings</div>
+    <div class="cv-popup-body">
       <Keybindings />
-      <div class="prose grid grid-cols-2 gap-2">
-        <div><span class="text-black dark:text-white">Space:</span> Start Game</div>
-        <div><span class="text-black dark:text-white">Esc:</span> End Game</div>
-        <div><span class="text-black dark:text-white">PgDown:</span> Next Mode</div>
-        <div><span class="text-black dark:text-white">PgUp:</span> Previous Mode</div>
+      <div class="grid grid-cols-2 gap-2 mt-4">
+        <div><strong>Space:</strong> Start Game</div>
+        <div><strong>Esc:</strong> End Game</div>
+        <div><strong>PgDown:</strong> Next Mode</div>
+        <div><strong>PgUp:</strong> Previous Mode</div>
       </div>
+    </div>
+    <div class="graph-end-controls">
+      <div></div>
+      <button class="cv-popup-close" on:click={closeModal}>Close</button>
     </div>
   </div>
 {/if}

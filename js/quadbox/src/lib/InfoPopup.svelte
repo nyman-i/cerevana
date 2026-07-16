@@ -54,24 +54,14 @@
   <CircleHelp class="btn btn-square btn-ghost h-8 lg:h-6" />
 </button>
 {#if show}
-  <div class="modal modal-open whitespace-normal" on:click={handleBackdropClick} on:keydown={handleKeydown} tabindex="0">
-    <div class="modal-box help-box w-[90%] max-w-3xl">
-      <div role="tablist" class="tabs tabs-lift relative">
-        <a role="tab"
-          class="tab"
-          class:tab-active={tab === 'how-to-play'}
-          on:click={() => tab = 'how-to-play'}>
-          How to Play
-        </a>
-        <a role="tab"
-          class="tab"
-          class:tab-active={tab === 'misc'}
-          on:click={() => tab = 'misc'}>
-          Reset App
-        </a>
-      </div>
+  <div class="cv-popup-backdrop" on:click={closeModal}></div>
+  <div class="cv-popup whitespace-normal" on:keydown={handleKeydown} tabindex="0">
+    <div class="graph-controls">
+      <button class="cv-button graph-select" class:selected={tab === 'how-to-play'} on:click={() => tab = 'how-to-play'}>How to Play</button>
+      <button class="cv-button graph-select" class:selected={tab === 'misc'} on:click={() => tab = 'misc'}>Reset</button>
+    </div>
       {#if tab === 'how-to-play'}
-      <div class="prose max-w-none text-gray-800 dark:text-gray-200 text-sm sm:text-base md:text-lg overflow-y-auto h-[70svh] mt-2">
+      <div class="cv-popup-body">
         <p>
           3D Quad N-Back is a working memory game. A cube will repeatedly flash in a 3D grid, and you must remember cues that appeared
           <strong>n steps ago</strong> across four different modalities:
@@ -87,10 +77,10 @@
           <strong>n steps back</strong> in the sequence:
         </p>
         <ul class="list-disc list-inside my-4">
-          <li><kbd class="px-2 py-1 kbd">A</kbd> – position match</li>
-          <li><kbd class="px-2 py-1 kbd">F</kbd> – color match</li>
-          <li><kbd class="px-2 py-1 kbd">J</kbd> – shape match</li>
-          <li><kbd class="px-2 py-1 kbd">L</kbd> – audio match</li>
+          <li><strong>A</strong> &ndash; position match</li>
+          <li><strong>F</strong> &ndash; color match</li>
+          <li><strong>J</strong> &ndash; shape match</li>
+          <li><strong>L</strong> &ndash; audio match</li>
         </ul>
         <p>
           You can press multiple keys if more than one aspect matches. The game continues with a new cube every few seconds.
@@ -100,37 +90,33 @@
         </p>
       </div>
       {:else if tab === 'misc'}
-      <div class="prose text-gray-800 dark:text-gray-200 flex flex-col gap-2 overflow-y-auto h-[70svh] w-full mt-2">
-        <div class="mt-6">
-          <p class="mb-2">Reset all game settings to their default values.</p>
-          <p class="text-sm">
-            This will not affect your game history or performance data.
-          </p>
-          <button class="btn btn-info mt-4 text-xl" on:click={resetSettings}>
+      <div class="cv-popup-body">
+        <div class="mt-4">
+          <div class="panel-heading">Reset Settings</div>
+          <p class="mt-2">Reset all game settings to their default values.
+          This will not affect your game history or performance data.</p>
+          <button class="cv-button mt-4" on:click={resetSettings}>
             Reset Settings
           </button>
         </div>
-        <div class="divider" />
+        <hr class="cv-divider">
         <div>
-          <p class="mb-2 text-red-600 dark:text-rose-500 font-semibold">Danger Zone</p>
-          <p class="text-sm">
-            This will erase all app data including settings and game history. This action is irreversible.
+          <div class="panel-heading">Danger Zone</div>
+          <p class="mt-2">
+            This will erase all Quad Box data including settings and game history. This action is irreversible.
           </p>
 
           {#if !confirmResetAll}
-            <button class="btn btn-error mt-4 text-xl dark:bg-rose-500" on:click={() => confirmResetAll = true}>
-              Reset Entire App
+            <button class="cv-button delete mt-4" on:click={() => confirmResetAll = true}>
+              Reset Quad Box
             </button>
           {:else}
-            <div class="mt-4 space-y-2">
-              <p class="text-sm text-red-600 dark:text-rose-500 font-medium">Are you absolutely sure?</p>
-              <button class="btn btn-error dark:bg-rose-500 w-full" on:click={() => resetAll()}>
-                Yes, erase everything
-                {#if isDeleting}
-                  <span class="loading loading-spinner"></span>
-                {/if}
+            <div class="mt-4 flex flex-col gap-2 items-start">
+              <p>Are you absolutely sure?</p>
+              <button class="cv-button delete" on:click={() => resetAll()}>
+                Yes, erase everything{#if isDeleting}&hellip;{/if}
               </button>
-              <button class="btn w-full" on:click={() => confirmResetAll = false}>
+              <button class="cv-button" on:click={() => confirmResetAll = false}>
                 Cancel
               </button>
             </div>
@@ -138,11 +124,12 @@
         </div>
       </div>
       {/if}
-      <div class="modal-action flex flex-row-reverse items-center justify-between mt-2">
-        <button class="btn" on:click={closeModal}>Close</button>
-        <a class="link" href="https://ko-fi.com/soasoa" target="_blank">Donate☕</a>
-        <a class="link" href="https://github.com/soamsy/quad-box" target="_blank">Github</a>
+      <div class="graph-end-controls">
+        <div class="flex gap-4">
+          <a class="underline" href="https://github.com/soamsy/quad-box" target="_blank" rel="noopener">Quad Box by soamsy</a>
+          <a class="underline" href="https://ko-fi.com/soasoa" target="_blank" rel="noopener">Donate☕</a>
+        </div>
+        <button class="cv-popup-close" on:click={closeModal}>Close</button>
       </div>
-    </div>
   </div>
 {/if}
