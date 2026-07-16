@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Cerevana — Quad Box</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#7cb6a8" />
+		<link rel="icon" type="image/png" href="favicon.png?v=4">
+		<link rel="stylesheet" href="fonts/cool/coolicons.css">
+		<link rel="stylesheet" href="css/styles.css">
+	</head>
+	<body>
+
+		<div class="main-view">
+
+			<label class="open metal-gear open--top-left" data-qb-panel="settings" tabindex="0"><span class="sidebar-button settings-label"></span></label>
+			<label class="open metal-gear open--bottom-left" data-qb-panel="info" tabindex="0"><span class="sidebar-button credits-label"></span></label>
+			<label class="open metal-gear open--bottom-right" data-qb-panel="chart" tabindex="0"><span class="sidebar-button graph-label"></span></label>
+
+			<nav class="game-menu metal-gear">
+				<a class="game-menu__item" href="index.html">MENU</a>
+				<a class="game-menu__item" href="rrt.html">RRT</a>
+				<a class="game-menu__item" href="nback.html">N-BACK</a>
+				<a class="game-menu__item selected" href="quadbox.html">QUAD BOX</a>
+			</nav>
+
+			<div class="background-image"></div>
+
+			<div class="overlay"></div>
+
+			<iframe id="quadbox-frame" src="js/quadbox/dist/index.html" title="Quad Box"></iframe>
+
+		</div>
+
+		<div id="error-popup" class="error-popup">
+			<div class="error-popup-content">
+				<p id="error-message"></p>
+				<button id="error-close-popup" class="error-close-popup">Close</button>
+				<textarea id="error-stack" readonly></textarea>
+			</div>
+		</div>
+
+		<script src="js/shared/constants.js"></script>
+		<script src="js/shared/backwards-compatibility.js"></script>
+		<script src="js/shared/db.js"></script>
+		<script src="js/shared/error-handling.js"></script>
+		<script src="js/shared/background.js"></script>
+		<script>
+			appStateStartup();
+			document.body.classList.toggle('light-mode', appState.darkMode === false);
+			applySavedBackground();
+
+			// Corner tabs drive the game's panels inside the iframe.
+			const quadboxFrame = document.getElementById('quadbox-frame');
+			document.querySelectorAll('[data-qb-panel]').forEach((el) => {
+				const send = () => quadboxFrame.contentWindow.postMessage(
+					{ cerevana: 'toggle', panel: el.dataset.qbPanel }, '*');
+				el.addEventListener('click', send);
+				el.addEventListener('keydown', (e) => {
+					if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); send(); }
+				});
+			});
+		</script>
+	</body>
+</html>

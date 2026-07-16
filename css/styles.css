@@ -422,6 +422,19 @@ button.delete:hover {
     filter: brightness(var(--background-brightness));
 }
 
+/* Quad Box host page: the game fills the frame; its own body is
+   transparent so .background-image/.overlay show through. Corner tabs
+   and .game-menu (z-index 50) float above. */
+#quadbox-frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    z-index: 0;
+}
+
 .metal-gear {
     font-family: "Oxanium", sans-serif;
     letter-spacing: 0.25em;
