@@ -48,8 +48,8 @@
 </div>
 {/if}
 {#if grid === 'static2D'}
-<div class="flex absolute items-center justify-center w-full h-full select-none overflow-hidden scale-[0.82]">
-  <div class="absolute w-[81.3svmin] h-[81.3svmin] mb-10">
+<div class="flex absolute items-center justify-center w-full h-full select-none overflow-hidden">
+  <div class="absolute w-[55.2svmin] h-[55.2svmin] mb-10">
     {#if trial.position0}
       {#each range(gameDisplayInfo.getMaxWidth()) as i (i)}
         {#if trial[`position${i}`]}
@@ -79,8 +79,8 @@
   </div>
 </div>
 {:else}
-<div class="flex absolute items-center justify-center w-full h-full select-none perspective-[60svmin] overflow-hidden scale-[0.82]">
-  <div class="scene absolute w-[60.3svmin] h-[60.3svmin] transform-3d -translate-z-[10svmin]"
+<div class="flex absolute items-center justify-center w-full h-full select-none perspective-[60svmin] overflow-hidden">
+  <div class="scene absolute w-[41.1svmin] h-[41.1svmin] transform-3d -translate-z-[10svmin]"
   class:mb-10={$mobile}
   style="
   animation-duration: {rotationTime}s;
@@ -111,20 +111,20 @@
       {svgId}
       {shapeOuterColor} />
     {/if}
-    <Frame class="-translate-z-[30.15svmin]" />
-    <Frame class="-translate-z-[10.05svmin]" />
-    <Frame class="translate-z-[10.05svmin]" />
-    <Frame class="translate-z-[30.15svmin]" />
+    <Frame class="-translate-z-[20.55svmin]" />
+    <Frame class="-translate-z-[6.85svmin]" />
+    <Frame class="translate-z-[6.85svmin]" />
+    <Frame class="translate-z-[20.55svmin]" />
 
-    <Frame class="-translate-y-[30.15svmin] rotate-x-90" />
-    <Frame class="-translate-y-[10.05svmin] rotate-x-90" />
-    <Frame class="translate-y-[10.05svmin] rotate-x-90" />
-    <Frame class="translate-y-[30.15svmin] rotate-x-90" />
+    <Frame class="-translate-y-[20.55svmin] rotate-x-90" />
+    <Frame class="-translate-y-[6.85svmin] rotate-x-90" />
+    <Frame class="translate-y-[6.85svmin] rotate-x-90" />
+    <Frame class="translate-y-[20.55svmin] rotate-x-90" />
 
-    <Frame class="-translate-x-[30.15svmin] rotate-y-90" />
-    <Frame class="-translate-x-[10.05svmin] rotate-y-90" />
-    <Frame class="translate-x-[10.05svmin] rotate-y-90" />
-    <Frame class="translate-x-[30.15svmin] rotate-y-90" />
+    <Frame class="-translate-x-[20.55svmin] rotate-y-90" />
+    <Frame class="-translate-x-[6.85svmin] rotate-y-90" />
+    <Frame class="translate-x-[6.85svmin] rotate-y-90" />
+    <Frame class="translate-x-[20.55svmin] rotate-y-90" />
   </div>
 </div>
 {/if}

@@ -61,6 +61,13 @@ untouched. Keep this list current with any new change.
   single-accent `.cv-mode-pill` (logic/cycling untouched).
 - `public/frame-dark.svg` / `frame-light.svg` — lattice lines tinted to
   Cerevana's sage accent (#7cb6a8 / #2f6b5c, slight opacity).
+- `src/lib/Grid.svelte` / `Cell.svelte` — cube geometry scaled ~0.68×
+  (scene 60.3→41.1svmin, cells 20.1→13.7, frame planes 30.15/10.05→
+  20.55/6.85, 2D grid 81.3→55.2, cells 27.1→18.4; ratios preserved) and
+  camera moved back (perspective 60svmin, scene -translate-z 10svmin →
+  max corner magnification ~1.2×) so the rotating cube stays clear of
+  the host nav/HUD/keys at every rotation phase. Purely visual — trial
+  logic untouched.
 - `src/app.css` (Cerevana control language section) — `.game-button`
   reskinned to N-Back's button style (translucent bg, thin border,
   Oxanium uppercase); drawer `.toggle`/`.select`/`.input`/`.btn`
