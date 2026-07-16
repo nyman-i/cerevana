@@ -222,7 +222,7 @@ class ProgressGraph {
                         display: subtitle ? true : false,
                         text: subtitle,
                         align: 'end',
-                        color: '#EEEEEE',
+                        color: getComputedStyle(document.body).getPropertyValue('--text-color').trim(),
                     }
                 },
             },

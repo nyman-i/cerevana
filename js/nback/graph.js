@@ -1,6 +1,29 @@
 // N-back graph popup: same .graph-popup shell as RRT's (js/rrt/graph.js),
 // tabs = Score and Level (per session) + Time Spent (per day)
 
+// Chart colours read the live theme tokens so both modes stay legible.
+const nbackToken = name => getComputedStyle(document.body).getPropertyValue(name).trim();
+
+// Per-mode series: muted hues evenly spaced from the sage accent hue, with L*
+// cycling 42/58/50 so neighbouring hues never share a lightness. Every series
+// clears 3:1 on BOTH themes; the legend labels each one, so colour is never
+// the only channel (13 categories cannot all separate under deuteranopia).
+const NBACK_MODE_COLORS = {
+    dual: '#00756f',
+    position: '#009db9',
+    sound: '#0083ba',
+    'position-color': '#0566ac',
+    'color-sound': '#8f81ce',
+    triple: '#a35f9f',
+    'dual-combo': '#a24169',
+    'tri-combo': '#d36d6e',
+    'quad-combo': '#af633d',
+    'tri-combo-color': '#815d16',
+    arithmetic: '#8d903f',
+    'dual-arithmetic': '#50833f',
+    'triple-arithmetic': '#00734c',
+};
+
 let nbackChart = null;
 let nbackTimeChart = null;
 
@@ -10,8 +33,7 @@ function nbackFindDay(timestamp) {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
-async function renderNBackTimeChart() {
-    const sessions = await getAllNBackSessions();
+async function renderNBackTimeChart(sessions) {
     if (!sessions || sessions.length === 0) return;
 
     const byDay = {};
@@ -28,7 +50,7 @@ async function renderNBackTimeChart() {
     const ctx = document.getElementById('nback-graph-canvas-time').getContext('2d');
     nbackTimeChart = new Chart(ctx, {
         type: 'bar',
-        data: { datasets: [{ label: 'Time Spent (Minutes)', data, backgroundColor: '#4cf' }] },
+        data: { datasets: [{ label: 'Time Spent (Minutes)', data, backgroundColor: NBACK_MODE_COLORS.dual }] },
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -39,22 +61,19 @@ async function renderNBackTimeChart() {
             },
             plugins: {
                 tooltip: { callbacks: { label: item => `${item.dataset.label}: ${item.raw.y.toFixed(2)}` } },
-                subtitle: { display: true, text: subtitle, align: 'end', color: '#EEEEEE' },
+                subtitle: { display: true, text: subtitle, align: 'end', color: nbackToken('--text-color') },
             },
         },
     });
 }
 
-async function renderNBackChart() {
-    const sessions = await getAllNBackSessions();
+async function renderNBackChart(sessions) {
     if (!sessions || sessions.length === 0) {
         return;
     }
     sessions.sort((a, b) => a.timestamp - b.timestamp);
 
-    const modeColors = { dual: '#4cf', position: '#fc4', sound: '#f7a', 'position-color': '#8e6', 'color-sound': '#e94', triple: '#b8f',
-        'dual-combo': '#6de', 'tri-combo': '#de6', 'quad-combo': '#e6d', 'tri-combo-color': '#9e9',
-        arithmetic: '#f96', 'dual-arithmetic': '#6f9', 'triple-arithmetic': '#96f' };
+    const modeColors = NBACK_MODE_COLORS;
     const datasets = [];
     for (const modeName in modeColors) {
         const rows = sessions.filter(s => s.modeName === modeName);
@@ -71,8 +90,10 @@ async function renderNBackChart() {
         datasets.push({
             label: modeName + ' %',
             data: rows.map(s => ({ x: s.timestamp, y: s.score })),
-            borderColor: modeColors[modeName] + '7',
-            backgroundColor: modeColors[modeName] + '7',
+            // '77' (not '7'): these colours are full #rrggbb, so the alpha
+            // suffix must be two digits to stay valid CSS hex
+            borderColor: modeColors[modeName] + '77',
+            backgroundColor: modeColors[modeName] + '77',
             borderDash: [4, 4],
             pointRadius: 2,
             fill: false,
@@ -145,9 +166,10 @@ graphTimeSelect.addEventListener('click', () => {
 
 graphButton.addEventListener('click', async () => {
     graphPopup.classList.add('visible');
-    document.getElementById('graph-empty').hidden = (await getAllNBackSessions()).length > 0;
-    renderNBackChart();
-    renderNBackTimeChart();
+    const sessions = await getAllNBackSessions();
+    document.getElementById('graph-empty').hidden = sessions.length > 0;
+    renderNBackChart(sessions);
+    renderNBackTimeChart(sessions);
 });
 
 graphClose.addEventListener('click', () => {

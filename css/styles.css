@@ -35,7 +35,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #eddb7e;
+    background-color: var(--bracket-color);
 }
 
 *,
@@ -46,7 +46,7 @@
 }
 
 :is(button, a, input, select, textarea, summary, label, [tabindex]):focus-visible {
-    outline: 2px solid #2bdef9;
+    outline: 2px solid var(--accent-color);
     outline-offset: 2px;
 }
 
@@ -69,18 +69,25 @@
         -0.04em 0.04em 0.06em #11111175,
         0.04em -0.04em 0.06em #11111175,
         0.04em 0.04em 0.06em #11111175;
+    /* Single accent: a muted sage-teal built out from the app's own button
+       teal #3c6c64 (hue 165). --accent-color is the only "look here" colour —
+       spend it on selected states, active nav, brackets, primary progress. */
+    --accent-color: #7cb6a8;
+    --accent-dim-color: #4f7d72;
+    --accent-deep-color: #3c6c64;
+
     --text-color: #fffffd;
-    --background-color: #111;
+    --background-color: #131312;
     --preamble-color: #fffa;
     --big-input-bg-color: #000a;
-    --bracket-color: #eddb7e;
-    --bracket-box-shadow: 0 0 0.33rem #9e8847;
+    --bracket-color: #7cb6a8;
+    --bracket-box-shadow: 0;
     --display-label-color: #fffffd;
     --offcanvas-fg: #fffffd;
-    --offcanvas-bg: radial-gradient(circle at top center, #000, #100);
+    --offcanvas-bg: radial-gradient(circle at top center, #0c0c0b, #131312);
     --small-input-bg-color: #111a;
     --profile-bg: #222;
-    --profile-arrow-bg: #111;
+    --profile-arrow-bg: #131312;
     --profile-border: 1px solid #333;
     --profile-select-bg: #222;
     --profile-select-border: 1px solid #333;
@@ -88,40 +95,60 @@
     --single-input-bg: #222a;
     --spinner-bg: #111a;
     --folder-bg: #222;
-    --profile-select-highlight: #248;
+    --profile-select-highlight: #2f5a52;
     --profile-select-hover: #444;
-    --profile-select-highlight-hover: #36A;
+    --profile-select-highlight-hover: #3f7268;
     --profile-select-delete: #523;
     --profile-select-delete-hover: #956;
     --switch-background-color: #333;
     --switch-unselected-color: #444;
-    --switch-selected-color: #CFF;
+    --switch-selected-color: #7cb6a8;
     --switch-border-color: #666;
-    --switch-border-checked-color: #cff9;
+    --switch-border-checked-color: #7cb6a8;
     --linear-settings-background-color: #222;
-    --select-background-color: #191919;
-    --correct-color: #192;
-    --wrong-color: #912;
+    --select-background-color: #191918;
+    /* Verdict pair: semantic green/red, desaturated toward the palette. Each
+       is BOTH a button background and answer text, so lightness is a
+       compromise (see UI_DESIGN §2.5). Tuned for deuteranopia separation. */
+    --correct-color: #4c8434;
+    --wrong-color: #8a5264;
     --background-image-bg-color: #000c;
     --background-brightness: 0.50;
     --label-background-color: #0009;
-    --label-color: #abf4ff;
+    --label-color: #7cb6a8;
     --overlay-background-color: #000;
-    --three-d-background: radial-gradient(circle at center, #555555E0, #222222E0);
+    --three-d-background: radial-gradient(circle at center, #54534fE0, #222220E0);
     --inline-input-bg-color: #282828;
+
+    /* Tokenised strays (were hardcoded outside this block) */
+    --link-color: #7cb6a8;
+    --button-fg-color: #dfe9ec;
+    --button-disabled-bg-color: #2b3a37;
+    --danger-color: #7d2f38;
+    --danger-glow-color: #8a4d55;
+    --frame-glow: 0 0 12px #2c4a44;
+    --progress-halfway-color: #5f9b8a;
+    --nback-missed-color: #4a6a7a;
 }
 
 .light-mode {
-    --text-color: #111;
-    --background-color: #FFF;
+    /* Same relationships as dark, re-derived for a warm off-white room: one
+       sage accent, low chroma. The accent darkens (it must carry label/link
+       text on near-white); the verdict pair darkens with it. */
+    --accent-color: #2f6b5c;
+    --accent-dim-color: #5c8f81;
+    --accent-deep-color: #3c6c64;
+
+    --text-color: #171613;
+    --background-color: #faf9f7;
     --text-outline: 0 0.01em 0.04em #11111175;
-    --preamble-color: #111;
+    --preamble-color: #3f3d38;
     --big-input-bg-color: #AAAa;
-    --bracket-color: #1798B0;
+    --bracket-color: #2f6b5c;
     --bracket-box-shadow: 0;
-    --display-label-color: #001122;
-    --offcanvas-fg: #111;
-    --offcanvas-bg: radial-gradient(circle at top center, #FFF, #DEF);
+    --display-label-color: #14201d;
+    --offcanvas-fg: #171613;
+    --offcanvas-bg: radial-gradient(circle at top center, #faf9f7, #e8efec);
     --small-input-bg-color: #fffa;
     --profile-bg: #eee;
     --profile-arrow-bg: #bbb;
@@ -132,27 +159,37 @@
     --single-input-bg: #eeea;
     --spinner-bg: #fffa;
     --folder-bg: #bbba;
-    --profile-select-highlight: #9BF;
+    --profile-select-highlight: #b9d6cd;
     --profile-select-hover: #BBB;
-    --profile-select-highlight-hover: #ACF;
+    --profile-select-highlight-hover: #cbe4dc;
     --profile-select-delete: #D67;
     --profile-select-delete-hover: #F89;
     --switch-background-color: #DDD;
     --switch-unselected-color: #FFF;
-    --switch-selected-color: #38B;
+    --switch-selected-color: #2f6b5c;
     --switch-border-color: #888;
-    --switch-border-checked-color: #393939;
+    --switch-border-checked-color: #2f6b5c;
     --linear-settings-background-color: #DDD;
-    --select-background-color: #DDD;
-    --correct-color: #093;
-    --wrong-color: #A03;
-    --background-image-bg-color: #FFF;
+    --select-background-color: #e6e4e0;
+    --correct-color: #307e2c;
+    --wrong-color: #582234;
+    --background-image-bg-color: #faf9f7;
     --background-brightness: 0.75;
     --label-background-color: #FFF9;
-    --label-color: #1E4D5A;
+    --label-color: #2f6b5c;
     --overlay-background-color: #DDDA;
-    --three-d-background: radial-gradient(circle at center, #FFFFFFE0, #BBDDEEE0);
+    --three-d-background: radial-gradient(circle at center, #FFFFFFE0, #dfe9e5E0);
     --inline-input-bg-color: #FAFAFA;
+
+    /* Tokenised strays */
+    --link-color: #2f6b5c;
+    --button-fg-color: #dfe9ec;
+    --button-disabled-bg-color: #9aa8a4;
+    --danger-color: #7d2f38;
+    --danger-glow-color: #a8737a;
+    --frame-glow: 0 0 12px #b5cdc7;
+    --progress-halfway-color: #4a8574;
+    --nback-missed-color: #4a6a7a;
 }
 
 body {
@@ -190,7 +227,7 @@ ul li:not(:last-child) {
 }
 
 a {
-  color: #1e90ff;
+  color: var(--link-color);
   text-decoration: none;
   transition: color 0.3s ease;
 }
@@ -199,26 +236,26 @@ button {
     padding: 0.25em 0.75em;
     font-family: inherit;
     font-size: inherit;
-    color: #dfe9ec;
+    color: var(--button-fg-color);
     border: 0;
-    background-color: #3c6c64;
+    background-color: var(--accent-deep-color);
     cursor: pointer;
 }
 
 button:disabled {
-    background-color: #2b3a37;
+    background-color: var(--button-disabled-bg-color);
 }
 
 button:not(:disabled):hover {
-    box-shadow: 0 2px 4px #4aa39a;
+    box-shadow: 0 2px 4px var(--accent-dim-color);
 }
 
 button.delete {
-    background-color: #981f25;
+    background-color: var(--danger-color);
 }
 
 button.delete:hover {
-    box-shadow: 0 2px 4px #bf3f65;
+    box-shadow: 0 2px 4px var(--danger-glow-color);
 }
 
 /* start of Utils */
@@ -350,8 +387,8 @@ button.delete:hover {
 .main-view {
     align-content: center;
     align-items: center;
-    border: 4px solid #3c6c64;
-    box-shadow: 0 0 20px #4aa39a;
+    border: 4px solid var(--accent-deep-color);
+    box-shadow: var(--frame-glow);
     display: grid;
     height: 100%;
     letter-spacing: 0.1em;
@@ -424,13 +461,13 @@ button.delete:hover {
     position: relative;
 }
 .timer__bar {
-    background-color: #2bdef9;
+    background-color: var(--accent-color);
     height: 8px;
     transition: width .25s ease;
 }
 
 .timer__bar.override {
-    background-color: #21A179;
+    background-color: var(--accent-dim-color);
 }
 
 .custom-time-info {
@@ -665,14 +702,14 @@ input[type="number"]::-moz-inner-spin-button {
     background-color: var(--correct-color)!important;
 }
 .confirmation-true:hover {
-    box-shadow: 0 3px 5px 0 #0908!important;
+    box-shadow: 0 3px 5px 0 #4c843488!important;
 }
 
 .confirmation-false {
     background-color: var(--wrong-color)!important;
 }
 .confirmation-false:hover {
-    box-shadow: 0 3px 5px 0 #9008!important;
+    box-shadow: 0 3px 5px 0 #8a526488!important;
 }
 
 .score {
@@ -1020,7 +1057,7 @@ input[type="number"]::-moz-inner-spin-button {
 }
 
 .is-connector {
-    color: #2bdef9;
+    color: var(--accent-dim-color);
     text-transform: uppercase;
 }
 
@@ -1033,7 +1070,7 @@ input[type="number"]::-moz-inner-spin-button {
 }
 
 .negation-explainer {
-    color: #eddb7e;
+    color: var(--accent-color);
     font-size: var(--step--1);
     font-style: italic;
 }
@@ -1089,7 +1126,7 @@ label.open {
 }
 
 label.open:hover {
-    text-shadow: 0px 0px 5px #affa;
+    text-shadow: 0 0 5px var(--accent-dim-color);
 }
 
 input:checked + .offcanvas {
@@ -1210,7 +1247,7 @@ input:checked + .offcanvas {
 
 input[type="checkbox"]:checked + .switch {
     border-color: var(--switch-border-checked-color);
-    box-shadow: 0 0 4px 1px var(--switch-border-checked-color);
+    box-shadow: 0 0 4px var(--switch-border-checked-color);
     transition-timing-function: ease-in;
 }
 
@@ -1400,7 +1437,7 @@ input[type="checkbox"]:checked + .switch::after {
     height: 2px; 
     margin: 10px 0;
     width: 100%;
-    background-color: #2bdef9;
+    background-color: var(--accent-dim-color);
 }
 
 .depth-a {
@@ -1981,7 +2018,7 @@ table.distinction {
     height: 40vh;
     width: 24px;
     background: rgba(0, 0, 0, 0.5);
-    border: 2px solid #3c6c64;
+    border: 2px solid var(--accent-deep-color);
     position: relative;
     overflow: hidden;
     display: flex;
@@ -1993,19 +2030,16 @@ table.distinction {
     position: absolute;
     bottom: 0;
     width: 100%;
-    background-color: #2bdef9;
-    box-shadow: 0 0 10px rgba(43, 222, 249, 0.7);
+    background-color: var(--accent-dim-color);
     transition: height 0.5s ease;
 }
 
 .progress-fill.halfway {
-    background-color: #4aa39a;
-    box-shadow: 0 0 10px rgba(74, 163, 154, 0.7);
+    background-color: var(--progress-halfway-color);
 }
 
 .progress-fill.complete {
-    background-color: #eddb7e;
-    box-shadow: 0 0 10px rgba(237, 219, 126, 0.7);
+    background-color: var(--accent-color);
 }
 
 .progress-content {
@@ -2237,7 +2271,7 @@ body.nback-mode .progress-container { display: none; }
 
 .nback__match--right { background-color: var(--correct-color); }
 .nback__match--wrong { background-color: var(--wrong-color); }
-.nback__match--missed { background-color: #28c; }
+.nback__match--missed { background-color: var(--nback-missed-color); }
 
 /* typed answer readout for the arithmetic modes */
 .nback__answer { font-size: var(--step-0); }
@@ -2479,8 +2513,14 @@ body.menu-mode .main-view {
 /* the destructive one stands apart: pushed right, tinted like button.delete */
 .menu__backup button.delete {
     margin-left: 1.5rem;
-    color: var(--wrong-color);
-    border-color: var(--wrong-color);
+    color: var(--danger-glow-color);
+    border-color: var(--danger-glow-color);
+}
+
+/* the glow tint is too pale for text on the light theme's near-white */
+.light-mode .menu__backup button.delete {
+    color: var(--danger-color);
+    border-color: var(--danger-color);
 }
 
 .menu__backup button:hover {
