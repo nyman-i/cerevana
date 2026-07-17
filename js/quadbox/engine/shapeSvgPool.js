@@ -29,7 +29,9 @@ class ShapeSvgPool {
   }
 
   async _loadShapes() {
-    const response = await fetch('sprites/shapes.html')
+    // module-relative (was page-relative 'sprites/shapes.html') so any
+    // host page can load the engine; points at the committed copy
+    const response = await fetch(new URL('../dist/sprites/shapes.html', import.meta.url))
     const text = await response.text()
 
     const parser = new DOMParser()

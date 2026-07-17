@@ -1,0 +1,316 @@
+/* Quad Box game rendering (quadbox.html only).
+   Geometry/behavior ported from the vendored Svelte components
+   (Grid/Cell/VisualCrank, Quad Box by soamsy, MIT — js/quadbox/LICENSE);
+   chrome/controls use the shared design system in styles.css. */
+
+/* ---------- stage ---------- */
+
+#qb-stage {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    user-select: none;
+}
+
+/* ---------- HUD strip (label-bar material, under the game-menu) ---------- */
+
+.qb-hud {
+    position: absolute;
+    top: 4.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 40;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.35rem 1.25rem;
+    background-color: var(--label-background-color);
+    font-family: "Oxanium", sans-serif;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* ---------- controls (keys + start use styles.css .nback__match/.nback__start) ---------- */
+
+.qb-controls {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 10;
+}
+
+.qb-keys {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.qb-keys button[hidden] {
+    display: none;
+}
+
+.qb-keys button:disabled {
+    background-color: transparent;
+    opacity: 0.35;
+}
+
+.qb-count {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 4rem;
+    font-size: 2.25rem;
+    opacity: 0.3;
+    user-select: none;
+    z-index: 5;
+}
+
+/* variable-N ghost number over the board */
+.qb-variable-n {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+    font-size: 9rem;
+    font-weight: bold;
+    color: #d1d5db;
+    opacity: 0.8;
+    text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+}
+
+body.light-mode .qb-variable-n {
+    color: #374151;
+}
+
+/* ---------- 3D scene (rotate3D) ---------- */
+
+.qb-wrap3d {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 60svmin;
+    overflow: hidden;
+}
+
+.qb-scene {
+    position: absolute;
+    width: 41.1svmin;
+    height: 41.1svmin;
+    transform-style: preserve-3d;
+    translate: 0 0 -10svmin;
+    animation: qb-spin 60s linear 0s infinite normal forwards running;
+    will-change: transform;
+}
+
+@keyframes qb-spin {
+    from {
+        transform: rotateX(var(--rotation-start-x, 0deg)) rotateY(var(--rotation-start-y, 0deg)) rotateZ(var(--rotation-start-z, 0deg));
+    }
+    to {
+        transform: rotateX(calc(var(--rotation-start-x, 0deg) + 360deg))
+                   rotateY(calc(var(--rotation-start-y, 0deg) + 360deg))
+                   rotateZ(calc(var(--rotation-start-z, 0deg) + 360deg));
+    }
+}
+
+.qb-frame {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+/* ---------- 2D board (static2D) ---------- */
+
+.qb-wrap2d {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.qb-board2d {
+    position: absolute;
+    width: 55.2svmin;
+    height: 55.2svmin;
+    margin-bottom: 2.5rem;
+}
+
+/* ---------- cells ---------- */
+
+.qb-cell {
+    position: absolute;
+    width: 13.7svmin;
+    height: 13.7svmin;
+    left: 13.7svmin;
+    top: 13.7svmin;
+    transform-style: preserve-3d;
+}
+
+.qb-cell2d {
+    position: absolute;
+    width: 18.4svmin;
+    height: 18.4svmin;
+    left: 18.4svmin;
+    top: 18.4svmin;
+}
+
+.qb-cell[hidden],
+.qb-cell2d[hidden],
+.qb-vcell[hidden] {
+    display: none;
+}
+
+.qb-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: var(--face-bg-color);
+    background-image: var(--shape-url);
+    opacity: var(--face-opacity, 1.0);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: var(--face-size, 82%) var(--face-size, 82%);
+    transition: filter 0.05s ease-out;
+}
+
+.qb-face--front  { translate: 0 0 6.85svmin; }
+.qb-face--back   { translate: 0 0 -6.85svmin; rotate: y 180deg; }
+.qb-face--right  { translate: 6.85svmin 0 0; rotate: y -90deg; }
+.qb-face--left   { translate: -6.85svmin 0 0; rotate: y 90deg; }
+.qb-face--bottom { translate: 0 6.85svmin 0; rotate: x 90deg; }
+.qb-face--top    { translate: 0 -6.85svmin 0; rotate: x -90deg; }
+
+/* flash / multi-position styling (dark is the default theme) */
+.qb-flash .qb-face {
+    filter: drop-shadow(0 0 8px #FFFFFF);
+}
+
+body.light-mode .qb-flash .qb-face {
+    filter: drop-shadow(0 0 8px #111111);
+}
+
+.qb-see-through .qb-face {
+    outline: 3px solid #FFF9;
+}
+
+body.light-mode .qb-see-through .qb-face {
+    outline: 3px solid #0009;
+}
+
+.qb-no-padding .qb-face {
+    background-size: 100% 100%;
+}
+
+.qb-little-padding .qb-face {
+    background-size: 95% 95%;
+}
+
+/* 2D position offsets */
+.p0-0   { transform: translate(-18.4svmin, -18.4svmin); }
+.p0-1   { transform: translate(-18.4svmin,     0svmin); }
+.p0-2   { transform: translate(-18.4svmin,  18.4svmin); }
+.p1-0   { transform: translate(0,          -18.4svmin); }
+.p1-1   { transform: translate(0,              0svmin); }
+.p1-2   { transform: translate(0,           18.4svmin); }
+.p2-0   { transform: translate(18.4svmin,  -18.4svmin); }
+.p2-1   { transform: translate(18.4svmin,      0svmin); }
+.p2-2   { transform: translate(18.4svmin,   18.4svmin); }
+
+/* 3D position offsets */
+.p0-0-0 { transform: translate3d(-13.7svmin, -13.7svmin, -13.7svmin); }
+.p0-0-1 { transform: translate3d(-13.7svmin, -13.7svmin, 0         ); }
+.p0-0-2 { transform: translate3d(-13.7svmin, -13.7svmin, 13.7svmin ); }
+.p0-1-0 { transform: translate3d(-13.7svmin, 0         , -13.7svmin); }
+.p0-1-1 { transform: translate3d(-13.7svmin, 0         , 0         ); }
+.p0-1-2 { transform: translate3d(-13.7svmin, 0         , 13.7svmin ); }
+.p0-2-0 { transform: translate3d(-13.7svmin, 13.7svmin , -13.7svmin); }
+.p0-2-1 { transform: translate3d(-13.7svmin, 13.7svmin , 0         ); }
+.p0-2-2 { transform: translate3d(-13.7svmin, 13.7svmin , 13.7svmin ); }
+.p1-0-0 { transform: translate3d(0         , -13.7svmin, -13.7svmin); }
+.p1-0-1 { transform: translate3d(0         , -13.7svmin, 0         ); }
+.p1-0-2 { transform: translate3d(0         , -13.7svmin, 13.7svmin ); }
+.p1-1-0 { transform: translate3d(0         , 0         , -13.7svmin); }
+.p1-1-1 { transform: translate3d(0         , 0         , 0         ); }
+.p1-1-2 { transform: translate3d(0         , 0         , 13.7svmin ); }
+.p1-2-0 { transform: translate3d(0         , 13.7svmin , -13.7svmin); }
+.p1-2-1 { transform: translate3d(0         , 13.7svmin , 0         ); }
+.p1-2-2 { transform: translate3d(0         , 13.7svmin , 13.7svmin ); }
+.p2-0-0 { transform: translate3d(13.7svmin , -13.7svmin, -13.7svmin); }
+.p2-0-1 { transform: translate3d(13.7svmin , -13.7svmin, 0         ); }
+.p2-0-2 { transform: translate3d(13.7svmin , -13.7svmin, 13.7svmin ); }
+.p2-1-0 { transform: translate3d(13.7svmin , 0         , -13.7svmin); }
+.p2-1-1 { transform: translate3d(13.7svmin , 0         , 0         ); }
+.p2-1-2 { transform: translate3d(13.7svmin , 0         , 13.7svmin ); }
+.p2-2-0 { transform: translate3d(13.7svmin , 13.7svmin , -13.7svmin); }
+.p2-2-1 { transform: translate3d(13.7svmin , 13.7svmin , 0         ); }
+.p2-2-2 { transform: translate3d(13.7svmin , 13.7svmin , 13.7svmin ); }
+
+/* ---------- vtally visual crank ---------- */
+
+.qb-crank-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.qb-crank {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 5px;
+    width: 46svmin;
+    height: 46svmin;
+}
+
+.qb-vcell-wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.qb-vcell {
+    position: absolute;
+    inset: 0;
+}
+
+/* ---------- recent games table (graph popup) ---------- */
+
+.qb-games-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: var(--step--1);
+}
+
+.qb-games-table th,
+.qb-games-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #333;
+}
+
+body.light-mode .qb-games-table th,
+body.light-mode .qb-games-table td {
+    border-bottom-color: #bbb;
+}
+
+.qb-chip {
+    display: inline-block;
+    padding: 0.1rem 0.45rem;
+    border-radius: 0.25rem;
+    color: #fffffd;
+}

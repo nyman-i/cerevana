@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Cerevana — Quad Box</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#7cb6a8" />
+		<link rel="icon" type="image/png" href="favicon.png?v=4">
+		<link rel="stylesheet" href="fonts/cool/coolicons.css">
+		<link rel="stylesheet" href="css/styles.css">
+		<link rel="stylesheet" href="css/quadbox.css">
+	</head>
+	<body>
+
+		<div class="main-view">
+
+			<input id="offcanvas-settings"
+				   type="checkbox"
+				   hidden>
+			<div id="sidebar-settings" class="offcanvas offcanvas--left">
+				<div class="offcanvas-body ffmono">
+					<div style="direction: ltr;">
+						<div class="mb-1"></div>
+						<div class="mb-05 panel-heading">Mode</div>
+						<div class="mb-2">
+							<div class="ctrl__inner">
+								<span>Game Mode</span>
+								<select id="qb-mode" class="select-item">
+									<option value="quad">Quad</option>
+									<option value="dual">Dual</option>
+									<option value="custom">Custom A</option>
+									<option value="customB">Custom B</option>
+									<option value="tally">Tally</option>
+									<option value="vtally">Visual Tally</option>
+								</select>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										Tally modes: enter the count of<br>
+										matches per trial instead of<br>
+										per-stimulus keys. Self-paced.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mb-2" id="qb-row-grid">
+							<div class="ctrl__inner">
+								<span>Grid</span>
+								<select id="qb-grid" class="select-item">
+									<option value="rotate3D">3D (rotating cube)</option>
+									<option value="static2D">2D (static)</option>
+								</select>
+							</div>
+						</div>
+						<div class="mb-05 panel-heading">Session</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								N-Back
+								<span class="inline-input__inner">
+									<input id="qb-nback" type="number" min="1" max="12" step="1" style="width: 5ch">
+								</span>
+							</div>
+						</div>
+						<div class="mb-1" id="qb-row-variable">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="qb-variable" type="checkbox">
+									<label class="switch" for="qb-variable"></label>
+								</div>
+								<label for="qb-variable">Variable N-Back</label>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										Makes N change randomly<br>
+										each trial.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mb-2" id="qb-row-trialtime">
+							<div class="inline-input__outer">
+								Trial time
+								<span class="inline-input__inner">
+									<input id="qb-trialtime" type="number" min="1000" max="5000" step="100" style="width: 7ch">ms
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Num trials
+								<span class="inline-input__inner">
+									<input id="qb-numtrials" type="number" min="10" max="999" step="1" style="width: 6ch">
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								<span class="ctrl__inner">Match chance
+									<div class="tooltip-container" tabindex="0">
+										?
+										<div class="tooltip-text">
+											Chance of a stimulus from<br>
+											n trials ago repeating.<br>
+										</div>
+									</div>
+								</span>
+								<span class="inline-input__inner">
+									<input id="qb-matchchance" type="number" min="5" max="75" step="1" style="width: 5ch">%
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								<span class="ctrl__inner">Interference
+									<div class="tooltip-container" tabindex="0">
+										?
+										<div class="tooltip-text">
+											Chance of using repeats from<br>
+											n&plusmn;1 trials ago. Increases<br>
+											difficulty.<br>
+										</div>
+									</div>
+								</span>
+								<span class="inline-input__inner">
+									<input id="qb-interference" type="number" min="0" max="75" step="1" style="width: 5ch">%
+								</span>
+							</div>
+						</div>
+						<div id="qb-tally-rows" hidden>
+							<div class="mb-1">
+								<div class="ctrl__inner">
+									<div>
+										<input hidden id="qb-chain" type="checkbox">
+										<label class="switch" for="qb-chain"></label>
+									</div>
+									<label for="qb-chain" id="qb-chain-label">Define position chain</label>
+								</div>
+							</div>
+							<div class="mb-2" id="qb-row-width">
+								<div class="inline-input__outer">
+									<span id="qb-width-label">Concurrent positions</span>
+									<span class="inline-input__inner">
+										<input id="qb-width" type="number" min="1" max="4" step="1" style="width: 4ch">
+									</span>
+								</div>
+							</div>
+							<div id="qb-chain-rows"></div>
+						</div>
+						<div class="mb-05 panel-heading">Stimuli</div>
+						<div id="qb-stimuli-rows">
+							<div class="mb-1" id="qb-row-audio">
+								<div class="ctrl__inner">
+									<div>
+										<input hidden id="qb-en-audio" type="checkbox">
+										<label class="switch" for="qb-en-audio"></label>
+									</div>
+									<label for="qb-en-audio">Audio</label>
+									<select id="qb-src-audio" class="select-item">
+										<option value="letters2">Letters M1</option>
+										<option value="letters3">Letters M2</option>
+										<option value="letters5">Letters F1</option>
+										<option value="letters4">Letters F2</option>
+										<option value="letters">Letters F3</option>
+										<option value="numbers">Numbers</option>
+										<option value="nato">NATO</option>
+										<option value="syl5">5 syllables</option>
+										<option value="syl10">10 syllables</option>
+									</select>
+								</div>
+							</div>
+							<div class="mb-1" id="qb-row-color">
+								<div class="ctrl__inner">
+									<div>
+										<input hidden id="qb-en-color" type="checkbox">
+										<label class="switch" for="qb-en-color"></label>
+									</div>
+									<label for="qb-en-color">Color</label>
+									<select id="qb-src-color" class="select-item">
+										<option value="basic">Basic</option>
+										<option value="gradient">Gradient</option>
+										<option value="voronoi">Voronoi</option>
+										<option value="generative">Generative Art</option>
+									</select>
+								</div>
+							</div>
+							<div class="mb-1" id="qb-row-shape">
+								<div class="ctrl__inner">
+									<div>
+										<input hidden id="qb-en-shape" type="checkbox">
+										<label class="switch" for="qb-en-shape"></label>
+									</div>
+									<label for="qb-en-shape">Shape</label>
+									<select id="qb-src-shape" class="select-item">
+										<option value="basic">Basic</option>
+										<option value="tetris">Tetris</option>
+										<option value="iconsA">Icons A</option>
+										<option value="iconsB">Icons B</option>
+										<option value="all">All Shapes</option>
+									</select>
+								</div>
+							</div>
+							<div class="mb-1" id="qb-row-image">
+								<div class="ctrl__inner">
+									<div>
+										<input hidden id="qb-en-image" type="checkbox">
+										<label class="switch" for="qb-en-image"></label>
+									</div>
+									<label for="qb-en-image">Image</label>
+									<select id="qb-src-image" class="select-item">
+										<option value="voronoi">Voronoi</option>
+										<option value="generative">Generative Art</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Display</div>
+						<div class="mb-2">
+							<div class="ctrl__inner">
+								<span>Feedback</span>
+								<select id="qb-feedback" class="select-item">
+									<option value="show">Show</option>
+									<option value="hide">Hide</option>
+									<option value="hide-counter">Hide counter only</option>
+								</select>
+							</div>
+						</div>
+						<div class="mb-2" id="qb-row-rotation">
+							<div class="inline-input__outer">
+								Rotation speed
+								<span class="inline-input__inner">
+									<input id="qb-rotation" type="number" min="0" max="999" step="1" style="width: 5ch">
+								</span>
+							</div>
+						</div>
+						<div id="qb-progression-rows">
+							<hr class="divider"/>
+							<div class="mb-05 panel-heading">Progression</div>
+							<div class="mb-1">
+								<div class="ctrl__inner">
+									<div>
+										<input hidden id="qb-autoprog" type="checkbox">
+										<label class="switch" for="qb-autoprog"></label>
+									</div>
+									<label for="qb-autoprog">Auto Progression</label>
+									<div class="tooltip-container" tabindex="0">
+										?
+										<div class="tooltip-text">
+											Raises or lowers N based on<br>
+											your recent scores.<br>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="mb-2">
+								<div class="inline-input__outer">
+									Advance at
+									<span class="inline-input__inner">
+										<input id="qb-advance" type="number" min="0" max="100" step="1" style="width: 5ch">%
+									</span>
+								</div>
+							</div>
+							<div class="mb-2">
+								<div class="inline-input__outer">
+									Win after
+									<span class="inline-input__inner">
+										<input id="qb-winafter" type="number" min="1" max="9" step="1" style="width: 4ch">in a row
+									</span>
+								</div>
+							</div>
+							<div class="mb-2">
+								<div class="inline-input__outer">
+									Drop below
+									<span class="inline-input__inner">
+										<input id="qb-dropbelow" type="number" min="0" max="100" step="1" style="width: 5ch">%
+									</span>
+								</div>
+							</div>
+							<div class="mb-2">
+								<div class="inline-input__outer">
+									Lose after
+									<span class="inline-input__inner">
+										<input id="qb-loseafter" type="number" min="1" max="9" step="1" style="width: 4ch">in a row
+									</span>
+								</div>
+							</div>
+						</div>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Keys</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Position
+								<span class="inline-input__inner">
+									<input id="qb-key-position" type="text" maxlength="1" style="width: 3ch">
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Color
+								<span class="inline-input__inner">
+									<input id="qb-key-color" type="text" maxlength="1" style="width: 3ch">
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Shape / Image
+								<span class="inline-input__inner">
+									<input id="qb-key-shape" type="text" maxlength="1" style="width: 3ch">
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Audio
+								<span class="inline-input__inner">
+									<input id="qb-key-audio" type="text" maxlength="1" style="width: 3ch">
+								</span>
+							</div>
+						</div>
+						<ul class="explainer">
+							<li>Space starts a session, Esc ends it.</li>
+							<li>PgUp / PgDn cycle your enabled modes.</li>
+							<li>In tally modes the number keys answer.</li>
+						</ul>
+					</div>
+				</div>
+				<div class="offcanvas-side">
+					<label class="offcanvas-close" for="offcanvas-settings" tabindex="0">✕</label>
+				</div>
+			</div>
+
+			<input id="offcanvas-info"
+				   type="checkbox"
+				   hidden>
+			<div id="sidebar-info" class="offcanvas offcanvas--left">
+				<div class="offcanvas-body ffmono">
+					<div style="direction: ltr;">
+						<div class="mb-1"></div>
+						<div class="mb-05 panel-heading">How to play</div>
+						<p>A cube flashes in the grid while other cues play. Remember
+						what happened <strong>N trials ago</strong> and press the
+						matching key whenever a modality repeats: position, color,
+						shape/image, or audio. Several can match at once.</p>
+						<ul class="explainer">
+							<li>A &mdash; position match</li>
+							<li>F &mdash; color match</li>
+							<li>J &mdash; shape / image match</li>
+							<li>L &mdash; audio match</li>
+						</ul>
+						<p>In <strong>tally</strong> modes you instead type the
+						<em>count</em> of matches each trial &mdash; self-paced, no
+						trial timer.</p>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Reset</div>
+						<p>Reset settings keeps your history. The full reset erases
+						all Quad Box data &mdash; irreversible.</p>
+						<div class="mb-1"><button id="qb-reset-settings">Reset Settings</button></div>
+						<div class="mb-1"><button id="qb-reset-all" class="delete">Reset Quad Box</button></div>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Credits</div>
+						<p>Quad Box by
+						<a href="https://github.com/soamsy/quad-box" target="_blank" rel="noopener">soamsy</a>
+						(MIT) &mdash; see <a href="credits.html">Credits</a>.</p>
+					</div>
+				</div>
+				<div class="offcanvas-side">
+					<label class="offcanvas-close" for="offcanvas-info" tabindex="0">✕</label>
+				</div>
+			</div>
+
+			<label class="open metal-gear open--top-left" for="offcanvas-settings" tabindex="0"><span class="sidebar-button settings-label"></span></label>
+			<label class="open metal-gear open--bottom-left" for="offcanvas-info" tabindex="0"><span class="sidebar-button info-label"></span></label>
+			<label id="graph-label" class="open metal-gear open--bottom-right" tabindex="0"><span class="sidebar-button graph-label"></span></label>
+
+			<nav class="game-menu metal-gear">
+				<a class="game-menu__item" href="index.html">MENU</a>
+				<a class="game-menu__item" href="rrt.html">RRT</a>
+				<a class="game-menu__item" href="nback.html">N-BACK</a>
+				<a class="game-menu__item selected" href="quadbox.html">QUAD BOX</a>
+			</nav>
+
+			<div class="background-image"></div>
+
+			<div class="overlay"></div>
+
+			<div class="qb-hud" id="qb-hud"></div>
+
+			<div id="qb-stage"></div>
+
+			<div class="qb-controls">
+				<div class="qb-keys" id="qb-keys"></div>
+				<button id="qb-start" class="nback__start">START</button>
+			</div>
+
+			<div class="qb-count" id="qb-count"></div>
+
+		</div>
+
+		<div id="graph-popup" class="graph-popup">
+			<div class="graph-controls">
+				<button id="qb-tab-recent" class="graph-select selected">Recent Games</button>
+				<button id="qb-tab-progress" class="graph-select">Progress</button>
+			</div>
+			<div id="qb-games-empty" class="panel-empty" hidden>No games yet &mdash; finish a session and your history appears here.</div>
+			<div id="qb-recent-view" class="graph-popup-content visible" style="overflow-y: auto;">
+				<div class="ctrl__inner" style="margin: 0.5rem 0;">
+					<div>
+						<input hidden id="qb-show-cancelled" type="checkbox">
+						<label class="switch" for="qb-show-cancelled"></label>
+					</div>
+					<label for="qb-show-cancelled">Show cancelled</label>
+					<span id="qb-playtime" style="margin-left: auto;"></span>
+				</div>
+				<table class="qb-games-table" id="qb-games-table"></table>
+			</div>
+			<div id="qb-progress-view" class="graph-popup-content"><canvas id="qb-graph-canvas"></canvas></div>
+			<div class="graph-end-controls">
+				<div>* Completed sessions from the last month</div>
+				<button id="graph-close-popup">Close</button>
+			</div>
+		</div>
+
+		<div id="error-popup" class="error-popup">
+			<div class="error-popup-content">
+				<p id="error-message"></p>
+				<button id="error-close-popup" class="error-close-popup">Close</button>
+				<textarea id="error-stack" readonly></textarea>
+			</div>
+		</div>
+
+		<script src="js/lib/chart.min.js"></script>
+		<script src="js/lib/chartjs-adapter-date-fns.min.js"></script>
+		<script src="js/lib/date-fns.min.js"></script>
+		<script src="js/shared/constants.js"></script>
+		<script src="js/shared/backwards-compatibility.js"></script>
+		<script src="js/shared/db.js"></script>
+		<script src="js/shared/error-handling.js"></script>
+		<script src="js/shared/background.js"></script>
+		<script src="js/shared/sidebar-events.js"></script>
+		<script type="module" src="js/quadbox/page.js"></script>
+	</body>
+</html>
