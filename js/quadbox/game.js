@@ -10,7 +10,7 @@ import { generateClassicGame, isClassicGame, CLASSIC_TITLES } from './classic.js
 import { runAutoProgression } from './engine/autoProgression.js'
 import { audioPlayer } from './audio.js'
 import { analytics } from './analytics.js'
-import { getSettings, getGameSettings, setGameField, subscribe } from './settings.js'
+import { getSettings, getGameSettings, setGameField, subscribe, applyDailyResetIfDue } from './settings.js'
 
 const isTallyMode = (mode) => mode === 'tally' || mode === 'vtally'
 
@@ -177,6 +177,9 @@ export class QuadBoxGame {
 
   async startGame() {
     if (this.isPlaying) return
+    // first game after the 04:00 boundary: every mode back to its default N
+    // (notify → regenerate picks up the reset level before we snapshot it)
+    applyDailyResetIfDue()
     const gameSettings = getGameSettings()
     this.isPlaying = true
     this.gameMeta = { ...this.game.meta, start: Date.now() }

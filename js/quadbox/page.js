@@ -3,6 +3,7 @@
 // storage semantics come from js/quadbox/engine/ and settings.js
 // (Quad Box by soamsy, MIT — js/quadbox/LICENSE).
 import { getSettings, getGameSettings, updateSetting, setGameField, subscribe, resetSettings } from './settings.js'
+import './profiles.js'
 import { getLastMonthGames, deleteDB } from './engine/gamedb.js'
 import { BoardRenderer } from './cube.js'
 import { QuadBoxGame, getNumberKeys, displayTitle } from './game.js'
