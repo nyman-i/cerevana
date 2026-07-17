@@ -8,8 +8,8 @@ import { createSvgId, findBoxColor, findShapeOuterColor, cacheNextTrial } from '
 import { getSvgUrl } from './engine/svg.js'
 import { seededRandom } from './engine/utils.js'
 
-const FRAME_DARK = new URL('./dist/frame-dark.svg', import.meta.url).href
-const FRAME_LIGHT = new URL('./dist/frame-light.svg', import.meta.url).href
+const FRAME_DARK = new URL('./frame-dark.svg', import.meta.url).href
+const FRAME_LIGHT = new URL('./frame-light.svg', import.meta.url).href
 
 // Grid.svelte: rotation start is seeded per 2-hour window
 const determineRotationStart = () => {

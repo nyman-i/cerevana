@@ -38,10 +38,10 @@ The modern community n-back, built to resist the strategies that make the
 classic protocol gameable: positions on a rotating 3D cube, audio, colors,
 shapes and unnameable generated images tracked simultaneously, deliberate
 n±1 interference lures, variable N, and self-paced tally modes where you
-enter the *count* of matches instead of reacting to each one. Includes
-tunable auto-progression, a progress chart and a year activity heatmap.
-Vendored from soamsy's Quad Box and restyled to match Cerevana — the game
-itself is unchanged.
+enter the *count* of matches instead of reacting to each one, with tunable
+auto-progression and per-mode history. Built on the game engine of
+soamsy's Quad Box (see Credits) — the mechanics are unchanged; the
+interface is native Cerevana.
 
 ## Roadmap
 
@@ -55,8 +55,8 @@ task, and UFOV. Suggestions and implementations are welcome.
 
 - Main menu with a live overview of the exercises: active profile, totals,
   accuracy and recent results at a glance.
-- Quad Box: the community's modern 3D quad n-back, vendored whole (see
-  Credits) with all of its modes, stats and settings intact.
+- Quad Box: the community's modern 3D quad n-back on the original game
+  engine (see Credits), with all of its modes, stats and settings intact.
 - Studies library: browse, search and filter the research behind cognitive
   training, collected by the Mindbuilding community.
 - In-app Credits page with the full attribution: exercise lineage, protocol
@@ -66,7 +66,7 @@ task, and UFOV. Suggestions and implementations are welcome.
   the Import box on another.
 - History export/import to a JSON file, with **merge** (timestamp-deduplicated)
   or **overwrite** semantics, covering score, question history, progress-graph
-  data and n-back sessions.
+  data, n-back sessions and Quad Box games.
 - Progress graphs: time spent, average correct times, premise speed and totals
   for RRT; per-mode level and score history for N-Back.
 - Timers with auto-progression (RRT) and adaptive levels (N-Back).
@@ -87,10 +87,7 @@ localhost (the History API and IndexedDB behave better than on `file://`):
 python3 -m http.server 8080
 ```
 
-then open http://localhost:8080. (Quad Box's built output is committed at
-`js/quadbox/dist/`, so no npm/build is needed to serve; rebuilding it is only
-required when changing `js/quadbox/src/` — see `js/quadbox/VENDORED.md`.)
-For an app-like window:
+then open http://localhost:8080. For an app-like window:
 
 ```bash
 chromium --app=http://localhost:8080
@@ -124,12 +121,14 @@ Jonathan Toomim ([brainworkshop.sourceforge.net](https://brainworkshop.sourcefor
 Cerevana reimplements the protocol in JavaScript and shares no code with
 Brain Workshop.
 
-**Quad Box** is [soamsy/quad-box](https://github.com/soamsy/quad-box)
+**Quad Box** is built on the game engine of
+[soamsy/quad-box](https://github.com/soamsy/quad-box)
 (MIT, [playable original](https://quad-box.netlify.app)) by
 [soamsy](https://github.com/soamsy/) — the same developer behind the
-Syllogimous-v3 fork RRT grew from. It is vendored into `js/quadbox/` and
-restyled to match Cerevana; the game mechanics are unchanged and its MIT
-license is kept at `js/quadbox/LICENSE` (details in `js/quadbox/VENDORED.md`).
+Syllogimous-v3 fork RRT grew from. The engine lives near-verbatim in
+`js/quadbox/engine/` with its MIT license at `js/quadbox/LICENSE`; the
+interface is a native Cerevana rewrite (full provenance in
+`js/quadbox/PROVENANCE.md`).
 
 The menu background photo is by
 [Simon Berger on Pexels](https://www.pexels.com/photo/photography-of-mountains-under-cloudy-sky-1183099/)

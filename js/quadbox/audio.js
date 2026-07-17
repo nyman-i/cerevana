@@ -8,7 +8,7 @@ import { getAudioPool } from './engine/constants.js'
 
 // Assets live next to this module (currently the committed dist copy;
 // relocated at cutover). Module-relative so any page can host the game.
-const AUDIO_BASE = new URL('./dist/audio/', import.meta.url)
+const AUDIO_BASE = new URL('./audio/', import.meta.url)
 
 const canOpus = typeof Audio !== 'undefined' &&
   new Audio().canPlayType('audio/ogg; codecs=opus') !== ''
