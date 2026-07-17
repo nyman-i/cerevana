@@ -19,4 +19,12 @@ window.onerror = function (message, source, lineno, colno, error) {
   showErrorPopup(errorDetails, stackTrace);
 };
 
+// window.onerror does NOT catch promise rejections: without this, a failed
+// async path (e.g. Quad Box audio) fails silently and can strand the page.
+window.addEventListener('unhandledrejection', function (event) {
+  const reason = event.reason;
+  showErrorPopup(`Error: ${reason?.message ?? String(reason)}`,
+                 reason?.stack ?? 'No stack trace available.');
+});
+
 closePopupButton.addEventListener('click', hideErrorPopup);

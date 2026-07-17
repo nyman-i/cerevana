@@ -164,90 +164,84 @@ analytics.subscribe(() => renderHud())
 $('qb-start').addEventListener('click', () => game.toggleGame())
 
 // ---- settings panel ----
-const settingsInputs = [
-  // [id, get, set]
-  ['qb-nback', () => getGameSettings().nBack, v => setGameField('nBack', clamp(v, 1, 12))],
-  ['qb-trialtime', () => getGameSettings().trialTime, v => setGameField('trialTime', clamp(v, 1000, 5000))],
-  ['qb-numtrials', () => getGameSettings().numTrials, v => setGameField('numTrials', clamp(v, 10, 999))],
-  ['qb-matchchance', () => getGameSettings().matchChance, v => setGameField('matchChance', clamp(v, 5, 75))],
-  ['qb-interference', () => getGameSettings().interference, v => setGameField('interference', clamp(v, 0, 75))],
-  ['qb-width', () => getGameSettings().positionWidth, v => setGameField('positionWidth', clamp(v, 1, 4))],
-  ['qb-rotation', () => getSettings().rotationSpeed, v => updateSetting('rotationSpeed', clamp(v, 0, 999))],
-  ['qb-advance', () => getSettings().successCriteria, v => {
-    v = clamp(v, 0, 100); if (v === null) return
-    updateSetting('successCriteria', v)
-    if (getSettings().failureCriteria > v) updateSetting('failureCriteria', v)
-  }],
-  ['qb-winafter', () => getSettings().successComboRequired, v => updateSetting('successComboRequired', clamp(v, 1, 9))],
-  ['qb-dropbelow', () => getSettings().failureCriteria, v => {
-    v = clamp(v, 0, 100); if (v === null) return
-    updateSetting('failureCriteria', v)
-    if (getSettings().successCriteria < v) updateSetting('successCriteria', v)
-  }],
-  ['qb-loseafter', () => getSettings().failureComboRequired, v => updateSetting('failureComboRequired', clamp(v, 1, 9))],
-]
-
-function clamp(v, min, max) {
-  v = +v
+// Out-of-range input is ignored (upstream clampNumber behavior). Bounds
+// come from the input's own min/max attributes — one source of truth, so
+// a setter can never be handed an out-of-range or NaN value.
+function clamp(value, min, max) {
+  const v = +value
   if (isNaN(v) || v < min || v > max) return null
   return v
 }
 
-const bindNumber = (id, get, set) => {
-  const input = $(id)
+// setters receive an already-validated number
+const numberInputs = [
+  ['qb-nback', v => setGameField('nBack', v)],
+  ['qb-trialtime', v => setGameField('trialTime', v)],
+  ['qb-numtrials', v => setGameField('numTrials', v)],
+  ['qb-matchchance', v => setGameField('matchChance', v)],
+  ['qb-interference', v => setGameField('interference', v)],
+  ['qb-width', v => setGameField('positionWidth', v)],
+  ['qb-rotation', v => updateSetting('rotationSpeed', v)],
+  ['qb-advance', v => {
+    updateSetting('successCriteria', v)
+    if (getSettings().failureCriteria > v) updateSetting('failureCriteria', v)
+  }],
+  ['qb-winafter', v => updateSetting('successComboRequired', v)],
+  ['qb-dropbelow', v => {
+    updateSetting('failureCriteria', v)
+    if (getSettings().successCriteria < v) updateSetting('successCriteria', v)
+  }],
+  ['qb-loseafter', v => updateSetting('failureComboRequired', v)],
+]
+
+const bindNumber = (input, set) => {
   input.addEventListener('input', () => {
-    const v = set(input.value)
-    if (v === null) return
+    const v = clamp(input.value, +input.min, +input.max)
+    if (v !== null) set(v)
   })
 }
 
-for (const [id, get, set] of settingsInputs) {
-  bindNumber(id, get, (raw) => {
-    const el = $(id)
-    const v = clamp(raw, +el.min, +el.max)
-    if (v === null) return null
-    set(raw)
-    return v
-  })
+for (const [id, set] of numberInputs) {
+  bindNumber($(id), set)
 }
 
 const toggles = [
-  ['qb-variable', () => getGameSettings().rules === 'variable', v => setGameField('rules', v ? 'variable' : 'none')],
-  ['qb-chain', () => !!getGameSettings().enablePositionWidthSequence, v => setGameField('enablePositionWidthSequence', v)],
-  ['qb-en-audio', () => !!getGameSettings().enableAudio, v => setGameField('enableAudio', v)],
-  ['qb-en-color', () => !!getGameSettings().enableColor, v => {
+  ['qb-variable', v => setGameField('rules', v ? 'variable' : 'none')],
+  ['qb-chain', v => setGameField('enablePositionWidthSequence', v)],
+  ['qb-en-audio', v => setGameField('enableAudio', v)],
+  ['qb-en-color', v => {
     setGameField('enableColor', v)
     if (v) setGameField('enableImage', false)
   }],
-  ['qb-en-shape', () => !!getGameSettings().enableShape, v => {
+  ['qb-en-shape', v => {
     setGameField('enableShape', v)
     if (v) setGameField('enableImage', false)
   }],
-  ['qb-en-image', () => !!getGameSettings().enableImage, v => {
+  ['qb-en-image', v => {
     setGameField('enableImage', v)
     if (v) {
       setGameField('enableShape', false)
       setGameField('enableColor', false)
     }
   }],
-  ['qb-autoprog', () => !!getSettings().enableAutoProgression, v => updateSetting('enableAutoProgression', v)],
+  ['qb-autoprog', v => updateSetting('enableAutoProgression', v)],
 ]
 
-for (const [id, get, set] of toggles) {
+for (const [id, set] of toggles) {
   $(id).addEventListener('change', (e) => set(e.target.checked))
 }
 
 const selects = [
-  ['qb-mode', () => getSettings().mode, v => updateSetting('mode', v)],
-  ['qb-grid', () => getGameSettings().grid, v => setGameField('grid', v)],
-  ['qb-feedback', () => getSettings().feedback, v => updateSetting('feedback', v)],
-  ['qb-src-audio', () => getGameSettings().audioSource, v => setGameField('audioSource', v)],
-  ['qb-src-color', () => getGameSettings().colorSource, v => setGameField('colorSource', v)],
-  ['qb-src-shape', () => getGameSettings().shapeSource, v => setGameField('shapeSource', v)],
-  ['qb-src-image', () => getGameSettings().imageSource, v => setGameField('imageSource', v)],
+  ['qb-mode', v => updateSetting('mode', v)],
+  ['qb-grid', v => setGameField('grid', v)],
+  ['qb-feedback', v => updateSetting('feedback', v)],
+  ['qb-src-audio', v => setGameField('audioSource', v)],
+  ['qb-src-color', v => setGameField('colorSource', v)],
+  ['qb-src-shape', v => setGameField('shapeSource', v)],
+  ['qb-src-image', v => setGameField('imageSource', v)],
 ]
 
-for (const [id, get, set] of selects) {
+for (const [id, set] of selects) {
   $(id).addEventListener('change', (e) => set(e.target.value))
 }
 
@@ -273,6 +267,37 @@ document.addEventListener('keydown', (event) => {
   updateSetting('mode', modes[i])
 })
 
+// The W1..Wn chain inputs are rebuilt only when their *structure* changes
+// (row count / chain toggled), like rebuildBoard()'s builtFor guard above.
+// Rebuilding on every keystroke would blow away the focused input.
+let chainBuiltFor = null
+
+function syncChainRows(gs) {
+  const rows = $('qb-chain-rows')
+  const signature = gs.enablePositionWidthSequence ? `chain|${gs.nBack}` : 'none'
+  if (signature !== chainBuiltFor) {
+    rows.innerHTML = ''
+    if (gs.enablePositionWidthSequence) {
+      for (let w = 0; w < gs.nBack; w++) {
+        const div = document.createElement('div')
+        div.className = 'mb-1'
+        div.style.marginLeft = '2rem'
+        div.innerHTML = `<div class="inline-input__outer">W${w + 1}<span class="inline-input__inner"><input type="number" min="1" max="4" step="1" style="width: 4ch"></span></div>`
+        bindNumber(div.querySelector('input'), (v) => {
+          const seq = [...getGameSettings().positionWidthSequence]
+          seq[w] = v
+          setGameField('positionWidthSequence', seq)
+        })
+        rows.appendChild(div)
+      }
+    }
+    chainBuiltFor = signature
+  }
+  rows.querySelectorAll('input').forEach((input, w) => {
+    if (input !== document.activeElement) input.value = gs.positionWidthSequence[w]
+  })
+}
+
 const syncPanel = () => {
   const settings = getSettings()
   const gs = getGameSettings()
@@ -280,21 +305,27 @@ const syncPanel = () => {
   const isTally = mode === 'tally' || mode === 'vtally'
   const hasToggles = mode.startsWith('custom') || isTally
 
+  // don't clobber what the user is mid-way through typing
+  const setValue = (id, value) => {
+    const input = $(id)
+    if (input !== document.activeElement) input.value = value
+  }
+
   $('qb-mode').value = mode
   $('qb-grid').value = gs.grid ?? 'rotate3D'
-  $('qb-nback').value = gs.nBack
+  setValue('qb-nback', gs.nBack)
   $('qb-variable').checked = gs.rules === 'variable'
-  if ('trialTime' in gs) $('qb-trialtime').value = gs.trialTime
-  $('qb-numtrials').value = gs.numTrials
-  $('qb-matchchance').value = gs.matchChance
-  $('qb-interference').value = gs.interference
+  if ('trialTime' in gs) setValue('qb-trialtime', gs.trialTime)
+  setValue('qb-numtrials', gs.numTrials)
+  setValue('qb-matchchance', gs.matchChance)
+  setValue('qb-interference', gs.interference)
   $('qb-feedback').value = settings.feedback
-  $('qb-rotation').value = settings.rotationSpeed
+  setValue('qb-rotation', settings.rotationSpeed)
   $('qb-autoprog').checked = settings.enableAutoProgression
-  $('qb-advance').value = settings.successCriteria
-  $('qb-winafter').value = settings.successComboRequired
-  $('qb-dropbelow').value = settings.failureCriteria
-  $('qb-loseafter').value = settings.failureComboRequired
+  setValue('qb-advance', settings.successCriteria)
+  setValue('qb-winafter', settings.successComboRequired)
+  setValue('qb-dropbelow', settings.failureCriteria)
+  setValue('qb-loseafter', settings.failureComboRequired)
   for (const field of ['position', 'color', 'shape', 'audio']) {
     $(`qb-key-${field}`).value = settings.hotkeys[field]
   }
@@ -311,26 +342,9 @@ const syncPanel = () => {
     $('qb-chain-label').textContent = `Define ${noun} chain`
     $('qb-width-label').textContent = `Concurrent ${noun}s`
     $('qb-chain').checked = !!gs.enablePositionWidthSequence
-    $('qb-width').value = gs.positionWidth
+    setValue('qb-width', gs.positionWidth)
     $('qb-row-width').hidden = !!gs.enablePositionWidthSequence
-    const rows = $('qb-chain-rows')
-    rows.innerHTML = ''
-    if (gs.enablePositionWidthSequence) {
-      for (let w = 0; w < gs.nBack; w++) {
-        const div = document.createElement('div')
-        div.className = 'mb-1'
-        div.style.marginLeft = '2rem'
-        div.innerHTML = `<div class="inline-input__outer">W${w + 1}<span class="inline-input__inner"><input type="number" min="1" max="4" step="1" value="${gs.positionWidthSequence[w]}" style="width: 4ch"></span></div>`
-        div.querySelector('input').addEventListener('input', (e) => {
-          const v = clamp(e.target.value, 1, 4)
-          if (v === null) return
-          const seq = [...getGameSettings().positionWidthSequence]
-          seq[w] = v
-          setGameField('positionWidthSequence', seq)
-        })
-        rows.appendChild(div)
-      }
-    }
+    syncChainRows(gs)
   }
 
   // stimuli rows

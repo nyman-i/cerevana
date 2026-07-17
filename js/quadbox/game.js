@@ -150,6 +150,10 @@ export class QuadBoxGame {
       if (e.message === 'Game cancelled') {
         console.debug('Game cancelled', e)
       } else {
+        // Unexpected failure (e.g. audio): stop cleanly so the button can't
+        // strand on STOP, keeping partial progress, then let it surface via
+        // the shared unhandledrejection handler.
+        await this.endGame('cancelled')
         throw e
       }
     }
