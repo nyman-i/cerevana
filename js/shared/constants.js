@@ -16,6 +16,7 @@ let appState = {
     "fastUi": true,
     "staticButtons": true,
     "darkMode": true,
+    "accentHue": 165, // sage default; one hue, S/L locked in styles.css
 };
 
 function getLocalStorageObj(key) {

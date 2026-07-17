@@ -1,7 +1,8 @@
 /*!
  * Cerevana N-Back — classic mode generation.
  * Original Cerevana code (CC BY-NC 3.0): a port of our own Brain Workshop
- * protocol reimplementation (js/nback/game.js — no Brain Workshop code).
+ * protocol reimplementation (formerly js/nback/game.js — no Brain
+ * Workshop code; protocol details in nback-spec.md).
  * Produces engine-shaped { trials, meta } consumed by QuadBoxGame, so the
  * flow/scoring/recording path is identical to engine-generated games.
  */

@@ -2,8 +2,9 @@
 
 Cerevana is an open, local-first brain-training app that unites multiple
 evidence-based cognitive exercises under one roof. Today that's **RRT**
-(relational reasoning), **Dual N-Back** (working memory) and **Quad Box**
-(3D quad n-back); the ambition is one place for the whole training stack.
+(relational reasoning) and **N-Back** (working memory — one merged game
+taking the best of the modern Quad Box protocol and the classic Brain
+Workshop one); the ambition is one place for the whole training stack.
 It is a plain static site — no build step, no dependencies, no accounts —
 and all of your data stays in your browser (localStorage and IndexedDB).
 
@@ -19,29 +20,24 @@ negation, and anti-strategy scrambling. Play untimed, or against a timer with
 auto-progression that raises premise count and tightens the clock as your
 accuracy holds up.
 
-### Dual N-Back
+### N-Back
 
-The classic dual n-back protocol: squares light up on a 3×3 grid while
-letters are spoken, and you signal whenever the position or the sound matches
-the one from N trials back. The level adapts per mode based on your session
-scores; a Jaeggi mode reproduces the original-study protocol, and a manual
-mode lets you play any level freely. Beyond the classic dual mode there are
-color and combination variants, arithmetic modes (a number is shown, an
-operation is spoken, and you type the answer against the number from N back),
-multi-square tracking, and anti-strategy options like variable-N, crab and
-self-paced play, with tunable progression thresholds and an optional daily
-level reset.
-
-### Quad Box
-
-The modern community n-back, built to resist the strategies that make the
-classic protocol gameable: positions on a rotating 3D cube, audio, colors,
-shapes and unnameable generated images tracked simultaneously, deliberate
-n±1 interference lures, variable N, and self-paced tally modes where you
-enter the *count* of matches instead of reacting to each one, with tunable
-auto-progression and per-mode history. Built on the game engine of
-soamsy's Quad Box (see Credits) — the mechanics are unchanged; the
-interface is native Cerevana.
+One n-back, best of both worlds. The core is the modern community
+protocol, built to resist the strategies that make n-back gameable:
+positions on a rotating 3D cube, audio, colors, shapes and unnameable
+generated images tracked simultaneously, deliberate n±1 interference
+lures, variable N, and self-paced tally modes where you enter the
+*count* of matches instead of reacting to each one — with tunable
+auto-progression and per-mode levels. On top of it, the classic Brain
+Workshop mode families: Position/Sound/Color presets, cross-modal
+combination modes, arithmetic modes (a number is shown, an operation is
+spoken, and you type the answer against the number from N back),
+multi-square tracking, a Jaeggi mode reproducing the original-study
+protocol, and crab / self-paced variants — plus an optional daily level
+reset and a choice between recorded voices and your browser's speech
+synthesis. Built on the game engine of soamsy's Quad Box (see Credits);
+the classic modes reimplement Brain Workshop's protocol without sharing
+any code with it.
 
 ## Roadmap
 
@@ -55,8 +51,6 @@ task, and UFOV. Suggestions and implementations are welcome.
 
 - Main menu with a live overview of the exercises: active profile, totals,
   accuracy and recent results at a glance.
-- Quad Box: the community's modern 3D quad n-back on the original game
-  engine (see Credits), with all of its modes, stats and settings intact.
 - Studies library: browse, search and filter the research behind cognitive
   training, collected by the Mindbuilding community.
 - In-app Credits page with the full attribution: exercise lineage, protocol
@@ -66,10 +60,11 @@ task, and UFOV. Suggestions and implementations are welcome.
   the Import box on another.
 - History export/import to a JSON file, with **merge** (timestamp-deduplicated)
   or **overwrite** semantics, covering score, question history, progress-graph
-  data, n-back sessions and Quad Box games.
+  data and all n-back games (older export files remain importable).
 - Progress graphs: time spent, average correct times, premise speed and totals
-  for RRT; per-mode level and score history for N-Back.
-- Timers with auto-progression (RRT) and adaptive levels (N-Back).
+  for RRT; per-mode level history for N-Back, with pre-merge sessions shown
+  as legacy lines.
+- Timers with auto-progression (RRT) and adaptive per-mode levels (N-Back).
 - A calm, focus-first look in both dark and light: one restrained sage-teal
   accent, spent only where attention is earned (selected states, the active
   tab, the timer). Text meets WCAG AA, and the correct/wrong colours are
@@ -115,20 +110,19 @@ codebase Cerevana grew from
 [giladkingsley](https://github.com/giladkingsley/) is also a credited
 Syllogimous contributor.
 
-**Dual N-Back** is inspired by **Brain Workshop** by Paul Hoskinson with
-Jonathan Toomim ([brainworkshop.sourceforge.net](https://brainworkshop.sourceforge.net/),
-[maintained fork](https://github.com/brain-workshop/brainworkshop)).
-Cerevana reimplements the protocol in JavaScript and shares no code with
-Brain Workshop.
-
-**Quad Box** is built on the game engine of
+**N-Back** merges two lineages. It is built on the game engine of
 [soamsy/quad-box](https://github.com/soamsy/quad-box)
 (MIT, [playable original](https://quad-box.netlify.app)) by
 [soamsy](https://github.com/soamsy/) — the same developer behind the
-Syllogimous-v3 fork RRT grew from. The engine lives near-verbatim in
-`js/quadbox/engine/` with its MIT license at `js/quadbox/LICENSE`; the
-interface is a native Cerevana rewrite (full provenance in
-`js/quadbox/PROVENANCE.md`).
+Syllogimous-v3 fork RRT grew from; the engine lives in
+`js/quadbox/engine/` with per-file MIT attribution headers and its
+license at `js/quadbox/LICENSE` (full provenance in
+`js/quadbox/PROVENANCE.md`). Its classic mode families are inspired by
+**Brain Workshop** by Paul Hoskinson with Jonathan Toomim
+([brainworkshop.sourceforge.net](https://brainworkshop.sourceforge.net/),
+[maintained fork](https://github.com/brain-workshop/brainworkshop)) —
+Cerevana reimplements the protocol in JavaScript and shares no code with
+Brain Workshop.
 
 The menu background photo is by
 [Simon Berger on Pexels](https://www.pexels.com/photo/photography-of-mountains-under-cloudy-sky-1183099/)

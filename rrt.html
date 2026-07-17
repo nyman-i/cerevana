@@ -8,10 +8,11 @@
 		<meta name="apple-mobile-web-app-status-bar" content="#7cb6a8" />
 		<meta name="theme-color" content="#7cb6a8" />
 
-		<link rel="icon" type="image/png" href="favicon.png?v=4">
+		<link rel="icon" type="image/png" href="favicon.png?v=5">
 		<link rel="stylesheet" href="css/codec.css">
 		<link rel="stylesheet" href="fonts/cool/coolicons.css">
 		<link rel="stylesheet" href="css/styles.css">
+		<script src="js/shared/boot.js"></script>
 		<style id="live-styles"></style>
 	</head>
 	<body>
@@ -493,15 +494,6 @@
 						</div>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Appearance</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Image
-								<span class="inline-input__inner">
-								  <input type="file" id="image-upload" onchange="handleImageChange(event)" accept="image/*">
-								</span>
-							</div>
-							<button onclick="clearBackgroundImage()" style="float:right;">Clear Image</button>
-						</div>
 						<div class="mb-1">
 							<div class="ctrl__inner">
 								<div class="inline-input__outer">
@@ -510,22 +502,16 @@
 									  <input type="text" id="color-input" placeholder="Enter color (e.g. #ff0000)" value="#161F30CC" oninput="handleColorChange(event)" style="width: 11ch"></input>
 									</span>
 								</div>
-								<div>
-									<input hidden id="p-dark-mode" type="checkbox" checked onchange="handleDarkModeChange(event)">
-									<label class="switch" for="p-dark-mode"></label>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										Tints the RRT game area.<br>
+										Any CSS color works.<br>
+									</div>
 								</div>
-								<label for="p-dark-mode">Dark Mode</label>
 							</div>
 						</div>
 						<div class="mb-2 ux-customize">
-							<div class="ctrl__inner">
-								<span>SFX</span>
-								<select id="p-sfx" class='select-item' onchange="handleSfxChange(event)">
-							    <option value="none">None</option>
-							    <option value="sfx1">Game-like</option>
-							    <option value="sfx2">Zen</option>
-								</select>
-							</div>
 							<div class="ctrl__inner">
 								<div>
 									<input hidden id="p-fast-ui" type="checkbox" onchange="handleFastUiChange(event)">
@@ -960,12 +946,11 @@
 			<label class="open metal-gear open--top-left" for="offcanvas-settings" tabindex="0"><span class="sidebar-button settings-label"></span></label>
 			<label class="open metal-gear open--top-right" for="offcanvas-history" tabindex="0"><span class="sidebar-button history-label"></span></label>
 			<label class="open metal-gear open--bottom-left" for="offcanvas-credits" tabindex="0"><span class="sidebar-button credits-label"></span></label>
-			<label id="graph-label" class="open metal-gear open--bottom-right" for="offcanvas-graph" tabindex="0"><span class="sidebar-button graph-label"></span></label>
+			<label id="graph-label" class="open metal-gear open--bottom-right" tabindex="0"><span class="sidebar-button graph-label"></span></label>
 				<nav class="game-menu metal-gear">
 					<a class="game-menu__item" href="index.html">MENU</a>
 					<a class="game-menu__item selected" href="rrt.html">RRT</a>
 					<a class="game-menu__item" href="nback.html">N-BACK</a>
-					<a class="game-menu__item" href="quadbox.html">QUAD BOX</a>
 				</nav>
 
 			<div class="background-image"></div>

@@ -8,6 +8,7 @@
 		<link rel="icon" type="image/png" href="favicon.png?v=5">
 		<link rel="stylesheet" href="fonts/cool/coolicons.css">
 		<link rel="stylesheet" href="css/styles.css">
+		<script src="js/shared/boot.js"></script>
 		<script>
 			// old profile share links point at index.html; the RRT page owns that import now
 			if (location.search.includes('savedata=')) location.replace('rrt.html' + location.search);
@@ -54,39 +55,22 @@
 					<h2 class="menu-card__name">N-BACK
 						<div class="tooltip-container" tabindex="0" onclick="event.preventDefault()">?
 							<div class="tooltip-text">
-								Watch squares light up on a grid while letters are spoken.
-								Signal whenever a position or sound repeats from N trials back
-								&mdash; the level adapts to your performance.<br><br>
+								One n-back, best of both worlds: positions on a rotating 3D
+								cube, sounds, colors, shapes and unnameable images at once,
+								interference lures and tally modes &mdash; plus the classic
+								Brain Workshop protocol: grid + letters, combination and
+								arithmetic modes, crab and Jaeggi variants.<br><br>
 								<strong>Trains:</strong> working memory &mdash; continuous
-								updating, attention control and interference resolution.<br><br>
-								The classic dual n-back protocol from Paul Hoskinson's
-								Brain Workshop.
+								updating, attention control and interference
+								resolution.<br><br>
+								Built on Quad Box by soamsy; classic modes after Paul
+								Hoskinson's Brain Workshop.
 							</div>
 						</div>
 					</h2>
-					<p class="menu-card__info">Adaptive n-back for working memory.</p>
+					<p class="menu-card__info">Adaptive n-back &mdash; the modern protocol and the classic, merged.</p>
 					<div id="menu-nback-stats" class="menu-card__stats"></div>
 					<div id="menu-nback-recent" class="menu-card__recent"></div>
-					<span class="menu-card__enter">ENTER &rarr;</span>
-				</a>
-				<a class="menu-card" href="quadbox.html">
-					<h2 class="menu-card__name">QUAD BOX
-						<div class="tooltip-container" tabindex="0" onclick="event.preventDefault()">?
-							<div class="tooltip-text">
-								N-back rebuilt to resist shortcuts: positions on a rotating
-								3D cube, sounds, colors, shapes and unnameable images at
-								once, with interference lures and count-the-matches tally
-								modes.<br><br>
-								<strong>Trains:</strong> working memory under maximum
-								modality load &mdash; strategy-proof updating and
-								interference control.<br><br>
-								Quad Box by soamsy &mdash; the modern community n-back.
-							</div>
-						</div>
-					</h2>
-					<p class="menu-card__info">3D quad n-back &mdash; the modern community protocol.</p>
-					<div id="menu-quadbox-stats" class="menu-card__stats"></div>
-					<div id="menu-quadbox-recent" class="menu-card__recent"></div>
 					<span class="menu-card__enter">ENTER &rarr;</span>
 				</a>
 			</div>
@@ -113,6 +97,11 @@
 							<option value="sfx1">Game-like</option>
 							<option value="sfx2">Zen</option>
 						</select>
+					</div>
+					<div class="ctrl__inner">
+						<span>Accent</span>
+						<input type="range" id="p-accent" class="accent-range" min="0" max="360" value="165" oninput="handleAccentChange(event)" aria-label="Accent color hue" title="Pick the app's accent hue">
+						<button onclick="resetAccentHue()" title="Back to the default sage accent">Reset</button>
 					</div>
 					<div class="ctrl__inner">
 						<span>Background</span>

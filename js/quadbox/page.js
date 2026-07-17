@@ -1,7 +1,8 @@
-// Quad Box page controller (quadbox.html): wires the promoted engine +
-// vanilla renderer into the shared Cerevana chrome. Settings/scoring/
-// storage semantics come from js/quadbox/engine/ and settings.js
-// (Quad Box by soamsy, MIT — js/quadbox/LICENSE).
+// N-Back page controller (nback.html): wires the engine + classic
+// generators + vanilla renderer into the shared Cerevana chrome.
+// Settings/scoring/storage semantics come from js/quadbox/engine/ and
+// settings.js (engine derived from Quad Box by soamsy, MIT —
+// js/quadbox/LICENSE).
 import { getSettings, getGameSettings, updateSetting, setGameField, subscribe, resetSettings } from './settings.js'
 import './profiles.js'
 import { getLastMonthGames, deleteDB } from './engine/gamedb.js'
@@ -504,6 +505,35 @@ const renderGames = async () => {
   $('qb-playtime').textContent = a.playTime ? `Today: ${a.playTime}` : ''
 }
 
+// Legacy Brain Workshop-era sessions (IndexedDB NBackHistory, read-only):
+// shown as dashed stepped level lines alongside the merged game's data.
+const LEGACY_LABELS = {
+  dual: 'Dual', position: 'Position', sound: 'Sound', 'position-color': 'PC',
+  'color-sound': 'CA', triple: 'Triple', 'dual-combo': 'DC', 'tri-combo': 'TC',
+  'quad-combo': 'QC', 'tri-combo-color': 'TCC', arithmetic: 'Arith',
+  'dual-arithmetic': 'DA', 'triple-arithmetic': 'TA',
+}
+
+const legacyDatasets = async (fg) => {
+  if (typeof getAllNBackSessions !== 'function') return []
+  const sessions = (await getAllNBackSessions()).sort((a, b) => a.timestamp - b.timestamp)
+  const byMode = {}
+  for (const s of sessions) {
+    const key = s.modeName ?? 'dual'
+    byMode[key] = byMode[key] ?? []
+    byMode[key].push({ x: s.timestamp, y: s.n })
+  }
+  return Object.entries(byMode).map(([modeName, data]) => ({
+    label: `${LEGACY_LABELS[modeName] ?? modeName} (legacy)`,
+    data,
+    borderColor: fg + '8',
+    backgroundColor: fg + '8',
+    borderDash: [6, 4],
+    stepped: true,
+    pointRadius: 2,
+  }))
+}
+
 let chart
 const renderChart = async () => {
   const games = (await getLastMonthGames())
@@ -521,6 +551,7 @@ const renderChart = async () => {
     label: title, data, borderColor: palette[i % palette.length],
     backgroundColor: palette[i % palette.length], tension: 0.2, pointRadius: 3,
   }))
+  datasets.push(...await legacyDatasets(document.body.classList.contains('light-mode') ? '#171613' : '#fffffd'))
   const fg = document.body.classList.contains('light-mode') ? '#171613' : '#fffffd'
   chart?.destroy()
   chart = new Chart($('qb-graph-canvas'), {

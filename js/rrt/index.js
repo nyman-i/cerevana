@@ -221,36 +221,11 @@ function displayInit() {
     }
 }
 
-function clearBackgroundImage() {
-    const fileInput = document.getElementById('image-upload');
-    fileInput.value = '';
-    delete appState.backgroundImage;
-    imageChanged = true;
-    save();
-    imagePromise = imagePromise.then(() => deleteImage(imageKey));
-    imagePromise = imagePromise.then(() => updateCustomStyles());
-}
-
-function handleImageChange(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const base64String = event.target.result;
-            appState.backgroundImage = imageKey;
-            imagePromise = imagePromise.then(() => storeImage(imageKey, base64String));
-            imageChanged = true;
-            refresh();
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
+// app-wide appearance (dark mode, background, SFX) is set on the main menu
+// (js/shared/appearance.js); RRT keeps only its own game-area color and Fast UI
 function populateAppearanceSettings() {
     document.getElementById('color-input').value = appState.darkMode ? appState.gameAreaColor : appState.gameAreaLightColor;
-    document.getElementById('p-sfx').value = appState.sfx;
     document.getElementById('p-fast-ui').checked = appState.fastUi;
-    document.getElementById('p-dark-mode').checked = appState.darkMode;
 }
 
 function populateProgressionDropdown() {
@@ -273,19 +248,9 @@ function handleColorChange(event) {
     refresh();
 }
 
-function handleSfxChange(event) {
-    appState.sfx = event.target.value;
-    refresh();
-}
-
 function handleFastUiChange(event) {
     appState.fastUi = event.target.checked;
     removeFastFeedback();
-    refresh();
-}
-
-function handleDarkModeChange(event) {
-    appState.darkMode = event.target.checked;
     refresh();
 }
 

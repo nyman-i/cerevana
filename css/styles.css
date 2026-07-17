@@ -77,18 +77,21 @@
         -0.04em 0.04em 0.06em #11111175,
         0.04em -0.04em 0.06em #11111175,
         0.04em 0.04em 0.06em #11111175;
-    /* Single accent: a muted sage-teal built out from the app's own button
-       teal #3c6c64 (hue 165). --accent-color is the only "look here" colour —
-       spend it on selected states, active nav, brackets, primary progress. */
-    --accent-color: #7cb6a8;
-    --accent-dim-color: #4f7d72;
-    --accent-deep-color: #3c6c64;
+    /* Single accent: ONE user-chosen hue at fixed S/L. Every accent token below
+       is hsl(var(--accent-hue) S% L%) — S and L are locked so the contrast
+       relationships hold for any hue (see UI_DESIGN §2). Default 165 = the
+       original sage-teal (#7cb6a8/#4f7d72/#3c6c64). --accent-color is the only
+       "look here" colour — spend it on selected states, nav, brackets, progress. */
+    --accent-hue: 165;
+    --accent-color: hsl(var(--accent-hue) 28% 60%);
+    --accent-dim-color: hsl(var(--accent-hue) 23% 40%);
+    --accent-deep-color: hsl(var(--accent-hue) 29% 33%);
 
     --text-color: #fffffd;
     --background-color: #131312;
     --preamble-color: #fffa;
     --big-input-bg-color: #000a;
-    --bracket-color: #7cb6a8;
+    --bracket-color: var(--accent-color);
     --bracket-box-shadow: 0;
     --display-label-color: #fffffd;
     --offcanvas-fg: #fffffd;
@@ -103,16 +106,16 @@
     --single-input-bg: #222a;
     --spinner-bg: #111a;
     --folder-bg: #222;
-    --profile-select-highlight: #2f5a52;
+    --profile-select-highlight: hsl(var(--accent-hue) 31% 27%);
     --profile-select-hover: #444;
-    --profile-select-highlight-hover: #3f7268;
+    --profile-select-highlight-hover: hsl(var(--accent-hue) 29% 35%);
     --profile-select-delete: #523;
     --profile-select-delete-hover: #956;
     --switch-background-color: #333;
     --switch-unselected-color: #444;
-    --switch-selected-color: #7cb6a8;
+    --switch-selected-color: var(--accent-color);
     --switch-border-color: #666;
-    --switch-border-checked-color: #7cb6a8;
+    --switch-border-checked-color: var(--accent-color);
     --linear-settings-background-color: #222;
     --select-background-color: #191918;
     /* Verdict pair: semantic green/red, desaturated toward the palette. Each
@@ -123,40 +126,40 @@
     --background-image-bg-color: #000c;
     --background-brightness: 0.50;
     --label-background-color: #0009;
-    --label-color: #7cb6a8;
+    --label-color: var(--accent-color);
     --overlay-background-color: #000;
     --three-d-background: radial-gradient(circle at center, #54534fE0, #222220E0);
     --inline-input-bg-color: #282828;
 
     /* Tokenised strays (were hardcoded outside this block) */
-    --link-color: #7cb6a8;
-    --button-fg-color: #dfe9ec;
-    --button-disabled-bg-color: #2b3a37;
+    --link-color: var(--accent-color);
+    --button-fg-color: hsl(var(--accent-hue) 19% 90%);
+    --button-disabled-bg-color: hsl(var(--accent-hue) 15% 20%);
     --danger-color: #7d2f38;
     --danger-glow-color: #8a4d55;
-    --frame-glow: 0 0 12px #2c4a44;
-    --progress-halfway-color: #5f9b8a;
+    --frame-glow: 0 0 12px hsl(var(--accent-hue) 25% 23%);
+    --progress-halfway-color: hsl(var(--accent-hue) 24% 49%);
     --nback-missed-color: #4a6a7a;
 }
 
 .light-mode {
-    /* Same relationships as dark, re-derived for a warm off-white room: one
-       sage accent, low chroma. The accent darkens (it must carry label/link
-       text on near-white); the verdict pair darkens with it. */
-    --accent-color: #2f6b5c;
-    --accent-dim-color: #5c8f81;
-    --accent-deep-color: #3c6c64;
+    /* Same relationships as dark, re-derived for a warm off-white room at the
+       same hue but higher chroma / lower lightness (the accent must carry
+       label/link text on near-white). --accent-deep-color is theme-identical,
+       so it inherits from :root — not redeclared here. */
+    --accent-color: hsl(var(--accent-hue) 39% 30%);
+    --accent-dim-color: hsl(var(--accent-hue) 22% 46%);
 
     --text-color: #171613;
     --background-color: #faf9f7;
     --text-outline: 0 0.01em 0.04em #11111175;
     --preamble-color: #3f3d38;
     --big-input-bg-color: #AAAa;
-    --bracket-color: #2f6b5c;
+    --bracket-color: var(--accent-color);
     --bracket-box-shadow: 0;
-    --display-label-color: #14201d;
+    --display-label-color: hsl(var(--accent-hue) 23% 10%);
     --offcanvas-fg: #171613;
-    --offcanvas-bg: radial-gradient(circle at top center, #faf9f7, #e8efec);
+    --offcanvas-bg: radial-gradient(circle at top center, #faf9f7, hsl(var(--accent-hue) 18% 92%));
     --small-input-bg-color: #fffa;
     --profile-bg: #eee;
     --profile-arrow-bg: #bbb;
@@ -167,16 +170,16 @@
     --single-input-bg: #eeea;
     --spinner-bg: #fffa;
     --folder-bg: #bbba;
-    --profile-select-highlight: #b9d6cd;
+    --profile-select-highlight: hsl(var(--accent-hue) 26% 78%);
     --profile-select-hover: #BBB;
-    --profile-select-highlight-hover: #cbe4dc;
+    --profile-select-highlight-hover: hsl(var(--accent-hue) 32% 85%);
     --profile-select-delete: #D67;
     --profile-select-delete-hover: #F89;
     --switch-background-color: #DDD;
     --switch-unselected-color: #FFF;
-    --switch-selected-color: #2f6b5c;
+    --switch-selected-color: var(--accent-color);
     --switch-border-color: #888;
-    --switch-border-checked-color: #2f6b5c;
+    --switch-border-checked-color: var(--accent-color);
     --linear-settings-background-color: #DDD;
     --select-background-color: #e6e4e0;
     --correct-color: #307e2c;
@@ -184,19 +187,18 @@
     --background-image-bg-color: #faf9f7;
     --background-brightness: 0.75;
     --label-background-color: #FFF9;
-    --label-color: #2f6b5c;
+    --label-color: var(--accent-color);
     --overlay-background-color: #DDDA;
-    --three-d-background: radial-gradient(circle at center, #FFFFFFE0, #dfe9e5E0);
+    --three-d-background: radial-gradient(circle at center, #FFFFFFE0, hsl(var(--accent-hue) 19% 89% / 0.88));
     --inline-input-bg-color: #FAFAFA;
 
-    /* Tokenised strays */
-    --link-color: #2f6b5c;
-    --button-fg-color: #dfe9ec;
-    --button-disabled-bg-color: #9aa8a4;
+    /* Tokenised strays (--button-fg-color is theme-identical → inherits :root) */
+    --link-color: var(--accent-color);
+    --button-disabled-bg-color: hsl(var(--accent-hue) 7% 63%);
     --danger-color: #7d2f38;
     --danger-glow-color: #a8737a;
-    --frame-glow: 0 0 12px #b5cdc7;
-    --progress-halfway-color: #4a8574;
+    --frame-glow: 0 0 12px hsl(var(--accent-hue) 19% 75%);
+    --progress-halfway-color: hsl(var(--accent-hue) 29% 41%);
     --nback-missed-color: #4a6a7a;
 }
 
@@ -1241,8 +1243,48 @@ input:checked + .offcanvas {
     gap: 0.6rem;
 }
 
+/* Accent hue picker: the track IS the choice — a hue wheel rendered at the
+   accent's own S/L so the thumb position previews the resulting colour. */
+.accent-range {
+    flex: 1;
+    min-width: 6rem;
+    height: 0.75rem;
+    padding: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    background: linear-gradient(to right,
+        hsl(0 28% 60%), hsl(60 28% 60%), hsl(120 28% 60%),
+        hsl(180 28% 60%), hsl(240 28% 60%), hsl(300 28% 60%), hsl(360 28% 60%));
+    cursor: pointer;
+}
+.accent-range::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 0.9rem;
+    height: 1.4rem;
+    background: var(--accent-color);
+    border: 2px solid var(--text-color);
+}
+.accent-range::-moz-range-thumb {
+    width: 0.9rem;
+    height: 1.4rem;
+    border: 2px solid var(--text-color);
+    border-radius: 0;
+    background: var(--accent-color);
+}
+
 .big-input {
     font-size: var(--step-0);
+}
+
+/* settings rows whose input a mode has locked (e.g. Jaeggi) — dimmed, showing the effective value */
+.ctrl__inner:has(input:disabled, select:disabled),
+.inline-input__outer:has(input:disabled) {
+    opacity: 0.45;
+}
+
+.ctrl__inner:has(input:disabled) .switch {
+    cursor: default;
 }
 
 .switch {
@@ -1574,7 +1616,7 @@ table.distinction {
     width: 20px;
     height: 20px;
     padding-left: 2px;
-    background-color: #404E4D;
+    background-color: hsl(var(--accent-hue) 10% 25%);
     color: #fff;
     font-size: var(--step--2);
     font-weight: bold;
@@ -1961,11 +2003,11 @@ table.distinction {
 }
 
 .graph-select.selected {
-    background: #1c3c30;
+    background: hsl(var(--accent-hue) 36% 17%);
 }
 
 .graph-select.selected:hover {
-    background: #316154;
+    background: hsl(var(--accent-hue) 33% 29%);
 }
 
 .graph-end-controls {
@@ -2398,12 +2440,6 @@ body.menu-mode .main-view {
     }
 }
 
-.menu-card__player {
-    font-size: var(--step--2);
-    letter-spacing: 0.15em;
-    color: var(--preamble-color);
-}
-
 .menu__cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
@@ -2471,6 +2507,9 @@ body.menu-mode .main-view {
 
 .menu-card__stats { font-size: var(--step--1); }
 
+/* the panel-empty utility's popup padding is too airy inside a card row */
+.menu-card .panel-empty { padding: 0; }
+
 .menu-card__recent {
     font-size: var(--step--2);
     color: var(--preamble-color);
@@ -2513,11 +2552,16 @@ body.menu-mode .main-view {
 
 .menu__pages a {
     color: var(--preamble-color);
+    text-decoration: none;
+    padding-bottom: 2px;
+    border-bottom: 3px solid transparent; /* same hover affordance as .menu-card__name */
+    transition: border-color 0.15s ease, color 0.15s ease;
 }
 
 .menu__pages a:hover,
 .menu__pages a:focus-visible {
     color: var(--label-color);
+    border-bottom-color: var(--label-color);
 }
 
 .menu__footer {
@@ -2529,37 +2573,31 @@ body.menu-mode .main-view {
     padding-top: 1.5rem;
 }
 
-.menu__backup {
+/* labels the backup/reset row so the footer scans as a section */
+.menu__footer-heading {
+    font-size: var(--step--2);
+    letter-spacing: 0.15em;
+    color: var(--preamble-color);
+    text-shadow: var(--text-outline);
+}
+
+/* footer control rows: settings chrome, same size as the offcanvas panels */
+.menu__backup,
+.menu__appearance {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0.75rem;
+    font-size: var(--step--1);
 }
 
-.menu__backup button {
-    font-size: var(--step--2);
-    background-color: transparent;
-    color: var(--preamble-color);
-    border: 1px solid var(--switch-border-color);
-    padding: 0.25em 0.75em;
+.menu__appearance {
+    gap: 0.75rem 2rem;
 }
 
-/* the destructive one stands apart: pushed right, tinted like button.delete */
+/* the destructive one stands apart from the safe backup actions */
 .menu__backup button.delete {
     margin-left: 1.5rem;
-    color: var(--danger-glow-color);
-    border-color: var(--danger-glow-color);
-}
-
-/* the glow tint is too pale for text on the light theme's near-white */
-.light-mode .menu__backup button.delete {
-    color: var(--danger-color);
-    border-color: var(--danger-color);
-}
-
-.menu__backup button:hover {
-    box-shadow: none;
-    color: var(--label-color);
-    border-color: var(--label-color);
 }
 
 .menu__community {

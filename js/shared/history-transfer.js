@@ -1,6 +1,7 @@
-// App-wide history export/import (RRT questions + progress rows + n-back
-// sessions + Quad Box games). Pages define onHistoryImported() to refresh
-// their UI after an import.
+// App-wide history export/import (RRT questions + progress rows + legacy
+// n-back sessions + N-Back games; the quadbox* names reflect the storage
+// identifiers, which never change). Pages define onHistoryImported() to
+// refresh their UI after an import.
 
 let importMode;
 
@@ -47,8 +48,8 @@ function importQuadBoxGames(rows, clearFirst) {
 }
 
 function resetEverything() {
-    const confirmed = confirm("Reset the ENTIRE app? This permanently deletes ALL data for every exercise: RRT, N-Back and Quad Box profiles, settings, scores, session history, progress graphs, and the background image. Tip: Export History first — the button is right next to this one.")
-        && confirm("Last chance: this cannot be undone. Really erase all RRT, N-Back and Quad Box data?");
+    const confirmed = confirm("Reset the ENTIRE app? This permanently deletes ALL data for every exercise: RRT and N-Back profiles, settings, scores, game history, progress graphs, and the background image. Tip: Export History first — the button is right next to this one.")
+        && confirm("Last chance: this cannot be undone. Really erase all RRT and N-Back data?");
     if (!confirmed) return;
     // prefix sweep covers oldSettingsKey ("sllgms-v3") and every sllgms-v3-* key, present and future
     Object.keys(localStorage)
@@ -128,5 +129,5 @@ async function handleHistoryImport(event) {
     appState.score = questions.reduce((s, q) => s + (q.correctness === 'right' ? 1 : -1), 0);
     save();
     if (typeof onHistoryImported === 'function') onHistoryImported();
-    alert(`Import complete: ${questions.length - base.length} new questions, ${rows.length} new graph entries, ${nbackRows.length} new n-back sessions, ${quadboxRows.length} new Quad Box games.`);
+    alert(`Import complete: ${questions.length - base.length} new questions, ${rows.length} new graph entries, ${nbackRows.length} legacy n-back sessions, ${quadboxRows.length} new N-Back games.`);
 }

@@ -28,17 +28,17 @@ Syllogimous by 4skinSkywalker and Syllogimous-v3 by ikokusovereignty,
 all under CC BY-NC 3.0 — this license therefore applies to Cerevana as
 a whole.
 
-The N-Back exercise is an original JavaScript reimplementation of the
-dual n-back protocol popularized by Brain Workshop (Paul Hoskinson and
-Jonathan Toomim, GPL-2.0). It shares no code with Brain Workshop, which
-is credited as inspiration.
-
-The Quad Box exercise is built on the game engine of soamsy/quad-box
-(https://github.com/soamsy/quad-box), MIT-licensed; the engine code in
-js/quadbox/engine/ is near-verbatim upstream code (per-file attribution
-headers), its license is kept at js/quadbox/LICENSE, and the full
-derivation is documented in js/quadbox/PROVENANCE.md. The MIT-licensed
-Quad Box code is not subject to this repository's CC BY-NC terms.
+The N-Back exercise merges two lineages into one game. Its engine is
+derived from soamsy/quad-box (https://github.com/soamsy/quad-box),
+MIT-licensed, and has since diverged as Cerevana code; the derived files
+in js/quadbox/engine/ keep per-file MIT attribution headers, the license
+is kept at js/quadbox/LICENSE, and the full derivation is documented in
+js/quadbox/PROVENANCE.md (the quad-box-derived portions are not subject
+to this repository's CC BY-NC terms). Its classic mode families are an
+original JavaScript reimplementation of the n-back protocol popularized
+by Brain Workshop (Paul Hoskinson and Jonathan Toomim, GPL-2.0) —
+Cerevana shares no code with Brain Workshop, which is credited as
+protocol source and inspiration.
 
 Bundled third-party assets carry their own licenses: Space Grotesk and
 Zen Dots typefaces (SIL OFL 1.1, see fonts/), menu background photo by
