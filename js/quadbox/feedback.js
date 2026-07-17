@@ -3,7 +3,8 @@
  * js/quadbox/LICENSE). Port of src/stores/feedbackStore.js and
  * tallyFeedbackStore.js: same states ('blank'|'disabled'|'success'|
  * 'failure'|'late-failure') and revert timings; svelte writables replaced
- * by a callback.
+ * by a callback. Cerevana: configure() takes the mode's active tag list
+ * instead of hardcoding the five engine stimuli.
  */
 
 // Per-stimulus feedback for the match keys (DefaultGame)
@@ -18,16 +19,10 @@ export const createFeedback = (onChange) => {
   const emit = () => onChange({ ...state })
 
   return {
-    // feedbackStore.updateDefaultFeedback: disabled per enable flags
-    configure(gameSettings, feedbackMode) {
+    // tags = the active tag list for the mode (only rendered keys get state)
+    configure(tags, feedbackMode) {
       hideFeedback = feedbackMode === 'hide'
-      defaults = {
-        position: 'blank',
-        color: gameSettings.enableColor ? 'blank' : 'disabled',
-        shape: gameSettings.enableShape ? 'blank' : 'disabled',
-        image: gameSettings.enableImage ? 'blank' : 'disabled',
-        audio: gameSettings.enableAudio ? 'blank' : 'disabled',
-      }
+      defaults = Object.fromEntries(tags.map(tag => [tag, 'blank']))
       this.reset()
     },
     reset() {

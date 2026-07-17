@@ -210,6 +210,44 @@ body.light-mode .qb-see-through .qb-face {
     outline: 3px solid #0009;
 }
 
+/* text stimuli (classic modes: combo letters, arithmetic numbers) render
+   inside faces; empty text leaves engine stimuli untouched */
+.qb-face {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Oxanium", sans-serif;
+    font-weight: bold;
+    font-size: 6.5svmin;
+    color: #fffffd;
+    user-select: none;
+}
+
+body.light-mode .qb-face {
+    color: #171613;
+}
+
+/* center overlay: stimulus display for position-less modes */
+.qb-center-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.qb-center-wrap[hidden] {
+    display: none;
+}
+
+.qb-center-wrap .qb-face {
+    position: static;
+    width: 18.4svmin;
+    height: 18.4svmin;
+    font-size: 9svmin;
+}
+
 .qb-no-padding .qb-face {
     background-size: 100% 100%;
 }

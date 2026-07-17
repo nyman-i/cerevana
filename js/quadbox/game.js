@@ -39,7 +39,8 @@ export const displayTitle = (info) => {
 export class QuadBoxGame {
   // ui: { renderTrial(trial, opts), cacheNext(trial), rebuild(),
   //       onState(), applyFeedback(u), resetFeedback(),
-  //       applyTallyFeedback(u), resetTallyFeedback() }
+  //       applyTallyFeedback(u), resetTallyFeedback(),
+  //       setAnswer(text, verdict?), setCrankIndex(i), onProgression(kind) }
   constructor(ui) {
     this.ui = ui
     this.isPlaying = false
@@ -62,7 +63,49 @@ export class QuadBoxGame {
     this.presentation = { highlight: false, flash: false }
     this.timeoutCancelFns = []
     this.gameMeta = {}
+    this.answer = { digits: '', negative: false }
+    this.advanceResolve = null
     this.gameId++
+  }
+
+  // ---- arithmetic (classic modes): typed answer, right/wrong per trial ----
+  get arithMode() {
+    return !!this.gameDisplayInfo.arithmetic
+  }
+
+  // digits append, '.' once, '-' toggles, no backspace, reset each trial;
+  // empty or '.' parses as 0
+  parseAnswer() {
+    const d = this.answer.digits
+    const v = (d === '' || d === '.') ? 0 : parseFloat(d)
+    return this.answer.negative ? -v : v
+  }
+
+  answerDisplay() {
+    return (this.answer.negative ? '-' : '') + (this.answer.digits || '0')
+  }
+
+  arithInput(ch) {
+    if (!this.isPlaying || !this.arithMode) return
+    if (ch === '-') this.answer.negative = !this.answer.negative
+    else if (ch === '.') { if (!this.answer.digits.includes('.')) this.answer.digits += '.' }
+    else this.answer.digits += ch
+    this.ui.setAnswer?.(this.answerDisplay())
+  }
+
+  scoreArithmetic() {
+    if (!this.arithMode || this.trialsIndex < this.gameDisplayInfo.nBack) return
+    const correct = this.parseAnswer() === this.currentTrial.answer
+    this.scoresheet[this.trialsIndex].arithmetic = correct
+    this.ui.setAnswer?.(this.answerDisplay(), correct ? 'right' : 'wrong')
+  }
+
+  // self-paced: the pending trialWait resolves on Enter / the NEXT button
+  advance() {
+    if (!this.gameDisplayInfo.selfPaced || !this.advanceResolve) return
+    const resolve = this.advanceResolve
+    this.advanceResolve = null
+    resolve()
   }
 
   get tally() {
@@ -189,7 +232,11 @@ export class QuadBoxGame {
       if (this.trialsIndex > gameInfoRecord.nBack) {
         await analytics.scoreTrials(gameInfoRecord, status === 'completed' ? this.scoresheet : this.scoresheet.slice(0, this.trialsIndex), status)
         if (status === 'completed') {
-          const s = getSettings()
+          let s = getSettings()
+          if (this.gameMeta.jaeggi) {
+            // original-study thresholds, single session: ≥90 advance, <75 drop
+            s = { ...s, successCriteria: 90, successComboRequired: 1, failureCriteria: 75, failureComboRequired: 1 }
+          }
           await runAutoProgression(gameInfoRecord, s, {
             setNBack: (n) => setGameField('nBack', n),
             onAdvance: () => this.ui.onProgression?.('advance'),
@@ -226,6 +273,11 @@ export class QuadBoxGame {
     }
 
     this.selectTrial(i)
+    if (this.arithMode) {
+      // typed answer resets every trial; scored at trial end
+      this.answer = { digits: '', negative: false }
+      this.ui.setAnswer?.('0')
+    }
     this.presentation.highlight = true
     this.ui.renderTrial(this.currentTrial, { highlight: true })
     this.ui.onState()
@@ -234,24 +286,38 @@ export class QuadBoxGame {
       this.presentation.highlight = false
       this.ui.renderTrial(this.currentTrial, { highlight: false })
     })
-    const trialWait = this.delay(this.gameDisplayInfo.trialTime)
+    // self-paced: the trial lasts until the player advances (Enter / NEXT)
+    const trialWait = this.gameDisplayInfo.selfPaced
+      ? this.makeCancellable(new Promise(resolve => { this.advanceResolve = resolve }))
+      : this.delay(this.gameDisplayInfo.trialTime)
     await Promise.all([audioWait, presentationWait, trialWait])
+    this.advanceResolve = null
     this.detectMissedStimuli()
     await this.playTrial(i + 1)
   }
 
   detectMissedStimuli() {
     if (!('tags' in this.gameDisplayInfo)) return
+    this.scoreArithmetic()
+    const jaeggi = !!this.gameDisplayInfo.jaeggi
+    const sheet = this.scoresheet[this.trialsIndex]
     const updates = {}
     for (const tag of this.gameDisplayInfo.tags) {
-      if (this.currentTrial.matches.includes(tag) && !(tag in this.scoresheet[this.trialsIndex])) {
-        this.scoresheet[this.trialsIndex][tag] = false
+      if (tag === 'arithmetic') continue
+      if (this.currentTrial.matches.includes(tag) && !(tag in sheet)) {
+        sheet[tag] = false
         updates[tag] = 'late-failure'
       } else {
         updates[tag] = 'blank'
+        // Jaeggi protocol: a correct rejection (no match, no press) counts
+        // as a hit, so its percent is (TP+TN)/total like the original study
+        if (jaeggi && this.trialsIndex >= this.gameDisplayInfo.nBack && !(tag in sheet)) {
+          sheet[tag] = true
+        }
       }
     }
-    this.ui.applyFeedback(updates)
+    // Jaeggi hides trial feedback (protocol)
+    if (!jaeggi) this.ui.applyFeedback(updates)
   }
 
   checkForMatch(type) {
@@ -261,7 +327,9 @@ export class QuadBoxGame {
     if (type in this.currentTrial && !(type in this.scoresheet[this.trialsIndex])) {
       const isSuccess = this.currentTrial.matches.includes(type)
       this.scoresheet[this.trialsIndex][type] = isSuccess
-      this.ui.applyFeedback({ [type]: isSuccess ? 'success' : 'failure' })
+      if (!this.gameDisplayInfo.jaeggi) {
+        this.ui.applyFeedback({ [type]: isSuccess ? 'success' : 'failure' })
+      }
     }
   }
 
@@ -319,9 +387,18 @@ export class QuadBoxGame {
   // ---- keyboard (both modes) ----
   handleKey(event) {
     if (event.target.closest?.('input, select, textarea')) return
+    if (this.isPlaying && this.arithMode) {
+      const code = event.code
+      if (/^(Digit|Numpad)[0-9]$/.test(code)) return this.arithInput(code.slice(-1))
+      if (code === 'Minus' || code === 'NumpadSubtract') return this.arithInput('-')
+      if (code === 'Period' || code === 'NumpadDecimal' || code === 'Comma') return this.arithInput('.')
+    }
     switch (event.code) {
       case 'Space':
         this.startGame()
+        break
+      case 'Enter':
+        this.advance()
         break
       case 'Escape':
         this.endGame('cancelled')

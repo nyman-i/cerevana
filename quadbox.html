@@ -40,6 +40,19 @@
 										<option value="positionColor">Position + Color</option>
 										<option value="colorSound">Color + Sound</option>
 										<option value="triple">Triple</option>
+										<option value="jaeggi">Jaeggi Dual</option>
+										<option value="multiSquare">Multi-Square</option>
+									</optgroup>
+									<optgroup label="Combination">
+										<option value="dualCombo">Dual Combination</option>
+										<option value="triCombo">Tri Combination</option>
+										<option value="quadCombo">Quad Combination</option>
+										<option value="triComboColor">Tri Combination (Color)</option>
+									</optgroup>
+									<optgroup label="Arithmetic">
+										<option value="arithmetic">Arithmetic</option>
+										<option value="dualArithmetic">Dual Arithmetic</option>
+										<option value="tripleArithmetic">Triple Arithmetic</option>
 									</optgroup>
 								</select>
 								<div class="tooltip-container" tabindex="0">
@@ -102,7 +115,103 @@
 								</span>
 							</div>
 						</div>
-						<div class="mb-2">
+						<div class="mb-1" id="qb-row-crab">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="qb-crab" type="checkbox">
+									<label class="switch" for="qb-crab"></label>
+								</div>
+								<label for="qb-crab">Crab</label>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										Matches compare against blocks<br>
+										of N in reverse order — an<br>
+										anti-strategy variant.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mb-1" id="qb-row-selfpaced">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="qb-selfpaced" type="checkbox">
+									<label class="switch" for="qb-selfpaced"></label>
+								</div>
+								<label for="qb-selfpaced">Self-paced</label>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										No trial clock: advance with<br>
+										Enter or the NEXT button.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mb-2" id="qb-row-squares">
+							<div class="inline-input__outer">
+								Squares
+								<span class="inline-input__inner">
+									<input id="qb-squares" type="number" min="2" max="4" step="1" style="width: 4ch">
+								</span>
+							</div>
+						</div>
+						<div id="qb-arith-rows" hidden>
+							<div class="mb-1">
+								<div class="ctrl__inner">
+									<div>
+										<input hidden id="qb-op-add" type="checkbox">
+										<label class="switch" for="qb-op-add"></label>
+									</div>
+									<label for="qb-op-add">Addition</label>
+								</div>
+							</div>
+							<div class="mb-1">
+								<div class="ctrl__inner">
+									<div>
+										<input hidden id="qb-op-sub" type="checkbox">
+										<label class="switch" for="qb-op-sub"></label>
+									</div>
+									<label for="qb-op-sub">Subtraction</label>
+								</div>
+							</div>
+							<div class="mb-1">
+								<div class="ctrl__inner">
+									<div>
+										<input hidden id="qb-op-mul" type="checkbox">
+										<label class="switch" for="qb-op-mul"></label>
+									</div>
+									<label for="qb-op-mul">Multiplication</label>
+								</div>
+							</div>
+							<div class="mb-1">
+								<div class="ctrl__inner">
+									<div>
+										<input hidden id="qb-op-div" type="checkbox">
+										<label class="switch" for="qb-op-div"></label>
+									</div>
+									<label for="qb-op-div">Division</label>
+								</div>
+							</div>
+							<div class="mb-1">
+								<div class="ctrl__inner">
+									<div>
+										<input hidden id="qb-negatives" type="checkbox">
+										<label class="switch" for="qb-negatives"></label>
+									</div>
+									<label for="qb-negatives">Negative numbers</label>
+								</div>
+							</div>
+							<div class="mb-2">
+								<div class="inline-input__outer">
+									Max number
+									<span class="inline-input__inner">
+										<input id="qb-maxnumber" type="number" min="1" max="99" step="1" style="width: 5ch">
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="mb-2" id="qb-row-matchchance">
 							<div class="inline-input__outer">
 								<span class="ctrl__inner">Match chance
 									<div class="tooltip-container" tabindex="0">
@@ -118,7 +227,7 @@
 								</span>
 							</div>
 						</div>
-						<div class="mb-2">
+						<div class="mb-2" id="qb-row-interference">
 							<div class="inline-input__outer">
 								<span class="ctrl__inner">Interference
 									<div class="tooltip-container" tabindex="0">
@@ -155,7 +264,7 @@
 							</div>
 							<div id="qb-chain-rows"></div>
 						</div>
-						<div class="mb-05 panel-heading">Stimuli</div>
+						<div class="mb-05 panel-heading" id="qb-stimuli-heading">Stimuli</div>
 						<div id="qb-stimuli-rows">
 							<div class="mb-1" id="qb-row-audio">
 								<div class="ctrl__inner">
@@ -415,8 +524,10 @@
 			<div id="qb-stage"></div>
 
 			<div class="qb-controls">
+				<div class="nback__answer" id="qb-answer" hidden>Answer: 0</div>
 				<div class="qb-keys" id="qb-keys"></div>
 				<button id="qb-start" class="nback__start">START</button>
+				<button id="qb-next" class="nback__start" hidden>NEXT</button>
 			</div>
 
 			<div class="qb-count" id="qb-count"></div>

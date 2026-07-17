@@ -2,7 +2,10 @@
  * Vanilla-DOM renderer for the Quad Box board — port of the vendored
  * Svelte components Grid.svelte / Cell.svelte / Frame.svelte /
  * VisualCrank.svelte (Quad Box by soamsy, MIT — js/quadbox/LICENSE).
- * Rendering only; trial data comes from js/quadbox/engine/.
+ * Rendering only; trial data comes from js/quadbox/engine/ or classic.js.
+ * Cerevana extensions: text stimuli (letters/numbers) on faces, a center
+ * overlay for position-less modes, and timed multi-position rendering
+ * with stream-identity tints (multi-square).
  */
 import { createSvgId, findBoxColor, findShapeOuterColor, cacheNextTrial } from './engine/trialUtils.js'
 import { getSvgUrl } from './engine/svg.js'
@@ -69,6 +72,14 @@ const cellStyle = (node, boxColor, svgId, shapeOuterColor, transparent) => {
 
 const MAX_CELLS = 4
 
+// multi-square stream identity: blue, green, yellow, red
+const STREAM_COLORS = ['#26f', '#2c2', '#dc2', '#d22']
+
+const setFaceText = (cell, text) => {
+  const t = text == null ? '' : String(text)
+  cell.querySelectorAll('.qb-face').forEach(f => { if (f.textContent !== t) f.textContent = t })
+}
+
 export class BoardRenderer {
   constructor(stage) {
     this.stage = stage
@@ -77,6 +88,10 @@ export class BoardRenderer {
     this.cells = []
     this.variableN = el('div', 'qb-variable-n', stage)
     this.variableN.hidden = true
+    // center overlay: stimulus display for position-less modes
+    this.centerWrap = el('div', 'qb-center-wrap', stage)
+    this.centerFace = el('div', 'qb-face', this.centerWrap)
+    this.centerWrap.hidden = true
   }
 
   // (Re)build the board for a grid type + theme + rotation speed.
@@ -144,23 +159,26 @@ export class BoardRenderer {
   }
 
   // Render a trial. settings = full quad-box settings object.
-  renderTrial(trial, settings, { highlight = false, flash = false } = {}) {
+  // `highlight` is undefined for tally renders (cells stay lit by design)
+  // and boolean for timed play (stimulus display window).
+  renderTrial(trial, settings, { highlight, flash = false } = {}) {
     if (this.grid === 'visualCrank') {
       this.renderCrank(trial, settings)
       return
     }
     const base = this.grid === 'static2D' ? 'qb-cell2d' : 'qb-cell'
     const multi = 'position0' in (trial ?? {})
+    const timedMulti = multi && highlight !== undefined
     for (let i = 0; i < MAX_CELLS; i++) {
       const cell = this.cells[i]
       let position, show, transparent = false
       if (multi) {
         position = trial[`position${i}`]
-        show = !!position
-        transparent = !!trial.position1
+        show = !!position && highlight !== false
+        transparent = !timedMulti && !!trial.position1
       } else {
         position = i === 0 ? trial?.position : null
-        show = i === 0 && !!position && highlight
+        show = i === 0 && !!position && !!highlight
       }
       if (!show) {
         cell.hidden = true
@@ -172,6 +190,22 @@ export class BoardRenderer {
       cell.hidden = false
       cell.className = cellClasses(base, position, svgId, multi ? flash : false, transparent)
       cellStyle(cell, boxColor, svgId, shapeOuterColor, transparent)
+      if (timedMulti && !boxColor) {
+        cell.style.setProperty('--face-bg-color', STREAM_COLORS[i])
+      }
+      setFaceText(cell, multi ? '' : trial?.text)
+    }
+    // position-less stimuli (sound-family colors, combo letters, arithmetic)
+    const wantCenter = !multi && !trial?.position && !!highlight
+      && (trial?.text != null || trial?.color || trial?.shape || trial?.image)
+    if (wantCenter) {
+      const svgId = createSvgId(trial.shape, trial.color, trial.image, settings)
+      cellStyle(this.centerWrap, findBoxColor(trial.shape, trial.color, trial.image, settings),
+        svgId, findShapeOuterColor(trial.color, settings), false)
+      this.centerFace.textContent = trial.text == null ? '' : String(trial.text)
+      this.centerWrap.hidden = false
+    } else {
+      this.centerWrap.hidden = true
     }
     this.variableN.hidden = !trial?.variableNBack
     if (trial?.variableNBack) this.variableN.textContent = trial.variableNBack
@@ -223,7 +257,8 @@ export class BoardRenderer {
   }
 
   clear() {
-    this.cells.forEach(c => { c.hidden = true })
+    this.cells.forEach(c => { c.hidden = true; setFaceText(c, '') })
     this.variableN.hidden = true
+    this.centerWrap.hidden = true
   }
 }

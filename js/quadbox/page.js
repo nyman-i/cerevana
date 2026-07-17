@@ -81,17 +81,26 @@ game = new QuadBoxGame({
     hud.style.backgroundColor = kind === 'advance' ? '#4c8434' : '#a6712c'
     setTimeout(() => { hud.style.backgroundColor = '' }, 2500)
   },
+  setAnswer: (text, verdict) => {
+    const line = $('qb-answer')
+    line.textContent = `Answer: ${text}`
+    line.classList.remove('nback__answer--right', 'nback__answer--wrong')
+    if (verdict) line.classList.add(`nback__answer--${verdict}`)
+  },
   onState: () => { if (game) refreshUi() },
 })
 
 // ---- HUD / keys / counter ----
-const KEY_FIELDS = [
-  { field: 'position', label: 'Position', hotkey: 'position' },
-  { field: 'color', label: 'Color', hotkey: 'color' },
-  { field: 'shape', label: 'Shape', hotkey: 'shape' },
-  { field: 'image', label: 'Image', hotkey: 'shape' },
-  { field: 'audio', label: 'Audio', hotkey: 'audio' },
-]
+// One key per active tag; the tag list comes from the generated game's meta,
+// so engine, preset and classic modes all render the right keys for free.
+const TAG_LABELS = {
+  position: 'Position', color: 'Color', shape: 'Shape', image: 'Image', audio: 'Audio',
+  visvis: 'Visual', visaudio: 'Vis & Audio', audiovis: 'Audio & Vis',
+  position0: 'Blue', position1: 'Green', position2: 'Yellow', position3: 'Red',
+}
+
+const tagHotkey = (settings, tag) =>
+  settings.hotkeys[tag] ?? (tag === 'image' ? settings.hotkeys.shape : '')
 
 // Rebuilt only when settings change (rebuilding per-trial would wipe
 // feedback classes and re-run feedback.configure's reset mid-game).
@@ -110,22 +119,20 @@ function renderKeys() {
       keysEl.appendChild(btn)
     }
   } else {
-    const gs = getGameSettings()
-    for (const { field, label, hotkey } of KEY_FIELDS) {
-      if (field === 'position' && gs.enablePosition === false) continue
-      if (field === 'color' && gs.enableImage) continue
-      if (field === 'shape' && gs.enableImage) continue
-      if (field === 'image' && !gs.enableImage) continue
+    const tags = (game.gameDisplayInfo.tags ?? []).filter(t => t !== 'arithmetic')
+    for (const tag of tags) {
       const btn = document.createElement('button')
       btn.className = 'nback__match'
-      btn.id = `qb-match-${field}`
-      btn.textContent = `${label} (${settings.hotkeys[hotkey]})`
+      btn.id = `qb-match-${tag}`
+      const key = tagHotkey(settings, tag)
+      btn.textContent = `${TAG_LABELS[tag] ?? tag}${key ? ` (${key})` : ''}`
       btn.tabIndex = -1
-      btn.addEventListener('click', () => { game.checkForMatch(field) })
+      btn.addEventListener('click', () => { game.checkForMatch(tag) })
       keysEl.appendChild(btn)
     }
-    feedback.configure(gs, settings.feedback)
+    feedback.configure(tags, settings.feedback)
   }
+  $('qb-answer').hidden = !game.gameDisplayInfo.arithmetic
 }
 
 function renderHud() {
@@ -141,6 +148,9 @@ function renderHud() {
     parts.push(`W = ${w}`)
   }
   parts.push(displayTitle(info).toUpperCase())
+  if (info.squares) parts[parts.length - 1] = `${info.squares}× MULTI`
+  if (info.crab) parts.push('CRAB')
+  if (info.selfPaced) parts.push('SP')
   const a = analytics.get()
   if (!game.isPlaying && a.lastGame?.total) {
     parts.push(`Last: ${(a.lastGame.total.percent * 100).toFixed(0)}%`)
@@ -158,11 +168,13 @@ function refreshUi() {
   rebuildBoard()
   renderHud()
   $('qb-start').textContent = game.isPlaying ? 'STOP' : 'START'
+  $('qb-next').hidden = !(game.isPlaying && game.gameDisplayInfo.selfPaced && !game.tally)
   $('qb-count').textContent = game.trialDisplay()
 }
 
 analytics.subscribe(() => renderHud())
 $('qb-start').addEventListener('click', () => game.toggleGame())
+$('qb-next').addEventListener('click', () => game.advance())
 
 // ---- settings panel ----
 // Out-of-range input is ignored (upstream clampNumber behavior). Bounds
@@ -182,6 +194,8 @@ const numberInputs = [
   ['qb-matchchance', v => setGameField('matchChance', v)],
   ['qb-interference', v => setGameField('interference', v)],
   ['qb-width', v => setGameField('positionWidth', v)],
+  ['qb-squares', v => setGameField('squares', v)],
+  ['qb-maxnumber', v => setGameField('arithMaxNumber', v)],
   ['qb-rotation', v => updateSetting('rotationSpeed', v)],
   ['qb-advance', v => {
     updateSetting('successCriteria', v)
@@ -208,6 +222,13 @@ for (const [id, set] of numberInputs) {
 
 const toggles = [
   ['qb-variable', v => setGameField('rules', v ? 'variable' : 'none')],
+  ['qb-crab', v => setGameField('crab', v)],
+  ['qb-selfpaced', v => setGameField('selfPaced', v)],
+  ['qb-negatives', v => setGameField('arithNegatives', v)],
+  ['qb-op-add', v => setGameField('arithOps', { ...getGameSettings().arithOps, add: v })],
+  ['qb-op-sub', v => setGameField('arithOps', { ...getGameSettings().arithOps, sub: v })],
+  ['qb-op-mul', v => setGameField('arithOps', { ...getGameSettings().arithOps, mul: v })],
+  ['qb-op-div', v => setGameField('arithOps', { ...getGameSettings().arithOps, div: v })],
   ['qb-chain', v => setGameField('enablePositionWidthSequence', v)],
   ['qb-en-audio', v => setGameField('enableAudio', v)],
   ['qb-en-color', v => {
@@ -258,7 +279,9 @@ for (const field of ['position', 'color', 'shape', 'audio']) {
 
 // PgUp/PgDn cycle enabled modes (ModeSwapper behavior)
 const MODE_ORDER = ['quad', 'dual', 'custom', 'customB',
-  'position', 'sound', 'positionColor', 'colorSound', 'triple', 'tally', 'vtally']
+  'position', 'sound', 'positionColor', 'colorSound', 'triple', 'jaeggi', 'multiSquare',
+  'dualCombo', 'triCombo', 'quadCombo', 'triComboColor',
+  'arithmetic', 'dualArithmetic', 'tripleArithmetic', 'tally', 'vtally']
 document.addEventListener('keydown', (event) => {
   if (event.code !== 'PageUp' && event.code !== 'PageDown') return
   const settings = getSettings()
@@ -307,6 +330,8 @@ const syncPanel = () => {
   const mode = settings.mode
   const isTally = mode === 'tally' || mode === 'vtally'
   const hasToggles = mode.startsWith('custom') || isTally
+  const isArith = 'arithOps' in gs
+  const isJaeggi = mode === 'jaeggi'
 
   // don't clobber what the user is mid-way through typing
   const setValue = (id, value) => {
@@ -334,8 +359,27 @@ const syncPanel = () => {
     $(`qb-key-${field}`).value = settings.hotkeys[field]
   }
 
+  // classic-family rows
+  $('qb-row-crab').hidden = isTally || isJaeggi || !!gs.enableShape || !!gs.enableImage
+  $('qb-crab').checked = !!gs.crab
+  $('qb-row-selfpaced').hidden = isTally || isJaeggi
+  $('qb-selfpaced').checked = !!gs.selfPaced
+  $('qb-row-squares').hidden = mode !== 'multiSquare'
+  if (mode === 'multiSquare') setValue('qb-squares', gs.squares)
+  $('qb-arith-rows').hidden = !isArith
+  if (isArith) {
+    $('qb-op-add').checked = gs.arithOps.add !== false
+    $('qb-op-sub').checked = gs.arithOps.sub !== false
+    $('qb-op-mul').checked = gs.arithOps.mul !== false
+    $('qb-op-div').checked = gs.arithOps.div !== false
+    setValue('qb-maxnumber', gs.arithMaxNumber)
+    $('qb-negatives').checked = !!gs.arithNegatives
+  }
+
   // visibility rules (GameSettings.svelte conditions)
-  $('qb-row-variable').hidden = isTally
+  $('qb-row-variable').hidden = isTally || isJaeggi || !!gs.crab
+  $('qb-row-matchchance').hidden = isJaeggi
+  $('qb-row-interference').hidden = isJaeggi
   $('qb-row-trialtime').hidden = !('trialTime' in gs)
   $('qb-row-grid').hidden = mode === 'vtally'
   $('qb-row-rotation').hidden = mode === 'vtally'
@@ -351,7 +395,9 @@ const syncPanel = () => {
     syncChainRows(gs)
   }
 
-  // stimuli rows
+  // stimuli rows (arithmetic speaks operations via TTS — no stimulus sources)
+  $('qb-stimuli-heading').hidden = isArith
+  $('qb-stimuli-rows').hidden = isArith
   $('qb-row-audio').hidden = mode === 'vtally'
   $('qb-en-audio').parentElement.hidden = !hasToggles
   $('qb-en-color').parentElement.hidden = !hasToggles
@@ -427,8 +473,16 @@ const renderGames = async () => {
     .filter(g => showCancelled || g.status === 'completed')
   $('qb-games-empty').hidden = games.length > 0
   const table = $('qb-games-table')
-  const tags = ['position', 'audio', 'color', 'shape', 'image']
-  const head = `<tr><th>Date</th><th>Game</th><th>Total</th>${tags.map(t => `<th>${t[0].toUpperCase()}${t.slice(1)}</th>`).join('')}<th>Time</th></tr>`
+  // columns = union of tags present in the fetched games, in display order
+  const TAG_ORDER = ['position', 'position0', 'position1', 'position2', 'position3',
+    'audio', 'color', 'shape', 'image', 'visvis', 'visaudio', 'audiovis', 'arithmetic']
+  const present = new Set()
+  for (const g of games) {
+    for (const t of Object.keys(g.scores ?? {})) present.add(t)
+  }
+  const tags = TAG_ORDER.filter(t => present.has(t))
+  const colName = (t) => TAG_LABELS[t] ?? (t === 'arithmetic' ? 'Arith' : t)
+  const head = `<tr><th>Date</th><th>Game</th><th>Total</th>${tags.map(t => `<th>${colName(t)}</th>`).join('')}<th>Time</th></tr>`
   const rows = games.map(g => {
     const date = new Date(g.timestamp).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
     const name = `${displayTitle(g).toUpperCase()} ${g.nBack}B${g.status === 'cancelled' ? ' ✕' : ''}`
