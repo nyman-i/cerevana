@@ -88,8 +88,8 @@ python3 -m http.server 8080
 ```
 
 then open http://localhost:8080. (Quad Box's built output is committed at
-`quadbox/dist/`, so no npm/build is needed to serve; rebuilding it is only
-required when changing `quadbox/src/` — see `quadbox/VENDORED.md`.)
+`js/quadbox/dist/`, so no npm/build is needed to serve; rebuilding it is only
+required when changing `js/quadbox/src/` — see `js/quadbox/VENDORED.md`.)
 For an app-like window:
 
 ```bash
@@ -127,9 +127,9 @@ Brain Workshop.
 **Quad Box** is [soamsy/quad-box](https://github.com/soamsy/quad-box)
 (MIT, [playable original](https://quad-box.netlify.app)) by
 [soamsy](https://github.com/soamsy/) — the same developer behind the
-Syllogimous-v3 fork RRT grew from. It is vendored into `quadbox/` and
+Syllogimous-v3 fork RRT grew from. It is vendored into `js/quadbox/` and
 restyled to match Cerevana; the game mechanics are unchanged and its MIT
-license is kept at `quadbox/LICENSE` (details in `quadbox/VENDORED.md`).
+license is kept at `js/quadbox/LICENSE` (details in `js/quadbox/VENDORED.md`).
 
 The menu background photo is by
 [Simon Berger on Pexels](https://www.pexels.com/photo/photography-of-mountains-under-cloudy-sky-1183099/)
@@ -149,10 +149,21 @@ The header/logo typeface is [Zen Dots](https://fonts.google.com/specimen/Zen+Dot
 by Yoshimichi Ohira, the display/HUD typeface is
 [Oxanium](https://github.com/sevmeyer/oxanium) by Severin Meyer, and the
 monospace typeface is
-[JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) by JetBrains —
+[JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) by JetBrains, and
+the CEREVANA wordmark on the menu is set in
+[Format 1452](https://github.com/velvetyne/Format_1452) by
+Frank Adebiaye (Velvetyne) —
 all licensed under the SIL Open Font License 1.1
 ([Zen Dots](fonts/OFL-ZenDots.txt), [Oxanium](fonts/OFL-Oxanium.txt),
-[JetBrains Mono](fonts/OFL-JetBrainsMono.txt)) and bundled locally.
+[JetBrains Mono](fonts/OFL-JetBrainsMono.txt),
+[Format 1452](fonts/OFL-Format1452.txt)) and bundled locally.
+
+Bundled libraries, all vendored in `js/lib/`:
+[Chart.js](https://www.chartjs.org/) (MIT) for the progress graphs, and —
+for Quad Box's generated image stimuli —
+[d3-delaunay](https://github.com/d3/d3-delaunay)/[delaunator](https://github.com/mapbox/delaunator)/[robust-predicates](https://github.com/mourner/robust-predicates)
+and [d3-shape](https://github.com/d3/d3-shape)/[d3-path](https://github.com/d3/d3-path)
+(ISC, see [js/lib/LICENSE-d3-stimuli.txt](js/lib/LICENSE-d3-stimuli.txt)).
 
 ## License
 

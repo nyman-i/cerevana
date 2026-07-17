@@ -1,5 +1,20 @@
 # Vendored: Quad Box
 
+> **Restructuring in progress (Option C′ — engine promotion).** Upstream
+> sync is FROZEN at commit `83a9718b371a2a747760dceac047b379a80a3ac5`.
+> The framework-free game engine has been promoted to `engine/` (buildless
+> ES modules, MIT headers per file); the Svelte app in `src/` + `dist/`
+> remains the live page until the vanilla cutover. Engine equivalence is
+> by construction: 8 files byte-identical to `src/` (headers aside),
+> 6 differ only in import-specifier lines (.js extensions / vendored d3
+> paths), `autoProgression.js` adapted off svelte stores (logic
+> unchanged). Tests: `node --experimental-test-module-mocks --test
+> tests/quadbox-pure.mjs` (port of `src`'s vitest suite) — 5/5 green.
+> d3 stimulus deps are vendored buildless in `js/lib/`:
+> `d3-delaunay.esm.js` + `delaunator.esm.js` + `robust-predicates.esm.js`
+> (ISC), `d3-shape.esm.js` + `d3-path.esm.js` (ISC) — jsDelivr +esm
+> bundles with sub-dep specifiers rewritten to local files.
+
 - Upstream: https://github.com/soamsy/quad-box
 - Commit: `83a9718b371a2a747760dceac047b379a80a3ac5` (upstream date 2025-11-08)
 - Vendored: 2026-07-16
@@ -94,3 +109,23 @@ untouched. Keep this list current with any new change.
   (`.cv-button`), `.mb-*` spacing scoped to the panel; daisyUI's
   `:root` base-100 paint disabled via its `--root-bg` hook so the page
   shows the host's black background.
+
+## Engine promotion checksums (sha256, at promotion)
+
+```
+  78e041a87c6d1af847f8776b90be2b5c863be1ad99568f36588fd32807e73d63  autoProgression.js
+  4492a953a97536425bb1d041c2544f4b250e4e9542ec5e0e4842532b4ee9afd9  constants.js
+  fe928211d20c9f0bbf250c87782374f27f66e6e19c6d35f10c5b2224437b3458  gamedb.js
+  c9a384028579dd55d233552c46a1d4c5bc38d1c83f91416b85ed19bcb4a4c317  generative.js
+  2e209235e88e01c668b28c9aa4fb091ddea015f060b8243a87799ccfe5465f78  gradient.js
+  9983f87dd95e28cd1cc2c76a9944a2d44bd3e0056bf17a573ef18f8efacbd9a8  nbackGame.js
+  7ecb732025a428f1411fe096afb296392c2599ac204a910fcf34d8b2b42ecbf4  nback.js
+  93e55848563bcb666cd3aa67b25bf444283732264dd8b996319c0307e898d54b  shapeSvgPool.js
+  2404ece680f134ccbc1f16c43e3360339a153dcff37dfbc790413715b088954f  svg.js
+  9cff10ea3bb4219893fbc80f4db6b588dc698e1229ec5c0db586ddc7d83d188d  trialUtils.js
+  4cf141645613ced8f0e9193d430528f448f5d10841bb7eb8d8049a0767db1998  utils.js
+  f4360fd957aed6d8cf73faad490ca7aa0b388541c51f55d1f09ff318101b32b8  voronoi.js
+  4de0b59925cc43aacc142481c158cdb64f3fbc9fe41299c6ead4e3efb5171d6e  migrations/migrations.js
+  9dfd62cbb68db6ae693e1da5cdc0b2b2dc3727d752dc32855edcbad6306f679b  migrations/v2.js
+  1598d215a7de2d4d424a8de1d1ebd1670d0882c82a506401e7f298f872a9d2a9  migrations/v3.js
+```
