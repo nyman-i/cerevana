@@ -26,12 +26,21 @@
 							<div class="ctrl__inner">
 								<span>Game Mode</span>
 								<select id="qb-mode" class="select-item">
-									<option value="quad">Quad</option>
-									<option value="dual">Dual</option>
-									<option value="custom">Custom A</option>
-									<option value="customB">Custom B</option>
-									<option value="tally">Tally</option>
-									<option value="vtally">Visual Tally</option>
+									<optgroup label="Quad Box">
+										<option value="quad">Quad</option>
+										<option value="dual">Dual</option>
+										<option value="custom">Custom A</option>
+										<option value="customB">Custom B</option>
+										<option value="tally">Tally</option>
+										<option value="vtally">Visual Tally</option>
+									</optgroup>
+									<optgroup label="Classic">
+										<option value="position">Position</option>
+										<option value="sound">Sound</option>
+										<option value="positionColor">Position + Color</option>
+										<option value="colorSound">Color + Sound</option>
+										<option value="triple">Triple</option>
+									</optgroup>
 								</select>
 								<div class="tooltip-container" tabindex="0">
 									?
@@ -231,6 +240,22 @@
 								<span class="inline-input__inner">
 									<input id="qb-rotation" type="number" min="0" max="999" step="1" style="width: 5ch">
 								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="ctrl__inner">
+								<span>Voice</span>
+								<select id="qb-voice" class="select-item">
+									<option value="recorded">Cerevana (recorded)</option>
+									<option value="browser">Browser voice</option>
+								</select>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										Audio stimuli: bundled recordings<br>
+										or your browser's built-in voice.<br>
+									</div>
+								</div>
 							</div>
 						</div>
 						<div id="qb-progression-rows">

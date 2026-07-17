@@ -112,6 +112,7 @@ function renderKeys() {
   } else {
     const gs = getGameSettings()
     for (const { field, label, hotkey } of KEY_FIELDS) {
+      if (field === 'position' && gs.enablePosition === false) continue
       if (field === 'color' && gs.enableImage) continue
       if (field === 'shape' && gs.enableImage) continue
       if (field === 'image' && !gs.enableImage) continue
@@ -235,6 +236,7 @@ const selects = [
   ['qb-mode', v => updateSetting('mode', v)],
   ['qb-grid', v => setGameField('grid', v)],
   ['qb-feedback', v => updateSetting('feedback', v)],
+  ['qb-voice', v => updateSetting('voice', v)],
   ['qb-src-audio', v => setGameField('audioSource', v)],
   ['qb-src-color', v => setGameField('colorSource', v)],
   ['qb-src-shape', v => setGameField('shapeSource', v)],
@@ -255,7 +257,8 @@ for (const field of ['position', 'color', 'shape', 'audio']) {
 }
 
 // PgUp/PgDn cycle enabled modes (ModeSwapper behavior)
-const MODE_ORDER = ['quad', 'dual', 'custom', 'customB', 'tally', 'vtally']
+const MODE_ORDER = ['quad', 'dual', 'custom', 'customB',
+  'position', 'sound', 'positionColor', 'colorSound', 'triple', 'tally', 'vtally']
 document.addEventListener('keydown', (event) => {
   if (event.code !== 'PageUp' && event.code !== 'PageDown') return
   const settings = getSettings()
@@ -320,6 +323,7 @@ const syncPanel = () => {
   setValue('qb-matchchance', gs.matchChance)
   setValue('qb-interference', gs.interference)
   $('qb-feedback').value = settings.feedback
+  $('qb-voice').value = settings.voice
   setValue('qb-rotation', settings.rotationSpeed)
   $('qb-autoprog').checked = settings.enableAutoProgression
   setValue('qb-advance', settings.successCriteria)
@@ -353,8 +357,9 @@ const syncPanel = () => {
   $('qb-en-color').parentElement.hidden = !hasToggles
   $('qb-en-shape').parentElement.hidden = !hasToggles
   $('qb-row-image').hidden = !hasToggles
-  $('qb-row-color').hidden = !(hasToggles || mode === 'quad')
-  $('qb-row-shape').hidden = !(hasToggles || mode === 'quad')
+  // preset modes have fixed stimuli but still expose the source pickers
+  $('qb-row-color').hidden = !(hasToggles || mode === 'quad' || gs.enableColor)
+  $('qb-row-shape').hidden = !(hasToggles || mode === 'quad' || gs.enableShape)
   $('qb-en-audio').checked = !!gs.enableAudio
   $('qb-en-color').checked = !!gs.enableColor
   $('qb-en-shape').checked = !!gs.enableShape

@@ -2,7 +2,9 @@
  * Derived from Quad Box — https://github.com/soamsy/quad-box
  * Copyright (c) 2025 The Quad Box Project Contributors
  * MIT License — see js/quadbox/LICENSE
- * Promoted from src/lib/nback.js at upstream commit 83a9718. Changes: none.
+ * Promoted from src/lib/nback.js at upstream commit 83a9718.
+ * Cerevana changes: position stimulus is optional (enablePosition: false —
+ * absent means enabled), for classic sound-only / color+sound modes.
  */
 import { COLOR_POOL, SHAPE_POOL, getAudioPool, POSITION_POOL, POSITION_POOL_2D, TETRIS_POOL, ICONS_A_POOL, ICONS_B_POOL, ALL_SHAPES_POOL } from "./constants.js"
 import { createVoronoiPool } from "./voronoi.js"
@@ -13,7 +15,9 @@ import { shuffle } from "./utils.js"
 
 export const generateGame = (gameSettings, globalSettings) => {
   const nbackGame = new NBackGame(gameSettings)
-  nbackGame.addStimulus('position', getPositionPool(gameSettings))
+  if (gameSettings.enablePosition !== false) {
+    nbackGame.addStimulus('position', getPositionPool(gameSettings))
+  }
   addNonTallyStimuli(nbackGame, gameSettings, globalSettings)
   return nbackGame.generateGame()
 }

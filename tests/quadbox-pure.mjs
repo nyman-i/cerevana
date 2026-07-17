@@ -9,6 +9,13 @@ mock.module(new URL('../js/quadbox/engine/utils.js', import.meta.url).href, {
   namedExports: {
     pick: (pool) => (pool && pool.length > 0 ? pool[0] : 'default'),
     shuffle: (array) => array,
+    // real implementation (voronoi.js imports it via the mocked module)
+    seededRandom: (seed) => {
+      const m = 2 ** 31 - 1
+      let state = seed % m
+      for (let i = 0; i < 10; i++) state = (48271 * state + 1) % m
+      return () => { state = (48271 * state + 1) % m; return state / m }
+    },
   },
 })
 
@@ -120,6 +127,26 @@ test('createTitle: correct titles for tally games', () => {
 
   assert.equal(game.createTitle(['audio']), 'tally dual')
   assert.equal(game.createTitle(['audio', 'shape', 'color']), 'tally quad')
+})
+
+// Cerevana engine changes (merged N-Back)
+
+test('createTitle: explicit gameSettings.title wins over derived titles', () => {
+  const game = new NBackGame({ ...mockGameSettings, title: 'position-color' })
+  assert.equal(game.createTitle(['position', 'color']), 'position-color')
+  const derived = new NBackGame(mockGameSettings)
+  assert.equal(derived.createTitle(['position', 'color']), 'custom')
+})
+
+test('generateGame: enablePosition false omits the position stimulus', async () => {
+  const { generateGame } = await import('../js/quadbox/engine/nback.js')
+  const base = { ...mockGameSettings, enableAudio: true, enableShape: false, enableColor: false, enableImage: false, audioSource: 'letters2' }
+  const withPos = generateGame(base, {})
+  assert.ok(withPos.meta.tags.includes('position'), 'position present by default')
+  const soundOnly = generateGame({ ...base, enablePosition: false, title: 'sound' }, {})
+  assert.deepEqual(soundOnly.meta.tags, ['audio'])
+  assert.equal(soundOnly.meta.title, 'sound')
+  assert.ok(soundOnly.trials.every(t => !('position' in t)), 'no trial carries a position')
 })
 
 test('generateMatches: generates some true matches', () => {

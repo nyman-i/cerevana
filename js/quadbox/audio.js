@@ -5,10 +5,24 @@
  * https://github.com/soamsy/quad-box, see js/quadbox/LICENSE.
  */
 import { getAudioPool } from './engine/constants.js'
+import { getSettings } from './settings.js'
 
-// Assets live next to this module (currently the committed dist copy;
-// relocated at cutover). Module-relative so any page can host the game.
+// Assets live next to this module. Module-relative so any page can host the game.
 const AUDIO_BASE = new URL('./audio/', import.meta.url)
+
+// Fire-and-forget TTS: the trial clock paces the game, not speech
+// completion — also avoids stranding the trial loop where no voices exist.
+const speak = (text) => {
+  speechSynthesis.cancel()
+  const u = new SpeechSynthesisUtterance(text)
+  u.lang = 'en-US'
+  u.rate = 1.1
+  speechSynthesis.speak(u)
+  return Promise.resolve()
+}
+
+// 'LettersM1/a' → 'a', 'Nato/alfa' → 'alfa'
+const spokenName = (url) => String(url).split('/').pop()
 
 const canOpus = typeof Audio !== 'undefined' &&
   new Audio().canPlayType('audio/ogg; codecs=opus') !== ''
@@ -31,6 +45,10 @@ class AudioPlayer {
   }
 
   async play(url) {
+    // 'speak:' urls (arithmetic operations) always use the browser voice;
+    // otherwise the voice setting picks recorded packs vs speechSynthesis
+    if (String(url).startsWith('speak:')) return speak(String(url).slice(6))
+    if (getSettings().voice === 'browser') return speak(spokenName(url))
     let audio = this.audioCache.get(url)
     if (!audio) {
       audio = this.createAudio(url)
@@ -55,6 +73,7 @@ class AudioPlayer {
   }
 
   cacheAudioSource(audioSource) {
+    if (getSettings().voice === 'browser') return
     getAudioPool(audioSource).forEach(url => this.preload(url))
   }
 

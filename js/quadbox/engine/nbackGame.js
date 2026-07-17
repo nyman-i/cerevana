@@ -2,7 +2,10 @@
  * Derived from Quad Box — https://github.com/soamsy/quad-box
  * Copyright (c) 2025 The Quad Box Project Contributors
  * MIT License — see js/quadbox/LICENSE
- * Promoted from src/lib/nbackGame.js at upstream commit 83a9718. Changes: none.
+ * Promoted from src/lib/nbackGame.js at upstream commit 83a9718.
+ * Cerevana changes: createTitle honors an explicit gameSettings.title
+ * (mode identity for preset modes that would otherwise collapse to
+ * 'custom' and cross-contaminate progression/chart grouping).
  */
 import { shuffle, pick } from "./utils.js"
 
@@ -73,6 +76,9 @@ export class NBackGame {
   }
 
   createTitle(tags) {
+    if (this.gameSettings.title) {
+      return this.gameSettings.title
+    }
     const title = this.createDefaultTitle(tags)
     if (this.tallyStimuli.size > 0) {
       const prefix = this.rules === 'vtally' ? 'vtally' : 'tally'

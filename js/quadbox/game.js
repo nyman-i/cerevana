@@ -6,6 +6,7 @@
  * by explicit ui callbacks (page.js renders).
  */
 import { generateGame, generateTallyGame } from './engine/nback.js'
+import { generateClassicGame, isClassicGame, CLASSIC_TITLES } from './classic.js'
 import { runAutoProgression } from './engine/autoProgression.js'
 import { audioPlayer } from './audio.js'
 import { analytics } from './analytics.js'
@@ -71,9 +72,17 @@ export class QuadBoxGame {
   regenerate() {
     const settings = getSettings()
     const gameSettings = getGameSettings()
+    const mode = settings.mode
+    // three generator families: tally (engine), classic (BW-derived modes +
+    // crab variants), engine default. Preset modes riding the engine pass an
+    // explicit title so records don't collapse to 'custom'.
     this.game = this.tally
       ? generateTallyGame(gameSettings, settings, this.gameId)
-      : generateGame(gameSettings, settings, this.gameId)
+      : isClassicGame(mode, gameSettings)
+        ? generateClassicGame(mode, gameSettings)
+        : generateGame(CLASSIC_TITLES[mode]
+          ? { ...gameSettings, title: CLASSIC_TITLES[mode] }
+          : gameSettings, settings, this.gameId)
     if (!this.isPlaying) {
       this.gameMeta = { ...this.game.meta }
       this.gameDisplayInfo = this.gameMeta
