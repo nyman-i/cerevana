@@ -2513,7 +2513,7 @@ body.menu-mode .main-view {
     white-space: nowrap;
 }
 
-@media (max-width: 500px) {
+@media (width <= 500px) {
     .menu-goal__label {
         min-width: 4.5rem;
         letter-spacing: 0.08em;
