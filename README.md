@@ -84,6 +84,10 @@ implementations are welcome.
   time spent for CCT.
 - Timers with auto-progression (RRT), adaptive per-mode levels (N-Back), and
   an adaptive answer interval (CCT).
+- Daily and weekly play-time goals for every exercise — progress bars beside
+  the play area on RRT and CCT, HUD and history readouts on N-Back — plus a
+  combined tracker on the main menu that sums the goals you've set across
+  exercises and derives a monthly target from them.
 - A calm, focus-first look in both dark and light: one restrained accent,
   spent only where attention is earned (selected states, the active tab, the
   timer). The accent hue is **yours to choose** — a slider in the menu's
