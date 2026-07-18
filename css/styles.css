@@ -293,6 +293,20 @@ button.delete:hover {
     letter-spacing: 0.08em;
 }
 
+/* custom elements (js/components/) render plain rows in light DOM;
+   display: contents makes the tag invisible to layout so the rendered
+   markup participates exactly as if written in place */
+help-tip,
+num-row,
+switch-row,
+select-row,
+goal-targets,
+profile-picker,
+corner-panel,
+corner-tabs {
+    display: contents;
+}
+
 /* empty-state one-liner for panels/popups with no data yet */
 .panel-empty {
     color: var(--preamble-color);

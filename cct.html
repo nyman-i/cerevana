@@ -10,6 +10,10 @@
 		<link rel="stylesheet" href="css/styles.css">
 		<link rel="stylesheet" href="css/cct.css">
 		<script src="js/shared/boot.js"></script>
+		<script src="js/components/help-tip.js"></script>
+		<script src="js/components/num-row.js"></script>
+		<script src="js/components/goal-targets.js"></script>
+		<script src="js/components/profile-picker.js"></script>
 	</head>
 	<body>
 
@@ -22,33 +26,8 @@
 				<div class="offcanvas-body ffmono">
 					<div style="direction: ltr;">
 						<div class="mb-1"></div>
-						<div class="mb-05 panel-heading">Profile</div>
-						<div class="mb-2 profile-container">
-							<div class="profile-dropdown">
-								<input type="text" class="profile-input" id="profile-input" placeholder="">
-								<span class="profile-arrow" id="profile-arrow">▼</span>
-								<div class="profile-list" id="profile-list">
-								</div>
-							</div>
-							<button type="button" class="profile-plus" id="profile-plus" aria-label="Add profile">+</button>
-						</div>
-						<div class="mb-05 panel-heading">Progress Targets</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Daily target
-								<span class="inline-input__inner">
-									<input id="cct-dailygoal" type="number" min="1" max="360" step="1" style="width: 5ch">min
-								</span>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Weekly target
-								<span class="inline-input__inner">
-									<input id="cct-weeklygoal" type="number" min="1" max="2500" step="1" style="width: 6ch">min
-								</span>
-							</div>
-						</div>
+						<profile-picker></profile-picker>
+						<goal-targets daily-id="cct-dailygoal" weekly-id="cct-weeklygoal"></goal-targets>
 						<div class="mb-05 panel-heading">Arithmetic</div>
 						<div class="mb-2">
 							<div class="ctrl__inner">
@@ -339,9 +318,17 @@
 
 			<div id="cct-stage">
 				<div class="cct-hud" id="cct-hud" hidden></div>
-				<div class="cct-digit" id="cct-digit" hidden></div>
-				<input id="cct-answer" class="cct-answer-input" type="text" inputmode="numeric" autocomplete="off" autocapitalize="off" hidden>
-				<div class="nback__result" id="cct-result" hidden></div>
+				<div class="cct-frame">
+					<div class="bracket-lip-top-left"></div>
+					<div class="border-left"></div>
+					<div class="bracket-lip-bottom-left"></div>
+					<div class="bracket-lip-top-right"></div>
+					<div class="border-right"></div>
+					<div class="bracket-lip-bottom-right"></div>
+					<div class="cct-digit" id="cct-digit" hidden></div>
+					<input id="cct-answer" class="cct-answer-input" type="text" inputmode="numeric" autocomplete="off" autocapitalize="off" hidden>
+					<div class="nback__result" id="cct-result" hidden></div>
+				</div>
 			</div>
 
 			<div class="cct-actions">
