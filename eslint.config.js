@@ -41,6 +41,8 @@ const NODE_GLOBALS = {
     process: 'readonly', console: 'readonly', Buffer: 'readonly',
     __dirname: 'readonly', __filename: 'readonly', module: 'readonly', require: 'readonly',
     URL: 'readonly', URLSearchParams: 'readonly', TextEncoder: 'readonly', TextDecoder: 'readonly',
+    // Node 22+ globals used by tests/smoke.mjs's zero-dependency CDP driver
+    WebSocket: 'readonly', fetch: 'readonly', setTimeout: 'readonly', clearTimeout: 'readonly',
 };
 
 // Every top-level function/const/let/var/class name across all classic
