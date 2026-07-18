@@ -61,9 +61,12 @@ task, and UFOV. Suggestions and implementations are welcome.
 - History export/import to a JSON file, with **merge** (timestamp-deduplicated)
   or **overwrite** semantics, covering score, question history, progress-graph
   data and all n-back games (older export files remain importable).
+- The same four corner panels on every game page: Settings, History (RRT's
+  per-question log; N-Back's per-game list with score chips), Info (how to
+  play, keyboard shortcuts, credits, resets) and Graphs.
 - Progress graphs: time spent, average correct times, premise speed and totals
-  for RRT; per-mode level history for N-Back, with pre-merge sessions shown
-  as legacy lines.
+  for RRT; per-mode level history and daily time spent for N-Back, with
+  pre-merge sessions shown as legacy lines.
 - Timers with auto-progression (RRT) and adaptive per-mode levels (N-Back).
 - A calm, focus-first look in both dark and light: one restrained accent,
   spent only where attention is earned (selected states, the active tab, the

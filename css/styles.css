@@ -1595,10 +1595,6 @@ table.distinction {
     content: 'HISTORY';
 }
 
-.credits-label::before {
-    content: 'SHORTCUTS';
-}
-
 .info-label::before {
     content: 'INFO';
 }

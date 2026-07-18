@@ -9,7 +9,6 @@
 		<meta name="theme-color" content="#7cb6a8" />
 
 		<link rel="icon" type="image/png" href="favicon.png?v=5">
-		<link rel="stylesheet" href="css/codec.css">
 		<link rel="stylesheet" href="fonts/cool/coolicons.css">
 		<link rel="stylesheet" href="css/styles.css">
 		<script src="js/shared/boot.js"></script>
@@ -887,12 +886,6 @@
 								</div>
 							</div>
 						</div>
-						<div class="mb-1">
-							<button id="reset-rrt" onclick="resetRRT()">Reset RRT</button>
-							<ul class="explainer">
-								<li>Resets RRT only: score, history and settings. N-Back is untouched. Full reset lives on the main menu.</li>
-							</ul>
-						</div>
 					</div>
 				</div>
 				<div class="offcanvas-side">
@@ -915,37 +908,59 @@
 					<button onclick="clearHistory()">Clear Session</button>
 				</div>
 			</div>
-			<input id="offcanvas-credits"
+			<input id="offcanvas-info"
 				   type="checkbox"
 				   hidden>
-			<div id="sidebar-credits" class="offcanvas offcanvas--left">
+			<div id="sidebar-info" class="offcanvas offcanvas--left">
 				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-credits">✕</label>
+					<label class="offcanvas-close" for="offcanvas-info">✕</label>
 				</div>
 				<div class="offcanvas-body ffmono">
 					<div style="direction: ltr;">
+						<div class="mb-1"></div>
+						<div class="mb-05 panel-heading">How to play</div>
+						<p>Read the premises, then judge whether the conclusion is
+						<strong>True</strong> or <strong>False</strong>. Premises
+						state relations &mdash; order, distinction, direction,
+						syllogisms &mdash; and the conclusion either follows from
+						them or contradicts them.</p>
+						<p>Turn the timer on to score: correct answers raise your
+						level and harder questions follow. Pick question types and
+						premise counts in Settings.</p>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Keyboard Shortcuts</div>
 						<div class="mb-2">
-							<div class="explainer">
-								<h4>Keyboard Shortcuts:</h4>
-								<div class="shortcuts">
+							<div class="shortcuts">
 								<p class="keyboard-shortcut"><span>Space</span><span>Toggle Timer</span></p>
 								<p class="keyboard-shortcut"><span>←, 1, j</span><span>Answer True</span></p>
 								<p class="keyboard-shortcut"><span>→, 2, k</span><span>Answer False</span></p>
 								<p class="keyboard-shortcut"><span>h</span><span>Open History</span></p>
 								<p class="keyboard-shortcut"><span>a</span><span>Prev (Carousel)</span></p>
 								<p class="keyboard-shortcut"><span>d</span><span>Next (Carousel)</span></p>
-								</div>
 							</div>
 						</div>
-						<div class="mb-2">
-							<a href="credits.html">Credits</a>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Credits</div>
+						<p>Based on
+						<a href="https://github.com/4skinSkywalker/Syllogimous" target="_blank" rel="noopener">Syllogimous</a>
+						by 4skinSkywalker, extended through the v3 lineage of
+						ikokusovereignty and
+						<a href="https://github.com/soamsy/Syllogimous-v3" target="_blank" rel="noopener">soamsy</a>
+						&mdash; see <a href="credits.html">Credits</a>.</p>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Reset</div>
+						<div class="mb-1">
+							<button id="reset-rrt" onclick="resetRRT()">Reset RRT</button>
+							<ul class="explainer">
+								<li>Resets RRT only: score, history and settings. N-Back is untouched. Full reset lives on the main menu.</li>
+							</ul>
 						</div>
 					</div>
 				</div>
 			</div>
 			<label class="open metal-gear open--top-left" for="offcanvas-settings" tabindex="0"><span class="sidebar-button settings-label"></span></label>
 			<label class="open metal-gear open--top-right" for="offcanvas-history" tabindex="0"><span class="sidebar-button history-label"></span></label>
-			<label class="open metal-gear open--bottom-left" for="offcanvas-credits" tabindex="0"><span class="sidebar-button credits-label"></span></label>
+			<label class="open metal-gear open--bottom-left" for="offcanvas-info" tabindex="0"><span class="sidebar-button info-label"></span></label>
 			<label id="graph-label" class="open metal-gear open--bottom-right" tabindex="0"><span class="sidebar-button graph-label"></span></label>
 				<nav class="game-menu metal-gear">
 					<a class="game-menu__item" href="index.html">MENU</a>
@@ -2092,7 +2107,6 @@
 		<script src="js/lib/chart.min.js"></script>
 		<script src="js/lib/chartjs-adapter-date-fns.min.js"></script>
 		<script src="js/lib/date-fns.min.js"></script>
-		<script src="js/shared/codec.js"></script>
 		<script src="js/shared/constants.js"></script>
 		<script src="js/rrt/generators/utils.js"></script>
 		<script src="js/rrt/generators/anchors.js"></script>

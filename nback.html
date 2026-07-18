@@ -464,11 +464,6 @@
 								</span>
 							</div>
 						</div>
-						<ul class="explainer">
-							<li>Space starts a session, Esc ends it.</li>
-							<li>PgUp / PgDn cycle your enabled modes.</li>
-							<li>In tally modes the number keys answer.</li>
-						</ul>
 					</div>
 				</div>
 				<div class="offcanvas-side">
@@ -488,26 +483,27 @@
 						what happened <strong>N trials ago</strong> and press the
 						matching key whenever a modality repeats: position, color,
 						shape/image, or audio. Several can match at once.</p>
-						<ul class="explainer">
-							<li>A &mdash; position match</li>
-							<li>F &mdash; color match</li>
-							<li>J &mdash; shape / image match</li>
-							<li>L &mdash; audio match</li>
-						</ul>
 						<p>In <strong>tally</strong> modes you instead type the
 						<em>count</em> of matches each trial &mdash; self-paced, no
 						trial timer.</p>
 						<p>The <strong>Classic</strong>, <strong>Combination</strong>
 						and <strong>Arithmetic</strong> groups follow the Brain
 						Workshop protocol: grid positions and spoken letters,
-						cross-modal matches (S / D / J), typed arithmetic answers,
-						and the crab, self-paced and Jaeggi variants.</p>
+						cross-modal matches, typed arithmetic answers, and the crab,
+						self-paced and Jaeggi variants.</p>
 						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Reset</div>
-						<p>Reset settings keeps your history. The full reset erases
-						all N-Back data &mdash; irreversible.</p>
-						<div class="mb-1"><button id="qb-reset-settings">Reset Settings</button></div>
-						<div class="mb-1"><button id="qb-reset-all" class="delete">Reset N-Back</button></div>
+						<div class="mb-05 panel-heading">Keyboard Shortcuts</div>
+						<div class="mb-2">
+							<div class="shortcuts">
+								<p class="keyboard-shortcut"><span>Space</span><span>Start session</span></p>
+								<p class="keyboard-shortcut"><span>Esc</span><span>Stop session</span></p>
+								<p class="keyboard-shortcut"><span>A, F, J, L</span><span>Match keys (change in Settings)</span></p>
+								<p class="keyboard-shortcut"><span>S, D, J</span><span>Combination matches</span></p>
+								<p class="keyboard-shortcut"><span>0&ndash;9</span><span>Tally counts / arithmetic answers</span></p>
+								<p class="keyboard-shortcut"><span>Enter</span><span>Next trial (self-paced)</span></p>
+								<p class="keyboard-shortcut"><span>PgUp, PgDn</span><span>Cycle enabled modes</span></p>
+							</div>
+						</div>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Credits</div>
 						<p>Built on the game engine of
@@ -516,6 +512,12 @@
 						<a href="https://brainworkshop.sourceforge.net/" target="_blank" rel="noopener">Brain Workshop</a>
 						(inspiration only, no shared code) &mdash; see
 						<a href="credits.html">Credits</a>.</p>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Reset</div>
+						<p>Reset settings keeps your history. The full reset erases
+						all N-Back data &mdash; irreversible.</p>
+						<div class="mb-1"><button id="qb-reset-settings">Reset Settings</button></div>
+						<div class="mb-1"><button id="qb-reset-all" class="delete">Reset N-Back</button></div>
 					</div>
 				</div>
 				<div class="offcanvas-side">
