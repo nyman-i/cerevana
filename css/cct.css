@@ -31,10 +31,26 @@
     user-select: none;
 }
 
+.cct-frame {
+    --cct-digit-size: clamp(4rem, 18svh, 9rem);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 0 3rem;
+    padding: 1.5rem 3rem;
+    min-width: 14rem;
+    /* idle height must match the running game (digit + gap + answer input),
+       so the frame doesn't resize when a session starts */
+    min-height: calc(3rem + var(--cct-digit-size) * 1.2 + 1rem + 3.5rem);
+}
+
 .cct-digit {
     font-family: Oxanium, sans-serif;
     font-weight: bold;
-    font-size: clamp(4rem, 18svh, 9rem);
+    font-size: var(--cct-digit-size);
     color: var(--accent-color);
     min-height: 1.2em;
     line-height: 1.2em;
@@ -45,6 +61,7 @@
     font-size: var(--step-1);
     text-align: center;
     width: 6ch;
+    height: 3.5rem;
     background-color: var(--single-input-bg);
     color: var(--text-color);
     border: 1px solid var(--switch-border-color);
