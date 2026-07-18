@@ -31,92 +31,140 @@
     user-select: none;
 }
 
-/* ---------- controls (keys + start use styles.css .nback__match/.nback__start) ----------
-   Side rails, vertically centered: START/NEXT + answer readout on the left,
-   match/tally keys on the right. The freed bottom strip lets the board grow
-   and now hosts the trial counter. Corner tabs keep the corners. */
+/* ---------- controls (original Quad Box layout, Cerevana styling) ----------
+   Key slabs attached flush to the screen edges, filling the vertical band
+   between the corner tabs (like upstream's game-button-lg columns):
+   position/color family left, shape/image/audio right. START/NEXT sit
+   top-right (upstream's Play), the trial counter bottom-right. Buttons keep
+   .nback__match / .nback__start colors, fonts and states. */
 
-.qb-controls {
+.qb-side {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+    height: 52svh;
+    width: clamp(5rem, 9svw, 8rem);
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: center;
     gap: 0.75rem;
     z-index: 10;
 }
 
-.qb-controls--left {
-    left: 1.25rem;
+.qb-side--left {
+    left: 0;
 }
 
-.qb-controls--right {
-    right: 1.25rem;
+.qb-side--right {
+    right: 0;
 }
 
-.qb-keys {
+.qb-side .nback__match {
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
-    gap: 1rem;
-    /* tally renders up to 10 number keys: cap the column and wrap-reverse so
-       overflow columns grow inward (leftward), never off-screen */
-    max-height: 60svh;
-    flex-wrap: wrap-reverse;
+    gap: 0.35rem;
+    padding: 0.5rem;
 }
 
-.qb-keys button[hidden] {
+.qb-key-name {
+    font-size: var(--step--1);
+    opacity: 0.85;
+}
+
+.qb-key-hot {
+    font-family: "Oxanium", sans-serif;
+    font-size: clamp(1.5rem, 4.5svh, 2.6rem);
+    font-weight: bold;
+    line-height: 1;
+}
+
+.qb-side button[hidden] {
     display: none;
 }
 
-.qb-keys button:disabled {
+.qb-side button:disabled {
     background-color: transparent;
     opacity: 0.35;
+}
+
+.qb-actions {
+    position: absolute;
+    top: 4.6rem;
+    right: 4rem;
+    display: flex;
+    gap: 0.75rem;
+    z-index: 10;
+}
+
+.qb-answer {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 10;
 }
 
 .qb-count {
     position: absolute;
     bottom: 0.75rem;
-    left: 0;
-    right: 0;
-    text-align: center;
+    right: 4rem;
     font-size: 2.25rem;
     opacity: 0.3;
     user-select: none;
     z-index: 5;
 }
 
-/* narrow screens: side rails would crowd the board — restore the stacked
-   bottom layout (keys row above START, counter back to the corner) */
+/* narrow screens: edge slabs would crowd the board — stack rows at the
+   bottom instead (left keys above right keys above START) */
 @media (max-width: 768px) {
-    .qb-controls {
+    .qb-side {
         top: auto;
         transform: none;
-        left: 0;
-        right: 0;
-    }
-
-    .qb-controls--left {
-        bottom: 1.25rem;
-    }
-
-    .qb-controls--right {
-        bottom: 5.5rem;
-    }
-
-    .qb-keys {
+        height: auto;
+        width: auto;
+        left: 0.5rem;
+        right: 0.5rem;
         flex-direction: row;
-        align-items: center;
-        max-height: none;
-        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
     }
 
-    .qb-count {
-        left: auto;
-        right: 4rem;
-        text-align: right;
+    .qb-side--left {
+        bottom: 9.25rem;
+    }
+
+    .qb-side--right {
+        bottom: 5.25rem;
+    }
+
+    .qb-side .nback__match {
+        flex: 0 1 auto;
+        flex-direction: row;
+        gap: 0.5rem;
+        min-height: 3rem;
+    }
+
+    .qb-key-hot {
+        font-size: var(--step-0);
+    }
+
+    .qb-actions {
+        top: auto;
+        right: auto;
+        left: 0;
+        bottom: 1.25rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .qb-answer {
+        bottom: 13.5rem;
     }
 }
 

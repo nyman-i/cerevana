@@ -589,6 +589,7 @@
 				<a class="game-menu__item" href="index.html">MENU</a>
 				<a class="game-menu__item" href="rrt.html">RRT</a>
 				<a class="game-menu__item selected" href="nback.html">N-BACK</a>
+				<a class="game-menu__item" href="cct.html">CCT</a>
 			</nav>
 
 			<div class="background-image"></div>
@@ -599,14 +600,13 @@
 
 			<div id="qb-stage"></div>
 
-			<div class="qb-controls qb-controls--left">
-				<div class="nback__answer" id="qb-answer" hidden>Answer: 0</div>
+			<div class="qb-side qb-side--left" id="qb-keys-left"></div>
+			<div class="qb-side qb-side--right" id="qb-keys-right"></div>
+			<div class="qb-actions">
 				<button id="qb-start" class="nback__start">START</button>
 				<button id="qb-next" class="nback__start" hidden>NEXT</button>
 			</div>
-			<div class="qb-controls qb-controls--right">
-				<div class="qb-keys" id="qb-keys"></div>
-			</div>
+			<div class="nback__answer qb-answer" id="qb-answer" hidden>Answer: 0</div>
 
 			<div class="qb-count" id="qb-count"></div>
 

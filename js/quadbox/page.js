@@ -105,33 +105,47 @@ const TAG_LABELS = {
 const tagHotkey = (settings, tag) =>
   settings.hotkeys[tag] ?? (tag === 'image' ? settings.hotkeys.shape : '')
 
+// Key slabs split across the two screen edges, like the original Quad Box:
+// position/color-family keys on the left, shape/image/audio-family on the
+// right; unknowns alternate to keep the sides balanced.
+const LEFT_TAGS = new Set(['position', 'color', 'visvis',
+  'position0', 'position1', 'position2', 'position3'])
+
+const slabButton = (id, name, hot, onClick) => {
+  const btn = document.createElement('button')
+  btn.className = 'nback__match'
+  btn.id = id
+  btn.tabIndex = -1
+  btn.innerHTML = `${name ? `<span class="qb-key-name">${name}</span>` : ''}<span class="qb-key-hot">${hot}</span>`
+  btn.addEventListener('click', onClick)
+  return btn
+}
+
 // Rebuilt only when settings change (rebuilding per-trial would wipe
 // feedback classes and re-run feedback.configure's reset mid-game).
 function renderKeys() {
   const settings = getSettings()
-  const keysEl = $('qb-keys')
-  keysEl.innerHTML = ''
+  const left = $('qb-keys-left')
+  const right = $('qb-keys-right')
+  left.innerHTML = ''
+  right.innerHTML = ''
   if (game.tally) {
-    for (const count of getNumberKeys(game.gameDisplayInfo)) {
-      const btn = document.createElement('button')
-      btn.className = 'nback__match'
-      btn.id = `qb-tally-${count}`
-      btn.textContent = count
-      btn.tabIndex = -1
-      btn.addEventListener('click', () => game.handleCount(count))
-      keysEl.appendChild(btn)
-    }
+    const counts = getNumberKeys(game.gameDisplayInfo)
+    counts.forEach((count, i) => {
+      const btn = slabButton(`qb-tally-${count}`, '', count, () => game.handleCount(count))
+      ;(i < Math.ceil(counts.length / 2) ? left : right).appendChild(btn)
+    })
   } else {
     const tags = (game.gameDisplayInfo.tags ?? []).filter(t => t !== 'arithmetic')
+    let alternate = 0
     for (const tag of tags) {
-      const btn = document.createElement('button')
-      btn.className = 'nback__match'
-      btn.id = `qb-match-${tag}`
       const key = tagHotkey(settings, tag)
-      btn.textContent = `${TAG_LABELS[tag] ?? tag}${key ? ` (${key})` : ''}`
-      btn.tabIndex = -1
-      btn.addEventListener('click', () => { game.checkForMatch(tag) })
-      keysEl.appendChild(btn)
+      const btn = slabButton(`qb-match-${tag}`, TAG_LABELS[tag] ?? tag, key || '·',
+        () => { game.checkForMatch(tag) })
+      const side = LEFT_TAGS.has(tag) ? left
+        : (tag === 'audio' || tag === 'shape' || tag === 'image' || tag === 'visaudio' || tag === 'audiovis') ? right
+          : (alternate++ % 2 === 0 ? left : right)
+      side.appendChild(btn)
     }
     feedback.configure(tags, settings.feedback)
   }
