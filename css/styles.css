@@ -2455,9 +2455,9 @@ body.menu-mode .main-view {
     flex-direction: column;
     gap: 0.6rem;
     width: min(100%, 72rem);
-    margin-bottom: 1.5rem;
     padding: 1rem 1.25rem;
     background-color: var(--label-background-color);
+    box-sizing: border-box;
 }
 
 .menu__goals-heading {
