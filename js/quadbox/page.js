@@ -1,7 +1,7 @@
 // N-Back page controller (nback.html): wires the engine + classic
 // generators + vanilla renderer into the shared Cerevana chrome.
 // Settings/scoring/storage semantics come from js/quadbox/engine/ and
-// settings.js (engine derived from Quad Box by soamsy, MIT —
+// settings.js (engine derived from Quad Box by soamsy, MIT -
 // js/quadbox/LICENSE).
 import { getSettings, getGameSettings, updateSetting, setGameField, subscribe, resetSettings } from './settings.js'
 import './profiles.js'
@@ -202,7 +202,7 @@ $('qb-next').addEventListener('click', () => game.advance())
 
 // ---- settings panel ----
 // Out-of-range input is ignored (upstream clampNumber behavior). Bounds
-// come from the input's own min/max attributes — one source of truth, so
+// come from the input's own min/max attributes - one source of truth, so
 // a setter can never be handed an out-of-range or NaN value.
 function clamp(value, min, max) {
   const v = +value
@@ -368,7 +368,7 @@ function syncChainRows(gs) {
 const PRIMARY_MODES = ['dual', 'quad', 'custom', 'customB']
 
 // Per-mode game settings are view-only outside the Custom modes: presets
-// are fixed protocols, so their scores stay comparable. nBack is exempt —
+// are fixed protocols, so their scores stay comparable. nBack is exempt -
 // it's the level (auto-progression / daily reset / manual play write it),
 // not mode configuration.
 const MODE_SETTING_INPUTS = [
@@ -459,7 +459,7 @@ const syncPanel = () => {
     syncChainRows(gs)
   }
 
-  // stimuli rows (arithmetic speaks operations via TTS — no stimulus sources)
+  // stimuli rows (arithmetic speaks operations via TTS - no stimulus sources)
   $('qb-stimuli-heading').hidden = isArith
   $('qb-stimuli-rows').hidden = isArith
   $('qb-row-audio').hidden = mode === 'vtally'
@@ -526,7 +526,7 @@ const renderGames = async () => {
   $('qb-hist-count').textContent = completed.length
   const last10 = completed.filter(g => g.total?.possible > 0).slice(0, 10)
   $('qb-hist-avg').textContent = last10.length
-    ? `${(100 * last10.reduce((s, g) => s + g.total.percent, 0) / last10.length).toFixed(0)}%` : '—'
+    ? `${(100 * last10.reduce((s, g) => s + g.total.percent, 0) / last10.length).toFixed(0)}%` : '-'
   const a = analytics.get()
   const settings = getSettings()
   const dailyGoal = settings.dailyProgressGoal
@@ -636,7 +636,7 @@ const renderChart = async () => {
     byTitle[key] = byTitle[key] ?? []
     byTitle[key].push({ x: g.timestamp, y: g.ncalc })
   }
-  // Canvas can't read CSS vars, but JS can — pull the themed accent + text colour
+  // Canvas can't read CSS vars, but JS can - pull the themed accent + text colour
   // from the computed tokens so the chart follows the user's hue and theme.
   const token = name => getComputedStyle(document.body).getPropertyValue(name).trim()
   const accent = token('--accent-color')

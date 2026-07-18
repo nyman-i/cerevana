@@ -113,7 +113,7 @@ async function renderGoalTracker(qbAll, cctAll) {
     const earliest = Math.min(goalDayStart(), goalWeekStart(), goalMonthStart());
     let rrtRecords = [];
     try { rrtRecords = await getRRTProgressFrom(earliest); } catch (e) {}
-    // per-game minutes since a timestamp — units mirror each game's own math:
+    // per-game minutes since a timestamp - units mirror each game's own math:
     // RRT timeElapsed ms, N-Back elapsed seconds (gamedb addScoreMetadata), CCT durationMs
     const qbElapsedSec = g => 'start' in g ? (g.timestamp - g.start) / 1000 : (g.trialTime * g.completedTrials / 1000 || 0);
     const mins = {

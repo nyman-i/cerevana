@@ -8,7 +8,7 @@
 // fetch. This is the only committed check that actually runs the app.
 //
 // Self-contained: spawns its own static file server + headless Chrome and
-// drives it over raw CDP/WebSocket (no Playwright/Puppeteer — matches
+// drives it over raw CDP/WebSocket (no Playwright/Puppeteer - matches
 // CLAUDE.md's no-dependencies rule and the project's `verify` skill, whose
 // documented gotchas this follows: wait for real conditions instead of fixed
 // sleeps, auto-accept JS dialogs, tolerate mid-navigation Runtime.evaluate

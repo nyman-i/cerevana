@@ -72,7 +72,7 @@ function parseStudies(md) {
 function cardHtml(study) {
     const meta = [
         study.sampleSize !== null ? 'n=' + study.sampleSize + (study.sampleNote ? ' ' + escapeHtml(study.sampleNote) : '') : null,
-        study.control ? study.control + ' control' + (study.controlDetail ? ' — ' + escapeHtml(study.controlDetail) : '') : null,
+        study.control ? study.control + ' control' + (study.controlDetail ? ' - ' + escapeHtml(study.controlDetail) : '') : null,
         study.category,
     ].filter(Boolean).join(' &middot; ');
     const title = study.url

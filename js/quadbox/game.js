@@ -1,5 +1,5 @@
 /*!
- * Derived from Quad Box — https://github.com/soamsy/quad-box (MIT, see
+ * Derived from Quad Box - https://github.com/soamsy/quad-box (MIT, see
  * js/quadbox/LICENSE). Port of the game-flow logic in
  * src/lib/DefaultGame.svelte and TallyGame.svelte: identical timings,
  * guards, scoring and auto-progression calls; svelte reactivity replaced

@@ -1,5 +1,5 @@
 // Pure-function checks for js/cct/engine/mechanics.js (CCT mechanics,
-// ported from tim22dev22/CCT script.js, MIT — see js/cct/PROVENANCE.md)
+// ported from tim22dev22/CCT script.js, MIT - see js/cct/PROVENANCE.md)
 // run with: node tests/cct-pure.mjs
 import {
   getExpectedAnswer, randomDigit, isCorrectAnswer,
@@ -60,7 +60,7 @@ const baseConfig = {
 }
 
 // M consecutive wrong (M = incorrectThreshold) raises interval PAST startingInterval,
-// toward the separate maximumInterval ceiling — the Cerevana change from upstream
+// toward the separate maximumInterval ceiling - the Cerevana change from upstream
 {
   let state = createIntervalState(baseConfig)
   for (let i = 0; i < 4; i++) state = recordAnswer(state, false)

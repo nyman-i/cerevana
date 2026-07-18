@@ -1,4 +1,4 @@
-// Original Cerevana code. IndexedDB store for CCT sessions — own database
+// Original Cerevana code. IndexedDB store for CCT sessions - own database
 // (NEVER rename: CCTHistory / sessions), mirrors the guarded
 // createObjectStore/createIndex idiom used throughout the app (see
 // js/quadbox/engine/gamedb.js, js/shared/db.js) but is CCT's own schema,
@@ -28,7 +28,7 @@ const dayKey = (timestamp) => {
   return date.getTime()
 }
 
-// 'YYYY-MM-DD' from LOCAL date parts — toISOString() converts to UTC first,
+// 'YYYY-MM-DD' from LOCAL date parts - toISOString() converts to UTC first,
 // which shifts the date by a day for any positive UTC offset
 const localDateKey = (timestamp) => {
   const date = new Date(dayKey(timestamp))

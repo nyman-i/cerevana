@@ -1,4 +1,4 @@
-// Cerevana web components — offcanvas corner-panel shell.
+// Cerevana web components - offcanvas corner-panel shell.
 // Renders the checkbox + sidebar + close-label skeleton that
 // js/shared/sidebar-events.js auto-wires by id convention
 // (input#offcanvas-NAME + div#sidebar-NAME). The panel's content is
@@ -6,7 +6,7 @@
 // aren't parsed yet when connectedCallback fires, a MutationObserver
 // relocates them into the offcanvas body as the parser streams them in
 // (complete before first paint and before any body-end script runs
-// element lookups — ids resolve wherever the node currently sits).
+// element lookups - ids resolve wherever the node currently sits).
 //
 // side="left": body gets the rtl-scrollbar direction wrapper + top
 // spacer (the settings/info shape). side="right": close label first,

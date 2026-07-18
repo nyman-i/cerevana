@@ -52,7 +52,7 @@ function tick() {
   if (!session) return
   if (!session.resolved) finalizeAnswer(null)
   // check right after resolving the previous question, before starting a new
-  // one — otherwise a timer running out mid-tick flashes one last digit the
+  // one - otherwise a timer running out mid-tick flashes one last digit the
   // user is never given time to answer
   if (checkEnd()) return
 
@@ -93,7 +93,7 @@ function checkEnd() {
   return false
 }
 
-// live keystroke check — only reacts once the typed value exactly matches;
+// live keystroke check - only reacts once the typed value exactly matches;
 // a partial/wrong-so-far value just keeps waiting (timeout is what marks it
 // wrong, mirroring upstream's isCorrectAnswerInput usage)
 export function submitAnswer(value) {

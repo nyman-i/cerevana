@@ -18,7 +18,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
-      # pinned to a commit SHA (not @master) — this runs with FLY_API_TOKEN
+      # pinned to a commit SHA (not @master) - this runs with FLY_API_TOKEN
       - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 # v1.6
       - run: flyctl deploy --remote-only -a cerevana-dev --config fly.dev.toml
         env:

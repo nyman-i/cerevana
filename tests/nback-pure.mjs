@@ -1,5 +1,5 @@
 // Pure-function checks for js/quadbox/classic.js (classic mode generation for
-// the merged Cerevana N-Back) — run with: node tests/nback-pure.mjs
+// the merged Cerevana N-Back) - run with: node tests/nback-pure.mjs
 import {
   COMBO, CLASSIC_MODES, CLASSIC_TITLES, variableN, divisorOk, genArith,
   arithAnswer, gen, genCombo, genMulti, jaeggiSequence, generateClassicGame,

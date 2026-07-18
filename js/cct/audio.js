@@ -1,6 +1,6 @@
 /*!
- * Derived from CCT — https://github.com/tim22dev22/CCT
- * MIT License — see js/cct/LICENSE
+ * Derived from CCT - https://github.com/tim22dev22/CCT
+ * MIT License - see js/cct/LICENSE
  * Ported from script.js's loadAudioClip/playStimulusAudio/playBeep
  * (lines ~3100-3420 at the `main` branch HEAD pulled 2026-07-18):
  * preload-once-per-voice-pack + cloneNode-per-stimulus playback (so an
@@ -33,7 +33,7 @@ class CctAudioPlayer {
     this.cache.set(voice, clips)
   }
 
-  // fire-and-forget: the stimulus clock paces the game, not clip completion —
+  // fire-and-forget: the stimulus clock paces the game, not clip completion -
   // clone so a fast interval can overlap the previous clip instead of cutting it
   playDigit(digit) {
     const { voice, playbackSpeed } = getSettings()

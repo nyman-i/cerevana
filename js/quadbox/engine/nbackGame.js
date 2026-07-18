@@ -1,7 +1,7 @@
 /*!
- * Derived from Quad Box — https://github.com/soamsy/quad-box
+ * Derived from Quad Box - https://github.com/soamsy/quad-box
  * Copyright (c) 2025 The Quad Box Project Contributors
- * MIT License — see js/quadbox/LICENSE
+ * MIT License - see js/quadbox/LICENSE
  * Promoted from src/lib/nbackGame.js at upstream commit 83a9718.
  * Cerevana changes: createTitle honors an explicit gameSettings.title
  * (mode identity for preset modes that would otherwise collapse to

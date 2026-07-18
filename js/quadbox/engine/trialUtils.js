@@ -1,7 +1,7 @@
 /*!
- * Derived from Quad Box — https://github.com/soamsy/quad-box
+ * Derived from Quad Box - https://github.com/soamsy/quad-box
  * Copyright (c) 2025 The Quad Box Project Contributors
- * MIT License — see js/quadbox/LICENSE
+ * MIT License - see js/quadbox/LICENSE
  * Promoted from src/lib/trialUtils.js at upstream commit 83a9718. Changes: import specifiers given .js extensions (buildless ESM).
  */
 import { LIGHT_PALETTE, DARK_PALETTE } from "./constants.js"

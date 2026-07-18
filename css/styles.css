@@ -26,7 +26,7 @@
     src: url("../fonts/ZenDots-Regular.woff2") format("woff2");
 }
 
-/* wordmark only — the CEREVANA logo on the menu; never for UI text */
+/* wordmark only - the CEREVANA logo on the menu; never for UI text */
 @font-face {
     font-family: "Format 1452";
     font-style: normal;
@@ -78,10 +78,10 @@
         0.04em -0.04em 0.06em #11111175,
         0.04em 0.04em 0.06em #11111175;
     /* Single accent: ONE user-chosen hue at fixed S/L. Every accent token below
-       is hsl(var(--accent-hue) S% L%) — S and L are locked so the contrast
+       is hsl(var(--accent-hue) S% L%) - S and L are locked so the contrast
        relationships hold for any hue (see UI_DESIGN §2). Default 165 = the
        original sage-teal (#7cb6a8/#4f7d72/#3c6c64). --accent-color is the only
-       "look here" colour — spend it on selected states, nav, brackets, progress. */
+       "look here" colour - spend it on selected states, nav, brackets, progress. */
     --accent-hue: 165;
     --accent-color: hsl(var(--accent-hue) 28% 60%);
     --accent-dim-color: hsl(var(--accent-hue) 23% 40%);
@@ -146,7 +146,7 @@
     /* Same relationships as dark, re-derived for a warm off-white room at the
        same hue but higher chroma / lower lightness (the accent must carry
        label/link text on near-white). --accent-deep-color is theme-identical,
-       so it inherits from :root — not redeclared here. */
+       so it inherits from :root - not redeclared here. */
     --accent-color: hsl(var(--accent-hue) 39% 30%);
     --accent-dim-color: hsl(var(--accent-hue) 22% 46%);
 
@@ -285,7 +285,7 @@ button.delete:hover {
     font-family: "JetBrains Mono", monospace;
 }
 
-/* section headers inside panels — bold caps so settings can be skimmed */
+/* section headers inside panels - bold caps so settings can be skimmed */
 .offcanvas-body h4,
 .panel-heading {
     font-weight: 700;
@@ -1254,7 +1254,7 @@ input:checked + .offcanvas {
     gap: 0.6rem;
 }
 
-/* Accent hue picker: the track IS the choice — a hue wheel rendered at the
+/* Accent hue picker: the track IS the choice - a hue wheel rendered at the
    accent's own S/L so the thumb position previews the resulting colour. */
 .accent-range {
     flex: 1;
@@ -1288,7 +1288,7 @@ input:checked + .offcanvas {
     font-size: var(--step-0);
 }
 
-/* settings rows whose input a mode has locked (e.g. Jaeggi) — dimmed, showing the effective value */
+/* settings rows whose input a mode has locked (e.g. Jaeggi) - dimmed, showing the effective value */
 .ctrl__inner:has(input:disabled, select:disabled),
 .inline-input__outer:has(input:disabled) {
     opacity: 0.45;
@@ -2389,7 +2389,7 @@ body.nback-mode .progress-container { display: none; }
 
 /* Default menu backdrop.
    Photo: https://www.pexels.com/photo/photography-of-mountains-under-cloudy-sky-1183099/
-   Photographer: Simon Berger — Pexels License (free to use).
+   Photographer: Simon Berger - Pexels License (free to use).
    Local copy resized to 1920px wide, JPEG q80 (img/menu-bg.jpg).
    Scrim gradients sit in the same background list, so a user-set custom
    background (inline style from js/shared/background.js) overrides both. */

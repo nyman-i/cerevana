@@ -3,7 +3,7 @@
 // - let corner labels and ✕ labels be toggled with Enter/Space (labels don't get
 //   native keyboard activation)
 // - close the graph popup (#graph-popup, opened by #graph-label) on ESC or
-//   an outside click — same dismissal on every game page
+//   an outside click - same dismissal on every game page
 // Pairs are discovered from the DOM: input#offcanvas-X + div#sidebar-X.
 (() => {
     const pairs = [...document.querySelectorAll('input[id^="offcanvas-"]')]

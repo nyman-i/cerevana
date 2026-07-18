@@ -1,4 +1,4 @@
-// Cerevana web components — the per-exercise profile picker
+// Cerevana web components - the per-exercise profile picker
 // (heading + dropdown + add button; ids are the contract the page's
 // profile JS binds to). The `share` attribute adds RRT's share/import
 // buttons, copied-toast and import input.

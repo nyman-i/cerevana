@@ -1,5 +1,5 @@
 /*!
- * Derived from Quad Box — https://github.com/soamsy/quad-box (MIT, see
+ * Derived from Quad Box - https://github.com/soamsy/quad-box (MIT, see
  * js/quadbox/LICENSE). Port of src/stores/analyticsStore.js: scoring and
  * persistence logic verbatim; the svelte writable is replaced by a plain
  * listener list.

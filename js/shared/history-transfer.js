@@ -5,7 +5,7 @@
 
 let importMode;
 
-// Quad Box's IndexedDB (upstream-defined identifiers — NEVER rename).
+// Quad Box's IndexedDB (upstream-defined identifiers - NEVER rename).
 // The upgrade handler must mirror js/quadbox/engine/gamedb.js exactly:
 // opening the db here must never leave it without the store/indexes.
 function openQuadBoxDB() {
@@ -47,7 +47,7 @@ function importQuadBoxGames(rows, clearFirst) {
     }));
 }
 
-// CCT's IndexedDB (own database, own identifiers — NEVER rename).
+// CCT's IndexedDB (own database, own identifiers - NEVER rename).
 // The upgrade handler must mirror js/cct/engine/gamedb.js exactly:
 // opening the db here must never leave it without the store/index.
 function openCctDB() {
@@ -88,7 +88,7 @@ function importCctRows(rows, clearFirst) {
 }
 
 function resetEverything() {
-    const confirmed = confirm("Reset the ENTIRE app? This permanently deletes ALL data for every exercise: RRT, N-Back and CCT profiles, settings, scores, game history, progress graphs, and the background image. Tip: Export History first — the button is right next to this one.")
+    const confirmed = confirm("Reset the ENTIRE app? This permanently deletes ALL data for every exercise: RRT, N-Back and CCT profiles, settings, scores, game history, progress graphs, and the background image. Tip: Export History first - the button is right next to this one.")
         && confirm("Last chance: this cannot be undone. Really erase all RRT, N-Back and CCT data?");
     if (!confirmed) return;
     // prefix sweep covers oldSettingsKey ("sllgms-v3") and every sllgms-v3-* key, present and future

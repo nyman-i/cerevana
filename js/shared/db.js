@@ -193,7 +193,7 @@ const goalMonthStart = () => {
     return new Date(g.getFullYear(), g.getMonth(), 1, 4, 0, 0).getTime();
 };
 
-// 'YYYY-MM-DD' of this week's Monday — for filtering getYearOfPlayTime() maps
+// 'YYYY-MM-DD' of this week's Monday - for filtering getYearOfPlayTime() maps
 const goalWeekStartKey = () => {
     const d = new Date(goalWeekStart());
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;

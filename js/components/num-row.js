@@ -1,8 +1,8 @@
-// Cerevana web components — settings-panel input row
+// Cerevana web components - settings-panel input row
 // (.mb-2 > .inline-input__outer > label + .inline-input__inner > input).
 // Covers number AND single-char text inputs (type="text"). Deviating
 // rows (rrt's multi-input triplets, rows with embedded extras) stay as
-// plain markup — don't force them in here.
+// plain markup - don't force them in here.
 //
 // <num-row input-id="qb-trialtime" label="Trial time" min="1000"
 //          max="5000" step="100" width="7ch" suffix="ms"

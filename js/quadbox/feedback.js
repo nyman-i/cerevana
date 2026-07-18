@@ -1,5 +1,5 @@
 /*!
- * Derived from Quad Box — https://github.com/soamsy/quad-box (MIT, see
+ * Derived from Quad Box - https://github.com/soamsy/quad-box (MIT, see
  * js/quadbox/LICENSE). Port of src/stores/feedbackStore.js and
  * tallyFeedbackStore.js: same states ('blank'|'disabled'|'success'|
  * 'failure'|'late-failure') and revert timings; svelte writables replaced

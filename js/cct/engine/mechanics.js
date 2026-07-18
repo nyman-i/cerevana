@@ -1,18 +1,18 @@
 /*!
- * Derived from CCT — https://github.com/tim22dev22/CCT
+ * Derived from CCT - https://github.com/tim22dev22/CCT
  * Copyright (c) 2026 tim22dev22 ("Thanks to EEE for supplying the
- * original source code" — credited upstream in CCT's own footer)
- * MIT License — see js/cct/LICENSE
+ * original source code" - credited upstream in CCT's own footer)
+ * MIT License - see js/cct/LICENSE
  * Ported from script.js (upstream, single global-scope file) at the
  * `main` branch HEAD pulled 2026-07-18: getRandomNumber (line 3401),
  * getExpectedAnswer + THRESHOLD_PRESETS (lines 383-400), changeInterval
  * + adjustDifficulty (lines 3477-3520), isCorrectAnswerInput (line
  * 3587). Restructured from global `let` state + DOM reads into pure
  * functions over an explicit state object, so the reducer is testable
- * without a DOM (see tests/cct-pure.mjs) — the interval clamp/threshold
+ * without a DOM (see tests/cct-pure.mjs) - the interval clamp/threshold
  * *logic* is unchanged from upstream, with one Cerevana change: upstream
  * clamps the ceiling to `startingInterval` itself (so a session that
- * starts with wrong answers has nowhere to go — it's already at the
+ * starts with wrong answers has nowhere to go - it's already at the
  * ceiling); Cerevana adds a separate `maximumInterval` ceiling so the
  * interval can still visibly rise above the starting pace.
  */

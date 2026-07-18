@@ -1,7 +1,7 @@
 /*!
- * Derived from Quad Box — https://github.com/soamsy/quad-box
+ * Derived from Quad Box - https://github.com/soamsy/quad-box
  * Copyright (c) 2025 The Quad Box Project Contributors
- * MIT License — see js/quadbox/LICENSE
+ * MIT License - see js/quadbox/LICENSE
  * Promoted from src/lib/generative.js at upstream commit 83a9718. Changes: d3-shape import points at the vendored js/lib/d3-shape.esm.js.
  */
 import { line, curveBasis, curveCardinal, curveCatmullRom, curveMonotoneX, curveNatural } from '../../lib/d3-shape.esm.js'

@@ -1,9 +1,9 @@
 /*!
- * Cerevana N-Back — profiles bridge (original Cerevana code, CC BY-NC 3.0).
+ * Cerevana N-Back - profiles bridge (original Cerevana code, CC BY-NC 3.0).
  * Extends the existing N-Back profile store with a per-profile `quadbox`
  * blob (the merged game's whole settings object). Selecting a profile
  * writes its blob into the live `quad-box-settings` key (identifier
- * unchanged — only content swaps) and reloads the in-memory store; every
+ * unchanged - only content swaps) and reloads the in-memory store; every
  * settings change is persisted back into the active profile.
  * Store identifiers are shared with the legacy page and NEVER renamed.
  */
