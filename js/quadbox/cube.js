@@ -152,8 +152,8 @@ export class BoardRenderer {
     }
     // position-less overlays (combo modes with no position stream, the
     // variable-N ghost number) must share whichever container carries the
-    // board's own HUD-clearance offset — qb-board2d's margin-bottom or
-    // qb-wrap3d's translateY — or they drift off the visible board
+    // board's own HUD-clearance offset - qb-board2d's margin-bottom or
+    // qb-wrap3d's translateY - or they drift off the visible board
     const overlayParent = this.board ?? this.wrap
     overlayParent.appendChild(this.variableN)
     overlayParent.appendChild(this.centerWrap)
@@ -204,7 +204,7 @@ export class BoardRenderer {
       cell.className = cellClasses(base, position, svgId, multi ? flash : false, transparent)
       cellStyle(cell, boxColor, svgId, shapeOuterColor, transparent)
       // findBoxColor always returns a truthy default (plain white/dark) when
-      // there's no shape/color/image, so !boxColor never fires here — check
+      // there's no shape/color/image, so !boxColor never fires here - check
       // the actual stimuli instead, or the stream-identity tint never shows
       if (timedMulti && !trial.shape && !trial.color && !trial.image) {
         cell.style.setProperty('--face-bg-color', STREAM_COLORS[i])

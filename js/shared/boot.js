@@ -10,7 +10,7 @@ try {
         if (meta) meta.setAttribute('content', 'hsl(' + s.accentHue + ' 28% 60%)');
     }
     // keep in sync with js/shared/appearance.js's FONT_STACKS (duplicated,
-    // not imported — this script must stay dependency-free). const, not var:
+    // not imported - this script must stay dependency-free). const, not var:
     // block-scoped to this try{}, so it can't collide with appearance.js's
     // own top-level `const FONT_STACKS` (a `var` here would leak globally).
     const FONT_STACKS = {

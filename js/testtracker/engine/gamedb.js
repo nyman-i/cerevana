@@ -1,4 +1,4 @@
-// Original Cerevana code. IndexedDB store for external test-battery scores —
+// Original Cerevana code. IndexedDB store for external test-battery scores -
 // own database (own identifiers, never shared with a game's history store),
 // mirrors the guarded createObjectStore/createIndex idiom used throughout the
 // app (see js/cct/engine/gamedb.js, js/quadbox/engine/gamedb.js, js/shared/db.js).

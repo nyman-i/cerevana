@@ -18,7 +18,7 @@ function handleSfxChange(event) {
     save();
 }
 
-// keep in sync with js/shared/boot.js's copy (duplicated, not shared — boot.js
+// keep in sync with js/shared/boot.js's copy (duplicated, not shared - boot.js
 // must stay dependency-free and runs before this file loads)
 const FONT_STACKS = {
     oxanium: '"Oxanium", sans-serif',

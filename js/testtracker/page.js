@@ -7,7 +7,7 @@ import { computeDelta, computeTimeline, isDueForRetest, bucketByMonth } from './
 
 const CATEGORY_ORDER = ['Fluid intelligence', 'Working memory', 'General aptitude', 'Personality & emotional control']
 const CHART_PALETTE = ['#7cb6a8', '#a6712c', '#8a5264', '#4c8434', '#4a6a7a', '#6f9440', '#a67cb6', '#b6a67c']
-// muted, deliberately un-vivid — these are a volume backdrop behind the score lines, not competing data
+// muted, deliberately un-vivid - these are a volume backdrop behind the score lines, not competing data
 const TRAINING_COLORS = { RRT: '#5a6b78', 'N-Back': '#6b5a78', CCT: '#78685a' }
 
 const listEl = document.getElementById('transfer-list')
@@ -68,7 +68,7 @@ function badgeHtml(records) {
     const delta = computeDelta(records)
     const sign = delta.deltaRaw > 0 ? '+' : ''
     const cls = delta.deltaRaw > 0 ? 'right' : (delta.deltaRaw < 0 ? 'wrong' : '')
-    const warn = !delta.reliable ? ' <span class="test-card__badge-warn" title="Under 120 days between tests — see the reliability note">&#9888;</span>' : ''
+    const warn = !delta.reliable ? ' <span class="test-card__badge-warn" title="Under 120 days between tests - see the reliability note">&#9888;</span>' : ''
     parts.push(`<span class="test-card__badge${cls ? ' test-card__badge--' + cls : ''}">${delta.baseline.score} &rarr; ${delta.latest.score} (${sign}${delta.deltaRaw})</span>${warn}`)
   }
   if (isDueForRetest(records)) parts.push(`<span class="test-card__badge test-card__badge--due">&#9200; Retest ready</span>`)
@@ -146,7 +146,7 @@ function resultCardHtml(test, records) {
   const cls = delta.deltaRaw > 0 ? 'right' : (delta.deltaRaw < 0 ? 'wrong' : '')
   const pct = delta.deltaPct !== null ? ` (${sign}${delta.deltaPct.toFixed(1)}%)` : ''
   const warning = !delta.reliable
-    ? `<div class="transfer-result__warning" title="Only ${delta.daysElapsed} days baseline-to-latest overall — too soon to separate real change from practice effects (recommended: 120+).">&#9888; Too soon (${delta.daysElapsed}d)</div>`
+    ? `<div class="transfer-result__warning" title="Only ${delta.daysElapsed} days baseline-to-latest overall - too soon to separate real change from practice effects (recommended: 120+).">&#9888; Too soon (${delta.daysElapsed}d)</div>`
     : `<div class="transfer-result__ok" title="${delta.daysElapsed} days baseline-to-latest overall">&#10003; ${delta.daysElapsed}d reliable</div>`
   return `<article class="transfer-result${cls ? ' transfer-result--' + cls : ''}">
     <h3 class="transfer-result__title">${escapeHtml(test.name)}</h3>
@@ -183,7 +183,7 @@ const formatDuration = (totalMinutes) => {
 }
 
 // Training time between the earliest logged baseline and the latest retest
-// across every test, bucketed by calendar month — same time accounting as
+// across every test, bucketed by calendar month - same time accounting as
 // js/menu/page.js's goal tracker (RRT timeElapsed ms from RRTHistory,
 // N-Back elapsed seconds, CCT durationMs), just kept per-record instead of
 // summed to one total so it can be plotted over time instead of printed.

@@ -1,7 +1,7 @@
 // Original Cerevana code. Pure functions: given a test's logged score
 // records, compute the baseline -> latest delta and whether enough time has
 // passed for the result to be reliable (see .claude/Tester.md's 4-6 month
-// interval guidance — under ~120 days a retest mostly reflects practice
+// interval guidance - under ~120 days a retest mostly reflects practice
 // effects, not real ability change).
 export const RELIABLE_INTERVAL_MS = 120 * 24 * 60 * 60 * 1000 // ~4 months, the low end of the recommended gap
 
@@ -21,7 +21,7 @@ export function computeDelta(records) {
 }
 
 // Every logged attempt, oldest first, each annotated with its delta/days
-// from the PREVIOUS attempt (null on the first — there's nothing before it).
+// from the PREVIOUS attempt (null on the first - there's nothing before it).
 // Unlike computeDelta this doesn't collapse to just baseline/latest: it's
 // the full history for a test that's been retaken more than once.
 export function computeTimeline(records) {
@@ -40,7 +40,7 @@ export function computeTimeline(records) {
   })
 }
 
-// True once RELIABLE_INTERVAL_MS has passed since the most recent attempt —
+// True once RELIABLE_INTERVAL_MS has passed since the most recent attempt -
 // a test with at least one logged score that's old enough a retest is due.
 export function isDueForRetest(records, now = Date.now()) {
   if (!records || !records.length) return false
@@ -50,7 +50,7 @@ export function isDueForRetest(records, now = Date.now()) {
 
 // [{ timestamp, minutes }, ...] -> [{ x: monthStartMs, y: totalMinutes }, ...]
 // sorted chronologically, one point per calendar month that has any minutes
-// (months with nothing logged are simply absent, not zero-filled) — feeds
+// (months with nothing logged are simply absent, not zero-filled) - feeds
 // the chart's per-exercise training-time bars, plotted on the same time axis
 // as the score lines. Calendar month is by LOCAL date, matching how a user
 // thinks about "this month" (same convention as js/cct/engine/gamedb.js's

@@ -217,10 +217,10 @@ body {
 }
 
 /* Default: every role keeps its own font (Oxanium nav/labels, JetBrains Mono
-   monospace panels, Zen Dots headings) — only body follows --main-font. Pick
+   monospace panels, Zen Dots headings) - only body follows --main-font. Pick
    a custom font (menu's Appearance panel) and js/shared/appearance.js /
    js/shared/boot.js add .font-override to <html>, which forces every role to
-   --main-font too — except the CEREVANA wordmark and coolicons glyphs. */
+   --main-font too - except the CEREVANA wordmark and coolicons glyphs. */
 html.font-override :not(.menu__title):not(i) {
     font-family: var(--main-font) !important;
 }
@@ -2688,7 +2688,7 @@ body.menu-mode .main-view {
 /* ---- Transfer page (transfer.html) ---- */
 
 /* Full-width two-column dashboard: a wide main column to browse/log tests
-   (cards flow into a responsive grid — there's room), a narrower sidebar
+   (cards flow into a responsive grid - there's room), a narrower sidebar
    that stays in view for Results/correlation while the main column scrolls. */
 .transfer-layout {
     display: grid;
@@ -2804,7 +2804,7 @@ body.menu-mode .main-view {
     padding-bottom: 1rem;
 }
 
-/* Capped to roughly 3 cards before it scrolls internally — otherwise a long
+/* Capped to roughly 3 cards before it scrolls internally - otherwise a long
    results list can make the sidebar (and so the whole two-column row)
    taller than the main test-browsing column, leaving a visible gap above
    .transfer-bottom under the shorter column. */
@@ -2834,7 +2834,7 @@ body.menu-mode .main-view {
     width: 100%;
 }
 
-/* Test cards are plain buttons that open the shared #test-popup — closed by
+/* Test cards are plain buttons that open the shared #test-popup - closed by
    default for a compact browse view; the single-line label alone carries
    enough (name + score/delta/due badges) that you don't need to open the
    popup just to see where you stand on it. */
@@ -2864,7 +2864,7 @@ body.menu-mode .main-view {
     border-left: 4px solid var(--accent-color);
 }
 
-/* Single line, always — a long test name truncates with an ellipsis rather
+/* Single line, always - a long test name truncates with an ellipsis rather
    than wrapping (the full name is a native tooltip here, and repeated as
    .test-card__title once the popup opens) so every card in the grid stays
    the same short height, whatever its name length. */
@@ -2987,7 +2987,7 @@ body.menu-mode .main-view {
 }
 
 /* ---- Test detail popup (opened by clicking a test card or a "ready to
-   retest" row) — same fixed/centered/rounded chrome as #graph-popup, at a
+   retest" row) - same fixed/centered/rounded chrome as #graph-popup, at a
    width suited to a form + history list rather than a full-width chart. */
 .test-popup {
     position: fixed;
@@ -3058,7 +3058,7 @@ body.menu-mode .main-view {
     border: 1px solid #333;
 }
 
-/* Content-sized, not fixed rem tracks — a wider date format or a multi-digit
+/* Content-sized, not fixed rem tracks - a wider date format or a multi-digit
    score is never cramped against a column that assumed something narrower. */
 .transfer-result__row {
     display: grid;
@@ -3105,7 +3105,7 @@ body.menu-mode .main-view {
 .transfer-result--right .transfer-result__summary strong { color: var(--correct-color); }
 .transfer-result--wrong .transfer-result__summary strong { color: var(--wrong-color); }
 
-/* Compact — a one-word-ish reliability chip inline after the headline delta,
+/* Compact - a one-word-ish reliability chip inline after the headline delta,
    not a full sentence on its own line (the full explanation is a title
    tooltip, same pattern as .test-card__badge-warn). */
 .transfer-result__warning,

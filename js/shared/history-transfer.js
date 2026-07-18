@@ -88,7 +88,7 @@ function importCctRows(rows, clearFirst) {
     }));
 }
 
-// Test Tracker's IndexedDB (own database, own identifiers — NEVER rename).
+// Test Tracker's IndexedDB (own database, own identifiers - NEVER rename).
 // The upgrade handler must mirror js/testtracker/engine/gamedb.js exactly:
 // opening the db here must never leave it without the store/index.
 function openTestTrackerDB() {
@@ -221,7 +221,7 @@ async function handleHistoryImport(event) {
     }
     // profiles/settings/appearance aren't mergeable (no meaningful way to combine two
     // profile lists or two appearance prefs), so overwrite-mode is the only mode that
-    // touches them — merge-mode stays purely additive, per its tooltip's promise
+    // touches them - merge-mode stays purely additive, per its tooltip's promise
     if (overwrite) {
         if (Array.isArray(data.rrtProfiles)) setLocalStorageObj(profilesKey, data.rrtProfiles);
         if (Number.isInteger(data.rrtSelectedProfile)) setLocalStorageObj(selectedProfileKey, data.rrtSelectedProfile);
