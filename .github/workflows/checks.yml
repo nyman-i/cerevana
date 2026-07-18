@@ -6,12 +6,6 @@ on:
 jobs:
   checks:
     runs-on: ubuntu-latest
-    # Reusable workflows don't inherit the caller's permissions (secrets:
-    # inherit only covers secrets) - gitleaks needs pull-requests: read to
-    # list a PR's commits when triggered via pull_request.
-    permissions:
-      contents: read
-      pull-requests: read
     steps:
       - uses: actions/checkout@v4
         with:
