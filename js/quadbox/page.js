@@ -198,8 +198,10 @@ analytics.subscribe(() => {
   // keep the history panel live if it's open when a game records
   if ($('offcanvas-history').checked) renderGames()
 })
-$('qb-start').addEventListener('click', () => game.toggleGame())
-$('qb-next').addEventListener('click', () => game.advance())
+// blur on click: otherwise the button keeps focus through the match hotkeys
+// that follow, and the browser's focus-visible ring pops onto it mid-game
+$('qb-start').addEventListener('click', (e) => { e.currentTarget.blur(); game.toggleGame() })
+$('qb-next').addEventListener('click', (e) => { e.currentTarget.blur(); game.advance() })
 
 // ---- settings panel ----
 // Out-of-range input is ignored (upstream clampNumber behavior). Bounds
