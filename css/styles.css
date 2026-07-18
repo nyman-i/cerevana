@@ -293,13 +293,6 @@ button.delete:hover {
     letter-spacing: 0.08em;
 }
 
-/* custom elements (js/shared/components.js) default to inline; their rendered
-   children are the usual block rows, so the tags themselves must be blocks */
-num-row,
-goal-targets {
-    display: block;
-}
-
 /* empty-state one-liner for panels/popups with no data yet */
 .panel-empty {
     color: var(--preamble-color);

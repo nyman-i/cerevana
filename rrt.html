@@ -12,7 +12,6 @@
 		<link rel="stylesheet" href="fonts/cool/coolicons.css">
 		<link rel="stylesheet" href="css/styles.css">
 		<script src="js/shared/boot.js"></script>
-		<script src="js/shared/components.js"></script>
 		<style id="live-styles"></style>
 	</head>
 	<body>
@@ -59,8 +58,32 @@
 								<input type="text" class="profile-import-input" id="profile-import-input" placeholder="Paste share URL, press Enter">
 							</div>
 						</div>
-						<goal-targets daily-id="p-63-optional" weekly-id="p-64-optional"
-							tooltip="Set your daily and weekly|time targets for training.|Progress bars will show on|the sides of the screen." tooltip-side="right"></goal-targets>
+						<div class="mb-05 panel-heading">Progress Targets</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Daily target
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text right">
+										Set your daily and weekly<br>
+										time targets for training.<br>
+										Progress bars will show on<br>
+										the sides of the screen.<br>
+									</div>
+								</div>
+								<span class="inline-input__inner">
+									<input id="p-63-optional" type="number" placeholder="" min="1" max="360" value="" style="width: 5ch">min
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Weekly target
+								<span class="inline-input__inner">
+									<input id="p-64-optional" type="number" placeholder="" min="1" max="2500" value="" style="width: 6ch">min
+								</span>
+							</div>
+						</div>
 						<div class="mb-05 panel-heading">Training</div>
 						<div class="mb-2">
 							<div class="inline-input__outer big-input">
