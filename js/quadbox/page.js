@@ -260,12 +260,12 @@ for (const [id, set] of toggles) {
   $(id).addEventListener('change', (e) => set(e.target.checked))
 }
 
-// primary Dual/Quad buttons drive the same single mode state as the select
-$('qb-mode-dual').addEventListener('click', () => updateSetting('mode', 'dual'))
-$('qb-mode-quad').addEventListener('click', () => updateSetting('mode', 'quad'))
-
+// Two mode dropdowns (Game Mode / Advanced Modes), one state: both write
+// settings.mode; syncPanel shows the active mode in its own select and the
+// '' placeholder in the other. Empty values (placeholder) never write.
 const selects = [
-  ['qb-mode', v => updateSetting('mode', v)],
+  ['qb-mode-main', v => { if (v) updateSetting('mode', v) }],
+  ['qb-mode', v => { if (v) updateSetting('mode', v) }],
   ['qb-grid', v => setGameField('grid', v)],
   ['qb-feedback', v => updateSetting('feedback', v)],
   ['qb-voice', v => updateSetting('voice', v)],
@@ -335,7 +335,20 @@ function syncChainRows(gs) {
   })
 }
 
-let syncedMode = null
+const PRIMARY_MODES = ['dual', 'quad', 'custom', 'customB']
+
+// Per-mode game settings are view-only outside the Custom modes: presets
+// are fixed protocols, so their scores stay comparable. nBack is exempt —
+// it's the level (auto-progression / daily reset / manual play write it),
+// not mode configuration.
+const MODE_SETTING_INPUTS = [
+  'qb-variable', 'qb-trialtime', 'qb-numtrials', 'qb-matchchance',
+  'qb-interference', 'qb-crab', 'qb-selfpaced', 'qb-squares',
+  'qb-op-add', 'qb-op-sub', 'qb-op-mul', 'qb-op-div', 'qb-negatives',
+  'qb-maxnumber', 'qb-chain', 'qb-width', 'qb-grid',
+  'qb-en-audio', 'qb-en-color', 'qb-en-shape', 'qb-en-image',
+  'qb-src-audio', 'qb-src-color', 'qb-src-shape', 'qb-src-image',
+]
 
 const syncPanel = () => {
   const settings = getSettings()
@@ -352,17 +365,9 @@ const syncPanel = () => {
     if (input !== document.activeElement) input.value = value
   }
 
-  $('qb-mode').value = mode
-  $('qb-mode-dual').classList.toggle('selected', mode === 'dual')
-  $('qb-mode-quad').classList.toggle('selected', mode === 'quad')
-  // The Advanced disclosure follows MODE CHANGES only (load, profile
-  // switch, picking a mode): open for advanced modes so the active mode
-  // is never hidden, closed for dual/quad. Unrelated settings syncs
-  // leave it alone — closing on every sync would slam it shut mid-browse.
-  if (mode !== syncedMode) {
-    $('qb-advanced-modes').open = mode !== 'dual' && mode !== 'quad'
-    syncedMode = mode
-  }
+  const isPrimary = PRIMARY_MODES.includes(mode)
+  $('qb-mode-main').value = isPrimary ? mode : ''
+  $('qb-mode').value = isPrimary ? '' : mode
   $('qb-grid').value = gs.grid ?? 'rotate3D'
   setValue('qb-nback', gs.nBack)
   $('qb-variable').checked = gs.rules === 'variable'
@@ -437,6 +442,12 @@ const syncPanel = () => {
   $('qb-src-color').value = gs.colorSource
   $('qb-src-shape').value = gs.shapeSource
   $('qb-src-image').value = gs.imageSource
+
+  // presets are view-only; only the Custom modes unlock their settings
+  // (runs last so the rebuilt chain-row inputs are covered too)
+  const editable = mode === 'custom' || mode === 'customB'
+  for (const id of MODE_SETTING_INPUTS) $(id).disabled = !editable
+  $('qb-chain-rows').querySelectorAll('input').forEach(i => { i.disabled = !editable })
 }
 
 subscribe(() => { syncPanel(); renderKeys(); refreshUi() })

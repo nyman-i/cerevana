@@ -32,26 +32,33 @@
 							</div>
 							<div class="profile-plus" id="profile-plus" role="button" tabindex="0" aria-label="Add profile">+</div>
 						</div>
-						<div class="mb-05 panel-heading">Mode</div>
+						<div class="mb-05 panel-heading">Game Mode</div>
 						<div class="mb-2">
 							<div class="ctrl__inner">
-								<span>Game Mode</span>
-								<div class="qb-mode-primary">
-									<button id="qb-mode-dual">Dual</button>
-									<button id="qb-mode-quad">Quad</button>
+								<select id="qb-mode-main" class="select-item">
+									<option value="" hidden>&mdash;</option>
+									<option value="dual">Dual</option>
+									<option value="quad">Quad</option>
+									<option value="custom">Custom A</option>
+									<option value="customB">Custom B</option>
+								</select>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text">
+										Dual and Quad are fixed protocols<br>
+										&mdash; settings are view-only so<br>
+										scores stay comparable. Pick a<br>
+										Custom mode to edit everything.<br>
+									</div>
 								</div>
 							</div>
 						</div>
-						<details id="qb-advanced-modes" class="mb-2">
-							<summary>Advanced modes</summary>
+						<div class="mb-05 panel-heading">Advanced Modes</div>
+						<div class="mb-2">
 							<div class="ctrl__inner">
-								<span>Mode</span>
 								<select id="qb-mode" class="select-item">
+									<option value="" hidden>&mdash;</option>
 									<optgroup label="Quad Box">
-										<option value="quad">Quad</option>
-										<option value="dual">Dual</option>
-										<option value="custom">Custom A</option>
-										<option value="customB">Custom B</option>
 										<option value="tally">Tally</option>
 										<option value="vtally">Visual Tally</option>
 									</optgroup>
@@ -79,13 +86,14 @@
 								<div class="tooltip-container" tabindex="0">
 									?
 									<div class="tooltip-text">
-										Tally modes: enter the count of<br>
-										matches per trial instead of<br>
-										per-stimulus keys. Self-paced.<br>
+										Preset variants, view-only like<br>
+										Dual/Quad. Tally modes: enter the<br>
+										count of matches per trial instead<br>
+										of per-stimulus keys. Self-paced.<br>
 									</div>
 								</div>
 							</div>
-						</details>
+						</div>
 						<div class="mb-2" id="qb-row-grid">
 							<div class="ctrl__inner">
 								<span>Grid</span>
