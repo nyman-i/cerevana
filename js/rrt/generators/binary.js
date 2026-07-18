@@ -74,6 +74,10 @@ class BinaryQuestion {
                 .replace("$a", choice.conclusion)
                 .replace("$b", choice2.conclusion);
 
+            // operand is a fixed internal template (operandTemplates),
+            // "a"/"b" are always coerced from internally-computed booleans;
+            // no user input ever reaches this.
+            // eslint-disable-next-line no-eval
             isValid = eval(
                 operand
                     .replaceAll("a", choice.isValid)
@@ -159,6 +163,10 @@ class NestedBinaryQuestion {
                 .reduce((a, c) => (a[c] = 1, a), {})
         )
         .join('/');
+        // generated.eval is a fixed internal template, digit placeholders
+        // are always substituted with internally-computed booleans; no
+        // user input ever reaches this.
+        // eslint-disable-next-line no-eval
         const isValid = eval(generated.eval.replaceAll(/(\d+)/g, m => questions[m].isValid));
         const premises = questions.reduce((a, q) => [ ...a, ...q.premises ], [])
         const conclusion = generated.human.replaceAll(/(\d+)/g, m => questions[m].conclusion);

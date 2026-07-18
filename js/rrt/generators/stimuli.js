@@ -6,7 +6,7 @@ function createNonsenseWord() {
         else 
             string += vowels[Math.floor(Math.random() * 5)];
 
-        if (string.length == savedata.nonsenseWordLength) {
+        if (string.length === savedata.nonsenseWordLength) {
             if (bannedWords.some(d => string.includes(d))) {
                 string = '';
             } else {

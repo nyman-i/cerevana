@@ -22,7 +22,7 @@ class ProfileStore {
 
     overrideExistingKeys(target, source) {
         for (const key of Object.keys(target)) {
-            if (source.hasOwnProperty(key)) {
+            if (Object.hasOwn(source, key)) {
                 target[key] = source[key];
             }
         }
@@ -40,7 +40,7 @@ class ProfileStore {
                 this.overrideExistingKeys(starterSettings, oldMigratedSettings);
                 // Backwards compatibility: don't blow away everyone's history
                 for (const movedKey of ["score", "questions", "backgroundImage", "gameAreaColor"]) {
-                    if (oldMigratedSettings.hasOwnProperty(movedKey)) {
+                    if (Object.hasOwn(oldMigratedSettings, movedKey)) {
                         appState[movedKey] = oldMigratedSettings[movedKey];
                     }
                 }
@@ -187,12 +187,12 @@ class ProfileStore {
     generateUrl() {
         const savedata = structuredClone(this.current().savedata);
         for (const setting of legacySettings) {
-            if (savedata.hasOwnProperty(setting) && defaultSavedata[setting] === savedata[setting]) {
+            if (Object.hasOwn(savedata, setting) && defaultSavedata[setting] === savedata[setting]) {
                 delete savedata[setting];
             }
         }
         for (const [setting, compressed] of Object.entries(compressedSettings)) {
-            if (savedata.hasOwnProperty(setting)) {
+            if (Object.hasOwn(savedata, setting)) {
                 savedata[compressed] = savedata[setting];
                 delete savedata[setting];
             }
@@ -268,7 +268,7 @@ class ProfileStore {
         this.uncompressSavedata(savedataObj);
 
         for (const key of Object.keys(savedataObj)) {
-            if (!defaultSavedata.hasOwnProperty(key)) {
+            if (!Object.hasOwn(defaultSavedata, key)) {
                 delete savedataObj[key];
                 continue;
             }
@@ -280,7 +280,7 @@ class ProfileStore {
         }
 
         for (const [key, defaultValue] of Object.entries(defaultSavedata)) {
-            if (!savedataObj.hasOwnProperty(key)) {
+            if (!Object.hasOwn(savedataObj, key)) {
                 savedataObj[key] = defaultValue;
             }
         }
@@ -300,7 +300,7 @@ class ProfileStore {
 
     uncompressSavedata(savedataObj) {
         for (const [setting, compressed] of Object.entries(compressedSettings)) {
-            if (savedataObj.hasOwnProperty(compressed)) {
+            if (Object.hasOwn(savedataObj, compressed)) {
                 savedataObj[setting] = savedataObj[compressed];
                 delete savedataObj[compressed];
             }

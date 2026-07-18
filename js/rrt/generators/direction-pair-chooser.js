@@ -2,7 +2,7 @@ class DirectionPairChooser {
     pickTwoDistantWords(neighbors, deprioritizePoles=false) {
         const options = Object.keys(neighbors);
         let pool = [];
-        const poles = options.filter(word => neighbors[word].length == 1);
+        const poles = options.filter(word => neighbors[word].length === 1);
         const pole_neighbors = options.filter(word => poles.some(pole => neighbors[pole].includes(word)))
         pool.push.apply(pool, poles);
         pool.push.apply(pool, pole_neighbors);

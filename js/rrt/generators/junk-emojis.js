@@ -52,8 +52,8 @@ class JunkEmojis {
 
         for (const hue of hues) {
             const group = [];
-            lightnesses = (lightnesses == lightA) ? lightB : lightA;
-            saturations = (saturations == saturationsA) ? saturationsB : saturationsA;
+            lightnesses = (lightnesses === lightA) ? lightB : lightA;
+            saturations = (saturations === saturationsA) ? saturationsB : saturationsA;
             for (const sat of saturations) {
                 const saturation = Math.round(sat + (Math.random() - 0.5) * 6);
                 for (const light of lightnesses) {
@@ -132,7 +132,7 @@ class JunkEmojis {
 
     bumpId() {
         this.id += 1;
-        if (this.id % this.pool.length == 0) {
+        if (this.id % this.pool.length === 0) {
             this.rebuildPool();
         }
     }
