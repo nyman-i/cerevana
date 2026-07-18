@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Cerevana — CCT</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#7cb6a8" />
+		<link rel="icon" type="image/png" href="favicon.png?v=4">
+		<link rel="stylesheet" href="fonts/cool/coolicons.css">
+		<link rel="stylesheet" href="css/styles.css">
+		<link rel="stylesheet" href="css/cct.css">
+		<script src="js/shared/boot.js"></script>
+	</head>
+	<body>
+
+		<div class="main-view">
+
+			<input id="offcanvas-settings"
+				   type="checkbox"
+				   hidden>
+			<div id="sidebar-settings" class="offcanvas offcanvas--left">
+				<div class="offcanvas-body ffmono">
+					<div style="direction: ltr;">
+						<div class="mb-1"></div>
+						<div class="mb-05 panel-heading">Profile</div>
+						<div class="mb-2 profile-container">
+							<div class="profile-dropdown">
+								<input type="text" class="profile-input" id="profile-input" placeholder="">
+								<span class="profile-arrow" id="profile-arrow">▼</span>
+								<div class="profile-list" id="profile-list">
+								</div>
+							</div>
+							<div class="profile-plus" id="profile-plus" role="button" tabindex="0" aria-label="Add profile">+</div>
+						</div>
+						<div class="mb-05 panel-heading">Arithmetic</div>
+						<div class="mb-2">
+							<div class="ctrl__inner">
+								<span>Operation</span>
+								<select id="cct-mode" class="select-item">
+									<option value="addition">Addition</option>
+									<option value="subtraction">Subtraction</option>
+									<option value="multiplication">Multiplication</option>
+									<option value="difference">Difference</option>
+								</select>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text right">
+										Sum, difference,<br>
+										or product of<br>
+										the current and<br>
+										previous digit.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mb-05 panel-heading">Session</div>
+						<div class="mb-2">
+							<div class="ctrl__inner">
+								<span>End condition</span>
+								<select id="cct-endcondition" class="select-item">
+									<option value="timer">Timer</option>
+									<option value="correct">Target correct</option>
+								</select>
+							</div>
+						</div>
+						<div class="mb-2" id="cct-row-duration">
+							<div class="inline-input__outer">
+								Duration
+								<span class="inline-input__inner">
+									<input id="cct-duration" type="number" min="1" max="9999" step="1" style="width: 5ch">min
+								</span>
+							</div>
+						</div>
+						<div class="mb-2" id="cct-row-targetcorrect" hidden>
+							<div class="inline-input__outer">
+								Target correct
+								<span class="inline-input__inner">
+									<input id="cct-targetcorrect" type="number" min="1" max="99999" step="1" style="width: 6ch">
+								</span>
+							</div>
+						</div>
+						<div class="mb-05 panel-heading">Adaptive Interval</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								<span class="ctrl__inner">Starting interval
+									<div class="tooltip-container" tabindex="0">
+										?
+										<div class="tooltip-text right">
+											Time between<br>
+											digits when a<br>
+											session starts.<br>
+										</div>
+									</div>
+								</span>
+								<span class="inline-input__inner">
+									<input id="cct-startinginterval" type="number" min="200" max="5000" step="50" style="width: 6ch">ms
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								<span class="ctrl__inner">Minimum interval
+									<div class="tooltip-container" tabindex="0">
+										?
+										<div class="tooltip-text right">
+											Fastest the<br>
+											interval can<br>
+											ever get.<br>
+										</div>
+									</div>
+								</span>
+								<span class="inline-input__inner">
+									<input id="cct-mininterval" type="number" min="100" max="5000" step="50" style="width: 6ch">ms
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								<span class="ctrl__inner">Maximum interval
+									<div class="tooltip-container" tabindex="0">
+										?
+										<div class="tooltip-text right">
+											Slowest the<br>
+											interval can<br>
+											ever get &mdash;<br>
+											can rise above<br>
+											the starting<br>
+											interval on a<br>
+											bad streak.<br>
+										</div>
+									</div>
+								</span>
+								<span class="inline-input__inner">
+									<input id="cct-maxinterval" type="number" min="200" max="10000" step="50" style="width: 6ch">ms
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Step
+								<span class="inline-input__inner">
+									<input id="cct-increment" type="number" min="10" max="500" step="10" style="width: 5ch">ms
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								<span class="ctrl__inner">Correct streak
+									<div class="tooltip-container" tabindex="0">
+										?
+										<div class="tooltip-text right">
+											This many right<br>
+											in a row speeds<br>
+											the interval up.<br>
+										</div>
+									</div>
+								</span>
+								<span class="inline-input__inner">
+									<input id="cct-correctthreshold" type="number" min="1" max="20" step="1" style="width: 4ch">
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								<span class="ctrl__inner">Incorrect streak
+									<div class="tooltip-container" tabindex="0">
+										?
+										<div class="tooltip-text right">
+											This many wrong<br>
+											in a row slows<br>
+											the interval down.<br>
+										</div>
+									</div>
+								</span>
+								<span class="inline-input__inner">
+									<input id="cct-incorrectthreshold" type="number" min="1" max="20" step="1" style="width: 4ch">
+								</span>
+							</div>
+						</div>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Audio</div>
+						<div class="mb-2">
+							<div class="ctrl__inner">
+								<span>Voice</span>
+								<select id="cct-voice" class="select-item">
+									<option value="nathan">Nathan</option>
+									<option value="enhancednathan">Enhanced Nathan</option>
+									<option value="samantha">Samantha</option>
+									<option value="siri4">Siri 4</option>
+								</select>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Playback speed
+								<span class="inline-input__inner">
+									<input id="cct-playbackspeed" type="number" min="1" max="1.5" step="0.1" style="width: 4ch">x
+								</span>
+							</div>
+						</div>
+						<div class="mb-1">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="cct-beepenabled" type="checkbox">
+									<label class="switch" for="cct-beepenabled"></label>
+								</div>
+								<label for="cct-beepenabled">Error beep</label>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Beep volume
+								<span class="inline-input__inner">
+									<input id="cct-beepvolume" type="number" min="0" max="100" step="5" style="width: 5ch">%
+								</span>
+							</div>
+						</div>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Display</div>
+						<div class="mb-1">
+							<div class="ctrl__inner">
+								<div>
+									<input hidden id="cct-intervaltiming" type="checkbox">
+									<label class="switch" for="cct-intervaltiming"></label>
+								</div>
+								<label for="cct-intervaltiming">Track time per interval</label>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text right">
+										Records how long<br>
+										each session spends<br>
+										at every interval,<br>
+										shown in History.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="offcanvas-side">
+					<label class="offcanvas-close" for="offcanvas-settings" tabindex="0">✕</label>
+				</div>
+			</div>
+
+			<input id="offcanvas-info"
+				   type="checkbox"
+				   hidden>
+			<div id="sidebar-info" class="offcanvas offcanvas--left">
+				<div class="offcanvas-body ffmono">
+					<div style="direction: ltr;">
+						<div class="mb-1"></div>
+						<div class="mb-05 panel-heading">How to play</div>
+						<p>Digits from 1&ndash;9 play one at a time. For each new digit,
+						answer with the result of it and the digit <strong>right
+						before it</strong> &mdash; by default the sum, so hearing
+						"3" then "5" means you type <strong>8</strong>.</p>
+						<p>Type your answer as soon as you know it; there's no submit
+						button, it's checked as you type. Answer correctly several
+						times in a row and the pace speeds up; miss a few in a row
+						and it slows back down.</p>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Keyboard Shortcuts</div>
+						<div class="mb-2">
+							<div class="shortcuts">
+								<p class="keyboard-shortcut"><span>Space</span><span>Start session</span></p>
+								<p class="keyboard-shortcut"><span>Esc</span><span>Stop session</span></p>
+								<p class="keyboard-shortcut"><span>0&ndash;9</span><span>Type your answer</span></p>
+								<p class="keyboard-shortcut"><span>h</span><span>Open History</span></p>
+							</div>
+						</div>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Credits</div>
+						<p>CCT's core mechanics (the adaptive-interval PASAT
+						rule) are adapted from
+						<a href="https://github.com/tim22dev22/CCT" target="_blank" rel="noopener">CCT</a>
+						by tim22dev22 (MIT) &mdash; see
+						<a href="credits.html">Credits</a>.</p>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Reset</div>
+						<p>Reset settings keeps your history. The full reset erases
+						all CCT data &mdash; irreversible.</p>
+						<div class="mb-1"><button id="cct-reset-settings">Reset Settings</button></div>
+						<div class="mb-1"><button id="cct-reset-all" class="delete">Reset CCT</button></div>
+					</div>
+				</div>
+				<div class="offcanvas-side">
+					<label class="offcanvas-close" for="offcanvas-info" tabindex="0">✕</label>
+				</div>
+			</div>
+
+			<input id="offcanvas-history"
+				   type="checkbox"
+				   hidden>
+			<div id="sidebar-history" class="offcanvas offcanvas--right">
+				<div class="offcanvas-side">
+					<label class="offcanvas-close" for="offcanvas-history" tabindex="0">✕</label>
+				</div>
+				<div class="offcanvas-body ffmono hql-frame">
+					<div>Sessions this month: <span id="cct-hist-count"></span></div>
+					<div>Avg accuracy, last 10: <span id="cct-hist-avg"></span></div>
+					<div>Play time today: <span id="cct-playtime"></span></div>
+					<div id="cct-sessions-empty" class="panel-empty" hidden>No sessions yet &mdash; finish one and your history appears here.</div>
+					<div id="cct-history-list" class="hql"></div>
+				</div>
+			</div>
+
+			<label class="open metal-gear open--top-left" for="offcanvas-settings" tabindex="0"><span class="sidebar-button settings-label"></span></label>
+			<label class="open metal-gear open--top-right" for="offcanvas-history" tabindex="0"><span class="sidebar-button history-label"></span></label>
+			<label class="open metal-gear open--bottom-left" for="offcanvas-info" tabindex="0"><span class="sidebar-button info-label"></span></label>
+			<label id="graph-label" class="open metal-gear open--bottom-right" tabindex="0"><span class="sidebar-button graph-label"></span></label>
+
+			<nav class="game-menu metal-gear">
+				<a class="game-menu__item" href="index.html">MENU</a>
+				<a class="game-menu__item" href="rrt.html">RRT</a>
+				<a class="game-menu__item" href="nback.html">N-BACK</a>
+				<a class="game-menu__item selected" href="cct.html">CCT</a>
+			</nav>
+
+			<div class="background-image"></div>
+
+			<div class="overlay"></div>
+
+			<div id="cct-stage">
+				<div class="cct-hud" id="cct-hud" hidden></div>
+				<div class="cct-digit" id="cct-digit" hidden></div>
+				<input id="cct-answer" class="cct-answer-input" type="text" inputmode="numeric" autocomplete="off" autocapitalize="off" hidden>
+				<div class="nback__result" id="cct-result" hidden></div>
+			</div>
+
+			<div class="cct-actions">
+				<button id="cct-start" class="nback__start">START</button>
+			</div>
+
+		</div>
+
+		<div id="graph-popup" class="graph-popup">
+			<div class="graph-controls">
+				<button id="cct-tab-progress" class="graph-select selected">Progress</button>
+				<button id="cct-tab-time" class="graph-select">Time Spent</button>
+			</div>
+			<div id="cct-graph-empty" class="panel-empty" hidden>No completed sessions yet.</div>
+			<div id="cct-progress-view" class="graph-popup-content visible"><canvas id="cct-graph-canvas"></canvas></div>
+			<div id="cct-time-view" class="graph-popup-content"><canvas id="cct-time-canvas"></canvas></div>
+			<div class="graph-end-controls">
+				<div>* Progress: last month &middot; Time Spent: last year</div>
+				<button id="graph-close-popup">Close</button>
+			</div>
+		</div>
+
+		<div id="error-popup" class="error-popup">
+			<div class="error-popup-content">
+				<p id="error-message"></p>
+				<button id="error-close-popup" class="error-close-popup">Close</button>
+				<textarea id="error-stack" readonly></textarea>
+			</div>
+		</div>
+
+		<script src="js/lib/chart.min.js"></script>
+		<script src="js/lib/chartjs-adapter-date-fns.min.js"></script>
+		<script src="js/lib/date-fns.min.js"></script>
+		<script src="js/shared/constants.js"></script>
+		<script src="js/shared/backwards-compatibility.js"></script>
+		<script src="js/shared/db.js"></script>
+		<script src="js/shared/error-handling.js"></script>
+		<script src="js/shared/background.js"></script>
+		<script src="js/shared/sidebar-events.js"></script>
+		<script type="module" src="js/cct/page.js"></script>
+	</body>
+</html>
