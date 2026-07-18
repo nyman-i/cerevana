@@ -2447,14 +2447,24 @@ body.menu-mode .main-view {
     width: min(100%, 72rem);
 }
 
-/* combined goal tracker: horizontal cousin of the RRT/CCT
-   .progress-bar-vertical widget, same fill-state colors */
+/* combined goal tracker: card-material section above the exercise cards;
+   bars are the horizontal cousin of the RRT/CCT .progress-bar-vertical
+   widget, same fill-state colors */
 .menu__goals {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.6rem;
     width: min(100%, 72rem);
     margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    background-color: var(--label-background-color);
+}
+
+.menu__goals-heading {
+    font-size: var(--step--2);
+    letter-spacing: 0.15em;
+    color: var(--preamble-color);
+    margin-bottom: 0.25rem;
 }
 
 .menu-goal {
@@ -2474,9 +2484,9 @@ body.menu-mode .main-view {
 
 .menu-goal__track {
     flex: 1;
-    height: 14px;
-    background-color: var(--label-background-color);
-    border: 2px solid var(--accent-color);
+    height: 12px;
+    background-color: var(--background-color);
+    border: 1px solid var(--accent-deep-color);
     border-radius: 0;
     overflow: hidden;
 }
@@ -2498,7 +2508,20 @@ body.menu-mode .main-view {
 
 .menu-goal__value {
     font-size: var(--step--2);
-    min-width: 9ch;
+    min-width: 11ch;
+    text-align: right;
+    white-space: nowrap;
+}
+
+@media (max-width: 500px) {
+    .menu-goal__label {
+        min-width: 4.5rem;
+        letter-spacing: 0.08em;
+    }
+
+    .menu-goal__value {
+        min-width: 0;
+    }
 }
 
 .menu-card {
