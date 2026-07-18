@@ -18,6 +18,8 @@
 		<script src="js/components/select-row.js"></script>
 		<script src="js/components/goal-targets.js"></script>
 		<script src="js/components/profile-picker.js"></script>
+		<script src="js/components/corner-panel.js"></script>
+		<script src="js/components/corner-tabs.js"></script>
 		<style id="live-styles"></style>
 	</head>
 	<body>
@@ -41,13 +43,7 @@
 
 		<div class="main-view">
 
-			<input id="offcanvas-settings"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-settings" class="offcanvas offcanvas--left">
-				<div class="offcanvas-body ffmono">
-					<div style="direction: ltr;">
-						<div class="mb-1"></div>
+			<corner-panel name="settings" side="left">
 						<profile-picker heading="Current Profile" share></profile-picker>
 						<goal-targets daily-id="p-63-optional" weekly-id="p-64-optional"
 							tooltip="Set your daily and weekly|time targets for training.|Progress bars will show on|the sides of the screen." tooltip-side="right"></goal-targets>
@@ -767,38 +763,16 @@
 								</div>
 							</div>
 						</div>
-					</div>
-				</div>
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-settings">✕</label>
-				</div>
-			</div>
-			<input id="offcanvas-history"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-history" class="offcanvas offcanvas--right">
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-history">✕</label>
-				</div>
-				<div class="offcanvas-body ffmono hql-frame">
+			</corner-panel>
+			<corner-panel name="history" side="right" body-class="hql-frame">
 					<div>Total answer time: <span id="total-display"></span></div>
 					<div>Avg answer time: <span id="average-display"></span></div>
 					<div>Avg correct answer time: <span id="average-correct-display"></span></div>
 					<div>% of answers correct: <span id="percent-correct-display"></span></div>
 					<div id="history-list" class="hql"></div>
 					<button type="button" onclick="clearHistory()">Clear Session</button>
-				</div>
-			</div>
-			<input id="offcanvas-info"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-info" class="offcanvas offcanvas--left">
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-info">✕</label>
-				</div>
-				<div class="offcanvas-body ffmono">
-					<div style="direction: ltr;">
-						<div class="mb-1"></div>
+			</corner-panel>
+			<corner-panel name="info" side="left">
 						<div class="mb-05 panel-heading">How to play</div>
 						<p>Read the premises, then judge whether the conclusion is
 						<strong>True</strong> or <strong>False</strong>. Premises
@@ -835,13 +809,8 @@
 						way; a full reset for every exercise lives on the main menu.)</p>
 						<div class="mb-1"><button type="button" id="reset-rrt-settings" onclick="resetRRTSettings()">Reset Settings</button></div>
 						<div class="mb-1"><button type="button" id="reset-rrt" class="delete" onclick="resetRRT()">Reset RRT</button></div>
-					</div>
-				</div>
-			</div>
-			<label class="open metal-gear open--top-left" for="offcanvas-settings" tabindex="0"><span class="sidebar-button settings-label"></span></label>
-			<label class="open metal-gear open--top-right" for="offcanvas-history" tabindex="0"><span class="sidebar-button history-label"></span></label>
-			<label class="open metal-gear open--bottom-left" for="offcanvas-info" tabindex="0"><span class="sidebar-button info-label"></span></label>
-			<label id="graph-label" class="open metal-gear open--bottom-right" tabindex="0"><span class="sidebar-button graph-label"></span></label>
+			</corner-panel>
+			<corner-tabs></corner-tabs>
 				<nav class="game-menu metal-gear">
 					<a class="game-menu__item" href="index.html">MENU</a>
 					<a class="game-menu__item selected" href="rrt.html">RRT</a>

@@ -16,18 +16,14 @@
 		<script src="js/components/select-row.js"></script>
 		<script src="js/components/goal-targets.js"></script>
 		<script src="js/components/profile-picker.js"></script>
+		<script src="js/components/corner-panel.js"></script>
+		<script src="js/components/corner-tabs.js"></script>
 	</head>
 	<body>
 
 		<div class="main-view">
 
-			<input id="offcanvas-settings"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-settings" class="offcanvas offcanvas--left">
-				<div class="offcanvas-body ffmono">
-					<div style="direction: ltr;">
-						<div class="mb-1"></div>
+			<corner-panel name="settings" side="left">
 						<profile-picker></profile-picker>
 						<goal-targets daily-id="cct-dailygoal" weekly-id="cct-weeklygoal"></goal-targets>
 						<div class="mb-05 panel-heading">Arithmetic</div>
@@ -56,20 +52,9 @@
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Display</div>
 						<switch-row input-id="cct-intervaltiming" label="Track time per interval" tooltip="Records how long|each session spends|at every interval,|shown in History." tooltip-side="right"></switch-row>
-					</div>
-				</div>
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-settings" tabindex="0">✕</label>
-				</div>
-			</div>
+			</corner-panel>
 
-			<input id="offcanvas-info"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-info" class="offcanvas offcanvas--left">
-				<div class="offcanvas-body ffmono">
-					<div style="direction: ltr;">
-						<div class="mb-1"></div>
+			<corner-panel name="info" side="left">
 						<div class="mb-05 panel-heading">How to play</div>
 						<p>Digits from 1&ndash;9 play one at a time. For each new digit,
 						answer with the result of it and the digit <strong>right
@@ -102,33 +87,17 @@
 						all CCT data &mdash; irreversible.</p>
 						<div class="mb-1"><button type="button" id="cct-reset-settings">Reset Settings</button></div>
 						<div class="mb-1"><button type="button" id="cct-reset-all" class="delete">Reset CCT</button></div>
-					</div>
-				</div>
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-info" tabindex="0">✕</label>
-				</div>
-			</div>
+			</corner-panel>
 
-			<input id="offcanvas-history"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-history" class="offcanvas offcanvas--right">
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-history" tabindex="0">✕</label>
-				</div>
-				<div class="offcanvas-body ffmono hql-frame">
+			<corner-panel name="history" side="right" body-class="hql-frame">
 					<div>Sessions this month: <span id="cct-hist-count"></span></div>
 					<div>Avg accuracy, last 10: <span id="cct-hist-avg"></span></div>
 					<div>Play time today: <span id="cct-playtime"></span></div>
 					<div id="cct-sessions-empty" class="panel-empty" hidden>No sessions yet &mdash; finish one and your history appears here.</div>
 					<div id="cct-history-list" class="hql"></div>
-				</div>
-			</div>
+			</corner-panel>
 
-			<label class="open metal-gear open--top-left" for="offcanvas-settings" tabindex="0"><span class="sidebar-button settings-label"></span></label>
-			<label class="open metal-gear open--top-right" for="offcanvas-history" tabindex="0"><span class="sidebar-button history-label"></span></label>
-			<label class="open metal-gear open--bottom-left" for="offcanvas-info" tabindex="0"><span class="sidebar-button info-label"></span></label>
-			<label id="graph-label" class="open metal-gear open--bottom-right" tabindex="0"><span class="sidebar-button graph-label"></span></label>
+			<corner-tabs></corner-tabs>
 
 			<nav class="game-menu metal-gear">
 				<a class="game-menu__item" href="index.html">MENU</a>

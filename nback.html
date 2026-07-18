@@ -16,18 +16,14 @@
 		<script src="js/components/select-row.js"></script>
 		<script src="js/components/goal-targets.js"></script>
 		<script src="js/components/profile-picker.js"></script>
+		<script src="js/components/corner-panel.js"></script>
+		<script src="js/components/corner-tabs.js"></script>
 	</head>
 	<body>
 
 		<div class="main-view">
 
-			<input id="offcanvas-settings"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-settings" class="offcanvas offcanvas--left">
-				<div class="offcanvas-body ffmono">
-					<div style="direction: ltr;">
-						<div class="mb-1"></div>
+			<corner-panel name="settings" side="left">
 						<profile-picker></profile-picker>
 						<goal-targets daily-id="qb-dailygoal" weekly-id="qb-weeklygoal"></goal-targets>
 						<div class="mb-05 panel-heading">Game Mode</div>
@@ -227,20 +223,9 @@
 						<num-row input-id="qb-key-color" label="Color" type="text" maxlength="1" width="3ch"></num-row>
 						<num-row input-id="qb-key-shape" label="Shape / Image" type="text" maxlength="1" width="3ch"></num-row>
 						<num-row input-id="qb-key-audio" label="Audio" type="text" maxlength="1" width="3ch"></num-row>
-					</div>
-				</div>
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-settings" tabindex="0">✕</label>
-				</div>
-			</div>
+			</corner-panel>
 
-			<input id="offcanvas-info"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-info" class="offcanvas offcanvas--left">
-				<div class="offcanvas-body ffmono">
-					<div style="direction: ltr;">
-						<div class="mb-1"></div>
+			<corner-panel name="info" side="left">
 						<div class="mb-05 panel-heading">How to play</div>
 						<p>A cube flashes in the grid while other cues play. Remember
 						what happened <strong>N trials ago</strong> and press the
@@ -282,21 +267,9 @@
 						all N-Back data &mdash; irreversible.</p>
 						<div class="mb-1"><button type="button" id="qb-reset-settings">Reset Settings</button></div>
 						<div class="mb-1"><button type="button" id="qb-reset-all" class="delete">Reset N-Back</button></div>
-					</div>
-				</div>
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-info" tabindex="0">✕</label>
-				</div>
-			</div>
+			</corner-panel>
 
-			<input id="offcanvas-history"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-history" class="offcanvas offcanvas--right">
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-history" tabindex="0">✕</label>
-				</div>
-				<div class="offcanvas-body ffmono hql-frame">
+			<corner-panel name="history" side="right" body-class="hql-frame">
 					<div>Games this month: <span id="qb-hist-count"></span></div>
 					<div>Avg score, last 10: <span id="qb-hist-avg"></span></div>
 					<div>Play time today: <span id="qb-playtime"></span></div>
@@ -310,13 +283,9 @@
 					</div>
 					<div id="qb-games-empty" class="panel-empty" hidden>No games yet &mdash; finish a session and your history appears here.</div>
 					<div id="qb-history-list" class="hql"></div>
-				</div>
-			</div>
+			</corner-panel>
 
-			<label class="open metal-gear open--top-left" for="offcanvas-settings" tabindex="0"><span class="sidebar-button settings-label"></span></label>
-			<label class="open metal-gear open--top-right" for="offcanvas-history" tabindex="0"><span class="sidebar-button history-label"></span></label>
-			<label class="open metal-gear open--bottom-left" for="offcanvas-info" tabindex="0"><span class="sidebar-button info-label"></span></label>
-			<label id="graph-label" class="open metal-gear open--bottom-right" tabindex="0"><span class="sidebar-button graph-label"></span></label>
+			<corner-tabs></corner-tabs>
 
 			<nav class="game-menu metal-gear">
 				<a class="game-menu__item" href="index.html">MENU</a>
