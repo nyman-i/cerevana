@@ -596,35 +596,6 @@ const switchTab = async (tab) => {
   else await renderTimeChart()
 }
 
-// Legacy Brain Workshop-era sessions (IndexedDB NBackHistory, read-only):
-// shown as dashed stepped level lines alongside the merged game's data.
-const LEGACY_LABELS = {
-  dual: 'Dual', position: 'Position', sound: 'Sound', 'position-color': 'PC',
-  'color-sound': 'CA', triple: 'Triple', 'dual-combo': 'DC', 'tri-combo': 'TC',
-  'quad-combo': 'QC', 'tri-combo-color': 'TCC', arithmetic: 'Arith',
-  'dual-arithmetic': 'DA', 'triple-arithmetic': 'TA',
-}
-
-const legacyDatasets = async (fg) => {
-  if (typeof getAllNBackSessions !== 'function') return []
-  const sessions = (await getAllNBackSessions()).sort((a, b) => a.timestamp - b.timestamp)
-  const byMode = {}
-  for (const s of sessions) {
-    const key = s.modeName ?? 'dual'
-    byMode[key] = byMode[key] ?? []
-    byMode[key].push({ x: s.timestamp, y: s.n })
-  }
-  return Object.entries(byMode).map(([modeName, data]) => ({
-    label: `${LEGACY_LABELS[modeName] ?? modeName} (legacy)`,
-    data,
-    borderColor: fg + '8',
-    backgroundColor: fg + '8',
-    borderDash: [6, 4],
-    stepped: true,
-    pointRadius: 2,
-  }))
-}
-
 let chart
 const renderChart = async () => {
   const games = (await getLastMonthGames())
@@ -646,7 +617,6 @@ const renderChart = async () => {
     label: title, data, borderColor: palette[i % palette.length],
     backgroundColor: palette[i % palette.length], tension: 0.2, pointRadius: 3,
   }))
-  datasets.push(...await legacyDatasets(fg))
   $('qb-graph-empty').hidden = datasets.some(d => d.data.length > 0)
   chart?.destroy()
   chart = new Chart($('qb-graph-canvas'), {
@@ -665,8 +635,6 @@ const renderChart = async () => {
 }
 
 // Daily play time over the last year (engine's 4 AM day boundary).
-// Legacy NBackHistory time is deliberately excluded: its per-session time
-// was an estimate (trials × tick length), not measured like game records.
 let timeChart
 const renderTimeChart = async () => {
   const byDay = await getYearOfPlayTime()

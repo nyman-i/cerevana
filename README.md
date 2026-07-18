@@ -91,15 +91,14 @@ implementations are welcome.
 - History export/import to a JSON file, with **merge** (timestamp-deduplicated)
   or **overwrite** semantics, covering score, question history, progress-graph
   data, all n-back games, all CCT sessions and all logged test-battery scores
-  (older export files remain importable).
+  (the current and previous export format import; older ones don't).
 - The same four corner panels on every game page: Settings, History (RRT's
   per-question log; N-Back's per-game list with score chips; CCT's
   per-session list with accuracy chips), Info (how to play, keyboard
   shortcuts, credits, resets) and Graphs.
 - Progress graphs: time spent, average correct times, premise speed and totals
-  for RRT; per-mode level history and daily time spent for N-Back, with
-  pre-merge sessions shown as legacy lines; accuracy-per-session and daily
-  time spent for CCT.
+  for RRT; per-mode level history and daily time spent for N-Back;
+  accuracy-per-session and daily time spent for CCT.
 - Timers with auto-progression (RRT), adaptive per-mode levels (N-Back), and
   an adaptive answer interval (CCT).
 - Daily and weekly play-time goals for every exercise - progress bars beside
