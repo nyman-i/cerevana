@@ -87,6 +87,10 @@
     --accent-dim-color: hsl(var(--accent-hue) 23% 40%);
     --accent-deep-color: hsl(var(--accent-hue) 29% 33%);
 
+    /* user-picked main UI font (menu's Appearance panel); js/shared/boot.js
+       overrides this pre-paint, js/shared/appearance.js live-updates it */
+    --main-font: "Space Grotesk", sans-serif;
+
     --text-color: #fffffd;
     --background-color: #131312;
     --preamble-color: #fffa;
@@ -206,7 +210,7 @@ body {
     height: 100svh;
     margin: 0;
     padding: 0;
-    font-family: "Space Grotesk", sans-serif;
+    font-family: var(--main-font);
     font-size: var(--step-0);
     color: var(--text-color);
     background-color: var(--background-color);
@@ -445,26 +449,6 @@ corner-tabs {
     filter: brightness(var(--background-brightness));
 }
 
-/* Quad Box host page: the game fills the frame; its own body is
-   transparent so .background-image/.overlay show through. Corner tabs
-   and .game-menu (z-index 50) float above. */
-#quadbox-frame {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    background: transparent;
-    z-index: 0;
-}
-
-/* Quad Box host: fade corner tabs while a panel is open inside the frame */
-label.open.tabs-hidden {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease-out;
-}
-
 .metal-gear {
     font-family: Oxanium, sans-serif;
     letter-spacing: 0.25em;
@@ -577,16 +561,6 @@ input[type="number"]::-moz-inner-spin-button {
     max-width: 13rem;
 }
 
-.inline-premise-wrapper {
-    align-items: center;
-    background-color: #000a;
-    display: flex;
-    gap: 1.25rem;
-    justify-content: space-between;
-    padding: .25rem .75rem;
-    margin-left: 1rem;
-}
-
 .inline-premise-spinner {
     background-color: var(--spinner-bg);
     font-family: "Space Grotesk", sans-serif;
@@ -643,6 +617,7 @@ input[type="number"]::-moz-inner-spin-button {
 .ux-customize {
     display: flex;
     justify-content: space-around;
+    gap: 1rem;
 }
 
 .divider {
@@ -708,11 +683,6 @@ input[type="number"]::-moz-inner-spin-button {
     content: 'MISSED';
     display: block;
     background: #6c757d;
-}
-
-.ux-customize {
-    display: flex;
-    gap: 1rem;
 }
 
 .carousel, .display-outer {
@@ -1505,15 +1475,6 @@ input[type="checkbox"]:checked + .switch::after {
     padding: 0;
 }
 
-.floor-heading {
-    border-left: 1px solid #0000;
-    border-right: 1px solid #0000;
-}
-
-.floor-heading.top {
-    border-top: 1px solid #0000;
-}
-
 .binary-explainer-separator {
     height: 2px; 
     margin: 10px 0;
@@ -2300,55 +2261,6 @@ table.distinction {
     }
 }
 
-#nback-area {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
-    min-height: 100%;
-    padding: 6rem 0 2rem;
-    box-sizing: border-box;
-    position: relative;
-    z-index: 1;
-    color: var(--text-color);
-}
-
-body.nback-mode #nback-area { display: flex; }
-body.nback-mode #game-area,
-body.nback-mode .progress-container { display: none; }
-
-.nback__grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    gap: 0.4rem;
-    width: min(60vmin, 24rem);
-    aspect-ratio: 1;
-}
-
-.nback__cell {
-    border: 1px solid var(--text-color);
-    border-radius: 0.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--step-2);
-    color: var(--preamble-color);
-}
-
-.nback__cell--center { border: none; }
-
-.nback__cell--on {
-    background-color: var(--bracket-color);
-    box-shadow: var(--bracket-box-shadow);
-}
-
-.nback__buttons {
-    display: flex;
-    gap: 1rem;
-}
-
 .nback__match {
     background-color: var(--single-input-bg);
     color: var(--text-color);
@@ -2690,14 +2602,6 @@ body.menu-mode .main-view {
     margin-left: 1.5rem;
 }
 
-.menu__community {
-    font-size: var(--step--2);
-    color: var(--preamble-color);
-    text-align: left;
-    max-width: min(90vw, 44rem);
-    text-shadow: var(--text-outline);
-}
-
 /* ---- Studies page (studies.html) ---- */
 
 .studies-filters {
@@ -2770,4 +2674,360 @@ body.menu-mode .main-view {
 .studies-empty {
     font-size: var(--step--1);
     color: var(--preamble-color);
+}
+
+/* ---- Transfer page (transfer.html) ---- */
+
+/* Full-width two-column dashboard: a wide main column to browse/log tests
+   (cards flow into a responsive grid — there's room), a narrower sidebar
+   that stays in view for Results/correlation while the main column scrolls. */
+.transfer-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(19rem, 26rem);
+    gap: 2rem;
+    width: 100%;
+    align-items: start;
+}
+
+.transfer-main {
+    min-width: 0; /* let grid children shrink instead of blowing out the column */
+}
+
+.transfer-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: sticky;
+    top: 1.5rem;
+    max-height: calc(100vh - 3rem);
+    overflow-y: auto;
+}
+
+@media (width <= 900px) {
+    .transfer-layout {
+        grid-template-columns: 1fr;
+    }
+    .transfer-sidebar {
+        position: static;
+        max-height: none;
+    }
+}
+
+.transfer-protocol {
+    background-color: var(--folder-bg);
+    padding: 0.5rem 1rem;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.transfer-protocol summary {
+    cursor: pointer;
+    font-family: Oxanium, sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: var(--step--1);
+    padding: 0.25rem 0;
+}
+
+.transfer-protocol .explainer {
+    margin-top: 0.5rem;
+}
+
+.transfer-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+    gap: 0.75rem;
+    align-items: start;
+    width: 100%;
+    padding-bottom: 1rem;
+}
+
+.transfer-results {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.transfer-category {
+    grid-column: 1 / -1;
+    font-size: var(--step--1);
+    margin-top: 1.25rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid #333;
+}
+
+.transfer-category:first-child {
+    margin-top: 0;
+}
+
+.transfer-section {
+    width: 100%;
+}
+
+/* Test cards are <details> — closed by default for a compact browse view;
+   the summary row alone carries enough (name + score/delta badge) that you
+   don't need to open a card just to see where you stand on it. */
+.test-card {
+    background-color: var(--background-color);
+    border: 1px solid #333;
+    box-shadow: 0 1px 10px 5px #0004;
+}
+
+.test-card[open] {
+    border-color: var(--switch-border-color);
+}
+
+/* Single line, always — a long test name truncates with an ellipsis rather
+   than wrapping (the full name is a native tooltip here, and repeated as
+   .test-card__title once the card is open) so every collapsed card in the
+   grid stays the same short height, whatever its name length. */
+.test-card__summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    font-size: var(--step-0);
+}
+
+.test-card__summary::-webkit-details-marker {
+    display: none;
+}
+
+.test-card__summary::before {
+    content: '\25b8';
+    color: var(--preamble-color);
+    flex: 0 0 auto;
+    display: inline-block;
+    transition: transform 0.15s ease;
+}
+
+.test-card[open] > .test-card__summary::before {
+    transform: rotate(90deg);
+}
+
+.test-card__summary:hover {
+    background-color: #fff1;
+}
+
+.test-card__name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.test-card__badge {
+    flex: 0 0 auto;
+    font-family: "JetBrains Mono", monospace;
+    font-size: var(--step--2);
+    background-color: var(--folder-bg);
+    padding: 0.2rem 0.5rem;
+    white-space: nowrap;
+}
+
+.test-card__badge--right { color: var(--correct-color); }
+.test-card__badge--wrong { color: var(--wrong-color); }
+.test-card__badge-warn { flex: 0 0 auto; cursor: help; }
+
+.test-card__body {
+    padding: 0 1.25rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.test-card__title {
+    margin: 0;
+    font-size: var(--step-0);
+    line-height: 1.4;
+}
+
+.test-card__meta {
+    font-size: var(--step--2);
+    letter-spacing: 0.05em;
+    color: var(--preamble-color);
+}
+
+.test-card__meta a {
+    color: var(--preamble-color);
+}
+
+.test-card__summary-text {
+    margin: 0;
+    font-size: var(--step--1);
+    line-height: 1.65;
+    max-width: 42rem;
+}
+
+.test-card__log {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    background-color: var(--big-input-bg-color);
+    padding: 0.75rem 1rem;
+}
+
+.test-card__log .inline-input__outer {
+    background: none;
+    padding: 0;
+    gap: 0.5rem;
+    width: fit-content;
+}
+
+.test-card__note-hint {
+    color: var(--preamble-color);
+    font-size: var(--step--2);
+}
+
+.test-card__history {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--step--1);
+    border: 1px solid #333;
+}
+
+.test-card__history-row {
+    display: grid;
+    grid-template-columns: 7rem 5rem 1fr auto;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.75rem;
+}
+
+.test-card__history-row:nth-child(even) {
+    background-color: #fff1;
+}
+
+.test-card__history-date {
+    color: var(--preamble-color);
+    font-family: "JetBrains Mono", monospace;
+    font-size: var(--step--2);
+}
+
+.test-card__history-score {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: bold;
+}
+
+.test-card__history-note {
+    color: var(--preamble-color);
+    font-size: var(--step--2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.test-card__history-delete {
+    background: none;
+    color: var(--preamble-color);
+    padding: 0 0.25rem;
+    line-height: 1;
+}
+
+.test-card__history-delete:hover {
+    box-shadow: none;
+    color: var(--danger-color);
+}
+
+/* ---- Results section ---- */
+
+.transfer-result {
+    background-color: var(--background-color);
+    border: 1px solid #333;
+    border-left: 4px solid var(--switch-border-color);
+    box-shadow: 0 1px 10px 5px #0004;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.transfer-result--right { border-left-color: var(--correct-color); }
+.transfer-result--wrong { border-left-color: var(--wrong-color); }
+
+.transfer-result__title {
+    font-size: var(--step-0);
+    margin: 0;
+}
+
+.transfer-result__track {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.transfer-result__point {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.transfer-result__point-label {
+    font-family: Oxanium, sans-serif;
+    font-size: var(--step--2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--preamble-color);
+}
+
+.transfer-result__point-date {
+    font-size: var(--step--2);
+    color: var(--preamble-color);
+}
+
+.transfer-result__point-score {
+    font-family: "JetBrains Mono", monospace;
+    font-size: var(--step-1);
+}
+
+.transfer-result__arrow {
+    color: var(--preamble-color);
+    font-size: var(--step-1);
+}
+
+.transfer-result__delta {
+    margin-left: auto;
+    font-family: "JetBrains Mono", monospace;
+    font-size: var(--step-1);
+    font-weight: bold;
+}
+
+.transfer-result--right .transfer-result__delta { color: var(--correct-color); }
+.transfer-result--wrong .transfer-result__delta { color: var(--wrong-color); }
+
+.transfer-result__warning {
+    font-size: var(--step--2);
+    color: var(--accent-color);
+}
+
+.transfer-result__ok {
+    font-size: var(--step--2);
+    color: var(--preamble-color);
+}
+
+.transfer-chart-wrap {
+    position: relative;
+    height: 16rem;
+    margin-top: 1rem;
+}
+
+.transfer-correlation {
+    font-size: var(--step--1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+@media (width <= 500px) {
+    .test-card__history-row {
+        grid-template-columns: 5.5rem 3.5rem 1fr auto;
+    }
 }
