@@ -65,11 +65,15 @@ task, and UFOV. Suggestions and implementations are welcome.
   for RRT; per-mode level history for N-Back, with pre-merge sessions shown
   as legacy lines.
 - Timers with auto-progression (RRT) and adaptive per-mode levels (N-Back).
-- A calm, focus-first look in both dark and light: one restrained sage-teal
-  accent, spent only where attention is earned (selected states, the active
-  tab, the timer). Text meets WCAG AA, and the correct/wrong colours are
-  tuned against a colour-blindness simulation — always paired with a word,
-  never colour alone. Custom background image and sound effects.
+- A calm, focus-first look in both dark and light: one restrained accent,
+  spent only where attention is earned (selected states, the active tab, the
+  timer). The accent hue is **yours to choose** — a slider in the menu's
+  Appearance section recolours the whole app (both themes, every page) from a
+  single hue, defaulting to the original sage-teal; every shade is derived at
+  fixed saturation/lightness so it stays WCAG-AA readable at any hue. The
+  correct/wrong colours are tuned against a colour-blindness simulation —
+  always paired with a word, never colour alone. Custom background image and
+  sound effects.
 - Desktop launcher installer for Linux (`create-shortcut.sh`) that serves the
   app locally and opens it in its own app window.
 

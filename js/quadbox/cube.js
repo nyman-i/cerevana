@@ -11,8 +11,14 @@ import { createSvgId, findBoxColor, findShapeOuterColor, cacheNextTrial } from '
 import { getSvgUrl } from './engine/svg.js'
 import { seededRandom } from './engine/utils.js'
 
-const FRAME_DARK = new URL('./frame-dark.svg', import.meta.url).href
-const FRAME_LIGHT = new URL('./frame-light.svg', import.meta.url).href
+// Inline so the lattice can inherit the user's accent via currentColor (an <img>
+// can't read CSS vars). Same 4 lines + border as the old frame-*.svg; the theme
+// hex/opacity split those files carried now lives in css/quadbox.css (.qb-frame).
+const FRAME_SVG =
+  '<svg class="qb-frame" viewBox="0 0 300 300" preserveAspectRatio="none" aria-hidden="true">' +
+  '<line x1="100" y1="0" x2="100" y2="300"/><line x1="200" y1="0" x2="200" y2="300"/>' +
+  '<line x1="0" y1="100" x2="300" y2="100"/><line x1="0" y1="200" x2="300" y2="200"/>' +
+  '<rect x="0" y="0" width="300" height="300" fill="none"/></svg>'
 
 // Grid.svelte: rotation start is seeded per 2-hour window
 const determineRotationStart = () => {
@@ -33,13 +39,12 @@ const el = (tag, className, parent) => {
   return node
 }
 
-const frameImg = (parent, theme, translate, rotate) => {
-  const img = el('img', 'qb-frame', parent)
-  img.src = theme === 'dark' ? FRAME_DARK : FRAME_LIGHT
-  img.alt = ''
-  if (translate) img.style.translate = translate
-  if (rotate) img.style.rotate = rotate
-  return img
+const frameImg = (parent, translate, rotate) => {
+  parent.insertAdjacentHTML('beforeend', FRAME_SVG)
+  const svg = parent.lastElementChild
+  if (translate) svg.style.translate = translate
+  if (rotate) svg.style.rotate = rotate
+  return svg
 }
 
 // Cell.svelte class/style computation, verbatim semantics
@@ -120,7 +125,7 @@ export class BoardRenderer {
         cell.hidden = true
         this.cells.push(cell)
       }
-      frameImg(this.board, theme)
+      frameImg(this.board)
     } else {
       this.wrap = el('div', 'qb-wrap3d', this.stage)
       this.scene = el('div', 'qb-scene', this.wrap)
@@ -139,9 +144,9 @@ export class BoardRenderer {
       }
       // Grid.svelte: 4 planes per axis at ±20.55 / ±6.85 svmin
       for (const d of ['-20.55svmin', '-6.85svmin', '6.85svmin', '20.55svmin']) {
-        frameImg(this.scene, theme, `0 0 ${d}`)
-        frameImg(this.scene, theme, `0 ${d} 0`, 'x 90deg')
-        frameImg(this.scene, theme, `${d} 0 0`, 'y 90deg')
+        frameImg(this.scene, `0 0 ${d}`)
+        frameImg(this.scene, `0 ${d} 0`, 'x 90deg')
+        frameImg(this.scene, `${d} 0 0`, 'y 90deg')
       }
     }
   }

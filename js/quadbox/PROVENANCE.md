@@ -51,8 +51,8 @@ timed multi-position), `audio.js` (plain `Audio` + browser-voice TTS).
 `profiles.js` (profile bridge), `page.js`, `../../nback.html`,
 `../../css/quadbox.css`.
 
-**Assets (upstream):** `audio/` (voice packs), `sprites/shapes.html`,
-`frame-dark.svg`/`frame-light.svg` (retinted).
+**Assets (upstream):** `audio/` (voice packs), `sprites/shapes.html`.
+(The board lattice is an inline SVG in `cube.js`, accent-tinted via CSS.)
 
 **Vendored deps (generated image stimuli):** `js/lib/d3-delaunay.esm.js`,
 `delaunator.esm.js`, `robust-predicates.esm.js`, `d3-shape.esm.js`,

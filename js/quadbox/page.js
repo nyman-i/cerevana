@@ -545,14 +545,17 @@ const renderChart = async () => {
     byTitle[key] = byTitle[key] ?? []
     byTitle[key].push({ x: g.timestamp, y: g.ncalc })
   }
-  const accent = document.body.classList.contains('light-mode') ? '#2f6b5c' : '#7cb6a8'
+  // Canvas can't read CSS vars, but JS can — pull the themed accent + text colour
+  // from the computed tokens so the chart follows the user's hue and theme.
+  const token = name => getComputedStyle(document.body).getPropertyValue(name).trim()
+  const accent = token('--accent-color')
+  const fg = token('--text-color')
   const palette = [accent, '#a6712c', '#8a5264', '#4c8434', '#4a6a7a', '#6f9440']
   const datasets = Object.entries(byTitle).map(([title, data], i) => ({
     label: title, data, borderColor: palette[i % palette.length],
     backgroundColor: palette[i % palette.length], tension: 0.2, pointRadius: 3,
   }))
-  datasets.push(...await legacyDatasets(document.body.classList.contains('light-mode') ? '#171613' : '#fffffd'))
-  const fg = document.body.classList.contains('light-mode') ? '#171613' : '#fffffd'
+  datasets.push(...await legacyDatasets(fg))
   chart?.destroy()
   chart = new Chart($('qb-graph-canvas'), {
     type: 'line',
