@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<title>Cerevana — N-Back</title>
@@ -10,28 +10,22 @@
 		<link rel="stylesheet" href="css/styles.css">
 		<link rel="stylesheet" href="css/quadbox.css">
 		<script src="js/shared/boot.js"></script>
+		<script src="js/components/help-tip.js"></script>
+		<script src="js/components/num-row.js"></script>
+		<script src="js/components/switch-row.js"></script>
+		<script src="js/components/select-row.js"></script>
+		<script src="js/components/goal-targets.js"></script>
+		<script src="js/components/profile-picker.js"></script>
+		<script src="js/components/corner-panel.js"></script>
+		<script src="js/components/corner-tabs.js"></script>
 	</head>
 	<body>
 
 		<div class="main-view">
 
-			<input id="offcanvas-settings"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-settings" class="offcanvas offcanvas--left">
-				<div class="offcanvas-body ffmono">
-					<div style="direction: ltr;">
-						<div class="mb-1"></div>
-						<div class="mb-05 panel-heading">Profile</div>
-						<div class="mb-2 profile-container">
-							<div class="profile-dropdown">
-								<input type="text" class="profile-input" id="profile-input" placeholder="">
-								<span class="profile-arrow" id="profile-arrow">▼</span>
-								<div class="profile-list" id="profile-list">
-								</div>
-							</div>
-							<div class="profile-plus" id="profile-plus" role="button" tabindex="0" aria-label="Add profile">+</div>
-						</div>
+			<corner-panel name="settings" side="left">
+						<profile-picker></profile-picker>
+						<goal-targets daily-id="qb-dailygoal" weekly-id="qb-weeklygoal"></goal-targets>
 						<div class="mb-05 panel-heading">Game Mode</div>
 						<div class="mb-2">
 							<div class="ctrl__inner">
@@ -98,191 +92,26 @@
 								</div>
 							</div>
 						</div>
-						<div class="mb-2" id="qb-row-grid">
-							<div class="ctrl__inner">
-								<span>Grid</span>
-								<select id="qb-grid" class="select-item">
-									<option value="rotate3D">3D (rotating cube)</option>
-									<option value="static2D">2D (static)</option>
-								</select>
-							</div>
-						</div>
+						<select-row select-id="qb-grid" label="Grid" row-id="qb-row-grid"
+							options="rotate3D=3D (rotating cube)|static2D=2D (static)"></select-row>
 						<div class="mb-05 panel-heading">Session</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								N-Back
-								<span class="inline-input__inner">
-									<input id="qb-nback" type="number" min="1" max="12" step="1" style="width: 5ch">
-								</span>
-							</div>
-						</div>
-						<div class="mb-1" id="qb-row-variable">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="qb-variable" type="checkbox">
-									<label class="switch" for="qb-variable"></label>
-								</div>
-								<label for="qb-variable">Variable N-Back</label>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text right">
-										Makes N change<br>
-										randomly each trial.<br>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="mb-2" id="qb-row-trialtime">
-							<div class="inline-input__outer">
-								Trial time
-								<span class="inline-input__inner">
-									<input id="qb-trialtime" type="number" min="1000" max="5000" step="100" style="width: 7ch">ms
-								</span>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Num trials
-								<span class="inline-input__inner">
-									<input id="qb-numtrials" type="number" min="10" max="999" step="1" style="width: 6ch">
-								</span>
-							</div>
-						</div>
-						<div class="mb-1" id="qb-row-crab">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="qb-crab" type="checkbox">
-									<label class="switch" for="qb-crab"></label>
-								</div>
-								<label for="qb-crab">Crab</label>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text">
-										Matches compare<br>
-										against blocks of N<br>
-										in reverse order —<br>
-										an anti-strategy<br>
-										variant.<br>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="mb-1" id="qb-row-selfpaced">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="qb-selfpaced" type="checkbox">
-									<label class="switch" for="qb-selfpaced"></label>
-								</div>
-								<label for="qb-selfpaced">Self-paced</label>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text right">
-										No trial clock:<br>
-										advance with<br>
-										Enter or the<br>
-										NEXT button.<br>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="mb-2" id="qb-row-squares">
-							<div class="inline-input__outer">
-								Squares
-								<span class="inline-input__inner">
-									<input id="qb-squares" type="number" min="2" max="4" step="1" style="width: 4ch">
-								</span>
-							</div>
-						</div>
+						<num-row input-id="qb-nback" label="N-Back" min="1" max="12" step="1" width="5ch"></num-row>
+						<switch-row input-id="qb-variable" label="Variable N-Back" row-id="qb-row-variable" tooltip="Makes N change|randomly each trial." tooltip-side="right"></switch-row>
+						<num-row input-id="qb-trialtime" label="Trial time" min="1000" max="5000" step="100" width="7ch" suffix="ms" row-id="qb-row-trialtime"></num-row>
+						<num-row input-id="qb-numtrials" label="Num trials" min="10" max="999" step="1" width="6ch"></num-row>
+						<switch-row input-id="qb-crab" label="Crab" row-id="qb-row-crab" tooltip="Matches compare|against blocks of N|in reverse order —|an anti-strategy|variant."></switch-row>
+						<switch-row input-id="qb-selfpaced" label="Self-paced" row-id="qb-row-selfpaced" tooltip="No trial clock:|advance with|Enter or the|NEXT button." tooltip-side="right"></switch-row>
+						<num-row input-id="qb-squares" label="Squares" min="2" max="4" step="1" width="4ch" row-id="qb-row-squares"></num-row>
 						<div id="qb-arith-rows" hidden>
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="qb-op-add" type="checkbox">
-										<label class="switch" for="qb-op-add"></label>
-									</div>
-									<label for="qb-op-add">Addition</label>
-								</div>
-							</div>
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="qb-op-sub" type="checkbox">
-										<label class="switch" for="qb-op-sub"></label>
-									</div>
-									<label for="qb-op-sub">Subtraction</label>
-								</div>
-							</div>
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="qb-op-mul" type="checkbox">
-										<label class="switch" for="qb-op-mul"></label>
-									</div>
-									<label for="qb-op-mul">Multiplication</label>
-								</div>
-							</div>
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="qb-op-div" type="checkbox">
-										<label class="switch" for="qb-op-div"></label>
-									</div>
-									<label for="qb-op-div">Division</label>
-								</div>
-							</div>
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="qb-negatives" type="checkbox">
-										<label class="switch" for="qb-negatives"></label>
-									</div>
-									<label for="qb-negatives">Negative numbers</label>
-								</div>
-							</div>
-							<div class="mb-2">
-								<div class="inline-input__outer">
-									Max number
-									<span class="inline-input__inner">
-										<input id="qb-maxnumber" type="number" min="1" max="99" step="1" style="width: 5ch">
-									</span>
-								</div>
-							</div>
+							<switch-row input-id="qb-op-add" label="Addition"></switch-row>
+							<switch-row input-id="qb-op-sub" label="Subtraction"></switch-row>
+							<switch-row input-id="qb-op-mul" label="Multiplication"></switch-row>
+							<switch-row input-id="qb-op-div" label="Division"></switch-row>
+							<switch-row input-id="qb-negatives" label="Negative numbers"></switch-row>
+							<num-row input-id="qb-maxnumber" label="Max number" min="1" max="99" step="1" width="5ch"></num-row>
 						</div>
-						<div class="mb-2" id="qb-row-matchchance">
-							<div class="inline-input__outer">
-								<span class="ctrl__inner">Match chance
-									<div class="tooltip-container" tabindex="0">
-										?
-										<div class="tooltip-text right">
-											How often the<br>
-											n-back stimulus<br>
-											repeats.<br>
-										</div>
-									</div>
-								</span>
-								<span class="inline-input__inner">
-									<input id="qb-matchchance" type="number" min="5" max="75" step="1" style="width: 5ch">%
-								</span>
-							</div>
-						</div>
-						<div class="mb-2" id="qb-row-interference">
-							<div class="inline-input__outer">
-								<span class="ctrl__inner">Interference
-									<div class="tooltip-container" tabindex="0">
-										?
-										<div class="tooltip-text right">
-											Odds of repeats<br>
-											from n&plusmn;1 trials<br>
-											ago. Raises<br>
-											difficulty.<br>
-										</div>
-									</div>
-								</span>
-								<span class="inline-input__inner">
-									<input id="qb-interference" type="number" min="0" max="75" step="1" style="width: 5ch">%
-								</span>
-							</div>
-						</div>
+						<num-row input-id="qb-matchchance" label="Match chance" min="5" max="75" step="1" width="5ch" suffix="%" row-id="qb-row-matchchance" tooltip="How often the|n-back stimulus|repeats." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
+						<num-row input-id="qb-interference" label="Interference" min="0" max="75" step="1" width="5ch" suffix="%" row-id="qb-row-interference" tooltip="Odds of repeats|from n&plusmn;1 trials|ago. Raises|difficulty." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
 						<div id="qb-tally-rows" hidden>
 							<div class="mb-1">
 								<div class="ctrl__inner">
@@ -372,161 +201,31 @@
 						</div>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Display</div>
-						<div class="mb-2">
-							<div class="ctrl__inner">
-								<span>Feedback</span>
-								<select id="qb-feedback" class="select-item">
-									<option value="show">Show</option>
-									<option value="hide">Hide</option>
-									<option value="hide-counter">Hide counter only</option>
-								</select>
-							</div>
-						</div>
-						<div class="mb-2" id="qb-row-rotation">
-							<div class="inline-input__outer">
-								Rotation speed
-								<span class="inline-input__inner">
-									<input id="qb-rotation" type="number" min="0" max="999" step="1" style="width: 5ch">
-								</span>
-							</div>
-						</div>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="qb-lattice-theme" type="checkbox">
-									<label class="switch" for="qb-lattice-theme"></label>
-								</div>
-								<label for="qb-lattice-theme">Lattice matches theme</label>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text right">
-										Tint the cube's grid<br>
-										with your accent<br>
-										colour instead of<br>
-										the original grey.<br>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="ctrl__inner">
-								<span>Voice</span>
-								<select id="qb-voice" class="select-item">
-									<option value="recorded">Cerevana (recorded)</option>
-									<option value="browser">Browser voice</option>
-								</select>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text right">
-										Audio stimuli:<br>
-										bundled recordings<br>
-										or your browser's<br>
-										built-in voice.<br>
-									</div>
-								</div>
-							</div>
-						</div>
+						<select-row select-id="qb-feedback" label="Feedback"
+							options="show=Show|hide=Hide|hide-counter=Hide counter only"></select-row>
+						<num-row input-id="qb-rotation" label="Rotation speed" min="0" max="999" step="1" width="5ch" row-id="qb-row-rotation"></num-row>
+						<switch-row input-id="qb-lattice-theme" label="Lattice matches theme" tooltip="Tint the cube's grid|with your accent|colour instead of|the original grey." tooltip-side="right"></switch-row>
+						<select-row select-id="qb-voice" label="Voice"
+							options="recorded=Cerevana (recorded)|browser=Browser voice"
+							tooltip="Audio stimuli:|bundled recordings|or your browser's|built-in voice." tooltip-side="right"></select-row>
 						<div id="qb-progression-rows">
 							<hr class="divider"/>
 							<div class="mb-05 panel-heading">Progression</div>
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="qb-autoprog" type="checkbox">
-										<label class="switch" for="qb-autoprog"></label>
-									</div>
-									<label for="qb-autoprog">Auto Progression</label>
-									<div class="tooltip-container" tabindex="0">
-										?
-										<div class="tooltip-text right">
-											Raises or lowers N<br>
-											based on your<br>
-											recent scores.<br>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="mb-2">
-								<div class="inline-input__outer">
-									Advance at
-									<span class="inline-input__inner">
-										<input id="qb-advance" type="number" min="0" max="100" step="1" style="width: 5ch">%
-									</span>
-								</div>
-							</div>
-							<div class="mb-2">
-								<div class="inline-input__outer">
-									Win after
-									<span class="inline-input__inner">
-										<input id="qb-winafter" type="number" min="1" max="9" step="1" style="width: 4ch">in a row
-									</span>
-								</div>
-							</div>
-							<div class="mb-2">
-								<div class="inline-input__outer">
-									Drop below
-									<span class="inline-input__inner">
-										<input id="qb-dropbelow" type="number" min="0" max="100" step="1" style="width: 5ch">%
-									</span>
-								</div>
-							</div>
-							<div class="mb-2">
-								<div class="inline-input__outer">
-									Lose after
-									<span class="inline-input__inner">
-										<input id="qb-loseafter" type="number" min="1" max="9" step="1" style="width: 4ch">in a row
-									</span>
-								</div>
-							</div>
+							<switch-row input-id="qb-autoprog" label="Auto Progression" tooltip="Raises or lowers N|based on your|recent scores." tooltip-side="right"></switch-row>
+							<num-row input-id="qb-advance" label="Advance at" min="0" max="100" step="1" width="5ch" suffix="%"></num-row>
+							<num-row input-id="qb-winafter" label="Win after" min="1" max="9" step="1" width="4ch" suffix="in a row"></num-row>
+							<num-row input-id="qb-dropbelow" label="Drop below" min="0" max="100" step="1" width="5ch" suffix="%"></num-row>
+							<num-row input-id="qb-loseafter" label="Lose after" min="1" max="9" step="1" width="4ch" suffix="in a row"></num-row>
 						</div>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Keys</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Position
-								<span class="inline-input__inner">
-									<input id="qb-key-position" type="text" maxlength="1" style="width: 3ch">
-								</span>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Color
-								<span class="inline-input__inner">
-									<input id="qb-key-color" type="text" maxlength="1" style="width: 3ch">
-								</span>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Shape / Image
-								<span class="inline-input__inner">
-									<input id="qb-key-shape" type="text" maxlength="1" style="width: 3ch">
-								</span>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Audio
-								<span class="inline-input__inner">
-									<input id="qb-key-audio" type="text" maxlength="1" style="width: 3ch">
-								</span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-settings" tabindex="0">✕</label>
-				</div>
-			</div>
+						<num-row input-id="qb-key-position" label="Position" type="text" maxlength="1" width="3ch"></num-row>
+						<num-row input-id="qb-key-color" label="Color" type="text" maxlength="1" width="3ch"></num-row>
+						<num-row input-id="qb-key-shape" label="Shape / Image" type="text" maxlength="1" width="3ch"></num-row>
+						<num-row input-id="qb-key-audio" label="Audio" type="text" maxlength="1" width="3ch"></num-row>
+			</corner-panel>
 
-			<input id="offcanvas-info"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-info" class="offcanvas offcanvas--left">
-				<div class="offcanvas-body ffmono">
-					<div style="direction: ltr;">
-						<div class="mb-1"></div>
+			<corner-panel name="info" side="left">
 						<div class="mb-05 panel-heading">How to play</div>
 						<p>A cube flashes in the grid while other cues play. Remember
 						what happened <strong>N trials ago</strong> and press the
@@ -566,26 +265,15 @@
 						<div class="mb-05 panel-heading">Reset</div>
 						<p>Reset settings keeps your history. The full reset erases
 						all N-Back data &mdash; irreversible.</p>
-						<div class="mb-1"><button id="qb-reset-settings">Reset Settings</button></div>
-						<div class="mb-1"><button id="qb-reset-all" class="delete">Reset N-Back</button></div>
-					</div>
-				</div>
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-info" tabindex="0">✕</label>
-				</div>
-			</div>
+						<div class="mb-1"><button type="button" id="qb-reset-settings">Reset Settings</button></div>
+						<div class="mb-1"><button type="button" id="qb-reset-all" class="delete">Reset N-Back</button></div>
+			</corner-panel>
 
-			<input id="offcanvas-history"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-history" class="offcanvas offcanvas--right">
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-history" tabindex="0">✕</label>
-				</div>
-				<div class="offcanvas-body ffmono hql-frame">
+			<corner-panel name="history" side="right" body-class="hql-frame">
 					<div>Games this month: <span id="qb-hist-count"></span></div>
 					<div>Avg score, last 10: <span id="qb-hist-avg"></span></div>
 					<div>Play time today: <span id="qb-playtime"></span></div>
+					<div>Play time this week: <span id="qb-weektime"></span></div>
 					<div class="ctrl__inner" style="margin: 0.5rem 0;">
 						<div>
 							<input hidden id="qb-show-cancelled" type="checkbox">
@@ -595,13 +283,9 @@
 					</div>
 					<div id="qb-games-empty" class="panel-empty" hidden>No games yet &mdash; finish a session and your history appears here.</div>
 					<div id="qb-history-list" class="hql"></div>
-				</div>
-			</div>
+			</corner-panel>
 
-			<label class="open metal-gear open--top-left" for="offcanvas-settings" tabindex="0"><span class="sidebar-button settings-label"></span></label>
-			<label class="open metal-gear open--top-right" for="offcanvas-history" tabindex="0"><span class="sidebar-button history-label"></span></label>
-			<label class="open metal-gear open--bottom-left" for="offcanvas-info" tabindex="0"><span class="sidebar-button info-label"></span></label>
-			<label id="graph-label" class="open metal-gear open--bottom-right" tabindex="0"><span class="sidebar-button graph-label"></span></label>
+			<corner-tabs></corner-tabs>
 
 			<nav class="game-menu metal-gear">
 				<a class="game-menu__item" href="index.html">MENU</a>
@@ -621,8 +305,8 @@
 			<div class="qb-side qb-side--left" id="qb-keys-left"></div>
 			<div class="qb-side qb-side--right" id="qb-keys-right"></div>
 			<div class="qb-actions">
-				<button id="qb-start" class="nback__start">START</button>
-				<button id="qb-next" class="nback__start" hidden>NEXT</button>
+				<button type="button" id="qb-start" class="nback__start">START</button>
+				<button type="button" id="qb-next" class="nback__start" hidden>NEXT</button>
 			</div>
 			<div class="nback__answer qb-answer" id="qb-answer" hidden>Answer: 0</div>
 
@@ -632,22 +316,22 @@
 
 		<div id="graph-popup" class="graph-popup">
 			<div class="graph-controls">
-				<button id="qb-tab-progress" class="graph-select selected">Progress</button>
-				<button id="qb-tab-time" class="graph-select">Time Spent</button>
+				<button type="button" id="qb-tab-progress" class="graph-select selected">Progress</button>
+				<button type="button" id="qb-tab-time" class="graph-select">Time Spent</button>
 			</div>
 			<div id="qb-graph-empty" class="panel-empty" hidden>No completed sessions yet.</div>
 			<div id="qb-progress-view" class="graph-popup-content visible"><canvas id="qb-graph-canvas"></canvas></div>
 			<div id="qb-time-view" class="graph-popup-content"><canvas id="qb-time-canvas"></canvas></div>
 			<div class="graph-end-controls">
 				<div>* Progress: last month &middot; Time Spent: last year</div>
-				<button id="graph-close-popup">Close</button>
+				<button type="button" id="graph-close-popup">Close</button>
 			</div>
 		</div>
 
 		<div id="error-popup" class="error-popup">
 			<div class="error-popup-content">
 				<p id="error-message"></p>
-				<button id="error-close-popup" class="error-close-popup">Close</button>
+				<button type="button" id="error-close-popup" class="error-close-popup">Close</button>
 				<textarea id="error-stack" readonly></textarea>
 			</div>
 		</div>

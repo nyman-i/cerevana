@@ -25,7 +25,7 @@
     align-items: center;
     padding: 0.35rem 1.25rem;
     background-color: var(--label-background-color);
-    font-family: "Oxanium", sans-serif;
+    font-family: Oxanium, sans-serif;
     letter-spacing: 0.05em;
     white-space: nowrap;
     user-select: none;
@@ -84,7 +84,7 @@
 .qb-side .nback__match--missed { background-color: var(--nback-missed-color); color: #fffffd; }
 
 .qb-key-name {
-    font-family: "Oxanium", sans-serif;
+    font-family: Oxanium, sans-serif;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -112,7 +112,7 @@
 .qb-actions {
     position: absolute;
     top: 4.6rem;
-    right: 4rem;
+    right: 6rem;
     display: flex;
     gap: 0.75rem;
     z-index: 10;
@@ -139,7 +139,7 @@
 
 /* narrow screens: edge slabs would crowd the board — stack rows at the
    bottom instead (left keys above right keys above START) */
-@media (max-width: 768px) {
+@media (width <= 768px) {
     .qb-side {
         top: auto;
         transform: none;
@@ -172,10 +172,7 @@
     }
 
     .qb-actions {
-        top: auto;
-        right: auto;
-        left: 0;
-        bottom: 1.25rem;
+        inset: auto auto 1.25rem 0;
         width: 100%;
         justify-content: center;
     }
@@ -262,7 +259,7 @@ body.qb-lattice-accent .qb-frame {
 }
 .qb-frame line,
 .qb-frame rect {
-    stroke: currentColor;
+    stroke: currentcolor;
     stroke-width: 1;
 }
 
@@ -331,11 +328,11 @@ body.qb-lattice-accent .qb-frame {
 
 /* flash / multi-position styling (dark is the default theme) */
 .qb-flash .qb-face {
-    filter: drop-shadow(0 0 8px #FFFFFF);
+    filter: drop-shadow(0 0 8px #FFF);
 }
 
 body.light-mode .qb-flash .qb-face {
-    filter: drop-shadow(0 0 8px #111111);
+    filter: drop-shadow(0 0 8px #111);
 }
 
 .qb-see-through .qb-face {
@@ -352,7 +349,7 @@ body.light-mode .qb-see-through .qb-face {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: "Oxanium", sans-serif;
+    font-family: Oxanium, sans-serif;
     font-weight: bold;
     font-size: 7.6svmin;
     color: #fffffd;
@@ -394,13 +391,13 @@ body.light-mode .qb-face {
 
 /* 2D position offsets */
 .p0-0   { transform: translate(-21.5svmin, -21.5svmin); }
-.p0-1   { transform: translate(-21.5svmin,     0svmin); }
+.p0-1   { transform: translate(-21.5svmin,     0); }
 .p0-2   { transform: translate(-21.5svmin,  21.5svmin); }
 .p1-0   { transform: translate(0,          -21.5svmin); }
-.p1-1   { transform: translate(0,              0svmin); }
+.p1-1   { transform: translate(0,              0); }
 .p1-2   { transform: translate(0,           21.5svmin); }
 .p2-0   { transform: translate(21.5svmin,  -21.5svmin); }
-.p2-1   { transform: translate(21.5svmin,      0svmin); }
+.p2-1   { transform: translate(21.5svmin,      0); }
 .p2-2   { transform: translate(21.5svmin,   21.5svmin); }
 
 /* 3D position offsets */

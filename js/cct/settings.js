@@ -27,6 +27,8 @@ const defaultSettings = {
   beepEnabled: true,
   // if true, records how long each session spends at every interval level
   showIntervalTiming: false,
+  dailyProgressGoal: null, // minutes of play time, null = no goal
+  weeklyProgressGoal: null,
 }
 
 const getDefaultSettings = () => structuredClone(defaultSettings)

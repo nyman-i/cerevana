@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<title>Cerevana — RRT</title>
@@ -12,6 +12,14 @@
 		<link rel="stylesheet" href="fonts/cool/coolicons.css">
 		<link rel="stylesheet" href="css/styles.css">
 		<script src="js/shared/boot.js"></script>
+		<script src="js/components/help-tip.js"></script>
+		<script src="js/components/num-row.js"></script>
+		<script src="js/components/switch-row.js"></script>
+		<script src="js/components/select-row.js"></script>
+		<script src="js/components/goal-targets.js"></script>
+		<script src="js/components/profile-picker.js"></script>
+		<script src="js/components/corner-panel.js"></script>
+		<script src="js/components/corner-tabs.js"></script>
 		<style id="live-styles"></style>
 	</head>
 	<body>
@@ -35,29 +43,10 @@
 
 		<div class="main-view">
 
-			<input id="offcanvas-settings"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-settings" class="offcanvas offcanvas--left">
-				<div class="offcanvas-body ffmono">
-					<div style="direction: ltr;">
-						<div class="mb-1"></div>
-						<div class="mb-1">
-							<span class="mb-05 panel-heading">Current Profile</span>
-							<div class="profile-container">
-							  <div class="profile-dropdown">
-							    <input type="text" class="profile-input" id="profile-input" placeholder="">
-							    <span class="profile-arrow" id="profile-arrow">▼</span>
-							    <div class="profile-list" id="profile-list">
-							    </div>
-								</div>
-								<div class="profile-plus" id="profile-plus" role="button" tabindex="0" aria-label="Add profile">+</div>
-								<div class="profile-share" id="profile-share" title="Share" role="button" tabindex="0" aria-label="Share profile"><span class="icon"><i class="ci-Share_iOS_Export"></i></span></div>
-								<div class="profile-share" id="profile-import" title="Import" role="button" tabindex="0" aria-label="Import profile"><span class="icon"><i class="ci-Download"></i></span></div>
-								<div class="profile-copied" id="profile-copied" role="status">URL copied to clipboard</div>
-								<input type="text" class="profile-import-input" id="profile-import-input" placeholder="Paste share URL, press Enter">
-							</div>
-						</div>
+			<corner-panel name="settings" side="left">
+						<profile-picker heading="Current Profile" share></profile-picker>
+						<goal-targets daily-id="p-63-optional" weekly-id="p-64-optional"
+							tooltip="Set your daily and weekly|time targets for training.|Progress bars will show on|the sides of the screen." tooltip-side="right"></goal-targets>
 						<div class="mb-05 panel-heading">Training</div>
 						<div class="mb-2">
 							<div class="inline-input__outer big-input">
@@ -143,45 +132,8 @@
 							</div>
 						</div>
 
-						<div class="mb-2">
-						  <div class="inline-input__outer">
-								Progress Targets
-								<div class="tooltip-container" tabindex="0">
-								  ?
-								  <div class="tooltip-text right">
-										Set your daily and weekly<br>
-										time targets for training.<br>
-										Progress bars will show on<br>
-										the sides of the screen.<br>
-								  </div>
-								</div>
-						  </div>
-						  <div class="multi-input">
-								<span class="single-input">
-								  Daily Target
-								  <span class="inline-premise-spinner">
-										<input id="p-63-optional" type="number" placeholder="" min="1" max="360" value="" style="width: 5ch">min
-									</span>
-								</span>
-								<span class="single-input">
-								  Weekly Target
-								  <span class="inline-premise-spinner">
-										<input id="p-64-optional" type="number" placeholder="" min="1" max="2500" value="" style="width: 6ch">min
-									</span>
-								</span>
-						  </div>
-						</div>
-
 						<div class="mb-05 panel-heading">Words &amp; Stimuli</div>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="p-20" type="checkbox" checked>
-									<label class="switch" for="p-20"></label>
-								</div>
-								<label for="p-20">Use Nonsense Words</label>
-							</div>
-						</div>		
+						<switch-row input-id="p-20" label="Use Nonsense Words" checked></switch-row>		
 						<div class="mb-2" style="margin-left: 2rem;">
 							<div class="inline-input__outer">
 								Nonsense Word Length
@@ -190,15 +142,7 @@
 								</span>
 							</div>
 						</div>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="p-27" type="checkbox">
-									<label class="switch" for="p-27"></label>
-								</div>
-								<label for="p-27">Use Garbage Words</label>
-							</div>
-						</div>		
+						<switch-row input-id="p-27" label="Use Garbage Words"></switch-row>		
 						<div class="mb-2" style="margin-left: 2rem;">
 							<div class="inline-input__outer">
 								Garbage Word Length
@@ -207,15 +151,7 @@
 								</span>
 							</div>
 						</div>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="p-8" type="checkbox">
-									<label class="switch" for="p-8"></label>
-								</div>
-								<label for="p-8">Use Meaningful Words</label>
-							</div>							
-						</div>								
+						<switch-row input-id="p-8" label="Use Meaningful Words"></switch-row>								
 						<div class="mb-2" style="margin-left: 2rem;">
 							<div class="ctrl__outer">
 								<div class="ctrl__inner">
@@ -234,15 +170,7 @@
 								</div>								
 							</div>
 						</div>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="p-21" type="checkbox">
-									<label class="switch" for="p-21"></label>
-								</div>
-								<label for="p-21">Use Emoji 🎉</label>
-							</div>
-						</div>
+						<switch-row input-id="p-21" label="Use Emoji 🎉"></switch-row>
 						<div class="mb-1">
 							<div class="ctrl__inner">
 								<div>
@@ -289,43 +217,8 @@
 								</div>
 							</div>
 						</div>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="p-32" type="checkbox" checked>
-									<label class="switch" for="p-32"></label>
-								</div>
-								<label for="p-32">Enable Connection Branching</label>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text right">
-										Form of anti-strategy for space,<br>
-										distinction and 180° modes.<br>
-										Allows a word to appear in<br>
-										more than 2 premises, creating<br>
-										a branching structure such that<br>
-										<br>
-										A &lt;relation&gt; B<br>
-										A &lt;relation&gt; C<br>
-										A &lt;relation&gt; D<br>
-										<br>
-										is possible, where A appears in<br>
-										3 premises, rather than 2.<br>
-										<br>
-										Leave on if unsure (default).
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="p-46" type="checkbox">
-									<label class="switch" for="p-46"></label>
-								</div>
-								<label for="p-46">Spoiler Conclusion</label>
-							</div>
-						</div>
+						<switch-row input-id="p-32" label="Enable Connection Branching" checked tooltip="Form of anti-strategy for space,|distinction and 180° modes.|Allows a word to appear in|more than 2 premises, creating|a branching structure such that|A &lt;relation&gt; B|A &lt;relation&gt; C|A &lt;relation&gt; D|is possible, where A appears in|3 premises, rather than 2.|Leave on if unsure (default)." tooltip-side="right"></switch-row>
+						<switch-row input-id="p-46" label="Spoiler Conclusion"></switch-row>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Question Types</div>
 						<div class="mb-1">
@@ -498,7 +391,7 @@
 								<div class="inline-input__outer">
 									<span>Color</span>
 									<span class="inline-input__inner">
-									  <input type="text" id="color-input" placeholder="Enter color (e.g. #ff0000)" value="#161F30CC" oninput="handleColorChange(event)" style="width: 11ch"></input>
+									  <input type="text" id="color-input" placeholder="Enter color (e.g. #ff0000)" value="#161F30CC" oninput="handleColorChange(event)" style="width: 11ch">
 									</span>
 								</div>
 								<div class="tooltip-container" tabindex="0">
@@ -530,24 +423,8 @@
 							<span id="experimental-folder-arrow" class="folder-arrow">▶</span><span>Experimental</span>
 						</div>
 						<div id="experimental-folder-content" class="folder-content">
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="p-48" type="checkbox">
-										<label class="switch" for="p-48"></label>
-									</div>
-									<label for="p-48">Minimal Mode</label>
-								</div>
-							</div>
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="p-66" type="checkbox">
-										<label class="switch" for="p-66"></label>
-									</div>
-									<label for="p-66">Wide Premises</label>
-								</div>
-							</div>
+							<switch-row input-id="p-48" label="Minimal Mode"></switch-row>
+							<switch-row input-id="p-66" label="Wide Premises"></switch-row>
 						</div>
 						<div class="folder" onclick="toggleLegacyFolder()">
 							<span id="legacy-folder-arrow" class="folder-arrow">▶</span><span>Legacy Options</span>
@@ -886,38 +763,16 @@
 								</div>
 							</div>
 						</div>
-					</div>
-				</div>
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-settings">✕</label>
-				</div>
-			</div>
-			<input id="offcanvas-history"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-history" class="offcanvas offcanvas--right">
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-history">✕</label>
-				</div>
-				<div class="offcanvas-body ffmono hql-frame">
+			</corner-panel>
+			<corner-panel name="history" side="right" body-class="hql-frame">
 					<div>Total answer time: <span id="total-display"></span></div>
 					<div>Avg answer time: <span id="average-display"></span></div>
 					<div>Avg correct answer time: <span id="average-correct-display"></span></div>
 					<div>% of answers correct: <span id="percent-correct-display"></span></div>
 					<div id="history-list" class="hql"></div>
-					<button onclick="clearHistory()">Clear Session</button>
-				</div>
-			</div>
-			<input id="offcanvas-info"
-				   type="checkbox"
-				   hidden>
-			<div id="sidebar-info" class="offcanvas offcanvas--left">
-				<div class="offcanvas-side">
-					<label class="offcanvas-close" for="offcanvas-info">✕</label>
-				</div>
-				<div class="offcanvas-body ffmono">
-					<div style="direction: ltr;">
-						<div class="mb-1"></div>
+					<button type="button" onclick="clearHistory()">Clear Session</button>
+			</corner-panel>
+			<corner-panel name="info" side="left">
 						<div class="mb-05 panel-heading">How to play</div>
 						<p>Read the premises, then judge whether the conclusion is
 						<strong>True</strong> or <strong>False</strong>. Premises
@@ -952,15 +807,10 @@
 						<p>Reset settings keeps your history. The full reset erases
 						all RRT data &mdash; irreversible. (N-Back is untouched either
 						way; a full reset for every exercise lives on the main menu.)</p>
-						<div class="mb-1"><button id="reset-rrt-settings" onclick="resetRRTSettings()">Reset Settings</button></div>
-						<div class="mb-1"><button id="reset-rrt" class="delete" onclick="resetRRT()">Reset RRT</button></div>
-					</div>
-				</div>
-			</div>
-			<label class="open metal-gear open--top-left" for="offcanvas-settings" tabindex="0"><span class="sidebar-button settings-label"></span></label>
-			<label class="open metal-gear open--top-right" for="offcanvas-history" tabindex="0"><span class="sidebar-button history-label"></span></label>
-			<label class="open metal-gear open--bottom-left" for="offcanvas-info" tabindex="0"><span class="sidebar-button info-label"></span></label>
-			<label id="graph-label" class="open metal-gear open--bottom-right" tabindex="0"><span class="sidebar-button graph-label"></span></label>
+						<div class="mb-1"><button type="button" id="reset-rrt-settings" onclick="resetRRTSettings()">Reset Settings</button></div>
+						<div class="mb-1"><button type="button" id="reset-rrt" class="delete" onclick="resetRRT()">Reset RRT</button></div>
+			</corner-panel>
+			<corner-tabs></corner-tabs>
 				<nav class="game-menu metal-gear">
 					<a class="game-menu__item" href="index.html">MENU</a>
 					<a class="game-menu__item selected" href="rrt.html">RRT</a>
@@ -988,7 +838,7 @@
 					</div>
 				</div>
 
-				<span id="spoiler-area">
+				<div id="spoiler-area">
 				<div class="game-display">
 					<div class="carousel">
 						<div class="carousel_display">
@@ -1007,8 +857,8 @@
 							</div>
 						</div>
 						<div class="carousel_controls">
-							<button id="carousel-back" disabled>Back</button>
-							<button id="carousel-next">Next</button>
+							<button type="button" id="carousel-back" disabled>Back</button>
+							<button type="button" id="carousel-next">Next</button>
 						</div>
 					</div>
 
@@ -1030,8 +880,8 @@
 				</div>
 
 				<div class="confirmation-buttons">
-					<button id="true-button" class="confirmation-true" onclick="checkIfTrue()" tabindex="-1">TRUE</button>
-					<button id="false-button" class="confirmation-false" onclick="checkIfFalse()" tabindex="-1">FALSE</button>
+					<button type="button" id="true-button" class="confirmation-true" onclick="checkIfTrue()" tabindex="-1">TRUE</button>
+					<button type="button" id="false-button" class="confirmation-false" onclick="checkIfFalse()" tabindex="-1">FALSE</button>
 				</div>
 
 				<div class="level-wrapper">
@@ -1045,8 +895,8 @@
 						<h3 class="score"><span class="correctly-answered">0</span> / <span class="next-level">0</span></h3>
 					</div>
 				</div>
-				<div id="progress-tracker" class="progress-tracker"></div
-				</span>
+				<div id="progress-tracker" class="progress-tracker"></div>
+			</div>
 			</div>
 
 
@@ -1072,10 +922,10 @@
 
 		<div id="graph-popup" class="graph-popup">
 			<div class="graph-controls">
-				<button id="graph-select-time" class="graph-select selected">Time Spent</button>
-				<button id="graph-select-score" class="graph-select">Avg Correct Times</button>
-				<button id="graph-select-time-per-premise" class="graph-select">Premise Speed</button>
-				<button id="graph-select-count" class="graph-select">Total Answered</button>
+				<button type="button" id="graph-select-time" class="graph-select selected">Time Spent</button>
+				<button type="button" id="graph-select-score" class="graph-select">Avg Correct Times</button>
+				<button type="button" id="graph-select-time-per-premise" class="graph-select">Premise Speed</button>
+				<button type="button" id="graph-select-count" class="graph-select">Total Answered</button>
 			</div>
 			<div id="graph-empty" class="panel-empty" hidden>No graph data yet &mdash; answer questions with the timer on and it appears here.</div>
 			<div id="graph-popup-time" class="graph-popup-content visible"><canvas id="graph-canvas-time"></canvas></div>
@@ -1084,14 +934,14 @@
 			<div id="graph-popup-score" class="graph-popup-content"><canvas id="graph-canvas-score"></canvas></div>
 			<div class="graph-end-controls">
 				<div>* Only timed questions are displayed</div>
-				<button id="graph-close-popup" class="graph-close-popup">Close</button>
+				<button type="button" id="graph-close-popup" class="graph-close-popup">Close</button>
 			</div>
 		</div>
 
 		<div id="error-popup" class="error-popup">
 			<div class="error-popup-content">
 				<p id="error-message"></p>
-				<button id="error-close-popup" class="error-close-popup">Close</button>
+				<button type="button" id="error-close-popup" class="error-close-popup">Close</button>
 				<textarea id="error-stack" readonly></textarea>
 			</div>
 		</div>

@@ -269,6 +269,8 @@ const defaultSettings = {
   dailyReset: false,
   lastResetDay: 0,
   latticeMatchesTheme: false, // cube lattice: fixed original grey vs accent-tinted
+  dailyProgressGoal: null, // minutes of play time, null = no goal
+  weeklyProgressGoal: null,
   // duplicate keys across entries are fine: pressing a key fires every bound
   // action and inactive tags are no-ops
   hotkeys: {

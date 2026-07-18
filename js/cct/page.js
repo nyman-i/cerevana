@@ -27,13 +27,18 @@ const keySettingMap = {
   'cct-beepvolume': 'beepVolume',
   'cct-beepenabled': 'beepEnabled',
   'cct-intervaltiming': 'showIntervalTiming',
+  'cct-dailygoal': 'dailyProgressGoal',
+  'cct-weeklygoal': 'weeklyProgressGoal',
 }
 
 const NUMBER_KEYS = new Set([
   'duration', 'targetCorrect', 'startingInterval', 'minimumInterval', 'maximumInterval',
   'intervalIncrement', 'correctThreshold', 'incorrectThreshold',
-  'playbackSpeed', 'beepVolume',
+  'playbackSpeed', 'beepVolume', 'dailyProgressGoal', 'weeklyProgressGoal',
 ])
+
+// emptying one of these inputs clears the setting instead of being ignored
+const NULLABLE_KEYS = new Set(['dailyProgressGoal', 'weeklyProgressGoal'])
 
 // guarded against clobbering a focused input (lesson from N-Back's
 // syncPanel — never overwrite what the user is mid-typing)
@@ -43,7 +48,7 @@ function populateSettings() {
     const el = $(id)
     if (!el || el === document.activeElement) continue
     if (el.type === 'checkbox') el.checked = settings[key]
-    else el.value = settings[key]
+    else el.value = settings[key] ?? ''
   }
   syncConditionalRows(settings)
 }
@@ -70,6 +75,7 @@ function registerEventHandlers() {
     el.addEventListener(eventName, () => {
       if (el.type === 'checkbox') { updateSetting(key, el.checked); return }
       if (NUMBER_KEYS.has(key)) {
+        if (NULLABLE_KEYS.has(key) && el.value === '') { updateSetting(key, null); return }
         const value = clampNumber(el.value, Number(el.min), Number(el.max))
         if (value !== null) updateSetting(key, value)
         return
@@ -79,7 +85,35 @@ function registerEventHandlers() {
   }
 }
 
-subscribe(populateSettings)
+// ---- daily/weekly goal bars (same widget + thresholds as RRT's
+// fillProgressTracker in js/rrt/progress.js) ----
+function fillTracker(tracker, minutesSpent, goal) {
+  const percent = Math.max(0, Math.min(100 * minutesSpent / goal, 100))
+  const fill = tracker.querySelector('.progress-fill')
+  fill.style.height = `${percent}%`
+  tracker.querySelector('.progress-value').innerText = `${Math.floor(minutesSpent)} / ${goal}`
+  fill.classList.toggle('complete', percent >= 100)
+  fill.classList.toggle('halfway', percent >= 50 && percent < 100)
+}
+
+async function renderGoalTrackers() {
+  const settings = getSettings()
+  const daily = $('daily-progress-container')
+  const weekly = $('weekly-progress-container')
+  daily.classList.toggle('visible', !!settings.dailyProgressGoal)
+  weekly.classList.toggle('visible', !!settings.weeklyProgressGoal)
+  if (settings.dailyProgressGoal) {
+    fillTracker(daily, (await getPlayTimeSince4AM()) / 60000, settings.dailyProgressGoal)
+  }
+  if (settings.weeklyProgressGoal) {
+    const wk = goalWeekStartKey() // global from js/shared/db.js
+    const byDay = await getYearOfPlayTime()
+    const weekMinutes = Object.entries(byDay).reduce((s, [d, m]) => d >= wk ? s + m : s, 0)
+    fillTracker(weekly, weekMinutes, settings.weeklyProgressGoal)
+  }
+}
+
+subscribe(() => { populateSettings(); renderGoalTrackers() })
 
 $('cct-reset-settings').addEventListener('click', () => {
   resetSettings()
@@ -95,6 +129,7 @@ $('cct-reset-all').addEventListener('click', async () => {
 
 populateSettings()
 registerEventHandlers()
+renderGoalTrackers()
 
 // ---- gameplay ----
 let stats = { correctAnswers: 0, totalQuestions: 0, interval: 0 }
@@ -154,6 +189,7 @@ function begin() {
     onEnd: async (record) => {
       endUi(record)
       await storeSession(record)
+      renderGoalTrackers()
       if ($('offcanvas-history').checked) renderSessions()
     },
   })

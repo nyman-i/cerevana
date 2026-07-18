@@ -44,8 +44,9 @@ async function renderMenuStats() {
     try { qb = JSON.parse(localStorage.getItem('quad-box-settings')) || {}; } catch (e) {}
     const qbMode = qb.mode || 'quad';
     const qbLevel = qb.gameSettings?.[qbMode]?.nBack ?? 2;
-    let qbGames = [];
-    try { qbGames = (await getAllQuadBoxGames()).filter(g => g.status === 'completed'); } catch (e) {}
+    let qbAll = [];
+    try { qbAll = (await getAllQuadBoxGames()).filter(g => g.status !== 'tombstone'); } catch (e) {}
+    const qbGames = qbAll.filter(g => g.status === 'completed');
     qbGames.sort((a, b) => a.timestamp - b.timestamp);
     const qbPct = (g) => {
         if (g.scores?.tally) return g.scores.tally.possible > 0 ? Math.round(100 * g.scores.tally.hits / g.scores.tally.possible) : 0;
@@ -69,8 +70,9 @@ async function renderMenuStats() {
     let cctSettings = {};
     try { cctSettings = JSON.parse(localStorage.getItem('cct-settings')) || {}; } catch (e) {}
     const cctMode = cctSettings.arithmeticMode || 'addition';
-    let cctSessions = [];
-    try { cctSessions = (await getAllCctSessions()).filter(s => s.status === 'Completed'); } catch (e) {}
+    let cctAll = [];
+    try { cctAll = await getAllCctSessions(); } catch (e) {}
+    const cctSessions = cctAll.filter(s => s.status === 'Completed');
     cctSessions.sort((a, b) => a.timestamp - b.timestamp);
     const cctLast10 = cctSessions.slice(-10);
     const cctAvg = Math.round(cctLast10.reduce((s, r) => s + r.accuracy, 0) / (cctLast10.length || 1));
@@ -80,6 +82,89 @@ async function renderMenuStats() {
     document.getElementById('menu-cct-recent').textContent = cctSessions.length
         ? 'Recent: ' + cctSessions.slice(-5).map(s => Math.round(s.accuracy) + '%').join('  ')
         : '';
+
+    await renderGoalTracker(qbAll, cctAll);
+}
+
+// ----- combined goal tracker: sums the goals of whichever games set one -----
+// Goals are read raw from each game's store (this page can't import the ES
+// modules); minutes come from the same records the cards already fetched.
+function readGoals() {
+    const fromStore = (key) => {
+        try {
+            const s = JSON.parse(localStorage.getItem(key)) || {};
+            return { daily: s.dailyProgressGoal ?? null, weekly: s.weeklyProgressGoal ?? null };
+        } catch (e) { return { daily: null, weekly: null }; }
+    };
+    let rrt = { daily: null, weekly: null };
+    try {
+        const profiles = JSON.parse(localStorage.getItem('sllgms-v3-profiles')) || [];
+        const sel = +localStorage.getItem('sllgms-v3-selected-profile') || 0;
+        const sd = profiles[sel]?.savedata || {};
+        // dGoal/wGoal: URL-imported profiles keep compressed keys until re-saved
+        rrt = { daily: sd.dailyProgressGoal ?? sd.dGoal ?? null, weekly: sd.weeklyProgressGoal ?? sd.wGoal ?? null };
+    } catch (e) {}
+    return { rrt, qb: fromStore('quad-box-settings'), cct: fromStore('cct-settings') };
+}
+
+async function renderGoalTracker(qbAll, cctAll) {
+    const goals = readGoals();
+
+    const earliest = Math.min(goalDayStart(), goalWeekStart(), goalMonthStart());
+    let rrtRecords = [];
+    try { rrtRecords = await getRRTProgressFrom(earliest); } catch (e) {}
+    // per-game minutes since a timestamp — units mirror each game's own math:
+    // RRT timeElapsed ms, N-Back elapsed seconds (gamedb addScoreMetadata), CCT durationMs
+    const qbElapsedSec = g => 'start' in g ? (g.timestamp - g.start) / 1000 : (g.trialTime * g.completedTrials / 1000 || 0);
+    const mins = {
+        rrt: start => rrtRecords.filter(q => q.timestamp >= start).reduce((s, q) => s + (q.timeElapsed || 0), 0) / 60000,
+        qb: start => qbAll.filter(g => g.timestamp >= start).reduce((s, g) => s + qbElapsedSec(g), 0) / 60,
+        cct: start => cctAll.filter(r => r.timestamp >= start).reduce((s, r) => s + (r.durationMs || 0), 0) / 60000,
+    };
+
+    const sumPeriod = (period, start) => {
+        let goal = 0, minutes = 0;
+        for (const game of ['rrt', 'qb', 'cct']) {
+            if (!goals[game][period]) continue;
+            goal += goals[game][period];
+            minutes += mins[game](start);
+        }
+        return { goal, minutes };
+    };
+    const daily = sumPeriod('daily', goalDayStart());
+    const weekly = sumPeriod('weekly', goalWeekStart());
+
+    // monthly is derived: per game the stronger of its daily rate and weekly/7,
+    // scaled to this month's length; progress counts every game with any goal
+    const gameDate = new Date(Date.now() - 4 * 3600 * 1000);
+    const daysInMonth = new Date(gameDate.getFullYear(), gameDate.getMonth() + 1, 0).getDate();
+    let monthlyGoal = 0, monthlyMinutes = 0;
+    for (const game of ['rrt', 'qb', 'cct']) {
+        const { daily: d, weekly: w } = goals[game];
+        if (!d && !w) continue;
+        monthlyGoal += Math.max(d ?? 0, (w ?? 0) / 7) * daysInMonth;
+        monthlyMinutes += mins[game](goalMonthStart());
+    }
+    monthlyGoal = Math.ceil(monthlyGoal);
+
+    const fillRow = (id, minutes, goal) => {
+        const row = document.getElementById(id);
+        if (!goal) { row.hidden = true; return false; }
+        row.hidden = false;
+        const pct = Math.max(0, Math.min(100 * minutes / goal, 100));
+        const fill = row.querySelector('.menu-goal__fill');
+        fill.style.width = pct + '%';
+        fill.classList.toggle('complete', pct >= 100);
+        fill.classList.toggle('halfway', pct >= 50 && pct < 100);
+        row.querySelector('.menu-goal__value').textContent = `${Math.floor(minutes)} / ${goal} min`;
+        return true;
+    };
+    const anyRow = [
+        fillRow('menu-goal-daily', daily.minutes, daily.goal),
+        fillRow('menu-goal-weekly', weekly.minutes, weekly.goal),
+        fillRow('menu-goal-monthly', monthlyMinutes, monthlyGoal),
+    ].some(Boolean);
+    document.getElementById('menu-goals').hidden = !anyRow;
 }
 
 const onHistoryImported = renderMenuStats; // refresh stat cards after a history import

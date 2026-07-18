@@ -65,7 +65,7 @@ class IncorrectDirections {
                     continue;
                 }
                 combinations.push(newCombo);
-                if (Math.abs(shift) == 1) {
+                if (Math.abs(shift) === 1) {
                     combinations.push(newCombo);
                     combinations.push(newCombo);
                 }

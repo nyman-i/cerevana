@@ -52,7 +52,7 @@ function scrambleWithLimit(premises, unbreakableDivisions) {
     let attempts;
     for (attempts = 0; attempts < 100; attempts++) {
         endIndices = shuffle(groups.slice()).flat();
-        neighborCount = 0;
+        let neighborCount = 0;
         for (let i = 0; i < endIndices.length - 1; i++) {
             if (Math.abs(endIndices[i] - endIndices[i+1]) === 1) {
                 neighborCount += 1;
@@ -70,7 +70,7 @@ function scrambleWithLimit(premises, unbreakableDivisions) {
 
     const scrambledPremises = endIndices.map(i => premises[i]);
     if (savedata.widePremises) {
-        const thinPremiseIndex = scrambledPremises.findIndex(p => Array.isArray(p) && p.length == 1);
+        const thinPremiseIndex = scrambledPremises.findIndex(p => Array.isArray(p) && p.length === 1);
         if (thinPremiseIndex !== -1) {
             const thinPremise = scrambledPremises[thinPremiseIndex];
             scrambledPremises.splice(thinPremiseIndex, 1);

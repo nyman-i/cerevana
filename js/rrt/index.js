@@ -312,7 +312,7 @@ function renderCarousel() {
 
     carousel.classList.add("visible");
     display.classList.remove("visible");
-    if (carouselIndex == 0) {
+    if (carouselIndex === 0) {
         carouselBackButton.disabled = true;
     } else {
         carouselBackButton.disabled = false;
@@ -732,7 +732,7 @@ function renderHQL(didAddSingleQuestion=false) {
 function updateAverage(reverseChronological) {
     let questions = reverseChronological.filter(q => q.answeredAt && q.startedAt);
     let times = questions.map(q => (q.answeredAt - q.startedAt) / 1000);
-    if (times.length == 0) {
+    if (times.length === 0) {
         return;
     }
     const totalTime = times.reduce((a,b) => a + b, 0);
@@ -743,11 +743,11 @@ function updateAverage(reverseChronological) {
     const average =  totalTime / times.length;
     averageDisplay.innerHTML = average.toFixed(1) + 's';
 
-    const correctQuestions = questions.filter(q => q.correctness == 'right');
+    const correctQuestions = questions.filter(q => q.correctness === 'right');
     const percentCorrect = 100 * correctQuestions.length / questions.length;
     percentCorrectDisplay.innerHTML = percentCorrect.toFixed(1) + '%';
     const correctTimes = correctQuestions.map(q => (q.answeredAt - q.startedAt) / 1000);
-    if (correctTimes.length == 0) {
+    if (correctTimes.length === 0) {
         averageCorrectDisplay.innerHTML = 'None yet';
         return;
     }

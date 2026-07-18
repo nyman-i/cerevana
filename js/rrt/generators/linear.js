@@ -2,9 +2,6 @@ function pickLinearPremise(a, b, comparison, reverseComparison, min, minRev) {
     if (savedata.minimalMode) {
         comparison = min;
         reverseComparison = minRev;
-    } else {
-        comparison = comparison;
-        reverseComparison = reverseComparison;
     }
     const ps = [
     `<span class="subject">${a}</span> <span class="relation">${comparison}</span> <span class="subject">${b}</span>`,
@@ -214,7 +211,7 @@ class LinearQuestion {
                 const neighborList = neighbors[source];
                 const firstNeighbor = neighborList[0];
                 if (firstNeighbor && neighborList.every(word => bucketMap[word] === bucketMap[firstNeighbor])) {
-                    if (bucketMap[firstNeighbor] + 1 == bucketMap[source]) {
+                    if (bucketMap[firstNeighbor] + 1 === bucketMap[source]) {
                         forwardChance = 0.6;
                     } else {
                         forwardChance = 0.4;

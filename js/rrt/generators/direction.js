@@ -38,20 +38,20 @@ function pickWeightedRandomDirection(dirCoords, baseWord, neighbors, wordCoordMa
         const distanceToClosest = badTargets
             .map(badTarget => taxicabDistance(badTarget, endLocation))
             .reduce((a,b) => Math.min(a,b), 999);
-        if (distanceToClosest == 0) {
+        if (distanceToClosest === 0) {
             pool.push(dirCoord)
-        } else if (distanceToClosest == 1) {
+        } else if (distanceToClosest === 1) {
             pool.push(dirCoord);
             pool.push(dirCoord);
             pool.push(dirCoord);
             pool.push(dirCoord);
             pool.push(dirCoord);
-        } else if (distanceToClosest == 2) {
+        } else if (distanceToClosest === 2) {
             pool.push(dirCoord);
             pool.push(dirCoord);
             pool.push(dirCoord);
             pool.push(dirCoord);
-        } else if (distanceToClosest == 3) {
+        } else if (distanceToClosest === 3) {
             pool.push(dirCoord);
             pool.push(dirCoord);
         } else {
@@ -222,7 +222,7 @@ function pickBaseWord(neighbors, branchesAllowed, bannedFromBranching=[]) {
     if (savedata.enableConnectionBranching === false) {
         branchesAllowed = false;
     }
-    if (Object.values(neighbors).filter(list => list.length == 3).length >= 2) {
+    if (Object.values(neighbors).filter(list => list.length === 3).length >= 2) {
         branchesAllowed = false;
     }
     const options = Object.keys(neighbors);
@@ -240,7 +240,7 @@ function pickBaseWord(neighbors, branchesAllowed, bannedFromBranching=[]) {
         pool.push(word);
         pool.push(word);
         pool.push(word);
-        if (neighbors[word] && neighbors[word].length == 1) {
+        if (neighbors[word] && neighbors[word].length === 1) {
             pool.push(word);
             pool.push(word);
             if (options.length >= 6) {

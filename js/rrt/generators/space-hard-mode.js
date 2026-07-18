@@ -92,8 +92,8 @@ class SpaceHardMode {
         let count = 0;
         while (wordSequence.length > 0 && count < 100) {
             let chainSize = Math.min(wordSequence.length, pickRandomItems([1, 1, 2, 2, 3], 1).picked[0]);
-            let willUseAllTransforms = chainSize == wordSequence.length && leftChains.length == 0 && rightChains.length == 0;
-            let shouldNotChain = pool.length == 1 || (willUseAllTransforms && Math.random() < 0.4)
+            let willUseAllTransforms = chainSize === wordSequence.length && leftChains.length === 0 && rightChains.length === 0;
+            let shouldNotChain = pool.length === 1 || (willUseAllTransforms && Math.random() < 0.4)
             if (shouldNotChain)
                 chainSize = 1;
             let words = wordSequence.splice(0, chainSize);
@@ -177,7 +177,7 @@ class SpaceHardMode {
             const plane = pickRandomItems(dimensionPool, 2).picked;
             plane.sort();
             let [m, n] = plane;
-            dimensionsUsed.push.apply(dimensionsUsed, plane.filter(d => dimensionsUsed.indexOf(d) == -1));
+            dimensionsUsed.push.apply(dimensionsUsed, plane.filter(d => dimensionsUsed.indexOf(d) === -1));
             if (m === 0 && n === 2) {
                 // ZX matches the right-hand rule for rotation, XZ (the reverse) does not
                 [m, n] = [n, m];

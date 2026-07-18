@@ -25,14 +25,14 @@
     align-items: center;
     padding: 0.35rem 1.25rem;
     background-color: var(--label-background-color);
-    font-family: "Oxanium", sans-serif;
+    font-family: Oxanium, sans-serif;
     letter-spacing: 0.05em;
     white-space: nowrap;
     user-select: none;
 }
 
 .cct-digit {
-    font-family: "Oxanium", sans-serif;
+    font-family: Oxanium, sans-serif;
     font-weight: bold;
     font-size: clamp(4rem, 18svh, 9rem);
     color: var(--accent-color);
@@ -41,7 +41,7 @@
 }
 
 .cct-answer-input {
-    font-family: "Oxanium", sans-serif;
+    font-family: Oxanium, sans-serif;
     font-size: var(--step-1);
     text-align: center;
     width: 6ch;

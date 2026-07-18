@@ -9,7 +9,7 @@ class SettingsMigration {
         }
 
         for (const key of Object.keys(defaultSavedata)) {
-            if (!settings.hasOwnProperty(key)) {
+            if (!Object.hasOwn(settings, key)) {
                 settings[key] = defaultSavedata[key];
             }
         }
@@ -17,7 +17,7 @@ class SettingsMigration {
 
     // Do not remove. Old share links still use V1, so getting rid of this will break those links
     upgradeToV2(settings) {
-        if (settings.hasOwnProperty('enableComparison') || settings.hasOwnProperty('enableTemporal')) {
+        if (Object.hasOwn(settings, 'enableComparison') || Object.hasOwn(settings, 'enableTemporal')) {
             settings.enableLinear = settings.enableComparison || settings.enableTemporal;
             let wording = [];
             if (settings.enableComparison) {
@@ -34,19 +34,19 @@ class SettingsMigration {
             delete settings.enableTemporal;
         }
 
-        if (settings.hasOwnProperty('overrideComparisonPremises') || settings.hasOwnProperty('overrideTemporalPremises')) {
+        if (Object.hasOwn(settings, 'overrideComparisonPremises') || Object.hasOwn(settings, 'overrideTemporalPremises')) {
             settings.overrideLinearPremises = settings.overrideComparisonPremises ?? settings.overrideTemporalPremises;
             delete settings.overrideComparisonPremises;
             delete settings.overrideTemporalPremises;
         }
 
-        if (settings.hasOwnProperty('overrideComparisonTime') || settings.hasOwnProperty('overrideTemporalTime')) {
+        if (Object.hasOwn(settings, 'overrideComparisonTime') || Object.hasOwn(settings, 'overrideTemporalTime')) {
             settings.overrideLinearTime = settings.overrideComparisonTime ?? settings.overrideTemporalTime;
             delete settings.overrideComparisonTime;
             delete settings.overrideTemporalTime;
         }
 
-        if (settings.hasOwnProperty('enableBacktrackingComparison') || settings.hasOwnProperty('enableBacktrackingTemporal')) {
+        if (Object.hasOwn(settings, 'enableBacktrackingComparison') || Object.hasOwn(settings, 'enableBacktrackingTemporal')) {
             settings.enableBacktrackingLinear = settings.enableBacktrackingComparison ?? settings.enableBacktrackingTemporal;
             delete settings.enableBacktrackingComparison;
             delete settings.enableBacktrackingTemporal;
@@ -55,7 +55,7 @@ class SettingsMigration {
     }
 
     upgradeToV3(settings) {
-        if (settings.hasOwnProperty('scrambleLimit')) {
+        if (Object.hasOwn(settings, 'scrambleLimit')) {
             const limit = settings.scrambleLimit;
             if (limit === null || limit === undefined) {
                 settings.scrambleFactor = 80;

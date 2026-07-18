@@ -1,0 +1,28 @@
+name: Checks
+
+on:
+  workflow_call:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-package-lock eslint@9 @eslint/js@9 stylelint@16 stylelint-config-standard@36 html-validate@8
+      - run: npx eslint .
+      - run: npx stylelint "css/**/*.css" --config .stylelintrc.js
+      - run: npx html-validate --config .htmlvalidate.js *.html
+      - run: node tests/cct-pure.mjs
+      - run: node tests/nback-pure.mjs
+      - run: node tests/rrt-pure.mjs
+      - run: node --experimental-test-module-mocks --test tests/quadbox-pure.mjs
+      - run: node tests/smoke.mjs

@@ -1,12 +1,12 @@
 function createNonsenseWord() {
     const vowels = ['A', 'E', 'I', 'O', 'U'], consonants = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'];
-    for (string = ''; string.length < savedata.nonsenseWordLength;) {
+    for (let string = ''; string.length < savedata.nonsenseWordLength;) {
         if ((string.length + 1) % 2) 
             string += consonants[Math.floor(Math.random() * 21)];
         else 
             string += vowels[Math.floor(Math.random() * 5)];
 
-        if (string.length == savedata.nonsenseWordLength) {
+        if (string.length === savedata.nonsenseWordLength) {
             if (bannedWords.some(d => string.includes(d))) {
                 string = '';
             } else {
