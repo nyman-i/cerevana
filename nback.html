@@ -12,6 +12,7 @@
 		<script src="js/shared/boot.js"></script>
 		<script src="js/components/help-tip.js"></script>
 		<script src="js/components/num-row.js"></script>
+		<script src="js/components/switch-row.js"></script>
 		<script src="js/components/goal-targets.js"></script>
 		<script src="js/components/profile-picker.js"></script>
 	</head>
@@ -105,108 +106,18 @@
 						</div>
 						<div class="mb-05 panel-heading">Session</div>
 						<num-row input-id="qb-nback" label="N-Back" min="1" max="12" step="1" width="5ch"></num-row>
-						<div class="mb-1" id="qb-row-variable">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="qb-variable" type="checkbox">
-									<label class="switch" for="qb-variable"></label>
-								</div>
-								<label for="qb-variable">Variable N-Back</label>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text right">
-										Makes N change<br>
-										randomly each trial.<br>
-									</div>
-								</div>
-							</div>
-						</div>
+						<switch-row input-id="qb-variable" label="Variable N-Back" row-id="qb-row-variable" tooltip="Makes N change|randomly each trial." tooltip-side="right"></switch-row>
 						<num-row input-id="qb-trialtime" label="Trial time" min="1000" max="5000" step="100" width="7ch" suffix="ms" row-id="qb-row-trialtime"></num-row>
 						<num-row input-id="qb-numtrials" label="Num trials" min="10" max="999" step="1" width="6ch"></num-row>
-						<div class="mb-1" id="qb-row-crab">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="qb-crab" type="checkbox">
-									<label class="switch" for="qb-crab"></label>
-								</div>
-								<label for="qb-crab">Crab</label>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text">
-										Matches compare<br>
-										against blocks of N<br>
-										in reverse order —<br>
-										an anti-strategy<br>
-										variant.<br>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="mb-1" id="qb-row-selfpaced">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="qb-selfpaced" type="checkbox">
-									<label class="switch" for="qb-selfpaced"></label>
-								</div>
-								<label for="qb-selfpaced">Self-paced</label>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text right">
-										No trial clock:<br>
-										advance with<br>
-										Enter or the<br>
-										NEXT button.<br>
-									</div>
-								</div>
-							</div>
-						</div>
+						<switch-row input-id="qb-crab" label="Crab" row-id="qb-row-crab" tooltip="Matches compare|against blocks of N|in reverse order —|an anti-strategy|variant."></switch-row>
+						<switch-row input-id="qb-selfpaced" label="Self-paced" row-id="qb-row-selfpaced" tooltip="No trial clock:|advance with|Enter or the|NEXT button." tooltip-side="right"></switch-row>
 						<num-row input-id="qb-squares" label="Squares" min="2" max="4" step="1" width="4ch" row-id="qb-row-squares"></num-row>
 						<div id="qb-arith-rows" hidden>
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="qb-op-add" type="checkbox">
-										<label class="switch" for="qb-op-add"></label>
-									</div>
-									<label for="qb-op-add">Addition</label>
-								</div>
-							</div>
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="qb-op-sub" type="checkbox">
-										<label class="switch" for="qb-op-sub"></label>
-									</div>
-									<label for="qb-op-sub">Subtraction</label>
-								</div>
-							</div>
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="qb-op-mul" type="checkbox">
-										<label class="switch" for="qb-op-mul"></label>
-									</div>
-									<label for="qb-op-mul">Multiplication</label>
-								</div>
-							</div>
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="qb-op-div" type="checkbox">
-										<label class="switch" for="qb-op-div"></label>
-									</div>
-									<label for="qb-op-div">Division</label>
-								</div>
-							</div>
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="qb-negatives" type="checkbox">
-										<label class="switch" for="qb-negatives"></label>
-									</div>
-									<label for="qb-negatives">Negative numbers</label>
-								</div>
-							</div>
+							<switch-row input-id="qb-op-add" label="Addition"></switch-row>
+							<switch-row input-id="qb-op-sub" label="Subtraction"></switch-row>
+							<switch-row input-id="qb-op-mul" label="Multiplication"></switch-row>
+							<switch-row input-id="qb-op-div" label="Division"></switch-row>
+							<switch-row input-id="qb-negatives" label="Negative numbers"></switch-row>
 							<num-row input-id="qb-maxnumber" label="Max number" min="1" max="99" step="1" width="5ch"></num-row>
 						</div>
 						<num-row input-id="qb-matchchance" label="Match chance" min="5" max="75" step="1" width="5ch" suffix="%" row-id="qb-row-matchchance" tooltip="How often the|n-back stimulus|repeats." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
@@ -311,24 +222,7 @@
 							</div>
 						</div>
 						<num-row input-id="qb-rotation" label="Rotation speed" min="0" max="999" step="1" width="5ch" row-id="qb-row-rotation"></num-row>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="qb-lattice-theme" type="checkbox">
-									<label class="switch" for="qb-lattice-theme"></label>
-								</div>
-								<label for="qb-lattice-theme">Lattice matches theme</label>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text right">
-										Tint the cube's grid<br>
-										with your accent<br>
-										colour instead of<br>
-										the original grey.<br>
-									</div>
-								</div>
-							</div>
-						</div>
+						<switch-row input-id="qb-lattice-theme" label="Lattice matches theme" tooltip="Tint the cube's grid|with your accent|colour instead of|the original grey." tooltip-side="right"></switch-row>
 						<div class="mb-2">
 							<div class="ctrl__inner">
 								<span>Voice</span>
@@ -350,23 +244,7 @@
 						<div id="qb-progression-rows">
 							<hr class="divider"/>
 							<div class="mb-05 panel-heading">Progression</div>
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="qb-autoprog" type="checkbox">
-										<label class="switch" for="qb-autoprog"></label>
-									</div>
-									<label for="qb-autoprog">Auto Progression</label>
-									<div class="tooltip-container" tabindex="0">
-										?
-										<div class="tooltip-text right">
-											Raises or lowers N<br>
-											based on your<br>
-											recent scores.<br>
-										</div>
-									</div>
-								</div>
-							</div>
+							<switch-row input-id="qb-autoprog" label="Auto Progression" tooltip="Raises or lowers N|based on your|recent scores." tooltip-side="right"></switch-row>
 							<num-row input-id="qb-advance" label="Advance at" min="0" max="100" step="1" width="5ch" suffix="%"></num-row>
 							<num-row input-id="qb-winafter" label="Win after" min="1" max="9" step="1" width="4ch" suffix="in a row"></num-row>
 							<num-row input-id="qb-dropbelow" label="Drop below" min="0" max="100" step="1" width="5ch" suffix="%"></num-row>

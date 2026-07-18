@@ -12,6 +12,7 @@
 		<script src="js/shared/boot.js"></script>
 		<script src="js/components/help-tip.js"></script>
 		<script src="js/components/num-row.js"></script>
+		<script src="js/components/switch-row.js"></script>
 		<script src="js/components/goal-targets.js"></script>
 		<script src="js/components/profile-picker.js"></script>
 	</head>
@@ -82,36 +83,11 @@
 							</div>
 						</div>
 						<num-row input-id="cct-playbackspeed" label="Playback speed" min="1" max="1.5" step="0.1" width="4ch" suffix="x"></num-row>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="cct-beepenabled" type="checkbox">
-									<label class="switch" for="cct-beepenabled"></label>
-								</div>
-								<label for="cct-beepenabled">Error beep</label>
-							</div>
-						</div>
+						<switch-row input-id="cct-beepenabled" label="Error beep"></switch-row>
 						<num-row input-id="cct-beepvolume" label="Beep volume" min="0" max="100" step="5" width="5ch" suffix="%"></num-row>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Display</div>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="cct-intervaltiming" type="checkbox">
-									<label class="switch" for="cct-intervaltiming"></label>
-								</div>
-								<label for="cct-intervaltiming">Track time per interval</label>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text right">
-										Records how long<br>
-										each session spends<br>
-										at every interval,<br>
-										shown in History.<br>
-									</div>
-								</div>
-							</div>
-						</div>
+						<switch-row input-id="cct-intervaltiming" label="Track time per interval" tooltip="Records how long|each session spends|at every interval,|shown in History." tooltip-side="right"></switch-row>
 					</div>
 				</div>
 				<div class="offcanvas-side">

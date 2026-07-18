@@ -14,6 +14,7 @@
 		<script src="js/shared/boot.js"></script>
 		<script src="js/components/help-tip.js"></script>
 		<script src="js/components/num-row.js"></script>
+		<script src="js/components/switch-row.js"></script>
 		<script src="js/components/goal-targets.js"></script>
 		<script src="js/components/profile-picker.js"></script>
 		<style id="live-styles"></style>
@@ -135,15 +136,7 @@
 						</div>
 
 						<div class="mb-05 panel-heading">Words &amp; Stimuli</div>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="p-20" type="checkbox" checked>
-									<label class="switch" for="p-20"></label>
-								</div>
-								<label for="p-20">Use Nonsense Words</label>
-							</div>
-						</div>		
+						<switch-row input-id="p-20" label="Use Nonsense Words" checked></switch-row>		
 						<div class="mb-2" style="margin-left: 2rem;">
 							<div class="inline-input__outer">
 								Nonsense Word Length
@@ -152,15 +145,7 @@
 								</span>
 							</div>
 						</div>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="p-27" type="checkbox">
-									<label class="switch" for="p-27"></label>
-								</div>
-								<label for="p-27">Use Garbage Words</label>
-							</div>
-						</div>		
+						<switch-row input-id="p-27" label="Use Garbage Words"></switch-row>		
 						<div class="mb-2" style="margin-left: 2rem;">
 							<div class="inline-input__outer">
 								Garbage Word Length
@@ -169,15 +154,7 @@
 								</span>
 							</div>
 						</div>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="p-8" type="checkbox">
-									<label class="switch" for="p-8"></label>
-								</div>
-								<label for="p-8">Use Meaningful Words</label>
-							</div>							
-						</div>								
+						<switch-row input-id="p-8" label="Use Meaningful Words"></switch-row>								
 						<div class="mb-2" style="margin-left: 2rem;">
 							<div class="ctrl__outer">
 								<div class="ctrl__inner">
@@ -196,15 +173,7 @@
 								</div>								
 							</div>
 						</div>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="p-21" type="checkbox">
-									<label class="switch" for="p-21"></label>
-								</div>
-								<label for="p-21">Use Emoji 🎉</label>
-							</div>
-						</div>
+						<switch-row input-id="p-21" label="Use Emoji 🎉"></switch-row>
 						<div class="mb-1">
 							<div class="ctrl__inner">
 								<div>
@@ -251,43 +220,8 @@
 								</div>
 							</div>
 						</div>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="p-32" type="checkbox" checked>
-									<label class="switch" for="p-32"></label>
-								</div>
-								<label for="p-32">Enable Connection Branching</label>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text right">
-										Form of anti-strategy for space,<br>
-										distinction and 180° modes.<br>
-										Allows a word to appear in<br>
-										more than 2 premises, creating<br>
-										a branching structure such that<br>
-										<br>
-										A &lt;relation&gt; B<br>
-										A &lt;relation&gt; C<br>
-										A &lt;relation&gt; D<br>
-										<br>
-										is possible, where A appears in<br>
-										3 premises, rather than 2.<br>
-										<br>
-										Leave on if unsure (default).
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="mb-1">
-							<div class="ctrl__inner">
-								<div>
-									<input hidden id="p-46" type="checkbox">
-									<label class="switch" for="p-46"></label>
-								</div>
-								<label for="p-46">Spoiler Conclusion</label>
-							</div>
-						</div>
+						<switch-row input-id="p-32" label="Enable Connection Branching" checked tooltip="Form of anti-strategy for space,|distinction and 180° modes.|Allows a word to appear in|more than 2 premises, creating|a branching structure such that|A &lt;relation&gt; B|A &lt;relation&gt; C|A &lt;relation&gt; D|is possible, where A appears in|3 premises, rather than 2.|Leave on if unsure (default)." tooltip-side="right"></switch-row>
+						<switch-row input-id="p-46" label="Spoiler Conclusion"></switch-row>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Question Types</div>
 						<div class="mb-1">
@@ -492,24 +426,8 @@
 							<span id="experimental-folder-arrow" class="folder-arrow">▶</span><span>Experimental</span>
 						</div>
 						<div id="experimental-folder-content" class="folder-content">
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="p-48" type="checkbox">
-										<label class="switch" for="p-48"></label>
-									</div>
-									<label for="p-48">Minimal Mode</label>
-								</div>
-							</div>
-							<div class="mb-1">
-								<div class="ctrl__inner">
-									<div>
-										<input hidden id="p-66" type="checkbox">
-										<label class="switch" for="p-66"></label>
-									</div>
-									<label for="p-66">Wide Premises</label>
-								</div>
-							</div>
+							<switch-row input-id="p-48" label="Minimal Mode"></switch-row>
+							<switch-row input-id="p-66" label="Wide Premises"></switch-row>
 						</div>
 						<div class="folder" onclick="toggleLegacyFolder()">
 							<span id="legacy-folder-arrow" class="folder-arrow">▶</span><span>Legacy Options</span>
