@@ -12,10 +12,14 @@ jobs:
   deploy:
     needs: checks
     runs-on: ubuntu-latest
-    concurrency: deploy-dev-group
+    timeout-minutes: 10
+    concurrency:
+      group: deploy-dev-group
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
+      # pinned to a commit SHA (not @master) — this runs with FLY_API_TOKEN
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 # v1.6
       - run: flyctl deploy --remote-only -a cerevana-dev --config fly.dev.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_DEV }}
