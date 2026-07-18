@@ -71,7 +71,7 @@ function listJsFiles(dir) {
     return out;
 }
 
-const MODULE_DIRS = ['js/quadbox', 'js/cct'];
+const MODULE_DIRS = ['js/quadbox', 'js/cct', 'js/testtracker'];
 const CLASSIC_FILES = [
     ...listJsFiles('js/rrt'),
     ...listJsFiles('js/shared'),

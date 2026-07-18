@@ -156,6 +156,11 @@ async function main() {
       assert(loaded, 'studies.html: study list renders after its data/studies.md fetch completes')
     })
 
+    await checkPage('transfer.html', 'transfer.html', async () => {
+      const loaded = await waitFor(() => evaluate(browserWs, sessionId, `document.getElementById('transfer-list')?.children.length > 0`), { timeout: 5000 })
+      assert(loaded, 'transfer.html: test-battery list renders after its data/test-battery.md fetch completes')
+    })
+
     await checkPage('credits.html', 'credits.html', async () => {
       const heading = await evaluate(browserWs, sessionId, `document.querySelector('h1')?.textContent`)
       assert(heading?.trim() === 'CREDITS', 'credits.html: main heading renders')

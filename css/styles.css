@@ -2713,6 +2713,58 @@ body.menu-mode .main-view {
     }
 }
 
+/* Full-width row below the two-column layout: the chart gets the room it
+   needs to actually be readable. Training activity is plotted as bars
+   inside the chart itself, not a separate panel, so this is just the one
+   section. */
+.transfer-bottom {
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.transfer-due-section {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.transfer-due {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.transfer-due__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    border: 1px solid #333;
+    border-left: 4px solid var(--accent-color);
+    box-shadow: 0 1px 10px 5px #0004;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+}
+
+.transfer-due__row:hover {
+    box-shadow: none;
+    background-color: #fff1;
+}
+
+.transfer-due__name {
+    font-weight: bold;
+}
+
+.transfer-due__age {
+    font-size: var(--step--2);
+    color: var(--preamble-color);
+    white-space: nowrap;
+}
+
 .transfer-protocol {
     background-color: var(--folder-bg);
     padding: 0.5rem 1rem;
@@ -2743,11 +2795,18 @@ body.menu-mode .main-view {
     padding-bottom: 1rem;
 }
 
+/* Capped to roughly 3 cards before it scrolls internally — otherwise a long
+   results list can make the sidebar (and so the whole two-column row)
+   taller than the main test-browsing column, leaving a visible gap above
+   .transfer-bottom under the shorter column. */
 .transfer-results {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     width: 100%;
+    max-height: 38rem;
+    overflow-y: auto;
+    padding-right: 0.25rem; /* room for the scrollbar so it doesn't sit on the card border */
 }
 
 .transfer-category {
@@ -2766,54 +2825,40 @@ body.menu-mode .main-view {
     width: 100%;
 }
 
-/* Test cards are <details> — closed by default for a compact browse view;
-   the summary row alone carries enough (name + score/delta badge) that you
-   don't need to open a card just to see where you stand on it. */
+/* Test cards are plain buttons that open the shared #test-popup — closed by
+   default for a compact browse view; the single-line label alone carries
+   enough (name + score/delta/due badges) that you don't need to open the
+   popup just to see where you stand on it. */
 .test-card {
-    background-color: var(--background-color);
-    border: 1px solid #333;
-    box-shadow: 0 1px 10px 5px #0004;
-}
-
-.test-card[open] {
-    border-color: var(--switch-border-color);
-}
-
-/* Single line, always — a long test name truncates with an ellipsis rather
-   than wrapping (the full name is a native tooltip here, and repeated as
-   .test-card__title once the card is open) so every collapsed card in the
-   grid stays the same short height, whatever its name length. */
-.test-card__summary {
-    cursor: pointer;
-    list-style: none;
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
     gap: 0.75rem;
-    padding: 0.75rem 1.25rem;
+    width: 100%;
+    text-align: left;
+    font: inherit;
     font-size: var(--step-0);
+    color: var(--text-color);
+    background-color: var(--background-color);
+    border: 1px solid #333;
+    box-shadow: 0 1px 10px 5px #0004;
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
 }
 
-.test-card__summary::-webkit-details-marker {
-    display: none;
-}
-
-.test-card__summary::before {
-    content: '\25b8';
-    color: var(--preamble-color);
-    flex: 0 0 auto;
-    display: inline-block;
-    transition: transform 0.15s ease;
-}
-
-.test-card[open] > .test-card__summary::before {
-    transform: rotate(90deg);
-}
-
-.test-card__summary:hover {
+.test-card:hover {
+    box-shadow: none;
     background-color: #fff1;
 }
 
+.test-card--due {
+    border-left: 4px solid var(--accent-color);
+}
+
+/* Single line, always — a long test name truncates with an ellipsis rather
+   than wrapping (the full name is a native tooltip here, and repeated as
+   .test-card__title once the popup opens) so every card in the grid stays
+   the same short height, whatever its name length. */
 .test-card__name {
     flex: 1 1 auto;
     min-width: 0;
@@ -2833,14 +2878,8 @@ body.menu-mode .main-view {
 
 .test-card__badge--right { color: var(--correct-color); }
 .test-card__badge--wrong { color: var(--wrong-color); }
+.test-card__badge--due { color: var(--accent-color); }
 .test-card__badge-warn { flex: 0 0 auto; cursor: help; }
-
-.test-card__body {
-    padding: 0 1.25rem 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
 
 .test-card__title {
     margin: 0;
@@ -2859,10 +2898,9 @@ body.menu-mode .main-view {
 }
 
 .test-card__summary-text {
-    margin: 0;
+    margin: 0.75rem 0;
     font-size: var(--step--1);
     line-height: 1.65;
-    max-width: 42rem;
 }
 
 .test-card__log {
@@ -2872,6 +2910,7 @@ body.menu-mode .main-view {
     gap: 0.75rem 1rem;
     background-color: var(--big-input-bg-color);
     padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
 }
 
 .test-card__log .inline-input__outer {
@@ -2891,6 +2930,8 @@ body.menu-mode .main-view {
     flex-direction: column;
     font-size: var(--step--1);
     border: 1px solid #333;
+    max-height: 14rem;
+    overflow-y: auto;
 }
 
 .test-card__history-row {
@@ -2936,7 +2977,50 @@ body.menu-mode .main-view {
     color: var(--danger-color);
 }
 
-/* ---- Results section ---- */
+/* ---- Test detail popup (opened by clicking a test card or a "ready to
+   retest" row) — same fixed/centered/rounded chrome as #graph-popup, at a
+   width suited to a form + history list rather than a full-width chart. */
+.test-popup {
+    position: fixed;
+    display: none;
+    z-index: 1000;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(90vw, 36rem);
+    max-height: 84vh;
+    overflow-y: auto;
+    background-color: var(--background-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
+    padding: 1.5rem;
+}
+
+.test-popup.visible {
+    display: block;
+}
+
+.test-popup-content {
+    position: relative;
+}
+
+.test-popup-close {
+    position: absolute;
+    top: -0.5rem;
+    right: -0.5rem;
+    background: none;
+    color: var(--preamble-color);
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 0.25rem 0.5rem;
+}
+
+.test-popup-close:hover {
+    box-shadow: none;
+    color: var(--danger-color);
+}
+
+/* ---- Results section: full attempt history, not just baseline/latest ---- */
 
 .transfer-result {
     background-color: var(--background-color);
@@ -2955,79 +3039,90 @@ body.menu-mode .main-view {
 .transfer-result__title {
     font-size: var(--step-0);
     margin: 0;
+    overflow-wrap: anywhere;
 }
 
-.transfer-result__track {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.transfer-result__point {
+.transfer-result__timeline {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    font-size: var(--step--1);
+    border: 1px solid #333;
 }
 
-.transfer-result__point-label {
-    font-family: Oxanium, sans-serif;
-    font-size: var(--step--2);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+/* Content-sized, not fixed rem tracks — a wider date format or a multi-digit
+   score is never cramped against a column that assumed something narrower. */
+.transfer-result__row {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.6rem;
+}
+
+.transfer-result__row:nth-child(even) {
+    background-color: #fff1;
+}
+
+.transfer-result__row-date {
     color: var(--preamble-color);
-}
-
-.transfer-result__point-date {
-    font-size: var(--step--2);
-    color: var(--preamble-color);
-}
-
-.transfer-result__point-score {
     font-family: "JetBrains Mono", monospace;
-    font-size: var(--step-1);
+    font-size: var(--step--2);
 }
 
-.transfer-result__arrow {
-    color: var(--preamble-color);
-    font-size: var(--step-1);
-}
-
-.transfer-result__delta {
-    margin-left: auto;
+.transfer-result__row-score {
     font-family: "JetBrains Mono", monospace;
-    font-size: var(--step-1);
     font-weight: bold;
 }
 
-.transfer-result--right .transfer-result__delta { color: var(--correct-color); }
-.transfer-result--wrong .transfer-result__delta { color: var(--wrong-color); }
-
-.transfer-result__warning {
-    font-size: var(--step--2);
-    color: var(--accent-color);
-}
-
-.transfer-result__ok {
+.transfer-result__row-delta {
+    font-family: "JetBrains Mono", monospace;
     font-size: var(--step--2);
     color: var(--preamble-color);
 }
 
-.transfer-chart-wrap {
-    position: relative;
-    height: 16rem;
-    margin-top: 1rem;
+.transfer-result__row-delta--right { color: var(--correct-color); }
+.transfer-result__row-delta--wrong { color: var(--wrong-color); }
+
+.transfer-result__summary {
+    font-size: var(--step--1);
+    overflow-wrap: anywhere;
 }
 
-.transfer-correlation {
-    font-size: var(--step--1);
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+.transfer-result__summary strong {
+    font-family: "JetBrains Mono", monospace;
+    font-size: var(--step-0);
+}
+
+.transfer-result--right .transfer-result__summary strong { color: var(--correct-color); }
+.transfer-result--wrong .transfer-result__summary strong { color: var(--wrong-color); }
+
+/* Compact — a one-word-ish reliability chip inline after the headline delta,
+   not a full sentence on its own line (the full explanation is a title
+   tooltip, same pattern as .test-card__badge-warn). */
+.transfer-result__warning,
+.transfer-result__ok {
+    display: inline;
+    font-size: var(--step--2);
+    cursor: help;
+}
+
+.transfer-result__warning { color: var(--accent-color); }
+.transfer-result__ok { color: var(--preamble-color); }
+
+.transfer-chart-wrap {
+    position: relative;
+    height: 22rem;
+    margin-top: 0.5rem;
 }
 
 @media (width <= 500px) {
     .test-card__history-row {
         grid-template-columns: 5.5rem 3.5rem 1fr auto;
+    }
+    .test-popup {
+        top: 3%;
+        width: 94vw;
+        max-height: 94vh;
+        padding: 1rem;
     }
 }
