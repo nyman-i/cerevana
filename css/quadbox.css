@@ -31,13 +31,15 @@
     user-select: none;
 }
 
-/* ---------- controls (keys + start use styles.css .nback__match/.nback__start) ---------- */
+/* ---------- controls (keys + start use styles.css .nback__match/.nback__start) ----------
+   Side rails, vertically centered: START/NEXT + answer readout on the left,
+   match/tally keys on the right. The freed bottom strip lets the board grow
+   and now hosts the trial counter. Corner tabs keep the corners. */
 
 .qb-controls {
     position: absolute;
-    bottom: 1.25rem;
-    left: 0;
-    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -45,11 +47,24 @@
     z-index: 10;
 }
 
+.qb-controls--left {
+    left: 1.25rem;
+}
+
+.qb-controls--right {
+    right: 1.25rem;
+}
+
 .qb-keys {
     display: flex;
-    gap: 1rem;
+    flex-direction: column;
+    align-items: flex-end;
     justify-content: center;
-    flex-wrap: wrap;
+    gap: 1rem;
+    /* tally renders up to 10 number keys: cap the column and wrap-reverse so
+       overflow columns grow inward (leftward), never off-screen */
+    max-height: 60svh;
+    flex-wrap: wrap-reverse;
 }
 
 .qb-keys button[hidden] {
@@ -64,11 +79,45 @@
 .qb-count {
     position: absolute;
     bottom: 0.75rem;
-    right: 4rem;
+    left: 0;
+    right: 0;
+    text-align: center;
     font-size: 2.25rem;
     opacity: 0.3;
     user-select: none;
     z-index: 5;
+}
+
+/* narrow screens: side rails would crowd the board — restore the stacked
+   bottom layout (keys row above START, counter back to the corner) */
+@media (max-width: 768px) {
+    .qb-controls {
+        top: auto;
+        transform: none;
+        left: 0;
+        right: 0;
+    }
+
+    .qb-controls--left {
+        bottom: 1.25rem;
+    }
+
+    .qb-controls--right {
+        bottom: 5.5rem;
+    }
+
+    .qb-keys {
+        flex-direction: row;
+        align-items: center;
+        max-height: none;
+        flex-wrap: wrap;
+    }
+
+    .qb-count {
+        left: auto;
+        right: 4rem;
+        text-align: right;
+    }
 }
 
 /* variable-N ghost number over the board */
@@ -99,16 +148,16 @@ body.light-mode .qb-variable-n {
     display: flex;
     align-items: center;
     justify-content: center;
-    perspective: 60svmin;
+    perspective: 70svmin;
     overflow: hidden;
 }
 
 .qb-scene {
     position: absolute;
-    width: 41.1svmin;
-    height: 41.1svmin;
+    width: 48svmin;
+    height: 48svmin;
     transform-style: preserve-3d;
-    translate: 0 0 -10svmin;
+    translate: 0 0 -11.7svmin;
     animation: qb-spin 60s linear 0s infinite normal forwards running;
     will-change: transform;
 }
@@ -150,8 +199,8 @@ body.light-mode .qb-variable-n {
 
 .qb-board2d {
     position: absolute;
-    width: 55.2svmin;
-    height: 55.2svmin;
+    width: 64.5svmin;
+    height: 64.5svmin;
     margin-bottom: 2.5rem;
 }
 
@@ -159,19 +208,19 @@ body.light-mode .qb-variable-n {
 
 .qb-cell {
     position: absolute;
-    width: 13.7svmin;
-    height: 13.7svmin;
-    left: 13.7svmin;
-    top: 13.7svmin;
+    width: 16svmin;
+    height: 16svmin;
+    left: 16svmin;
+    top: 16svmin;
     transform-style: preserve-3d;
 }
 
 .qb-cell2d {
     position: absolute;
-    width: 18.4svmin;
-    height: 18.4svmin;
-    left: 18.4svmin;
-    top: 18.4svmin;
+    width: 21.5svmin;
+    height: 21.5svmin;
+    left: 21.5svmin;
+    top: 21.5svmin;
 }
 
 .qb-cell[hidden],
@@ -193,12 +242,12 @@ body.light-mode .qb-variable-n {
     transition: filter 0.05s ease-out;
 }
 
-.qb-face--front  { translate: 0 0 6.85svmin; }
-.qb-face--back   { translate: 0 0 -6.85svmin; rotate: y 180deg; }
-.qb-face--right  { translate: 6.85svmin 0 0; rotate: y -90deg; }
-.qb-face--left   { translate: -6.85svmin 0 0; rotate: y 90deg; }
-.qb-face--bottom { translate: 0 6.85svmin 0; rotate: x 90deg; }
-.qb-face--top    { translate: 0 -6.85svmin 0; rotate: x -90deg; }
+.qb-face--front  { translate: 0 0 8svmin; }
+.qb-face--back   { translate: 0 0 -8svmin; rotate: y 180deg; }
+.qb-face--right  { translate: 8svmin 0 0; rotate: y -90deg; }
+.qb-face--left   { translate: -8svmin 0 0; rotate: y 90deg; }
+.qb-face--bottom { translate: 0 8svmin 0; rotate: x 90deg; }
+.qb-face--top    { translate: 0 -8svmin 0; rotate: x -90deg; }
 
 /* flash / multi-position styling (dark is the default theme) */
 .qb-flash .qb-face {
@@ -225,7 +274,7 @@ body.light-mode .qb-see-through .qb-face {
     justify-content: center;
     font-family: "Oxanium", sans-serif;
     font-weight: bold;
-    font-size: 6.5svmin;
+    font-size: 7.6svmin;
     color: #fffffd;
     user-select: none;
 }
@@ -250,9 +299,9 @@ body.light-mode .qb-face {
 
 .qb-center-wrap .qb-face {
     position: static;
-    width: 18.4svmin;
-    height: 18.4svmin;
-    font-size: 9svmin;
+    width: 21.5svmin;
+    height: 21.5svmin;
+    font-size: 10.5svmin;
 }
 
 .qb-no-padding .qb-face {
@@ -264,44 +313,44 @@ body.light-mode .qb-face {
 }
 
 /* 2D position offsets */
-.p0-0   { transform: translate(-18.4svmin, -18.4svmin); }
-.p0-1   { transform: translate(-18.4svmin,     0svmin); }
-.p0-2   { transform: translate(-18.4svmin,  18.4svmin); }
-.p1-0   { transform: translate(0,          -18.4svmin); }
+.p0-0   { transform: translate(-21.5svmin, -21.5svmin); }
+.p0-1   { transform: translate(-21.5svmin,     0svmin); }
+.p0-2   { transform: translate(-21.5svmin,  21.5svmin); }
+.p1-0   { transform: translate(0,          -21.5svmin); }
 .p1-1   { transform: translate(0,              0svmin); }
-.p1-2   { transform: translate(0,           18.4svmin); }
-.p2-0   { transform: translate(18.4svmin,  -18.4svmin); }
-.p2-1   { transform: translate(18.4svmin,      0svmin); }
-.p2-2   { transform: translate(18.4svmin,   18.4svmin); }
+.p1-2   { transform: translate(0,           21.5svmin); }
+.p2-0   { transform: translate(21.5svmin,  -21.5svmin); }
+.p2-1   { transform: translate(21.5svmin,      0svmin); }
+.p2-2   { transform: translate(21.5svmin,   21.5svmin); }
 
 /* 3D position offsets */
-.p0-0-0 { transform: translate3d(-13.7svmin, -13.7svmin, -13.7svmin); }
-.p0-0-1 { transform: translate3d(-13.7svmin, -13.7svmin, 0         ); }
-.p0-0-2 { transform: translate3d(-13.7svmin, -13.7svmin, 13.7svmin ); }
-.p0-1-0 { transform: translate3d(-13.7svmin, 0         , -13.7svmin); }
-.p0-1-1 { transform: translate3d(-13.7svmin, 0         , 0         ); }
-.p0-1-2 { transform: translate3d(-13.7svmin, 0         , 13.7svmin ); }
-.p0-2-0 { transform: translate3d(-13.7svmin, 13.7svmin , -13.7svmin); }
-.p0-2-1 { transform: translate3d(-13.7svmin, 13.7svmin , 0         ); }
-.p0-2-2 { transform: translate3d(-13.7svmin, 13.7svmin , 13.7svmin ); }
-.p1-0-0 { transform: translate3d(0         , -13.7svmin, -13.7svmin); }
-.p1-0-1 { transform: translate3d(0         , -13.7svmin, 0         ); }
-.p1-0-2 { transform: translate3d(0         , -13.7svmin, 13.7svmin ); }
-.p1-1-0 { transform: translate3d(0         , 0         , -13.7svmin); }
+.p0-0-0 { transform: translate3d(-16svmin, -16svmin, -16svmin); }
+.p0-0-1 { transform: translate3d(-16svmin, -16svmin, 0         ); }
+.p0-0-2 { transform: translate3d(-16svmin, -16svmin, 16svmin ); }
+.p0-1-0 { transform: translate3d(-16svmin, 0         , -16svmin); }
+.p0-1-1 { transform: translate3d(-16svmin, 0         , 0         ); }
+.p0-1-2 { transform: translate3d(-16svmin, 0         , 16svmin ); }
+.p0-2-0 { transform: translate3d(-16svmin, 16svmin , -16svmin); }
+.p0-2-1 { transform: translate3d(-16svmin, 16svmin , 0         ); }
+.p0-2-2 { transform: translate3d(-16svmin, 16svmin , 16svmin ); }
+.p1-0-0 { transform: translate3d(0         , -16svmin, -16svmin); }
+.p1-0-1 { transform: translate3d(0         , -16svmin, 0         ); }
+.p1-0-2 { transform: translate3d(0         , -16svmin, 16svmin ); }
+.p1-1-0 { transform: translate3d(0         , 0         , -16svmin); }
 .p1-1-1 { transform: translate3d(0         , 0         , 0         ); }
-.p1-1-2 { transform: translate3d(0         , 0         , 13.7svmin ); }
-.p1-2-0 { transform: translate3d(0         , 13.7svmin , -13.7svmin); }
-.p1-2-1 { transform: translate3d(0         , 13.7svmin , 0         ); }
-.p1-2-2 { transform: translate3d(0         , 13.7svmin , 13.7svmin ); }
-.p2-0-0 { transform: translate3d(13.7svmin , -13.7svmin, -13.7svmin); }
-.p2-0-1 { transform: translate3d(13.7svmin , -13.7svmin, 0         ); }
-.p2-0-2 { transform: translate3d(13.7svmin , -13.7svmin, 13.7svmin ); }
-.p2-1-0 { transform: translate3d(13.7svmin , 0         , -13.7svmin); }
-.p2-1-1 { transform: translate3d(13.7svmin , 0         , 0         ); }
-.p2-1-2 { transform: translate3d(13.7svmin , 0         , 13.7svmin ); }
-.p2-2-0 { transform: translate3d(13.7svmin , 13.7svmin , -13.7svmin); }
-.p2-2-1 { transform: translate3d(13.7svmin , 13.7svmin , 0         ); }
-.p2-2-2 { transform: translate3d(13.7svmin , 13.7svmin , 13.7svmin ); }
+.p1-1-2 { transform: translate3d(0         , 0         , 16svmin ); }
+.p1-2-0 { transform: translate3d(0         , 16svmin , -16svmin); }
+.p1-2-1 { transform: translate3d(0         , 16svmin , 0         ); }
+.p1-2-2 { transform: translate3d(0         , 16svmin , 16svmin ); }
+.p2-0-0 { transform: translate3d(16svmin , -16svmin, -16svmin); }
+.p2-0-1 { transform: translate3d(16svmin , -16svmin, 0         ); }
+.p2-0-2 { transform: translate3d(16svmin , -16svmin, 16svmin ); }
+.p2-1-0 { transform: translate3d(16svmin , 0         , -16svmin); }
+.p2-1-1 { transform: translate3d(16svmin , 0         , 0         ); }
+.p2-1-2 { transform: translate3d(16svmin , 0         , 16svmin ); }
+.p2-2-0 { transform: translate3d(16svmin , 16svmin , -16svmin); }
+.p2-2-1 { transform: translate3d(16svmin , 16svmin , 0         ); }
+.p2-2-2 { transform: translate3d(16svmin , 16svmin , 16svmin ); }
 
 /* ---------- vtally visual crank ---------- */
 

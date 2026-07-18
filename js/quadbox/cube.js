@@ -142,8 +142,8 @@ export class BoardRenderer {
         cell.hidden = true
         this.cells.push(cell)
       }
-      // Grid.svelte: 4 planes per axis at ±20.55 / ±6.85 svmin
-      for (const d of ['-20.55svmin', '-6.85svmin', '6.85svmin', '20.55svmin']) {
+      // Grid.svelte: 4 planes per axis at ±(scene/2) / ±(cell/2) svmin
+      for (const d of ['-24svmin', '-8svmin', '8svmin', '24svmin']) {
         frameImg(this.scene, `0 0 ${d}`)
         frameImg(this.scene, `0 ${d} 0`, 'x 90deg')
         frameImg(this.scene, `${d} 0 0`, 'y 90deg')
