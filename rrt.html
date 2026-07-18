@@ -949,12 +949,11 @@
 						&mdash; see <a href="credits.html">Credits</a>.</p>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Reset</div>
-						<div class="mb-1">
-							<button id="reset-rrt" onclick="resetRRT()">Reset RRT</button>
-							<ul class="explainer">
-								<li>Resets RRT only: score, history and settings. N-Back is untouched. Full reset lives on the main menu.</li>
-							</ul>
-						</div>
+						<p>Reset settings keeps your history. The full reset erases
+						all RRT data &mdash; irreversible. (N-Back is untouched either
+						way; a full reset for every exercise lives on the main menu.)</p>
+						<div class="mb-1"><button id="reset-rrt-settings" onclick="resetRRTSettings()">Reset Settings</button></div>
+						<div class="mb-1"><button id="reset-rrt" class="delete" onclick="resetRRT()">Reset RRT</button></div>
 					</div>
 				</div>
 			</div>

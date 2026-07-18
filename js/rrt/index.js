@@ -665,6 +665,12 @@ function timeElapsed() {
     wowFeedback();
 }
 
+function resetRRTSettings() {
+    Object.assign(savedata, defaultSavedata);
+    refresh();
+    alert('Settings reset to default.');
+}
+
 function resetRRT() {
     const confirmed = confirm("Reset RRT? This permanently deletes your RRT profiles, settings, score, question history and progress-graph data. N-Back data and the background image are kept. Tip: Export History from the main menu first to keep a backup.")
         && confirm("Last chance: this cannot be undone. Really reset RRT?");
