@@ -3,6 +3,11 @@
 // (light-mode body class, js/shared/sounds.js, applySavedBackground).
 
 function handleDarkModeChange(event) {
+    // Leaving the dark? Prove you're not a monster first.
+    if (!event.target.checked && !confirm('ARE YOU A FKN PSYCHO?!')) {
+        event.target.checked = true; // bail — back to the dark you go
+        return;
+    }
     appState.darkMode = event.target.checked;
     save();
     document.body.classList.toggle('light-mode', !appState.darkMode);
