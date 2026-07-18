@@ -79,6 +79,23 @@
 								</span>
 							</div>
 						</div>
+						<div class="mb-05 panel-heading">Progress Targets</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Daily target
+								<span class="inline-input__inner">
+									<input id="cct-dailygoal" type="number" min="1" max="360" step="1" style="width: 5ch">min
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Weekly target
+								<span class="inline-input__inner">
+									<input id="cct-weeklygoal" type="number" min="1" max="2500" step="1" style="width: 6ch">min
+								</span>
+							</div>
+						</div>
 						<div class="mb-05 panel-heading">Adaptive Interval</div>
 						<div class="mb-2">
 							<div class="inline-input__outer">
@@ -329,6 +346,25 @@
 
 			<div class="cct-actions">
 				<button id="cct-start" class="nback__start">START</button>
+			</div>
+
+			<div id="daily-progress-container" class="progress-container">
+				<div class="progress-bar-vertical">
+					<div class="progress-content">
+						<div class="progress-label">DAILY</div>
+						<div class="progress-value"></div>
+					</div>
+				</div>
+				<div class="progress-fill" style="height: 0%;"></div>
+			</div>
+			<div id="weekly-progress-container" class="progress-container">
+				<div class="progress-bar-vertical">
+					<div class="progress-content">
+						<div class="progress-label">WEEKLY</div>
+						<div class="progress-value"></div>
+					</div>
+				</div>
+				<div class="progress-fill" style="height: 0%;"></div>
 			</div>
 
 		</div>
