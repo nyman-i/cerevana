@@ -35,13 +35,18 @@ export const createFeedback = (onChange) => {
       if (hideFeedback) return
       state = { ...state, ...updates }
       emit()
-      if (Object.values(updates).includes('late-failure')) {
-        timeouts.push(setTimeout(() => {
-          for (const key in state) {
-            if (state[key] === 'late-failure') state[key] = defaults[key]
-          }
-          emit()
-        }, 500))
+      // late-failure (missed a real match) and pressed (Jaeggi's neutral
+      // press acknowledgment, which never reveals right/wrong) both revert
+      // on their own rather than waiting for the next trial's update
+      for (const [value, ms] of [['late-failure', 500], ['pressed', 250]]) {
+        if (Object.values(updates).includes(value)) {
+          timeouts.push(setTimeout(() => {
+            for (const key in state) {
+              if (state[key] === value) state[key] = defaults[key]
+            }
+            emit()
+          }, ms))
+        }
       }
     },
     get: () => ({ ...state }),

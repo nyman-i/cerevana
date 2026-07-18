@@ -82,6 +82,8 @@
 .qb-side .nback__match--right { background-color: var(--correct-color); color: #fffffd; }
 .qb-side .nback__match--wrong { background-color: var(--wrong-color); color: #fffffd; }
 .qb-side .nback__match--missed { background-color: var(--nback-missed-color); color: #fffffd; }
+/* Jaeggi's neutral "press acknowledged" flash — never right/wrong-coded */
+.qb-side .nback__match--pressed { background-color: var(--accent-color); }
 
 .qb-key-name {
     font-family: Oxanium, sans-serif;

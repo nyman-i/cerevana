@@ -49,6 +49,7 @@ const FEEDBACK_CLASSES = {
   success: 'nback__match--right',
   failure: 'nback__match--wrong',
   'late-failure': 'nback__match--missed',
+  pressed: 'nback__match--pressed',
 }
 
 const feedback = createFeedback((state) => {

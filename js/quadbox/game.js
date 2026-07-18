@@ -330,9 +330,9 @@ export class QuadBoxGame {
     if (type in this.currentTrial && !(type in this.scoresheet[this.trialsIndex])) {
       const isSuccess = this.currentTrial.matches.includes(type)
       this.scoresheet[this.trialsIndex][type] = isSuccess
-      if (!this.gameDisplayInfo.jaeggi) {
-        this.ui.applyFeedback({ [type]: isSuccess ? 'success' : 'failure' })
-      }
+      // Jaeggi hides right/wrong (protocol), but still acknowledges the
+      // press so the button doesn't look unresponsive
+      this.ui.applyFeedback({ [type]: this.gameDisplayInfo.jaeggi ? 'pressed' : (isSuccess ? 'success' : 'failure') })
     }
   }
 
