@@ -253,7 +253,6 @@ const canvasTime = document.getElementById('graph-canvas-time');
 const canvasCount = document.getElementById('graph-canvas-count');
 const canvasScore = document.getElementById('graph-canvas-score');
 const canvasTimePerPremise = document.getElementById('graph-canvas-time-per-premise');
-const canvases = [canvasTime, canvasCount, canvasScore, canvasTimePerPremise];
 
 const graphTimeSelect = document.getElementById('graph-select-time');
 const graphCountSelect = document.getElementById('graph-select-count');

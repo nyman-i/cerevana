@@ -17,6 +17,7 @@ let appState = {
     "staticButtons": true,
     "darkMode": true,
     "accentHue": 165, // sage default; one hue, S/L locked in styles.css
+    "mainFont": "default",
 };
 
 function getLocalStorageObj(key) {
@@ -4359,29 +4360,6 @@ const forms = [
     ],
 ];
 
-const dirNames = [
-    null,
-    "North",
-    "North-East",
-    "East",
-    "South-East",
-    "South",
-    "South-West",
-    "West",
-    "North-West"
-];
-
-const nameInverseDir = {
-    "North": "South",
-    "North-East": "South-West",
-    "East": "West",
-    "South-East": "North-West",
-    "South": "North",
-    "South-West": "North-East",
-    "West": "East",
-    "North-West": "South-East"
-};
-
 const dirCoords = [
     [ 0,  0],
     [ 0,  1],
@@ -4490,7 +4468,6 @@ xs.map(x =>
     )
 );
 
-const timeNames = ['was', 'is', 'will be'];
 const timeMapping = {
     [-1]: 'was',
     [0]: 'is',

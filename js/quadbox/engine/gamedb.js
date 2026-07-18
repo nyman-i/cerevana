@@ -72,37 +72,6 @@ export async function getLastRecentGame() {
   })
 }
 
-export async function getAllCompletedGames() {
-  const db = await openDB()
-  const tx = db.transaction(STORE_NAME, "readonly")
-  const store = tx.objectStore(STORE_NAME)
-  const index = store.index("status_timestamp")
-
-  const games = []
-
-  return new Promise((resolve, reject) => {
-    const keyRange = IDBKeyRange.bound(["completed", 0], ["completed", Infinity])
-    const cursorRequest = index.openCursor(keyRange, "prev")
-
-    cursorRequest.onsuccess = (event) => {
-      const cursor = event.target.result
-      if (cursor) {
-        addScoreMetadata(cursor.value)
-        games.push(cursor.value)
-        cursor.continue()
-      } else {
-        db.close()
-        resolve(games)
-      }
-    }
-
-    cursorRequest.onerror = () => {
-      db.close()
-      reject(cursorRequest.error)
-    }
-  })
-}
-
 export async function getLast48HoursGames() {
   return await getGamesTimeRange(new Date(Date.now() - 48 * 60 * 60 * 1000), new Date(Date.now() + 24 * 60 * 60 * 1000))
 }

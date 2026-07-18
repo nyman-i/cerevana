@@ -27,8 +27,8 @@ for (const file of [
   vm.runInContext(fs.readFileSync(genPath(file), 'utf8'), sandbox, { filename: file })
 }
 const {
-  pickRandomItems, shuffle, coinFlip, randomInclusive, arraysEqual,
-  removeDuplicateArrays, removeDuplicates, interleaveArrays,
+  pickRandomItems, shuffle, coinFlip, arraysEqual,
+  removeDuplicateArrays, interleaveArrays,
   frontHeavyIntervalMerge, pairwise, repeatArrayUntil, normalizeString, oneOutOf,
   premiseKey, seededRandom, createWidePremises,
 } = sandbox
@@ -77,21 +77,6 @@ const assert = (c, l) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + l); if (!
   assert(trues > trials * 0.4 && trues < trials * 0.6, `coinFlip: ~50% true rate over ${trials} trials (got ${trues})`)
 }
 
-// --- randomInclusive ---
-{
-  let allInRange = true, sawLow = false, sawHigh = false
-  for (let i = 0; i < 2000; i++) {
-    const v = randomInclusive(3, 7)
-    if (v < 3 || v > 7) allInRange = false
-    if (v === 3) sawLow = true
-    if (v === 7) sawHigh = true
-  }
-  assert(allInRange, 'randomInclusive: every draw is within [start, end]')
-  assert(sawLow && sawHigh, 'randomInclusive: both endpoints reachable over 2000 draws')
-  assert(randomInclusive(5, 5) === 5, 'randomInclusive: start === end returns that value')
-  assert(randomInclusive(7, 3) === 7, 'randomInclusive: start > end returns start unchanged')
-}
-
 // --- arraysEqual ---
 {
   assert(arraysEqual([1, 2, 3], [1, 2, 3]), 'arraysEqual: identical arrays are equal')
@@ -100,12 +85,11 @@ const assert = (c, l) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + l); if (!
   assert(arraysEqual([], []), 'arraysEqual: two empty arrays are equal')
 }
 
-// --- removeDuplicateArrays / removeDuplicates ---
+// --- removeDuplicateArrays ---
 {
   const dupes = [[1, 2], [3, 4], [1, 2], [5, 6], [3, 4]]
   const unique = removeDuplicateArrays(dupes)
   assert(unique.length === 3, 'removeDuplicateArrays: drops exact duplicate sub-arrays')
-  assert(removeDuplicates([1, 2, 2, 3, 1, 4]).join(',') === '1,2,3,4', 'removeDuplicates: drops repeats, keeps first-occurrence order')
 }
 
 // --- interleaveArrays ---

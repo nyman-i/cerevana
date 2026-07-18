@@ -29,16 +29,13 @@ let timerRunning = false;
 let processingAnswer = false;
 
 const historyList = document.getElementById("history-list");
-const historyButton = document.querySelector(`label.open[for="offcanvas-history"]`);
 const historyCheckbox = document.getElementById("offcanvas-history");
-const settingsButton = document.querySelector(`label.open[for="offcanvas-settings"]`);
 const totalDisplay = document.getElementById("total-display");
 const averageDisplay = document.getElementById("average-display");
 const averageCorrectDisplay = document.getElementById("average-correct-display");
 const percentCorrectDisplay = document.getElementById("percent-correct-display");
 
 let carouselIndex = 0;
-let carouselEnabled = false;
 let question;
 const carousel = document.querySelector(".carousel");
 const carouselDisplayLabelType = carousel.querySelector(".carousel_display_label_type");
@@ -672,7 +669,7 @@ function resetRRTSettings() {
 }
 
 function resetRRT() {
-    const confirmed = confirm("Reset RRT? This permanently deletes your RRT profiles, settings, score, question history and progress-graph data. N-Back data and the background image are kept. Tip: Export History from the main menu first to keep a backup.")
+    const confirmed = confirm("Reset RRT? This permanently deletes your RRT profiles, settings, score, question history and progress-graph data. N-Back data and the background image are kept. Tip: Export Data from the main menu first to keep a backup.")
         && confirm("Last chance: this cannot be undone. Really reset RRT?");
     if (confirmed) {
         localStorage.removeItem(oldSettingsKey);

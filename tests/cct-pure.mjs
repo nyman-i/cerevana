@@ -3,7 +3,7 @@
 // run with: node tests/cct-pure.mjs
 import {
   getExpectedAnswer, randomDigit, isCorrectAnswer,
-  createIntervalState, recordAnswer, THRESHOLD_PRESETS,
+  createIntervalState, recordAnswer,
 } from '../js/cct/engine/mechanics.js'
 
 let fail = 0
@@ -103,10 +103,6 @@ const baseConfig = {
   state = recordAnswer(state, false)
   assert(state.correctStreak === 0 && state.wrongStreak === 1, 'recordAnswer: a wrong answer zeroes the correct streak')
 }
-
-// --- THRESHOLD_PRESETS: Balanced/Strict fixtures ---
-assert(THRESHOLD_PRESETS.Balanced.correct === 4 && THRESHOLD_PRESETS.Balanced.incorrect === 4, 'THRESHOLD_PRESETS: Balanced is 4/4')
-assert(THRESHOLD_PRESETS.Strict.correct === 5 && THRESHOLD_PRESETS.Strict.incorrect === 3, 'THRESHOLD_PRESETS: Strict is 5/3')
 
 console.log(fail ? fail + ' FAILURES' : 'ALL PASS')
 process.exit(fail ? 1 : 0)

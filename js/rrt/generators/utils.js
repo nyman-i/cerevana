@@ -23,13 +23,6 @@ function coinFlip() {
     return Math.random() > 0.5;
 }
 
-function randomInclusive(start, end) {
-    if (start >= end) {
-        return start;
-    }
-    return Math.floor(Math.random() * (end - start + 1)) + start;
-}
-
 function arraysEqual(arr1, arr2) {
     return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
 }
@@ -40,16 +33,6 @@ function removeDuplicateArrays(arrays) {
     );
 
     return uniqueArrays;
-}
-
-function removeDuplicates(arr) {
-  const seen = new Set();
-  return arr.filter(item => {
-    if (seen.has(item))
-        return false;
-    seen.add(item);
-    return true;
-  });
 }
 
 function getPremisesFor(key, defaultQuota) {

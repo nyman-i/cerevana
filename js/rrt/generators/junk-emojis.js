@@ -207,34 +207,6 @@ class JunkEmojis {
 
 // To generate:
 // console.log(new JunkEmojis(JUNK_EMOJI_COUNT + 1).generateAllEmoji());
-// document.addEventListener("DOMContentLoaded", throwSvgsOnPage);
-
-function throwSvgsOnPage() {
-    let symbols = Array.from(document.querySelectorAll("symbol"));
-    let container = document.createElement("div");
-    container.id = "svg-container";
-
-    symbols.forEach((symbol, i) => {
-        if (i % (JUNK_EMOJI_COUNT / 10) === 0) {
-            let divider = document.createElement("div");
-            divider.setAttribute("style", "display: inline-block; width: 10px; height: 50px; border: 3px dotted black; background-color: #FFF");
-            container.appendChild(divider);
-        }
-        let useElement = document.createElementNS("http://www.w3.org/2000/svg", "use");
-        useElement.setAttributeNS("http://www.w3.org/1999/xlink", "href", `#${symbol.id}`);
-
-        let svgWrapper = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svgWrapper.setAttribute("viewBox", symbol.getAttribute("viewBox"));
-        svgWrapper.setAttribute("width", "50");
-        svgWrapper.setAttribute("height", "50");
-        svgWrapper.appendChild(useElement);
-        container.appendChild(svgWrapper);
-
-    });
-
-    document.body.appendChild(container);
-}
-
 function renderJunkEmojisText(text) {
     text = text.replaceAll(/\[junk\](\d+)\[\/junk\]/gi, (match, id) => {
         let s = `<svg class="junk" width="${EMOJI_LENGTH}" height="${EMOJI_LENGTH}">`;

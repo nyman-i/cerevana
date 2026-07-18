@@ -216,20 +216,6 @@ const importRRTRows = async (rows, clearFirst) => {
     });
 };
 
-const storeNBackSession = async (record) => {
-    const db = await initDB();
-
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction('NBackHistory', 'readwrite');
-        const store = transaction.objectStore('NBackHistory');
-
-        const request = store.add(record);
-
-        request.onsuccess = () => resolve('NBackHistory stored successfully!');
-        request.onerror = (event) => reject(event.target.error);
-    });
-};
-
 const getAllNBackSessions = async () => {
     const db = await initDB();
 

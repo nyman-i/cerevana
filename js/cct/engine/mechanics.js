@@ -5,7 +5,7 @@
  * MIT License - see js/cct/LICENSE
  * Ported from script.js (upstream, single global-scope file) at the
  * `main` branch HEAD pulled 2026-07-18: getRandomNumber (line 3401),
- * getExpectedAnswer + THRESHOLD_PRESETS (lines 383-400), changeInterval
+ * getExpectedAnswer (lines 383-400), changeInterval
  * + adjustDifficulty (lines 3477-3520), isCorrectAnswerInput (line
  * 3587). Restructured from global `let` state + DOM reads into pure
  * functions over an explicit state object, so the reducer is testable
@@ -16,11 +16,6 @@
  * ceiling); Cerevana adds a separate `maximumInterval` ceiling so the
  * interval can still visibly rise above the starting pace.
  */
-
-export const THRESHOLD_PRESETS = {
-  Balanced: { correct: 4, incorrect: 4 },
-  Strict: { correct: 5, incorrect: 3 },
-}
 
 export const randomDigit = () => Math.floor(Math.random() * 9) + 1
 

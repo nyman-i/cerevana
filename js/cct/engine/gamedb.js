@@ -47,16 +47,6 @@ export async function storeSession(record) {
   })
 }
 
-export async function getAllSessions() {
-  const db = await openDB()
-  const tx = db.transaction(STORE_NAME, 'readonly')
-  return new Promise((resolve, reject) => {
-    const request = tx.objectStore(STORE_NAME).getAll()
-    request.onsuccess = () => { db.close(); resolve(request.result) }
-    request.onerror = () => { db.close(); reject(request.error) }
-  })
-}
-
 export async function getLastMonthSessions() {
   const db = await openDB()
   const tx = db.transaction(STORE_NAME, 'readonly')
