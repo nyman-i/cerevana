@@ -2,9 +2,10 @@
 
 Cerevana is an open, local-first brain-training app that unites multiple
 evidence-based cognitive exercises under one roof. Today that's **RRT**
-(relational reasoning) and **N-Back** (working memory — one merged game
+(relational reasoning), **N-Back** (working memory — one merged game
 taking the best of the modern Quad Box protocol and the classic Brain
-Workshop one); the ambition is one place for the whole training stack.
+Workshop one), and **CCT** (Cognitive Control Training — adaptive-interval
+serial addition); the ambition is one place for the whole training stack.
 It is a plain static site — no build step, no dependencies, no accounts —
 and all of your data stays in your browser (localStorage and IndexedDB).
 
@@ -39,13 +40,24 @@ synthesis. Built on the game engine of soamsy's Quad Box (see Credits);
 the classic modes reimplement Brain Workshop's protocol without sharing
 any code with it.
 
+### CCT
+
+Cognitive Control Training: the classic PASAT (Paced Auditory Serial
+Addition Test) protocol. Digits from 1–9 play one at a time — for each new
+one, answer with the result of it and the digit right before it (addition
+by default; multiplication, subtraction and difference are also available).
+The pace is adaptive: answer streaks speed the interval up, miss streaks
+slow it back down, clamped between a configurable floor and ceiling. Choose
+from four pre-recorded voice packs and an adjustable playback speed. Core
+mechanics adapted from tim22dev22's CCT (see Credits).
+
 ## Roadmap
 
 The goal is to grow Cerevana into one roof for the training methods the
 [Mindbuilding community](https://discord.gg/brain) has converged on.
 Possible future exercises — no promises, in no particular order — include
-Cognitive Control Training (CCT), 3D Multiple Object Tracking, the Posner
-task, and UFOV. Suggestions and implementations are welcome.
+3D Multiple Object Tracking, the Posner task, and UFOV. Suggestions and
+implementations are welcome.
 
 ## Features
 
@@ -60,14 +72,18 @@ task, and UFOV. Suggestions and implementations are welcome.
   the Import box on another.
 - History export/import to a JSON file, with **merge** (timestamp-deduplicated)
   or **overwrite** semantics, covering score, question history, progress-graph
-  data and all n-back games (older export files remain importable).
+  data, all n-back games and all CCT sessions (older export files remain
+  importable).
 - The same four corner panels on every game page: Settings, History (RRT's
-  per-question log; N-Back's per-game list with score chips), Info (how to
-  play, keyboard shortcuts, credits, resets) and Graphs.
+  per-question log; N-Back's per-game list with score chips; CCT's
+  per-session list with accuracy chips), Info (how to play, keyboard
+  shortcuts, credits, resets) and Graphs.
 - Progress graphs: time spent, average correct times, premise speed and totals
   for RRT; per-mode level history and daily time spent for N-Back, with
-  pre-merge sessions shown as legacy lines.
-- Timers with auto-progression (RRT) and adaptive per-mode levels (N-Back).
+  pre-merge sessions shown as legacy lines; accuracy-per-session and daily
+  time spent for CCT.
+- Timers with auto-progression (RRT), adaptive per-mode levels (N-Back), and
+  an adaptive answer interval (CCT).
 - A calm, focus-first look in both dark and light: one restrained accent,
   spent only where attention is earned (selected states, the active tab, the
   timer). The accent hue is **yours to choose** — a slider in the menu's
@@ -130,6 +146,15 @@ license at `js/quadbox/LICENSE` (full provenance in
 [maintained fork](https://github.com/brain-workshop/brainworkshop)) —
 Cerevana reimplements the protocol in JavaScript and shares no code with
 Brain Workshop.
+
+**CCT**'s core mechanics — the adaptive-interval PASAT rule — are adapted
+from [tim22dev22/CCT](https://github.com/tim22dev22/CCT) (MIT,
+[playable original](https://tim22dev22.github.io/CCT/)); the derived files
+live in `js/cct/engine/` with per-file MIT attribution headers and their
+license at `js/cct/LICENSE` (full provenance in `js/cct/PROVENANCE.md`).
+The four pre-recorded voice packs (`js/cct/audio/`) are vendored from the
+same source under the same MIT license. CCT's own README credits "EEE" for
+supplying its original source code.
 
 The menu background photo is by
 [Simon Berger on Pexels](https://www.pexels.com/photo/photography-of-mountains-under-cloudy-sky-1183099/)

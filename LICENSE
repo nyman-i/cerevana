@@ -40,6 +40,16 @@ by Brain Workshop (Paul Hoskinson and Jonathan Toomim, GPL-2.0) —
 Cerevana shares no code with Brain Workshop, which is credited as
 protocol source and inspiration.
 
+The CCT exercise's core mechanics (the adaptive-interval PASAT rule) are
+derived from tim22dev22/CCT (https://github.com/tim22dev22/CCT),
+MIT-licensed; the derived files in js/cct/engine/ keep per-file MIT
+attribution headers, the license is kept at js/cct/LICENSE, and the full
+derivation is documented in js/cct/PROVENANCE.md (the CCT-derived
+portions, including the vendored voice-pack audio, are not subject to
+this repository's CC BY-NC terms). Everything else in js/cct/ (settings,
+game loop, history, profiles, page controller) is original Cerevana code.
+
 Bundled third-party assets carry their own licenses: Space Grotesk and
 Zen Dots typefaces (SIL OFL 1.1, see fonts/), menu background photo by
-Simon Berger (Pexels License), Chart.js (MIT, vendored in js/lib/).
+Simon Berger (Pexels License), Chart.js (MIT, vendored in js/lib/), CCT
+voice-pack audio (MIT, vendored in js/cct/audio/, see js/cct/LICENSE).

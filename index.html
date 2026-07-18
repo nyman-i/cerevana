@@ -73,6 +73,26 @@
 					<div id="menu-nback-recent" class="menu-card__recent"></div>
 					<span class="menu-card__enter">ENTER &rarr;</span>
 				</a>
+				<a class="menu-card" href="cct.html">
+					<h2 class="menu-card__name">CCT
+						<div class="tooltip-container" tabindex="0" onclick="event.preventDefault()">?
+							<div class="tooltip-text">
+								Digits play one at a time; answer with the result of the
+								current and previous digit &mdash; the classic PASAT task.
+								The pace adapts to you: answer streaks speed it up, miss
+								streaks slow it back down.<br><br>
+								<strong>Trains:</strong> cognitive control &mdash; divided
+								attention, processing speed and resistance to interference
+								under time pressure.<br><br>
+								Mechanics adapted from CCT by tim22dev22.
+							</div>
+						</div>
+					</h2>
+					<p class="menu-card__info">Serial addition under an adaptive clock.</p>
+					<div id="menu-cct-stats" class="menu-card__stats"></div>
+					<div id="menu-cct-recent" class="menu-card__recent"></div>
+					<span class="menu-card__enter">ENTER &rarr;</span>
+				</a>
 			</div>
 
 			<nav class="menu__pages">
@@ -112,7 +132,7 @@
 				</div>
 				<div class="panel-heading menu__footer-heading">Your Data</div>
 				<div class="menu__backup">
-					<button onclick="exportHistory()" title="Save all RRT and N-Back history to a JSON file">Export History</button>
+					<button onclick="exportHistory()" title="Save all RRT, N-Back and CCT history to a JSON file">Export History</button>
 					<button onclick="pickImportFile('merge')" title="Combine a file with this device's history — no duplicates, nothing deleted">Import (merge)</button>
 					<button onclick="pickImportFile('overwrite')" title="Replace this device's history with the file's contents">Import (overwrite)</button>
 					<button class="delete" onclick="resetEverything()" title="Permanently erase ALL data for every exercise">Reset App</button>

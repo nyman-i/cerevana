@@ -20,6 +20,10 @@ const NBACK_TITLE_SHORT = {
     'tri-combo': 'TC', 'quad-combo': 'QC', 'tri-combo-color': 'TCC',
     arithmetic: 'A', 'dual-arithmetic': 'DA', 'triple-arithmetic': 'TA',
 };
+const CCT_MODE_LABEL = {
+    addition: 'Addition', subtraction: 'Subtraction',
+    multiplication: 'Multiplication', difference: 'Difference',
+};
 
 async function renderMenuStats() {
     // RRT: questions from appState
@@ -59,6 +63,22 @@ async function renderMenuStats() {
             const key = g.title?.startsWith('tally') ? 'tally' : (g.title?.startsWith('vtally') ? 'vtally' : g.title);
             return (NBACK_TITLE_SHORT[key] || '?') + g.nBack + 'B ' + qbPct(g) + '%';
         }).join('  ')
+        : '';
+
+    // ----- CCT: localStorage cct-settings + IndexedDB CCTHistory -----
+    let cctSettings = {};
+    try { cctSettings = JSON.parse(localStorage.getItem('cct-settings')) || {}; } catch (e) {}
+    const cctMode = cctSettings.arithmeticMode || 'addition';
+    let cctSessions = [];
+    try { cctSessions = (await getAllCctSessions()).filter(s => s.status === 'Completed'); } catch (e) {}
+    cctSessions.sort((a, b) => a.timestamp - b.timestamp);
+    const cctLast10 = cctSessions.slice(-10);
+    const cctAvg = Math.round(cctLast10.reduce((s, r) => s + r.accuracy, 0) / (cctLast10.length || 1));
+    document.getElementById('menu-cct-stats').innerHTML =
+        `${CCT_MODE_LABEL[cctMode] || cctMode}`
+        + (cctSessions.length ? ` &middot; ${cctSessions.length} sessions &middot; avg ${cctAvg}%` : ' &middot; no sessions yet');
+    document.getElementById('menu-cct-recent').textContent = cctSessions.length
+        ? 'Recent: ' + cctSessions.slice(-5).map(s => Math.round(s.accuracy) + '%').join('  ')
         : '';
 }
 
