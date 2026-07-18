@@ -335,22 +335,26 @@ body.light-mode .qb-face {
 
 /* ---------- recent games table (graph popup) ---------- */
 
-.qb-games-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
+/* history panel: stacked per-game cards (.hqli shell from styles.css) */
+.qb-hist-card {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.5rem;
     font-size: var(--step--1);
 }
 
-.qb-games-table th,
-.qb-games-table td {
-    padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid #333;
+.qb-hist-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
 }
 
-body.light-mode .qb-games-table th,
-body.light-mode .qb-games-table td {
-    border-bottom-color: #bbb;
+/* .hqli-footer's RRT styling assumes its wide card layout (negative margin)
+   and a dark backdrop (#fff6) — neutralize both inside the history cards */
+.qb-hist-card .hqli-footer {
+    margin-right: 0;
+    color: var(--text-color);
+    opacity: 0.55;
 }
 
 .qb-chip {

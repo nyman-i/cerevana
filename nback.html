@@ -523,7 +523,31 @@
 				</div>
 			</div>
 
+			<input id="offcanvas-history"
+				   type="checkbox"
+				   hidden>
+			<div id="sidebar-history" class="offcanvas offcanvas--right">
+				<div class="offcanvas-side">
+					<label class="offcanvas-close" for="offcanvas-history" tabindex="0">✕</label>
+				</div>
+				<div class="offcanvas-body ffmono hql-frame">
+					<div>Games this month: <span id="qb-hist-count"></span></div>
+					<div>Avg score, last 10: <span id="qb-hist-avg"></span></div>
+					<div>Play time today: <span id="qb-playtime"></span></div>
+					<div class="ctrl__inner" style="margin: 0.5rem 0;">
+						<div>
+							<input hidden id="qb-show-cancelled" type="checkbox">
+							<label class="switch" for="qb-show-cancelled"></label>
+						</div>
+						<label for="qb-show-cancelled">Show cancelled</label>
+					</div>
+					<div id="qb-games-empty" class="panel-empty" hidden>No games yet &mdash; finish a session and your history appears here.</div>
+					<div id="qb-history-list" class="hql"></div>
+				</div>
+			</div>
+
 			<label class="open metal-gear open--top-left" for="offcanvas-settings" tabindex="0"><span class="sidebar-button settings-label"></span></label>
+			<label class="open metal-gear open--top-right" for="offcanvas-history" tabindex="0"><span class="sidebar-button history-label"></span></label>
 			<label class="open metal-gear open--bottom-left" for="offcanvas-info" tabindex="0"><span class="sidebar-button info-label"></span></label>
 			<label id="graph-label" class="open metal-gear open--bottom-right" tabindex="0"><span class="sidebar-button graph-label"></span></label>
 
@@ -554,24 +578,14 @@
 
 		<div id="graph-popup" class="graph-popup">
 			<div class="graph-controls">
-				<button id="qb-tab-recent" class="graph-select selected">Recent Games</button>
-				<button id="qb-tab-progress" class="graph-select">Progress</button>
+				<button id="qb-tab-progress" class="graph-select selected">Progress</button>
+				<button id="qb-tab-time" class="graph-select">Time Spent</button>
 			</div>
-			<div id="qb-games-empty" class="panel-empty" hidden>No games yet &mdash; finish a session and your history appears here.</div>
-			<div id="qb-recent-view" class="graph-popup-content visible" style="overflow-y: auto;">
-				<div class="ctrl__inner" style="margin: 0.5rem 0;">
-					<div>
-						<input hidden id="qb-show-cancelled" type="checkbox">
-						<label class="switch" for="qb-show-cancelled"></label>
-					</div>
-					<label for="qb-show-cancelled">Show cancelled</label>
-					<span id="qb-playtime" style="margin-left: auto;"></span>
-				</div>
-				<table class="qb-games-table" id="qb-games-table"></table>
-			</div>
-			<div id="qb-progress-view" class="graph-popup-content"><canvas id="qb-graph-canvas"></canvas></div>
+			<div id="qb-graph-empty" class="panel-empty" hidden>No completed sessions yet.</div>
+			<div id="qb-progress-view" class="graph-popup-content visible"><canvas id="qb-graph-canvas"></canvas></div>
+			<div id="qb-time-view" class="graph-popup-content"><canvas id="qb-time-canvas"></canvas></div>
 			<div class="graph-end-controls">
-				<div>* Completed sessions from the last month</div>
+				<div>* Progress: last month &middot; Time Spent: last year</div>
 				<button id="graph-close-popup">Close</button>
 			</div>
 		</div>

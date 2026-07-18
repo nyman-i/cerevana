@@ -5,7 +5,8 @@
 // js/quadbox/LICENSE).
 import { getSettings, getGameSettings, updateSetting, setGameField, subscribe, resetSettings } from './settings.js'
 import './profiles.js'
-import { getLastMonthGames, deleteDB } from './engine/gamedb.js'
+import { getLastMonthGames, getYearOfPlayTime, deleteDB } from './engine/gamedb.js'
+import { formatSeconds } from './engine/utils.js'
 import { BoardRenderer } from './cube.js'
 import { QuadBoxGame, getNumberKeys, displayTitle } from './game.js'
 import { createFeedback, createTallyFeedback } from './feedback.js'
@@ -174,7 +175,11 @@ function refreshUi() {
   $('qb-count').textContent = game.trialDisplay()
 }
 
-analytics.subscribe(() => renderHud())
+analytics.subscribe(() => {
+  renderHud()
+  // keep the history panel live if it's open when a game records
+  if ($('offcanvas-history').checked) renderGames()
+})
 $('qb-start').addEventListener('click', () => game.toggleGame())
 $('qb-next').addEventListener('click', () => game.advance())
 
@@ -433,30 +438,7 @@ $('qb-reset-all').addEventListener('click', async () => {
   location.reload()
 })
 
-// ---- graph popup ----
-const popup = $('graph-popup')
-$('graph-label').addEventListener('click', async () => {
-  popup.classList.add('visible')
-  await renderGames()
-})
-$('graph-close-popup').addEventListener('click', () => popup.classList.remove('visible'))
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && popup.classList.contains('visible')) popup.classList.remove('visible')
-})
-
-$('qb-tab-recent').addEventListener('click', () => switchTab('recent'))
-$('qb-tab-progress').addEventListener('click', () => switchTab('progress'))
-
-const switchTab = async (tab) => {
-  $('qb-tab-recent').classList.toggle('selected', tab === 'recent')
-  $('qb-tab-progress').classList.toggle('selected', tab === 'progress')
-  $('qb-recent-view').classList.toggle('visible', tab === 'recent')
-  $('qb-progress-view').classList.toggle('visible', tab === 'progress')
-  if (tab === 'progress') await renderChart()
-}
-
-$('qb-show-cancelled').addEventListener('change', () => renderGames())
-
+// ---- history panel (top-right offcanvas) ----
 // Score tiers on the Cerevana verdict palette (as in the Svelte port)
 const tierColor = (percent) => {
   if (percent > 0.7) return '#4c8434'
@@ -468,41 +450,70 @@ const tierColor = (percent) => {
 
 const fmtElapsed = (s) => `${Math.floor(s / 60)}m ${String(Math.floor(s % 60)).padStart(2, '0')}s`
 
+const chip = (percent) =>
+  `<span class="qb-chip" style="background:${tierColor(percent)}">${(percent * 100).toFixed(0)}%</span>`
+
 const renderGames = async () => {
   const showCancelled = $('qb-show-cancelled').checked
-  const games = (await getLastMonthGames())
-    .filter(g => g.status !== 'tombstone')
-    .filter(g => showCancelled || g.status === 'completed')
+  const all = (await getLastMonthGames()).filter(g => g.status !== 'tombstone')
+  const completed = all.filter(g => g.status === 'completed')
+  const games = showCancelled ? all : completed
+
+  // summary lines (games come newest-first from the gamedb cursor)
+  $('qb-hist-count').textContent = completed.length
+  const last10 = completed.filter(g => g.total?.possible > 0).slice(0, 10)
+  $('qb-hist-avg').textContent = last10.length
+    ? `${(100 * last10.reduce((s, g) => s + g.total.percent, 0) / last10.length).toFixed(0)}%` : '—'
+  const a = analytics.get()
+  $('qb-playtime').textContent = a.playTime || '0m 00s'
+
   $('qb-games-empty').hidden = games.length > 0
-  const table = $('qb-games-table')
-  // columns = union of tags present in the fetched games, in display order
-  const TAG_ORDER = ['position', 'position0', 'position1', 'position2', 'position3',
-    'audio', 'color', 'shape', 'image', 'visvis', 'visaudio', 'audiovis', 'arithmetic']
-  const present = new Set()
-  for (const g of games) {
-    for (const t of Object.keys(g.scores ?? {})) present.add(t)
-  }
-  const tags = TAG_ORDER.filter(t => present.has(t))
-  const colName = (t) => TAG_LABELS[t] ?? (t === 'arithmetic' ? 'Arith' : t)
-  const head = `<tr><th>Date</th><th>Game</th><th>Total</th>${tags.map(t => `<th>${colName(t)}</th>`).join('')}<th>Time</th></tr>`
-  const rows = games.map(g => {
+  $('qb-history-list').innerHTML = games.map(g => {
     const date = new Date(g.timestamp).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
     const name = `${displayTitle(g).toUpperCase()} ${g.nBack}B${g.status === 'cancelled' ? ' ✕' : ''}`
-    const total = g.total?.possible > 0
-      ? `<span class="qb-chip" style="background:${tierColor(g.total.percent)}">${(g.total.percent * 100).toFixed(0)}%</span>` : ''
-    const cells = tags.map(t => {
-      const s = g.scores?.[t]
-      if (!s || !(s.possible > 0)) return '<td></td>'
-      return `<td><span class="qb-chip" style="background:${tierColor(s.percent)}">${(s.percent * 100).toFixed(0)}%</span></td>`
-    }).join('')
+    const total = g.total?.possible > 0 ? chip(g.total.percent) : ''
+    const tags = Object.entries(g.scores ?? {})
+      .filter(([, s]) => s.possible > 0)
+      .map(([t, s]) => `<span class="qb-chip" style="background:${tierColor(s.percent)}">${TAG_LABELS[t] ?? t} ${(s.percent * 100).toFixed(0)}%</span>`)
+      .join(' ')
     const time = g.total?.averageTrialTime
       ? `${fmtElapsed(g.elapsedSeconds)} | ${(g.total.averageTrialTime / 1000).toFixed(2)}s/t`
       : fmtElapsed(g.elapsedSeconds)
-    return `<tr><td>${date}</td><td>${name}</td><td>${total}</td>${cells}<td>${time}</td></tr>`
+    return `<div class="hqli"><div class="qb-hist-card">
+      <div><strong>${name}</strong> ${total}</div>
+      ${tags ? `<div class="qb-hist-tags">${tags}</div>` : ''}
+      <div class="hqli-footer"><span>${date}</span><span>${time}</span></div>
+    </div></div>`
   }).join('')
-  table.innerHTML = head + rows
-  const a = analytics.get()
-  $('qb-playtime').textContent = a.playTime ? `Today: ${a.playTime}` : ''
+}
+
+// render on open (sidebar-events dispatches `change` for keyboard toggles too)
+$('offcanvas-history').addEventListener('change', (e) => {
+  if (e.target.checked) renderGames()
+})
+$('qb-show-cancelled').addEventListener('change', () => renderGames())
+
+// ---- graph popup (charts only) ----
+const popup = $('graph-popup')
+$('graph-label').addEventListener('click', async () => {
+  popup.classList.add('visible')
+  await renderChart()
+})
+$('graph-close-popup').addEventListener('click', () => popup.classList.remove('visible'))
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && popup.classList.contains('visible')) popup.classList.remove('visible')
+})
+
+$('qb-tab-progress').addEventListener('click', () => switchTab('progress'))
+$('qb-tab-time').addEventListener('click', () => switchTab('time'))
+
+const switchTab = async (tab) => {
+  $('qb-tab-progress').classList.toggle('selected', tab === 'progress')
+  $('qb-tab-time').classList.toggle('selected', tab === 'time')
+  $('qb-progress-view').classList.toggle('visible', tab === 'progress')
+  $('qb-time-view').classList.toggle('visible', tab === 'time')
+  if (tab === 'progress') await renderChart()
+  else await renderTimeChart()
 }
 
 // Legacy Brain Workshop-era sessions (IndexedDB NBackHistory, read-only):
@@ -556,6 +567,7 @@ const renderChart = async () => {
     backgroundColor: palette[i % palette.length], tension: 0.2, pointRadius: 3,
   }))
   datasets.push(...await legacyDatasets(fg))
+  $('qb-graph-empty').hidden = datasets.some(d => d.data.length > 0)
   chart?.destroy()
   chart = new Chart($('qb-graph-canvas'), {
     type: 'line',
@@ -568,6 +580,38 @@ const renderChart = async () => {
         y: { title: { display: true, text: 'n-back level (ncalc)', color: fg }, ticks: { color: fg }, grid: { color: '#4444' } },
       },
       plugins: { legend: { labels: { color: fg } } },
+    },
+  })
+}
+
+// Daily play time over the last year (engine's 4 AM day boundary).
+// Legacy NBackHistory time is deliberately excluded: its per-session time
+// was an estimate (trials × tick length), not measured like game records.
+let timeChart
+const renderTimeChart = async () => {
+  const byDay = await getYearOfPlayTime()
+  const data = Object.entries(byDay).sort(([a], [b]) => a.localeCompare(b))
+    .map(([day, minutes]) => ({ x: day, y: minutes }))
+  $('qb-graph-empty').hidden = data.length > 0
+  const token = name => getComputedStyle(document.body).getPropertyValue(name).trim()
+  const accent = token('--accent-color')
+  const fg = token('--text-color')
+  const totalMinutes = data.reduce((s, d) => s + d.y, 0)
+  timeChart?.destroy()
+  timeChart = new Chart($('qb-time-canvas'), {
+    type: 'bar',
+    data: { datasets: [{ label: 'Minutes played', data, backgroundColor: accent }] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { type: 'time', time: { unit: 'day' }, ticks: { color: fg }, grid: { color: '#4444' } },
+        y: { title: { display: true, text: 'minutes', color: fg }, ticks: { color: fg }, grid: { color: '#4444' } },
+      },
+      plugins: {
+        legend: { labels: { color: fg } },
+        title: { display: true, text: `Total: ${formatSeconds(totalMinutes * 60)}`, color: fg },
+      },
     },
   })
 }
