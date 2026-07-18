@@ -13,6 +13,7 @@
 		<script src="js/components/help-tip.js"></script>
 		<script src="js/components/num-row.js"></script>
 		<script src="js/components/switch-row.js"></script>
+		<script src="js/components/select-row.js"></script>
 		<script src="js/components/goal-targets.js"></script>
 		<script src="js/components/profile-picker.js"></script>
 	</head>
@@ -30,36 +31,12 @@
 						<profile-picker></profile-picker>
 						<goal-targets daily-id="cct-dailygoal" weekly-id="cct-weeklygoal"></goal-targets>
 						<div class="mb-05 panel-heading">Arithmetic</div>
-						<div class="mb-2">
-							<div class="ctrl__inner">
-								<span>Operation</span>
-								<select id="cct-mode" class="select-item">
-									<option value="addition">Addition</option>
-									<option value="subtraction">Subtraction</option>
-									<option value="multiplication">Multiplication</option>
-									<option value="difference">Difference</option>
-								</select>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text right">
-										Sum, difference,<br>
-										or product of<br>
-										the current and<br>
-										previous digit.<br>
-									</div>
-								</div>
-							</div>
-						</div>
+						<select-row select-id="cct-mode" label="Operation"
+							options="addition=Addition|subtraction=Subtraction|multiplication=Multiplication|difference=Difference"
+							tooltip="Sum, difference,|or product of|the current and|previous digit." tooltip-side="right"></select-row>
 						<div class="mb-05 panel-heading">Session</div>
-						<div class="mb-2">
-							<div class="ctrl__inner">
-								<span>End condition</span>
-								<select id="cct-endcondition" class="select-item">
-									<option value="timer">Timer</option>
-									<option value="correct">Target correct</option>
-								</select>
-							</div>
-						</div>
+						<select-row select-id="cct-endcondition" label="End condition"
+							options="timer=Timer|correct=Target correct"></select-row>
 						<num-row input-id="cct-duration" label="Duration" min="1" max="9999" step="1" width="5ch" suffix="min" row-id="cct-row-duration"></num-row>
 						<num-row input-id="cct-targetcorrect" label="Target correct" min="1" max="99999" step="1" width="6ch" row-id="cct-row-targetcorrect" row-hidden></num-row>
 						<div class="mb-05 panel-heading">Adaptive Interval</div>
@@ -71,17 +48,8 @@
 						<num-row input-id="cct-incorrectthreshold" label="Incorrect streak" min="1" max="20" step="1" width="4ch" tooltip="This many wrong|in a row slows|the interval down." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Audio</div>
-						<div class="mb-2">
-							<div class="ctrl__inner">
-								<span>Voice</span>
-								<select id="cct-voice" class="select-item">
-									<option value="nathan">Nathan</option>
-									<option value="enhancednathan">Enhanced Nathan</option>
-									<option value="samantha">Samantha</option>
-									<option value="siri4">Siri 4</option>
-								</select>
-							</div>
-						</div>
+						<select-row select-id="cct-voice" label="Voice"
+							options="nathan=Nathan|enhancednathan=Enhanced Nathan|samantha=Samantha|siri4=Siri 4"></select-row>
 						<num-row input-id="cct-playbackspeed" label="Playback speed" min="1" max="1.5" step="0.1" width="4ch" suffix="x"></num-row>
 						<switch-row input-id="cct-beepenabled" label="Error beep"></switch-row>
 						<num-row input-id="cct-beepvolume" label="Beep volume" min="0" max="100" step="5" width="5ch" suffix="%"></num-row>

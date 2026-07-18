@@ -13,6 +13,7 @@
 		<script src="js/components/help-tip.js"></script>
 		<script src="js/components/num-row.js"></script>
 		<script src="js/components/switch-row.js"></script>
+		<script src="js/components/select-row.js"></script>
 		<script src="js/components/goal-targets.js"></script>
 		<script src="js/components/profile-picker.js"></script>
 	</head>
@@ -95,15 +96,8 @@
 								</div>
 							</div>
 						</div>
-						<div class="mb-2" id="qb-row-grid">
-							<div class="ctrl__inner">
-								<span>Grid</span>
-								<select id="qb-grid" class="select-item">
-									<option value="rotate3D">3D (rotating cube)</option>
-									<option value="static2D">2D (static)</option>
-								</select>
-							</div>
-						</div>
+						<select-row select-id="qb-grid" label="Grid" row-id="qb-row-grid"
+							options="rotate3D=3D (rotating cube)|static2D=2D (static)"></select-row>
 						<div class="mb-05 panel-heading">Session</div>
 						<num-row input-id="qb-nback" label="N-Back" min="1" max="12" step="1" width="5ch"></num-row>
 						<switch-row input-id="qb-variable" label="Variable N-Back" row-id="qb-row-variable" tooltip="Makes N change|randomly each trial." tooltip-side="right"></switch-row>
@@ -211,36 +205,13 @@
 						</div>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Display</div>
-						<div class="mb-2">
-							<div class="ctrl__inner">
-								<span>Feedback</span>
-								<select id="qb-feedback" class="select-item">
-									<option value="show">Show</option>
-									<option value="hide">Hide</option>
-									<option value="hide-counter">Hide counter only</option>
-								</select>
-							</div>
-						</div>
+						<select-row select-id="qb-feedback" label="Feedback"
+							options="show=Show|hide=Hide|hide-counter=Hide counter only"></select-row>
 						<num-row input-id="qb-rotation" label="Rotation speed" min="0" max="999" step="1" width="5ch" row-id="qb-row-rotation"></num-row>
 						<switch-row input-id="qb-lattice-theme" label="Lattice matches theme" tooltip="Tint the cube's grid|with your accent|colour instead of|the original grey." tooltip-side="right"></switch-row>
-						<div class="mb-2">
-							<div class="ctrl__inner">
-								<span>Voice</span>
-								<select id="qb-voice" class="select-item">
-									<option value="recorded">Cerevana (recorded)</option>
-									<option value="browser">Browser voice</option>
-								</select>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text right">
-										Audio stimuli:<br>
-										bundled recordings<br>
-										or your browser's<br>
-										built-in voice.<br>
-									</div>
-								</div>
-							</div>
-						</div>
+						<select-row select-id="qb-voice" label="Voice"
+							options="recorded=Cerevana (recorded)|browser=Browser voice"
+							tooltip="Audio stimuli:|bundled recordings|or your browser's|built-in voice." tooltip-side="right"></select-row>
 						<div id="qb-progression-rows">
 							<hr class="divider"/>
 							<div class="mb-05 panel-heading">Progression</div>
