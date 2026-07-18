@@ -91,10 +91,10 @@ export class BoardRenderer {
     this.grid = null
     this.theme = 'dark'
     this.cells = []
-    this.variableN = el('div', 'qb-variable-n', stage)
+    this.variableN = el('div', 'qb-variable-n', null)
     this.variableN.hidden = true
     // center overlay: stimulus display for position-less modes
-    this.centerWrap = el('div', 'qb-center-wrap', stage)
+    this.centerWrap = el('div', 'qb-center-wrap', null)
     this.centerFace = el('div', 'qb-face', this.centerWrap)
     this.centerWrap.hidden = true
   }
@@ -105,6 +105,7 @@ export class BoardRenderer {
     this.theme = theme
     this.wrap?.remove()
     this.cells = []
+    this.board = null
 
     if (grid === 'visualCrank') {
       this.wrap = el('div', 'qb-crank-wrap', this.stage)
@@ -149,6 +150,13 @@ export class BoardRenderer {
         frameImg(this.scene, `${d} 0 0`, 'y 90deg')
       }
     }
+    // position-less overlays (combo modes with no position stream, the
+    // variable-N ghost number) must share whichever container carries the
+    // board's own HUD-clearance offset — qb-board2d's margin-bottom or
+    // qb-wrap3d's translateY — or they drift off the visible board
+    const overlayParent = this.board ?? this.wrap
+    overlayParent.appendChild(this.variableN)
+    overlayParent.appendChild(this.centerWrap)
   }
 
   setRotationSpeed(rotationSpeed) {
@@ -195,7 +203,10 @@ export class BoardRenderer {
       cell.hidden = false
       cell.className = cellClasses(base, position, svgId, multi ? flash : false, transparent)
       cellStyle(cell, boxColor, svgId, shapeOuterColor, transparent)
-      if (timedMulti && !boxColor) {
+      // findBoxColor always returns a truthy default (plain white/dark) when
+      // there's no shape/color/image, so !boxColor never fires here — check
+      // the actual stimuli instead, or the stream-identity tint never shows
+      if (timedMulti && !trial.shape && !trial.color && !trial.image) {
         cell.style.setProperty('--face-bg-color', STREAM_COLORS[i])
       }
       setFaceText(cell, multi ? '' : trial?.text)
