@@ -116,7 +116,8 @@ const slabButton = (id, name, hot, onClick) => {
   btn.className = 'nback__match'
   btn.id = id
   btn.tabIndex = -1
-  btn.innerHTML = `${name ? `<span class="qb-key-name">${name}</span>` : ''}<span class="qb-key-hot">${hot}</span>`
+  btn.innerHTML = `<span class="qb-key-name">${name}</span>`
+    + (hot !== '' ? `<span class="qb-key-hot">${hot}</span>` : '')
   btn.addEventListener('click', onClick)
   return btn
 }
@@ -132,7 +133,8 @@ function renderKeys() {
   if (game.tally) {
     const counts = getNumberKeys(game.gameDisplayInfo)
     counts.forEach((count, i) => {
-      const btn = slabButton(`qb-tally-${count}`, '', count, () => game.handleCount(count))
+      // the number is the headline; no separate hotkey hint needed
+      const btn = slabButton(`qb-tally-${count}`, count, '', () => game.handleCount(count))
       ;(i < Math.ceil(counts.length / 2) ? left : right).appendChild(btn)
     })
   } else {
