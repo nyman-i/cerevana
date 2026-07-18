@@ -344,7 +344,7 @@ profileShare.addEventListener('click', e => {
     profileToast('URL copied to clipboard');
 });
 
-// ponytail: inline input instead of prompt()/alert() — Chrome suppresses those in --app windows
+// ponytail: inline input instead of prompt()/alert() - Chrome suppresses those in --app windows
 profileImport.addEventListener('click', e => {
     const visible = profileImportInput.style.display === 'block';
     profileImportInput.style.display = visible ? 'none' : 'block';

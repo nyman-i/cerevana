@@ -3,7 +3,7 @@
 //
 // Two tiers, because the codebase has two genuinely different JS shapes:
 //  - "module" files (js/quadbox/**, js/cct/**) are self-contained ES modules
-//    with explicit import/export — no-undef and no-unused-vars are fully
+//    with explicit import/export - no-undef and no-unused-vars are fully
 //    trustworthy there.
 //  - "classic" files (js/rrt/**, js/shared/**, js/menu/page.js,
 //    js/studies/page.js) are plain <script>-tag files sharing one global
@@ -46,7 +46,7 @@ const NODE_GLOBALS = {
 };
 
 // Every top-level function/const/let/var/class name across all classic
-// script files — that's the shared cross-file global scope a browser
+// script files - that's the shared cross-file global scope a browser
 // actually gives these files when loaded together on one page.
 function collectClassicGlobals(files) {
     const declRe = /^(?:export\s+)?(?:async\s+)?function\s*\*?\s+(\w+)|^(?:export\s+)?(?:const|let|var)\s+(\w+)|^(?:export\s+)?class\s+(\w+)/gm;
@@ -83,7 +83,7 @@ const CLASSIC_FILES = [
 const classicGlobals = collectClassicGlobals(CLASSIC_FILES);
 // js/quadbox/** and js/cct/** are ES modules, but they run on pages that also
 // load js/shared/**'s classic scripts first (appState, getAllNBackSessions,
-// etc. land on `window` before the module tag runs) — module files legitimately
+// etc. land on `window` before the module tag runs) - module files legitimately
 // reference those without importing them.
 const sharedClassicGlobals = collectClassicGlobals(listJsFiles('js/shared').filter((f) => fs.existsSync(f)));
 

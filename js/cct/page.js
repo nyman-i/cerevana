@@ -1,4 +1,4 @@
-// Original Cerevana code. Controller for cct.html — settings-panel wiring
+// Original Cerevana code. Controller for cct.html - settings-panel wiring
 // follows RRT's single id-to-key map convention (js/shared/constants.js
 // keySettingMap / js/rrt/index.js), since CCT has no per-mode nesting like
 // N-Back's qb-* three-table approach.
@@ -41,7 +41,7 @@ const NUMBER_KEYS = new Set([
 const NULLABLE_KEYS = new Set(['dailyProgressGoal', 'weeklyProgressGoal'])
 
 // guarded against clobbering a focused input (lesson from N-Back's
-// syncPanel — never overwrite what the user is mid-typing)
+// syncPanel - never overwrite what the user is mid-typing)
 function populateSettings() {
   const settings = getSettings()
   for (const [id, key] of Object.entries(keySettingMap)) {
@@ -59,7 +59,7 @@ function syncConditionalRows(settings) {
 }
 
 // out-of-range typed values are ignored rather than applied (same convention
-// as N-Back's bindNumber/clamp in js/quadbox/page.js) — e.g. typing "0" into
+// as N-Back's bindNumber/clamp in js/quadbox/page.js) - e.g. typing "0" into
 // Correct streak would otherwise fire the difficulty threshold on every answer
 function clampNumber(value, min, max) {
   const v = Number(value)
@@ -236,7 +236,7 @@ const renderSessions = async () => {
   $('cct-hist-count').textContent = sessions.length
   const last10 = completed.filter(s => s.totalQuestionsAsked > 0).slice(0, 10)
   $('cct-hist-avg').textContent = last10.length
-    ? `${(last10.reduce((sum, s) => sum + s.accuracy, 0) / last10.length).toFixed(0)}%` : '—'
+    ? `${(last10.reduce((sum, s) => sum + s.accuracy, 0) / last10.length).toFixed(0)}%` : '-'
   $('cct-playtime').textContent = fmtPlayTime(await getPlayTimeSince4AM())
 
   $('cct-sessions-empty').hidden = sessions.length > 0
@@ -257,7 +257,7 @@ $('offcanvas-history').addEventListener('change', (e) => {
   if (e.target.checked) renderSessions()
 })
 
-// 'H' opens History, like RRT/N-Back — guarded to skip while an input has
+// 'H' opens History, like RRT/N-Back - guarded to skip while an input has
 // focus (CCT answers are numeric, so 'h' never reaches the answer field
 // anyway, but keep the same convention as the other two pages).
 document.addEventListener('keydown', (e) => {
@@ -301,7 +301,7 @@ const renderChart = async () => {
     byMode[key] = byMode[key] ?? []
     byMode[key].push({ x: s.timestamp, y: s.accuracy })
   }
-  // Canvas can't read CSS vars, but JS can — pull the themed accent + text colour
+  // Canvas can't read CSS vars, but JS can - pull the themed accent + text colour
   // from the computed tokens so the chart follows the user's hue and theme.
   const token = name => getComputedStyle(document.body).getPropertyValue(name).trim()
   const accent = token('--accent-color')

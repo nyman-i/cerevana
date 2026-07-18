@@ -1,7 +1,7 @@
 /*!
- * Cerevana N-Back — classic mode generation.
+ * Cerevana N-Back - classic mode generation.
  * Original Cerevana code (CC BY-NC 3.0): a port of our own Brain Workshop
- * protocol reimplementation (formerly js/nback/game.js — no Brain
+ * protocol reimplementation (formerly js/nback/game.js - no Brain
  * Workshop code; protocol details in nback-spec.md).
  * Produces engine-shaped { trials, meta } consumed by QuadBoxGame, so the
  * flow/scoring/recording path is identical to engine-generated games.
@@ -40,7 +40,7 @@ export const CLASSIC_TITLES = {
   triple: 'triple',
 }
 
-// BW's ARITHMETIC_ACCEPTABLE_DECIMALS (tenths, odd twentieths, eighths) — every
+// BW's ARITHMETIC_ACCEPTABLE_DECIMALS (tenths, odd twentieths, eighths) - every
 // value is m/40, so divisor legality reduces to exact integer math (no float eq).
 const ARITH_DECIMALS = new Set([4, 5, 6, 8, 10, 12, 14, 15, 16, 18, 20, 22, 24, 25, 26, 28, 30, 32, 34, 35, 36, 38])
 
@@ -60,7 +60,7 @@ export const divisorOk = (a, x) => {
 
 // one arithmetic trial: op uniform from the enabled set; number uniform in
 // [0, max] ([-max, max] with negatives). Divide draws only legal divisors of
-// the n-back number (plain n — not the crab/variable effective back);
+// the n-back number (plain n - not the crab/variable effective back);
 // before trial n, divide numbers are just nonzero.
 export const genArith = (numbers, n, t, ops, maxNumber, negatives) => {
   const op = ops[Math.floor(Math.random() * ops.length)]
@@ -112,7 +112,7 @@ export const gen = (hist, n, t, back = n, pMatch = 0.125, pLure = 0.125) => {
 
 // combination-mode generation: streams start uniform; then per modality IN
 // MODE ORDER, forced match/lure writes the modality's current stream from its
-// reference stream's history — later modalities overwrite earlier ones.
+// reference stream's history - later modalities overwrite earlier ones.
 export const genCombo = (streams, mods, n, t, back = n, pMatch = 0.125, pLure = 0.125) => {
   const cur = {}
   for (const s in streams) cur[s] = rand8()
@@ -335,7 +335,7 @@ export const generateClassicGame = (modeKey, gs) => {
         if (t >= n) {
           // the operation is spoken, and only once answers are expected;
           // arithmetic never joins `matches` (it's a typed answer, not a
-          // match judgment — detectMissedStimuli must not touch it)
+          // match judgment - detectMissedStimuli must not touch it)
           trial.audio = 'speak:' + opsSeq[t]
           trial.answer = arithAnswer(numbers[t - effBack(t)], opsSeq[t], numbers[t])
         }

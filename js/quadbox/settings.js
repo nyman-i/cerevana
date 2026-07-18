@@ -1,11 +1,11 @@
 /*!
- * Derived from Quad Box — https://github.com/soamsy/quad-box
+ * Derived from Quad Box - https://github.com/soamsy/quad-box
  * Copyright (c) 2025 The Quad Box Project Contributors
- * MIT License — see js/quadbox/LICENSE
+ * MIT License - see js/quadbox/LICENSE
  * Ported from src/stores/settingsStore.js at upstream commit 83a9718
  * (deepMerge/load/save), then extended for Cerevana's merged N-Back:
  * classic mode defaults, voice/dailyReset, reloadSettings. All additions
- * are additive keys — the storage key and existing JSON shape are
+ * are additive keys - the storage key and existing JSON shape are
  * unchanged (NEVER rename: quad-box-settings).
  */
 import { migrateSettings } from './engine/migrations/migrations.js'

@@ -1,4 +1,4 @@
-// Cerevana web components — the shared Progress Targets section
+// Cerevana web components - the shared Progress Targets section
 // (heading + daily/weekly minute inputs), used by all three exercises.
 // Requires help-tip.js and num-row.js to be loaded first.
 //

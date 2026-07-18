@@ -1,10 +1,10 @@
 /*!
- * Cerevana CCT — profiles bridge (original Cerevana code, CC BY-NC 3.0).
+ * Cerevana CCT - profiles bridge (original Cerevana code, CC BY-NC 3.0).
  * Direct port of js/quadbox/profiles.js's pattern: extends the existing
  * profile store with a per-profile `cct` blob (the whole settings object).
  * Selecting a profile writes its blob into the live `cct-settings` key and
  * reloads the in-memory store; every settings change is persisted back into
- * the active profile. No legacy-level seeding — CCT has no predecessor data.
+ * the active profile. No legacy-level seeding - CCT has no predecessor data.
  * Store identifiers are NEVER renamed once shipped.
  */
 import { getSettings, reloadSettings, subscribe } from './settings.js'

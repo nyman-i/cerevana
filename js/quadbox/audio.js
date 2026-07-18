@@ -1,7 +1,7 @@
 /*!
- * Plain-Audio replacement for src/lib/audioPlayer.js (howler) —
+ * Plain-Audio replacement for src/lib/audioPlayer.js (howler) -
  * same public surface (preload/play/cacheAudioSource/clearCache), same
- * asset layout (opus with mp3 fallback). Original: Quad Box, MIT —
+ * asset layout (opus with mp3 fallback). Original: Quad Box, MIT -
  * https://github.com/soamsy/quad-box, see js/quadbox/LICENSE.
  */
 import { getAudioPool } from './engine/constants.js'
@@ -11,7 +11,7 @@ import { getSettings } from './settings.js'
 const AUDIO_BASE = new URL('./audio/', import.meta.url)
 
 // Fire-and-forget TTS: the trial clock paces the game, not speech
-// completion — also avoids stranding the trial loop where no voices exist.
+// completion - also avoids stranding the trial loop where no voices exist.
 const speak = (text) => {
   speechSynthesis.cancel()
   const u = new SpeechSynthesisUtterance(text)

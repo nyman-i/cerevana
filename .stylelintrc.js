@@ -1,6 +1,6 @@
 // Lint-only config, not shipped (see eslint.config.js for the same note).
 // stylelint-config-standard's "possible error" rules (invalid values, unknown
-// units, duplicate properties, etc.) all pass clean on this codebase as-is —
+// units, duplicate properties, etc.) all pass clean on this codebase as-is -
 // zero of those fired in the initial dry run. Everything disabled below is a
 // naming/notation/formatting preference the standard config assumes, that
 // conflicts with this codebase's own established, consistent conventions.
@@ -10,7 +10,7 @@ export default {
     rules: {
         // BEM (block__element--modifier) is this codebase's class-naming
         // convention throughout; renaming would also require touching every
-        // matching class in HTML and JS querySelectors — out of scope here.
+        // matching class in HTML and JS querySelectors - out of scope here.
         'selector-class-pattern': null,
         // --step--1, --step--2 is the type-scale token convention.
         'custom-property-pattern': null,

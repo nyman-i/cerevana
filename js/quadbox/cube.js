@@ -1,7 +1,7 @@
 /*!
- * Vanilla-DOM renderer for the Quad Box board — port of the vendored
+ * Vanilla-DOM renderer for the Quad Box board - port of the vendored
  * Svelte components Grid.svelte / Cell.svelte / Frame.svelte /
- * VisualCrank.svelte (Quad Box by soamsy, MIT — js/quadbox/LICENSE).
+ * VisualCrank.svelte (Quad Box by soamsy, MIT - js/quadbox/LICENSE).
  * Rendering only; trial data comes from js/quadbox/engine/ or classic.js.
  * Cerevana extensions: text stimuli (letters/numbers) on faces, a center
  * overlay for position-less modes, and timed multi-position rendering

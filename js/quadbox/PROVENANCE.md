@@ -1,20 +1,20 @@
-# Cerevana N-Back — provenance
+# Cerevana N-Back - provenance
 
 Cerevana's **N-Back** exercise is one merged game with two lineages:
 
 1. **Engine**: built on the game engine of
    **[soamsy/quad-box](https://github.com/soamsy/quad-box)** (MIT, see
-   `LICENSE` in this directory), by soamsy — the same developer behind
+   `LICENSE` in this directory), by soamsy - the same developer behind
    the Syllogimous-v3 fork Cerevana's RRT grew from. Vendored
    2026-07-16 as a Svelte app, restructured 2026-07-17 into plain JS,
    then merged with the classic exercise. The engine **has since
-   diverged from upstream** as part of the merged game — it is Cerevana
+   diverged from upstream** as part of the merged game - it is Cerevana
    code now, with MIT attribution headers kept on every derived file.
 2. **Classic protocol**: the classic mode families (Position/Sound
    presets, Combination, Arithmetic, Jaeggi, Multi-Square, crab,
    self-paced, daily reset) reimplement the protocol of **Brain
    Workshop** (Paul Hoskinson & Jonathan Toomim, GPL-2.0). Cerevana
-   shares **no code** with Brain Workshop — `classic.js` is original
+   shares **no code** with Brain Workshop - `classic.js` is original
    Cerevana code (its precursor lived at `js/nback/game.js`; protocol
    details in `nback-spec.md`) and Brain Workshop is credited as
    inspiration only. Classic code must never be pasted into files
@@ -32,9 +32,9 @@ Cerevana's **N-Back** exercise is one merged game with two lineages:
 
 ## File map
 
-**`engine/`** — quad-box-derived core (MIT headers): generation
+**`engine/`** - quad-box-derived core (MIT headers): generation
 (`nbackGame.js`, `nback.js`), pools (`constants.js`), persistence
-(`gamedb.js` — scoring metadata, ncalc), auto-progression, stimulus art
+(`gamedb.js` - scoring metadata, ncalc), auto-progression, stimulus art
 (`svg.js`, `voronoi.js`, `generative.js`, `gradient.js`,
 `shapeSvgPool.js`, `trialUtils.js`), settings migrations. Cerevana
 changes so far: explicit `gameSettings.title`, optional position
@@ -56,17 +56,17 @@ timed multi-position), `audio.js` (plain `Audio` + browser-voice TTS).
 
 **Vendored deps (generated image stimuli):** `js/lib/d3-delaunay.esm.js`,
 `delaunator.esm.js`, `robust-predicates.esm.js`, `d3-shape.esm.js`,
-`d3-path.esm.js` — ISC, see `js/lib/LICENSE-d3-stimuli.txt`.
+`d3-path.esm.js` - ISC, see `js/lib/LICENSE-d3-stimuli.txt`.
 
 ## Data (NEVER rename)
 
 - localStorage `quad-box-settings` (versioned via `engine/migrations/`;
-  merged-game keys are additive) — the live settings store.
-- IndexedDB `QuadBoxNBack` v1, store `games` — all merged-game records
+  merged-game keys are additive) - the live settings store.
+- IndexedDB `QuadBoxNBack` v1, store `games` - all merged-game records
   (classic modes record here too, with their own titles/tags).
 - localStorage `sllgms-v3-nback-profiles` / `sllgms-v3-nback-selected-profile`
-  — profiles; each carries the merged settings blob under `data.quadbox`.
-- IndexedDB `SyllDB`/`NBackHistory` — read-only legacy Brain
+  - profiles; each carries the merged settings blob under `data.quadbox`.
+- IndexedDB `SyllDB`/`NBackHistory` - read-only legacy Brain
   Workshop-era sessions (still graphed, exported and importable).
 
 Records and settings from the upstream quad-box app still load

@@ -1,4 +1,4 @@
-// Quad Box engine tests — port of js/quadbox/src's vitest suite
+// Quad Box engine tests - port of js/quadbox/src's vitest suite
 // (tests/nbackGame.test.js) to plain node, targeting the promoted engine.
 // Run: node --experimental-test-module-mocks --test tests/quadbox-pure.mjs
 import { test, mock } from 'node:test'

@@ -1,4 +1,4 @@
-// Cerevana web components — settings-panel select row
+// Cerevana web components - settings-panel select row
 // (.mb-2 > .ctrl__inner > span label + select.select-item).
 // Options come from the `options` attribute ("value=Label|value=Label")
 // so the element renders complete at parse time (children of a custom

@@ -1,7 +1,7 @@
 /*!
- * Derived from Quad Box — https://github.com/soamsy/quad-box
+ * Derived from Quad Box - https://github.com/soamsy/quad-box
  * Copyright (c) 2025 The Quad Box Project Contributors
- * MIT License — see js/quadbox/LICENSE
+ * MIT License - see js/quadbox/LICENSE
  * Promoted from src/migrations/v3.js at upstream commit 83a9718. Changes: none.
  */
 export const migrateToV3 = (settings) => {

@@ -1,6 +1,6 @@
 // Original Cerevana code. Settings store for CCT, structured after
 // js/quadbox/settings.js's deepMerge/load/save/subscribe pattern (see
-// that file for the pattern's own upstream provenance) — CCT has no
+// that file for the pattern's own upstream provenance) - CCT has no
 // per-mode nesting (one exercise, one settings shape), so this stays flat.
 import { migrateSettings } from './engine/migrations/migrations.js'
 

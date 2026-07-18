@@ -1,11 +1,11 @@
 // Pure-function checks for RRT's dependency-free generators
-// (js/rrt/generators/*) — run with: node tests/rrt-pure.mjs
+// (js/rrt/generators/*) - run with: node tests/rrt-pure.mjs
 //
-// js/rrt/ is classic global-scope <script>-tag code (no import/export —
+// js/rrt/ is classic global-scope <script>-tag code (no import/export -
 // every page loads ~20 of these files together and they share one window
 // scope), unlike js/quadbox/ and js/cct/'s real ES modules, so they can't be
 // `import`ed the way nback-pure.mjs/cct-pure.mjs do. Instead, load the files
-// with no savedata/DOM dependency into a vm sandbox — same shared-scope
+// with no savedata/DOM dependency into a vm sandbox - same shared-scope
 // execution the browser gives them, no app source touched. Files that read
 // `savedata.*` (a global populated from localStorage, declared in
 // js/shared/constants.js) are out of scope here; covering those needs a
@@ -34,7 +34,7 @@ const {
 } = sandbox
 // `class` declarations (unlike `function`/`var`) don't attach to the vm
 // context object as own properties, same as they don't attach to `window` in
-// a real classic script — evaluate the bare names to pull their lexical
+// a real classic script - evaluate the bare names to pull their lexical
 // bindings out instead.
 const ColorComparator = vm.runInContext('ColorComparator', sandbox)
 const VisualNoise = vm.runInContext('VisualNoise', sandbox)
@@ -200,13 +200,13 @@ const assert = (c, l) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + l); if (!
   const flatCount = wide.reduce((n, g) => n + g.length, 0)
   assert(flatCount === path.length, 'createWidePremises: every input premise appears exactly once in the output')
 
-  // star graph: center 'X' connects to A/B/C/D — center has 4 neighbors, so
+  // star graph: center 'X' connects to A/B/C/D - center has 4 neighbors, so
   // it should get paired (not left as three lonely singles).
   const star = ['A', 'B', 'C', 'D'].map(leaf => ({ start: 'X', end: leaf }))
   const wideStar = createWidePremises(star.map(p => ({ ...p })))
   assert(wideStar.some(g => g.length === 2), 'createWidePremises: a 4-neighbor star produces at least one paired group')
 
-  // >20 premises takes the non-optimal fast path — just confirm it completes
+  // >20 premises takes the non-optimal fast path - just confirm it completes
   // and preserves every premise (no crash, no dropped/duplicated edges).
   const bigChain = Array.from({ length: 25 }, (_, i) => ({ start: `n${i}`, end: `n${i + 1}` }))
   const wideBig = createWidePremises(bigChain.map(p => ({ ...p })))

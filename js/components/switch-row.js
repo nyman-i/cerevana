@@ -1,4 +1,4 @@
-// Cerevana web components — settings-panel switch row
+// Cerevana web components - settings-panel switch row
 // (.mb-1 > .ctrl__inner > div(checkbox+label.switch) + text label).
 // The inner div wrapping input+label.switch is load-bearing: CSS needs
 // `input:checked + .switch` adjacency, and quadbox's syncPanel toggles

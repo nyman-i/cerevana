@@ -1,4 +1,4 @@
-// Cerevana web components — the four corner tab labels
+// Cerevana web components - the four corner tab labels
 // (SETTINGS / HISTORY / INFO / GRAPH), byte-identical on every game
 // page. Captions come from CSS ::before rules on the *-label spans;
 // sidebar-events.js handles click/keyboard on label.open, and the
