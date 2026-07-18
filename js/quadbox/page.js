@@ -177,8 +177,9 @@ function renderHud() {
       parts.push(`${(a.lastGame.total.averageTrialTime / 1000).toFixed(2)}s/t`)
     }
   }
-  if (!game.isPlaying && a.playTime) {
-    parts.push(`Today: ${a.playTime}`)
+  if (!game.isPlaying && (a.playTime || settings.dailyProgressGoal)) {
+    const goal = settings.dailyProgressGoal
+    parts.push(`Today: ${a.playTime ?? '0m 00s'}${goal ? ` / ${goal}m` : ''}`)
   }
   $('qb-hud').innerHTML = parts.map(p => `<div>${p}</div>`).join('')
 }
@@ -242,6 +243,18 @@ const bindNumber = (input, set) => {
 for (const [id, set] of numberInputs) {
   bindNumber($(id), set)
 }
+
+// goals are nullable: an emptied input clears them, which bindNumber can't do
+const bindGoal = (id, key) => {
+  const input = $(id)
+  input.addEventListener('input', () => {
+    if (input.value === '') { updateSetting(key, null); return }
+    const v = clamp(input.value, +input.min, +input.max)
+    if (v !== null) updateSetting(key, v)
+  })
+}
+bindGoal('qb-dailygoal', 'dailyProgressGoal')
+bindGoal('qb-weeklygoal', 'weeklyProgressGoal')
 
 const toggles = [
   ['qb-variable', v => setGameField('rules', v ? 'variable' : 'none')],
@@ -404,6 +417,8 @@ const syncPanel = () => {
   setValue('qb-winafter', settings.successComboRequired)
   setValue('qb-dropbelow', settings.failureCriteria)
   setValue('qb-loseafter', settings.failureComboRequired)
+  setValue('qb-dailygoal', settings.dailyProgressGoal ?? '')
+  setValue('qb-weeklygoal', settings.weeklyProgressGoal ?? '')
   for (const field of ['position', 'color', 'shape', 'audio']) {
     $(`qb-key-${field}`).value = settings.hotkeys[field]
   }
@@ -513,7 +528,15 @@ const renderGames = async () => {
   $('qb-hist-avg').textContent = last10.length
     ? `${(100 * last10.reduce((s, g) => s + g.total.percent, 0) / last10.length).toFixed(0)}%` : '—'
   const a = analytics.get()
-  $('qb-playtime').textContent = a.playTime || '0m 00s'
+  const settings = getSettings()
+  const dailyGoal = settings.dailyProgressGoal
+  $('qb-playtime').textContent =
+    `${a.playTime || '0m 00s'}${dailyGoal ? ` / ${dailyGoal}m` : ''}`
+  const wk = goalWeekStartKey() // global from js/shared/db.js
+  const byDay = await getYearOfPlayTime()
+  const weekMinutes = Object.entries(byDay).reduce((s, [d, m]) => d >= wk ? s + m : s, 0)
+  $('qb-weektime').textContent =
+    `${fmtElapsed(weekMinutes * 60)}${settings.weeklyProgressGoal ? ` / ${settings.weeklyProgressGoal}m` : ''}`
 
   $('qb-games-empty').hidden = games.length > 0
   $('qb-history-list').innerHTML = games.map(g => {

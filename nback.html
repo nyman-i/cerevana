@@ -480,6 +480,24 @@
 							</div>
 						</div>
 						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Progress Targets</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Daily target
+								<span class="inline-input__inner">
+									<input id="qb-dailygoal" type="number" min="1" max="360" step="1" style="width: 5ch">min
+								</span>
+							</div>
+						</div>
+						<div class="mb-2">
+							<div class="inline-input__outer">
+								Weekly target
+								<span class="inline-input__inner">
+									<input id="qb-weeklygoal" type="number" min="1" max="2500" step="1" style="width: 6ch">min
+								</span>
+							</div>
+						</div>
+						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Keys</div>
 						<div class="mb-2">
 							<div class="inline-input__outer">
@@ -586,6 +604,7 @@
 					<div>Games this month: <span id="qb-hist-count"></span></div>
 					<div>Avg score, last 10: <span id="qb-hist-avg"></span></div>
 					<div>Play time today: <span id="qb-playtime"></span></div>
+					<div>Play time this week: <span id="qb-weektime"></span></div>
 					<div class="ctrl__inner" style="margin: 0.5rem 0;">
 						<div>
 							<input hidden id="qb-show-cancelled" type="checkbox">
