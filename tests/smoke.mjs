@@ -75,9 +75,12 @@ async function main() {
   const chromeBin = process.env.CHROME_BIN || 'google-chrome'
   const chrome = spawn(chromeBin, [
     '--headless=new', '--disable-gpu', '--no-first-run', '--no-sandbox',
+    // CI-runner hardening: small /dev/shm crashes Chrome without this; no
+    // D-Bus session exists in the container, so don't let Chrome wait on one.
+    '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--disable-extensions',
     `--remote-debugging-port=${CDP_PORT}`, '--remote-debugging-address=127.0.0.1',
     `--user-data-dir=${profileDir}`,
-  ])
+  ], { env: { ...process.env, DBUS_SESSION_BUS_ADDRESS: '/dev/null' } })
   const chromeLog = []
   chrome.stdout?.on('data', (d) => chromeLog.push(d))
   chrome.stderr?.on('data', (d) => chromeLog.push(d))
@@ -92,7 +95,7 @@ async function main() {
     let info
     const cdpReady = await waitFor(async () => {
       try { info = await (await fetch(`http://localhost:${CDP_PORT}/json/version`)).json(); return true } catch { return false }
-    }, { timeout: 10000 })
+    }, { timeout: 25000 })
     assert(cdpReady, 'headless Chrome CDP endpoint came up')
     if (!cdpReady) throw new Error('chrome never became ready: ' + Buffer.concat(chromeLog).toString())
 
