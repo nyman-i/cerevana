@@ -75,6 +75,7 @@ const MODULE_DIRS = ['js/quadbox', 'js/cct'];
 const CLASSIC_FILES = [
     ...listJsFiles('js/rrt'),
     ...listJsFiles('js/shared'),
+    ...listJsFiles('js/components'),
     'js/menu/page.js',
     'js/studies/page.js',
 ].filter((f) => fs.existsSync(f));
