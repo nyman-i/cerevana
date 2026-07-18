@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<title>Cerevana</title>
@@ -139,21 +139,21 @@
 					<div class="ctrl__inner">
 						<span>Accent</span>
 						<input type="range" id="p-accent" class="accent-range" min="0" max="360" value="165" oninput="handleAccentChange(event)" aria-label="Accent color hue" title="Pick the app's accent hue">
-						<button onclick="resetAccentHue()" title="Back to the default sage accent">Reset</button>
+						<button type="button" onclick="resetAccentHue()" title="Back to the default sage accent">Reset</button>
 					</div>
 					<div class="ctrl__inner">
 						<span>Background</span>
 						<input type="file" id="image-upload" onchange="handleImageChange(event)" accept="image/*" style="display:none">
-						<button onclick="pickBackgroundImage()" title="Use your own image as the app background">Choose Image</button>
-						<button onclick="clearBackgroundImage()" title="Back to the default background">Clear</button>
+						<button type="button" onclick="pickBackgroundImage()" title="Use your own image as the app background">Choose Image</button>
+						<button type="button" onclick="clearBackgroundImage()" title="Back to the default background">Clear</button>
 					</div>
 				</div>
 				<div class="panel-heading menu__footer-heading">Your Data</div>
 				<div class="menu__backup">
-					<button onclick="exportHistory()" title="Save all RRT, N-Back and CCT history to a JSON file">Export History</button>
-					<button onclick="pickImportFile('merge')" title="Combine a file with this device's history — no duplicates, nothing deleted">Import (merge)</button>
-					<button onclick="pickImportFile('overwrite')" title="Replace this device's history with the file's contents">Import (overwrite)</button>
-					<button class="delete" onclick="resetEverything()" title="Permanently erase ALL data for every exercise">Reset App</button>
+					<button type="button" onclick="exportHistory()" title="Save all RRT, N-Back and CCT history to a JSON file">Export History</button>
+					<button type="button" onclick="pickImportFile('merge')" title="Combine a file with this device's history — no duplicates, nothing deleted">Import (merge)</button>
+					<button type="button" onclick="pickImportFile('overwrite')" title="Replace this device's history with the file's contents">Import (overwrite)</button>
+					<button type="button" class="delete" onclick="resetEverything()" title="Permanently erase ALL data for every exercise">Reset App</button>
 					<input type="file" id="history-import" accept=".json,application/json" style="display:none" onchange="handleHistoryImport(event)">
 				</div>
 			</div>
@@ -164,7 +164,7 @@
 		<div id="error-popup" class="error-popup">
 			<div class="error-popup-content">
 				<p id="error-message"></p>
-				<button id="error-close-popup" class="error-close-popup">Close</button>
+				<button type="button" id="error-close-popup" class="error-close-popup">Close</button>
 				<textarea id="error-stack" readonly></textarea>
 			</div>
 		</div>

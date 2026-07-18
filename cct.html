@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<title>Cerevana — CCT</title>
@@ -30,7 +30,7 @@
 								<div class="profile-list" id="profile-list">
 								</div>
 							</div>
-							<div class="profile-plus" id="profile-plus" role="button" tabindex="0" aria-label="Add profile">+</div>
+							<button type="button" class="profile-plus" id="profile-plus" aria-label="Add profile">+</button>
 						</div>
 						<div class="mb-05 panel-heading">Arithmetic</div>
 						<div class="mb-2">
@@ -296,8 +296,8 @@
 						<div class="mb-05 panel-heading">Reset</div>
 						<p>Reset settings keeps your history. The full reset erases
 						all CCT data &mdash; irreversible.</p>
-						<div class="mb-1"><button id="cct-reset-settings">Reset Settings</button></div>
-						<div class="mb-1"><button id="cct-reset-all" class="delete">Reset CCT</button></div>
+						<div class="mb-1"><button type="button" id="cct-reset-settings">Reset Settings</button></div>
+						<div class="mb-1"><button type="button" id="cct-reset-all" class="delete">Reset CCT</button></div>
 					</div>
 				</div>
 				<div class="offcanvas-side">
@@ -345,7 +345,7 @@
 			</div>
 
 			<div class="cct-actions">
-				<button id="cct-start" class="nback__start">START</button>
+				<button type="button" id="cct-start" class="nback__start">START</button>
 			</div>
 
 			<div id="daily-progress-container" class="progress-container">
@@ -371,22 +371,22 @@
 
 		<div id="graph-popup" class="graph-popup">
 			<div class="graph-controls">
-				<button id="cct-tab-progress" class="graph-select selected">Progress</button>
-				<button id="cct-tab-time" class="graph-select">Time Spent</button>
+				<button type="button" id="cct-tab-progress" class="graph-select selected">Progress</button>
+				<button type="button" id="cct-tab-time" class="graph-select">Time Spent</button>
 			</div>
 			<div id="cct-graph-empty" class="panel-empty" hidden>No completed sessions yet.</div>
 			<div id="cct-progress-view" class="graph-popup-content visible"><canvas id="cct-graph-canvas"></canvas></div>
 			<div id="cct-time-view" class="graph-popup-content"><canvas id="cct-time-canvas"></canvas></div>
 			<div class="graph-end-controls">
 				<div>* Progress: last month &middot; Time Spent: last year</div>
-				<button id="graph-close-popup">Close</button>
+				<button type="button" id="graph-close-popup">Close</button>
 			</div>
 		</div>
 
 		<div id="error-popup" class="error-popup">
 			<div class="error-popup-content">
 				<p id="error-message"></p>
-				<button id="error-close-popup" class="error-close-popup">Close</button>
+				<button type="button" id="error-close-popup" class="error-close-popup">Close</button>
 				<textarea id="error-stack" readonly></textarea>
 			</div>
 		</div>

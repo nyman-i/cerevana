@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<title>Cerevana — RRT</title>
@@ -51,9 +51,9 @@
 							    <div class="profile-list" id="profile-list">
 							    </div>
 								</div>
-								<div class="profile-plus" id="profile-plus" role="button" tabindex="0" aria-label="Add profile">+</div>
-								<div class="profile-share" id="profile-share" title="Share" role="button" tabindex="0" aria-label="Share profile"><span class="icon"><i class="ci-Share_iOS_Export"></i></span></div>
-								<div class="profile-share" id="profile-import" title="Import" role="button" tabindex="0" aria-label="Import profile"><span class="icon"><i class="ci-Download"></i></span></div>
+								<button type="button" class="profile-plus" id="profile-plus" aria-label="Add profile">+</button>
+								<button type="button" class="profile-share" id="profile-share" title="Share" aria-label="Share profile"><span class="icon"><i class="ci-Share_iOS_Export"></i></span></button>
+								<button type="button" class="profile-share" id="profile-import" title="Import" aria-label="Import profile"><span class="icon"><i class="ci-Download"></i></span></button>
 								<div class="profile-copied" id="profile-copied" role="status">URL copied to clipboard</div>
 								<input type="text" class="profile-import-input" id="profile-import-input" placeholder="Paste share URL, press Enter">
 							</div>
@@ -498,7 +498,7 @@
 								<div class="inline-input__outer">
 									<span>Color</span>
 									<span class="inline-input__inner">
-									  <input type="text" id="color-input" placeholder="Enter color (e.g. #ff0000)" value="#161F30CC" oninput="handleColorChange(event)" style="width: 11ch"></input>
+									  <input type="text" id="color-input" placeholder="Enter color (e.g. #ff0000)" value="#161F30CC" oninput="handleColorChange(event)" style="width: 11ch">
 									</span>
 								</div>
 								<div class="tooltip-container" tabindex="0">
@@ -905,7 +905,7 @@
 					<div>Avg correct answer time: <span id="average-correct-display"></span></div>
 					<div>% of answers correct: <span id="percent-correct-display"></span></div>
 					<div id="history-list" class="hql"></div>
-					<button onclick="clearHistory()">Clear Session</button>
+					<button type="button" onclick="clearHistory()">Clear Session</button>
 				</div>
 			</div>
 			<input id="offcanvas-info"
@@ -952,8 +952,8 @@
 						<p>Reset settings keeps your history. The full reset erases
 						all RRT data &mdash; irreversible. (N-Back is untouched either
 						way; a full reset for every exercise lives on the main menu.)</p>
-						<div class="mb-1"><button id="reset-rrt-settings" onclick="resetRRTSettings()">Reset Settings</button></div>
-						<div class="mb-1"><button id="reset-rrt" class="delete" onclick="resetRRT()">Reset RRT</button></div>
+						<div class="mb-1"><button type="button" id="reset-rrt-settings" onclick="resetRRTSettings()">Reset Settings</button></div>
+						<div class="mb-1"><button type="button" id="reset-rrt" class="delete" onclick="resetRRT()">Reset RRT</button></div>
 					</div>
 				</div>
 			</div>
@@ -988,7 +988,7 @@
 					</div>
 				</div>
 
-				<span id="spoiler-area">
+				<div id="spoiler-area">
 				<div class="game-display">
 					<div class="carousel">
 						<div class="carousel_display">
@@ -1007,8 +1007,8 @@
 							</div>
 						</div>
 						<div class="carousel_controls">
-							<button id="carousel-back" disabled>Back</button>
-							<button id="carousel-next">Next</button>
+							<button type="button" id="carousel-back" disabled>Back</button>
+							<button type="button" id="carousel-next">Next</button>
 						</div>
 					</div>
 
@@ -1030,8 +1030,8 @@
 				</div>
 
 				<div class="confirmation-buttons">
-					<button id="true-button" class="confirmation-true" onclick="checkIfTrue()" tabindex="-1">TRUE</button>
-					<button id="false-button" class="confirmation-false" onclick="checkIfFalse()" tabindex="-1">FALSE</button>
+					<button type="button" id="true-button" class="confirmation-true" onclick="checkIfTrue()" tabindex="-1">TRUE</button>
+					<button type="button" id="false-button" class="confirmation-false" onclick="checkIfFalse()" tabindex="-1">FALSE</button>
 				</div>
 
 				<div class="level-wrapper">
@@ -1045,8 +1045,8 @@
 						<h3 class="score"><span class="correctly-answered">0</span> / <span class="next-level">0</span></h3>
 					</div>
 				</div>
-				<div id="progress-tracker" class="progress-tracker"></div
-				</span>
+				<div id="progress-tracker" class="progress-tracker"></div>
+			</div>
 			</div>
 
 
@@ -1072,10 +1072,10 @@
 
 		<div id="graph-popup" class="graph-popup">
 			<div class="graph-controls">
-				<button id="graph-select-time" class="graph-select selected">Time Spent</button>
-				<button id="graph-select-score" class="graph-select">Avg Correct Times</button>
-				<button id="graph-select-time-per-premise" class="graph-select">Premise Speed</button>
-				<button id="graph-select-count" class="graph-select">Total Answered</button>
+				<button type="button" id="graph-select-time" class="graph-select selected">Time Spent</button>
+				<button type="button" id="graph-select-score" class="graph-select">Avg Correct Times</button>
+				<button type="button" id="graph-select-time-per-premise" class="graph-select">Premise Speed</button>
+				<button type="button" id="graph-select-count" class="graph-select">Total Answered</button>
 			</div>
 			<div id="graph-empty" class="panel-empty" hidden>No graph data yet &mdash; answer questions with the timer on and it appears here.</div>
 			<div id="graph-popup-time" class="graph-popup-content visible"><canvas id="graph-canvas-time"></canvas></div>
@@ -1084,14 +1084,14 @@
 			<div id="graph-popup-score" class="graph-popup-content"><canvas id="graph-canvas-score"></canvas></div>
 			<div class="graph-end-controls">
 				<div>* Only timed questions are displayed</div>
-				<button id="graph-close-popup" class="graph-close-popup">Close</button>
+				<button type="button" id="graph-close-popup" class="graph-close-popup">Close</button>
 			</div>
 		</div>
 
 		<div id="error-popup" class="error-popup">
 			<div class="error-popup-content">
 				<p id="error-message"></p>
-				<button id="error-close-popup" class="error-close-popup">Close</button>
+				<button type="button" id="error-close-popup" class="error-close-popup">Close</button>
 				<textarea id="error-stack" readonly></textarea>
 			</div>
 		</div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<title>Cerevana — N-Back</title>
@@ -30,7 +30,7 @@
 								<div class="profile-list" id="profile-list">
 								</div>
 							</div>
-							<div class="profile-plus" id="profile-plus" role="button" tabindex="0" aria-label="Add profile">+</div>
+							<button type="button" class="profile-plus" id="profile-plus" aria-label="Add profile">+</button>
 						</div>
 						<div class="mb-05 panel-heading">Game Mode</div>
 						<div class="mb-2">
@@ -584,8 +584,8 @@
 						<div class="mb-05 panel-heading">Reset</div>
 						<p>Reset settings keeps your history. The full reset erases
 						all N-Back data &mdash; irreversible.</p>
-						<div class="mb-1"><button id="qb-reset-settings">Reset Settings</button></div>
-						<div class="mb-1"><button id="qb-reset-all" class="delete">Reset N-Back</button></div>
+						<div class="mb-1"><button type="button" id="qb-reset-settings">Reset Settings</button></div>
+						<div class="mb-1"><button type="button" id="qb-reset-all" class="delete">Reset N-Back</button></div>
 					</div>
 				</div>
 				<div class="offcanvas-side">
@@ -640,8 +640,8 @@
 			<div class="qb-side qb-side--left" id="qb-keys-left"></div>
 			<div class="qb-side qb-side--right" id="qb-keys-right"></div>
 			<div class="qb-actions">
-				<button id="qb-start" class="nback__start">START</button>
-				<button id="qb-next" class="nback__start" hidden>NEXT</button>
+				<button type="button" id="qb-start" class="nback__start">START</button>
+				<button type="button" id="qb-next" class="nback__start" hidden>NEXT</button>
 			</div>
 			<div class="nback__answer qb-answer" id="qb-answer" hidden>Answer: 0</div>
 
@@ -651,22 +651,22 @@
 
 		<div id="graph-popup" class="graph-popup">
 			<div class="graph-controls">
-				<button id="qb-tab-progress" class="graph-select selected">Progress</button>
-				<button id="qb-tab-time" class="graph-select">Time Spent</button>
+				<button type="button" id="qb-tab-progress" class="graph-select selected">Progress</button>
+				<button type="button" id="qb-tab-time" class="graph-select">Time Spent</button>
 			</div>
 			<div id="qb-graph-empty" class="panel-empty" hidden>No completed sessions yet.</div>
 			<div id="qb-progress-view" class="graph-popup-content visible"><canvas id="qb-graph-canvas"></canvas></div>
 			<div id="qb-time-view" class="graph-popup-content"><canvas id="qb-time-canvas"></canvas></div>
 			<div class="graph-end-controls">
 				<div>* Progress: last month &middot; Time Spent: last year</div>
-				<button id="graph-close-popup">Close</button>
+				<button type="button" id="graph-close-popup">Close</button>
 			</div>
 		</div>
 
 		<div id="error-popup" class="error-popup">
 			<div class="error-popup-content">
 				<p id="error-message"></p>
-				<button id="error-close-popup" class="error-close-popup">Close</button>
+				<button type="button" id="error-close-popup" class="error-close-popup">Close</button>
 				<textarea id="error-stack" readonly></textarea>
 			</div>
 		</div>
