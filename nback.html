@@ -104,14 +104,7 @@
 							</div>
 						</div>
 						<div class="mb-05 panel-heading">Session</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								N-Back
-								<span class="inline-input__inner">
-									<input id="qb-nback" type="number" min="1" max="12" step="1" style="width: 5ch">
-								</span>
-							</div>
-						</div>
+						<num-row input-id="qb-nback" label="N-Back" min="1" max="12" step="1" width="5ch"></num-row>
 						<div class="mb-1" id="qb-row-variable">
 							<div class="ctrl__inner">
 								<div>
@@ -128,22 +121,8 @@
 								</div>
 							</div>
 						</div>
-						<div class="mb-2" id="qb-row-trialtime">
-							<div class="inline-input__outer">
-								Trial time
-								<span class="inline-input__inner">
-									<input id="qb-trialtime" type="number" min="1000" max="5000" step="100" style="width: 7ch">ms
-								</span>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Num trials
-								<span class="inline-input__inner">
-									<input id="qb-numtrials" type="number" min="10" max="999" step="1" style="width: 6ch">
-								</span>
-							</div>
-						</div>
+						<num-row input-id="qb-trialtime" label="Trial time" min="1000" max="5000" step="100" width="7ch" suffix="ms" row-id="qb-row-trialtime"></num-row>
+						<num-row input-id="qb-numtrials" label="Num trials" min="10" max="999" step="1" width="6ch"></num-row>
 						<div class="mb-1" id="qb-row-crab">
 							<div class="ctrl__inner">
 								<div>
@@ -181,14 +160,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="mb-2" id="qb-row-squares">
-							<div class="inline-input__outer">
-								Squares
-								<span class="inline-input__inner">
-									<input id="qb-squares" type="number" min="2" max="4" step="1" style="width: 4ch">
-								</span>
-							</div>
-						</div>
+						<num-row input-id="qb-squares" label="Squares" min="2" max="4" step="1" width="4ch" row-id="qb-row-squares"></num-row>
 						<div id="qb-arith-rows" hidden>
 							<div class="mb-1">
 								<div class="ctrl__inner">
@@ -235,50 +207,10 @@
 									<label for="qb-negatives">Negative numbers</label>
 								</div>
 							</div>
-							<div class="mb-2">
-								<div class="inline-input__outer">
-									Max number
-									<span class="inline-input__inner">
-										<input id="qb-maxnumber" type="number" min="1" max="99" step="1" style="width: 5ch">
-									</span>
-								</div>
-							</div>
+							<num-row input-id="qb-maxnumber" label="Max number" min="1" max="99" step="1" width="5ch"></num-row>
 						</div>
-						<div class="mb-2" id="qb-row-matchchance">
-							<div class="inline-input__outer">
-								<span class="ctrl__inner">Match chance
-									<div class="tooltip-container" tabindex="0">
-										?
-										<div class="tooltip-text right">
-											How often the<br>
-											n-back stimulus<br>
-											repeats.<br>
-										</div>
-									</div>
-								</span>
-								<span class="inline-input__inner">
-									<input id="qb-matchchance" type="number" min="5" max="75" step="1" style="width: 5ch">%
-								</span>
-							</div>
-						</div>
-						<div class="mb-2" id="qb-row-interference">
-							<div class="inline-input__outer">
-								<span class="ctrl__inner">Interference
-									<div class="tooltip-container" tabindex="0">
-										?
-										<div class="tooltip-text right">
-											Odds of repeats<br>
-											from n&plusmn;1 trials<br>
-											ago. Raises<br>
-											difficulty.<br>
-										</div>
-									</div>
-								</span>
-								<span class="inline-input__inner">
-									<input id="qb-interference" type="number" min="0" max="75" step="1" style="width: 5ch">%
-								</span>
-							</div>
-						</div>
+						<num-row input-id="qb-matchchance" label="Match chance" min="5" max="75" step="1" width="5ch" suffix="%" row-id="qb-row-matchchance" tooltip="How often the|n-back stimulus|repeats." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
+						<num-row input-id="qb-interference" label="Interference" min="0" max="75" step="1" width="5ch" suffix="%" row-id="qb-row-interference" tooltip="Odds of repeats|from n&plusmn;1 trials|ago. Raises|difficulty." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
 						<div id="qb-tally-rows" hidden>
 							<div class="mb-1">
 								<div class="ctrl__inner">
@@ -378,14 +310,7 @@
 								</select>
 							</div>
 						</div>
-						<div class="mb-2" id="qb-row-rotation">
-							<div class="inline-input__outer">
-								Rotation speed
-								<span class="inline-input__inner">
-									<input id="qb-rotation" type="number" min="0" max="999" step="1" style="width: 5ch">
-								</span>
-							</div>
-						</div>
+						<num-row input-id="qb-rotation" label="Rotation speed" min="0" max="999" step="1" width="5ch" row-id="qb-row-rotation"></num-row>
 						<div class="mb-1">
 							<div class="ctrl__inner">
 								<div>
@@ -442,73 +367,17 @@
 									</div>
 								</div>
 							</div>
-							<div class="mb-2">
-								<div class="inline-input__outer">
-									Advance at
-									<span class="inline-input__inner">
-										<input id="qb-advance" type="number" min="0" max="100" step="1" style="width: 5ch">%
-									</span>
-								</div>
-							</div>
-							<div class="mb-2">
-								<div class="inline-input__outer">
-									Win after
-									<span class="inline-input__inner">
-										<input id="qb-winafter" type="number" min="1" max="9" step="1" style="width: 4ch">in a row
-									</span>
-								</div>
-							</div>
-							<div class="mb-2">
-								<div class="inline-input__outer">
-									Drop below
-									<span class="inline-input__inner">
-										<input id="qb-dropbelow" type="number" min="0" max="100" step="1" style="width: 5ch">%
-									</span>
-								</div>
-							</div>
-							<div class="mb-2">
-								<div class="inline-input__outer">
-									Lose after
-									<span class="inline-input__inner">
-										<input id="qb-loseafter" type="number" min="1" max="9" step="1" style="width: 4ch">in a row
-									</span>
-								</div>
-							</div>
+							<num-row input-id="qb-advance" label="Advance at" min="0" max="100" step="1" width="5ch" suffix="%"></num-row>
+							<num-row input-id="qb-winafter" label="Win after" min="1" max="9" step="1" width="4ch" suffix="in a row"></num-row>
+							<num-row input-id="qb-dropbelow" label="Drop below" min="0" max="100" step="1" width="5ch" suffix="%"></num-row>
+							<num-row input-id="qb-loseafter" label="Lose after" min="1" max="9" step="1" width="4ch" suffix="in a row"></num-row>
 						</div>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Keys</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Position
-								<span class="inline-input__inner">
-									<input id="qb-key-position" type="text" maxlength="1" style="width: 3ch">
-								</span>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Color
-								<span class="inline-input__inner">
-									<input id="qb-key-color" type="text" maxlength="1" style="width: 3ch">
-								</span>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Shape / Image
-								<span class="inline-input__inner">
-									<input id="qb-key-shape" type="text" maxlength="1" style="width: 3ch">
-								</span>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Audio
-								<span class="inline-input__inner">
-									<input id="qb-key-audio" type="text" maxlength="1" style="width: 3ch">
-								</span>
-							</div>
-						</div>
+						<num-row input-id="qb-key-position" label="Position" type="text" maxlength="1" width="3ch"></num-row>
+						<num-row input-id="qb-key-color" label="Color" type="text" maxlength="1" width="3ch"></num-row>
+						<num-row input-id="qb-key-shape" label="Shape / Image" type="text" maxlength="1" width="3ch"></num-row>
+						<num-row input-id="qb-key-audio" label="Audio" type="text" maxlength="1" width="3ch"></num-row>
 					</div>
 				</div>
 				<div class="offcanvas-side">

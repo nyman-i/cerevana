@@ -59,120 +59,15 @@
 								</select>
 							</div>
 						</div>
-						<div class="mb-2" id="cct-row-duration">
-							<div class="inline-input__outer">
-								Duration
-								<span class="inline-input__inner">
-									<input id="cct-duration" type="number" min="1" max="9999" step="1" style="width: 5ch">min
-								</span>
-							</div>
-						</div>
-						<div class="mb-2" id="cct-row-targetcorrect" hidden>
-							<div class="inline-input__outer">
-								Target correct
-								<span class="inline-input__inner">
-									<input id="cct-targetcorrect" type="number" min="1" max="99999" step="1" style="width: 6ch">
-								</span>
-							</div>
-						</div>
+						<num-row input-id="cct-duration" label="Duration" min="1" max="9999" step="1" width="5ch" suffix="min" row-id="cct-row-duration"></num-row>
+						<num-row input-id="cct-targetcorrect" label="Target correct" min="1" max="99999" step="1" width="6ch" row-id="cct-row-targetcorrect" row-hidden></num-row>
 						<div class="mb-05 panel-heading">Adaptive Interval</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								<span class="ctrl__inner">Starting interval
-									<div class="tooltip-container" tabindex="0">
-										?
-										<div class="tooltip-text right">
-											Time between<br>
-											digits when a<br>
-											session starts.<br>
-										</div>
-									</div>
-								</span>
-								<span class="inline-input__inner">
-									<input id="cct-startinginterval" type="number" min="200" max="5000" step="50" style="width: 6ch">ms
-								</span>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								<span class="ctrl__inner">Minimum interval
-									<div class="tooltip-container" tabindex="0">
-										?
-										<div class="tooltip-text right">
-											Fastest the<br>
-											interval can<br>
-											ever get.<br>
-										</div>
-									</div>
-								</span>
-								<span class="inline-input__inner">
-									<input id="cct-mininterval" type="number" min="100" max="5000" step="50" style="width: 6ch">ms
-								</span>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								<span class="ctrl__inner">Maximum interval
-									<div class="tooltip-container" tabindex="0">
-										?
-										<div class="tooltip-text right">
-											Slowest the<br>
-											interval can<br>
-											ever get &mdash;<br>
-											can rise above<br>
-											the starting<br>
-											interval on a<br>
-											bad streak.<br>
-										</div>
-									</div>
-								</span>
-								<span class="inline-input__inner">
-									<input id="cct-maxinterval" type="number" min="200" max="10000" step="50" style="width: 6ch">ms
-								</span>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Step
-								<span class="inline-input__inner">
-									<input id="cct-increment" type="number" min="10" max="500" step="10" style="width: 5ch">ms
-								</span>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								<span class="ctrl__inner">Correct streak
-									<div class="tooltip-container" tabindex="0">
-										?
-										<div class="tooltip-text right">
-											This many right<br>
-											in a row speeds<br>
-											the interval up.<br>
-										</div>
-									</div>
-								</span>
-								<span class="inline-input__inner">
-									<input id="cct-correctthreshold" type="number" min="1" max="20" step="1" style="width: 4ch">
-								</span>
-							</div>
-						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								<span class="ctrl__inner">Incorrect streak
-									<div class="tooltip-container" tabindex="0">
-										?
-										<div class="tooltip-text right">
-											This many wrong<br>
-											in a row slows<br>
-											the interval down.<br>
-										</div>
-									</div>
-								</span>
-								<span class="inline-input__inner">
-									<input id="cct-incorrectthreshold" type="number" min="1" max="20" step="1" style="width: 4ch">
-								</span>
-							</div>
-						</div>
+						<num-row input-id="cct-startinginterval" label="Starting interval" min="200" max="5000" step="50" width="6ch" suffix="ms" tooltip="Time between|digits when a|session starts." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
+						<num-row input-id="cct-mininterval" label="Minimum interval" min="100" max="5000" step="50" width="6ch" suffix="ms" tooltip="Fastest the|interval can|ever get." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
+						<num-row input-id="cct-maxinterval" label="Maximum interval" min="200" max="10000" step="50" width="6ch" suffix="ms" tooltip="Slowest the|interval can|ever get &mdash;|can rise above|the starting|interval on a|bad streak." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
+						<num-row input-id="cct-increment" label="Step" min="10" max="500" step="10" width="5ch" suffix="ms"></num-row>
+						<num-row input-id="cct-correctthreshold" label="Correct streak" min="1" max="20" step="1" width="4ch" tooltip="This many right|in a row speeds|the interval up." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
+						<num-row input-id="cct-incorrectthreshold" label="Incorrect streak" min="1" max="20" step="1" width="4ch" tooltip="This many wrong|in a row slows|the interval down." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Audio</div>
 						<div class="mb-2">
@@ -186,14 +81,7 @@
 								</select>
 							</div>
 						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Playback speed
-								<span class="inline-input__inner">
-									<input id="cct-playbackspeed" type="number" min="1" max="1.5" step="0.1" style="width: 4ch">x
-								</span>
-							</div>
-						</div>
+						<num-row input-id="cct-playbackspeed" label="Playback speed" min="1" max="1.5" step="0.1" width="4ch" suffix="x"></num-row>
 						<div class="mb-1">
 							<div class="ctrl__inner">
 								<div>
@@ -203,14 +91,7 @@
 								<label for="cct-beepenabled">Error beep</label>
 							</div>
 						</div>
-						<div class="mb-2">
-							<div class="inline-input__outer">
-								Beep volume
-								<span class="inline-input__inner">
-									<input id="cct-beepvolume" type="number" min="0" max="100" step="5" style="width: 5ch">%
-								</span>
-							</div>
-						</div>
+						<num-row input-id="cct-beepvolume" label="Beep volume" min="0" max="100" step="5" width="5ch" suffix="%"></num-row>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Display</div>
 						<div class="mb-1">
