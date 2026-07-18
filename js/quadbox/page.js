@@ -260,6 +260,10 @@ for (const [id, set] of toggles) {
   $(id).addEventListener('change', (e) => set(e.target.checked))
 }
 
+// primary Dual/Quad buttons drive the same single mode state as the select
+$('qb-mode-dual').addEventListener('click', () => updateSetting('mode', 'dual'))
+$('qb-mode-quad').addEventListener('click', () => updateSetting('mode', 'quad'))
+
 const selects = [
   ['qb-mode', v => updateSetting('mode', v)],
   ['qb-grid', v => setGameField('grid', v)],
@@ -331,6 +335,8 @@ function syncChainRows(gs) {
   })
 }
 
+let syncedMode = null
+
 const syncPanel = () => {
   const settings = getSettings()
   const gs = getGameSettings()
@@ -347,6 +353,16 @@ const syncPanel = () => {
   }
 
   $('qb-mode').value = mode
+  $('qb-mode-dual').classList.toggle('selected', mode === 'dual')
+  $('qb-mode-quad').classList.toggle('selected', mode === 'quad')
+  // The Advanced disclosure follows MODE CHANGES only (load, profile
+  // switch, picking a mode): open for advanced modes so the active mode
+  // is never hidden, closed for dual/quad. Unrelated settings syncs
+  // leave it alone — closing on every sync would slam it shut mid-browse.
+  if (mode !== syncedMode) {
+    $('qb-advanced-modes').open = mode !== 'dual' && mode !== 'quad'
+    syncedMode = mode
+  }
   $('qb-grid').value = gs.grid ?? 'rotate3D'
   setValue('qb-nback', gs.nBack)
   $('qb-variable').checked = gs.rules === 'variable'

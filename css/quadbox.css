@@ -335,6 +335,36 @@ body.light-mode .qb-face {
 
 /* ---------- recent games table (graph popup) ---------- */
 
+/* mode picker: primary Dual/Quad pair + collapsed Advanced section.
+   Selected state is accent bg + theme-background text — correct contrast
+   in both themes by construction (accent is bright-on-dark, dark-on-light). */
+.qb-mode-primary {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1 1 auto;
+}
+
+.qb-mode-primary button {
+    flex: 1 1 0;
+}
+
+.qb-mode-primary button.selected {
+    background-color: var(--accent-color);
+    color: var(--background-color);
+    font-weight: bold;
+}
+
+#qb-advanced-modes summary {
+    cursor: pointer;
+    padding: 0.5rem;
+    background-color: var(--folder-bg);
+    user-select: none;
+}
+
+#qb-advanced-modes > .ctrl__inner {
+    margin-top: 0.5rem;
+}
+
 /* history panel: stacked per-game cards (.hqli shell from styles.css) */
 .qb-hist-card {
     display: grid;
