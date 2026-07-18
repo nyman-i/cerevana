@@ -161,9 +161,9 @@
 				</div>
 				<div class="panel-heading menu__footer-heading">Your Data</div>
 				<div class="menu__backup">
-					<button type="button" onclick="exportHistory()" title="Save all RRT, N-Back and CCT history to a JSON file">Export History</button>
-					<button type="button" onclick="pickImportFile('merge')" title="Combine a file with this device's history - no duplicates, nothing deleted">Import (merge)</button>
-					<button type="button" onclick="pickImportFile('overwrite')" title="Replace this device's history with the file's contents">Import (overwrite)</button>
+					<button type="button" onclick="exportHistory()" title="Save all RRT, N-Back and CCT history, profiles, settings and appearance to a JSON file (background image not included)">Export Data</button>
+					<button type="button" onclick="pickImportFile('merge')" title="Combine a file's history with this device's - no duplicates, nothing deleted. Profiles/settings/appearance are left untouched">Import (merge)</button>
+					<button type="button" onclick="pickImportFile('overwrite')" title="Replace this device's history, profiles, settings and appearance with the file's contents">Import (overwrite)</button>
 					<button type="button" class="delete" onclick="resetEverything()" title="Permanently erase ALL data for every exercise">Reset App</button>
 					<input type="file" id="history-import" accept=".json,application/json" style="display:none" onchange="handleHistoryImport(event)">
 				</div>
