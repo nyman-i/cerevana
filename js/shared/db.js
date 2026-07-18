@@ -166,17 +166,18 @@ const getAllRRTProgress = async () => {
     });
 }
 
-const getTodayRRTProgress = async () => {
+// Goal-period boundaries, shared by all exercises and the menu tracker.
+// The app's day rolls over at 4 AM; the week starts Monday 4 AM.
+const goalDayStart = () => {
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 4, 0, 0);
     if (now.getHours() < 4) {
         todayStart.setDate(todayStart.getDate() - 1);
     }
-
-    return await getRRTProgressFrom(todayStart.getTime());
+    return todayStart.getTime();
 };
 
-const getWeekRRTProgress = async () => {
+const goalWeekStart = () => {
     const now = new Date();
     const dayOfWeek = now.getDay();
     const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
@@ -184,9 +185,23 @@ const getWeekRRTProgress = async () => {
     if (now.getDay() === 1 && now.getHours() < 4) {
         weekStart.setDate(weekStart.getDate() - 7);
     }
-
-    return getRRTProgressFrom(weekStart.getTime());
+    return weekStart.getTime();
 };
+
+const goalMonthStart = () => {
+    const g = new Date(Date.now() - 4 * 3600 * 1000);
+    return new Date(g.getFullYear(), g.getMonth(), 1, 4, 0, 0).getTime();
+};
+
+// 'YYYY-MM-DD' of this week's Monday — for filtering getYearOfPlayTime() maps
+const goalWeekStartKey = () => {
+    const d = new Date(goalWeekStart());
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+const getTodayRRTProgress = async () => getRRTProgressFrom(goalDayStart());
+
+const getWeekRRTProgress = async () => getRRTProgressFrom(goalWeekStart());
 
 const importRRTRows = async (rows, clearFirst) => {
     const db = await initDB();
