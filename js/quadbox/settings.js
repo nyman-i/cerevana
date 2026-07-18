@@ -268,6 +268,7 @@ const defaultSettings = {
   voice: 'recorded', // 'recorded' = Cerevana audio packs, 'browser' = speechSynthesis
   dailyReset: false,
   lastResetDay: 0,
+  latticeMatchesTheme: false, // cube lattice: fixed original grey vs accent-tinted
   // duplicate keys across entries are fine: pressing a key fires every bound
   // action and inactive tags are no-ops
   hotkeys: {

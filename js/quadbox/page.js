@@ -268,6 +268,7 @@ const toggles = [
     }
   }],
   ['qb-autoprog', v => updateSetting('enableAutoProgression', v)],
+  ['qb-lattice-theme', v => updateSetting('latticeMatchesTheme', v)],
 ]
 
 for (const [id, set] of toggles) {
@@ -392,6 +393,10 @@ const syncPanel = () => {
   $('qb-feedback').value = settings.feedback
   $('qb-voice').value = settings.voice
   setValue('qb-rotation', settings.rotationSpeed)
+  $('qb-lattice-theme').checked = !!settings.latticeMatchesTheme
+  // same shape as the light-mode toggle at the top of this file: a body
+  // class the CSS keys off, applied on load and on every settings change
+  document.body.classList.toggle('qb-lattice-accent', !!settings.latticeMatchesTheme)
   $('qb-autoprog').checked = settings.enableAutoProgression
   setValue('qb-advance', settings.successCriteria)
   setValue('qb-winafter', settings.successComboRequired)
