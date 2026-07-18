@@ -1,0 +1,11 @@
+.git
+.github
+.claude
+.vscode
+tests
+nback-spec.md
+CLAUDE.md
+README.md
+Dockerfile
+.dockerignore
+fly.toml
