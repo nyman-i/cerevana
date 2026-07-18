@@ -113,7 +113,8 @@ implementations are welcome.
   fixed saturation/lightness so it stays WCAG-AA readable at any hue. The
   correct/wrong colours are tuned against a colour-blindness simulation -
   always paired with a word, never colour alone. Custom background image and
-  sound effects.
+  sound effects. A main-font picker in the same Appearance section (Oxanium,
+  JetBrains Mono, Zen Dots, or the default per-role mix) applies app-wide.
 - Desktop launcher installer for Linux (`create-shortcut.sh`) that serves the
   app locally and opens it in its own app window.
 

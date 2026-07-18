@@ -139,6 +139,15 @@
 						</select>
 					</div>
 					<div class="ctrl__inner">
+						<span>Font</span>
+						<select id="p-font" class="select-item" onchange="handleMainFontChange(event)">
+							<option value="default">Default</option>
+							<option value="oxanium" style="font-family: Oxanium, sans-serif">Oxanium</option>
+							<option value="jetbrains" style="font-family: 'JetBrains Mono', monospace">JetBrains Mono</option>
+							<option value="zendots" style="font-family: 'Zen Dots', sans-serif">Zen Dots</option>
+						</select>
+					</div>
+					<div class="ctrl__inner">
 						<span>Accent</span>
 						<input type="range" id="p-accent" class="accent-range" min="0" max="360" value="165" oninput="handleAccentChange(event)" aria-label="Accent color hue" title="Pick the app's accent hue">
 						<button type="button" onclick="resetAccentHue()" title="Back to the default sage accent">Reset</button>

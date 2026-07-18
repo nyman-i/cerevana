@@ -216,6 +216,15 @@ body {
     background-color: var(--background-color);
 }
 
+/* Default: every role keeps its own font (Oxanium nav/labels, JetBrains Mono
+   monospace panels, Zen Dots headings) — only body follows --main-font. Pick
+   a custom font (menu's Appearance panel) and js/shared/appearance.js /
+   js/shared/boot.js add .font-override to <html>, which forces every role to
+   --main-font too — except the CEREVANA wordmark and coolicons glyphs. */
+html.font-override :not(.menu__title):not(i) {
+    font-family: var(--main-font) !important;
+}
+
 h1,
 h2,
 h3,
