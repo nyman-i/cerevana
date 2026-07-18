@@ -500,8 +500,17 @@ $('graph-label').addEventListener('click', async () => {
   await renderChart()
 })
 $('graph-close-popup').addEventListener('click', () => popup.classList.remove('visible'))
+// ESC + outside-click dismissal is shared: js/shared/sidebar-events.js
+
+// 'H' opens History, like RRT. Never while playing: match hotkeys are
+// user-configurable, so a remapped H must not be stolen mid-game.
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && popup.classList.contains('visible')) popup.classList.remove('visible')
+  if (e.code !== 'KeyH') return
+  if (e.target.closest?.('input, select, textarea')) return
+  if (game.isPlaying) return
+  const cb = $('offcanvas-history')
+  cb.checked = !cb.checked
+  cb.dispatchEvent(new Event('change'))
 })
 
 $('qb-tab-progress').addEventListener('click', () => switchTab('progress'))

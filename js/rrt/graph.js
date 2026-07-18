@@ -300,8 +300,4 @@ graphButton.addEventListener('click', async () => {
     document.getElementById('graph-empty').hidden = (await getAllRRTProgress()).length > 0;
 });
 
-document.addEventListener('click', (event) => {
-  if (graphPopup.classList.contains('visible') && !graphPopup.contains(event.target) && !graphButton.contains(event.target)) {
-      PROGRESS_GRAPH.clearGraph();
-  }
-});
+// dismissal (ESC + outside click) is shared: js/shared/sidebar-events.js
