@@ -213,7 +213,7 @@ body.light-mode .qb-variable-n {
     display: flex;
     align-items: center;
     justify-content: center;
-    perspective: 90svmin;
+    perspective: 93svmin;
     /* below-center shift buys HUD clearance for the bigger cube; on the wrap
        so the perspective origin moves with the scene (symmetric projection) */
     transform: translateY(7svh);
@@ -222,10 +222,10 @@ body.light-mode .qb-variable-n {
 
 .qb-scene {
     position: absolute;
-    width: 49.5svmin;
-    height: 49.5svmin;
+    width: 51svmin;
+    height: 51svmin;
     transform-style: preserve-3d;
-    translate: 0 0 -11.9svmin;
+    translate: 0 0 -12.2svmin;
     animation: qb-spin 60s linear 0s infinite normal forwards running;
     will-change: transform;
 }
@@ -288,10 +288,10 @@ body.qb-lattice-accent .qb-frame {
 
 .qb-cell {
     position: absolute;
-    width: 16.5svmin;
-    height: 16.5svmin;
-    left: 16.5svmin;
-    top: 16.5svmin;
+    width: 17svmin;
+    height: 17svmin;
+    left: 17svmin;
+    top: 17svmin;
     transform-style: preserve-3d;
 }
 
@@ -322,12 +322,12 @@ body.qb-lattice-accent .qb-frame {
     transition: filter 0.05s ease-out;
 }
 
-.qb-face--front  { translate: 0 0 8.25svmin; }
-.qb-face--back   { translate: 0 0 -8.25svmin; rotate: y 180deg; }
-.qb-face--right  { translate: 8.25svmin 0 0; rotate: y -90deg; }
-.qb-face--left   { translate: -8.25svmin 0 0; rotate: y 90deg; }
-.qb-face--bottom { translate: 0 8.25svmin 0; rotate: x 90deg; }
-.qb-face--top    { translate: 0 -8.25svmin 0; rotate: x -90deg; }
+.qb-face--front  { translate: 0 0 8.5svmin; }
+.qb-face--back   { translate: 0 0 -8.5svmin; rotate: y 180deg; }
+.qb-face--right  { translate: 8.5svmin 0 0; rotate: y -90deg; }
+.qb-face--left   { translate: -8.5svmin 0 0; rotate: y 90deg; }
+.qb-face--bottom { translate: 0 8.5svmin 0; rotate: x 90deg; }
+.qb-face--top    { translate: 0 -8.5svmin 0; rotate: x -90deg; }
 
 /* flash / multi-position styling (dark is the default theme) */
 .qb-flash .qb-face {
@@ -404,33 +404,33 @@ body.light-mode .qb-face {
 .p2-2   { transform: translate(21.5svmin,   21.5svmin); }
 
 /* 3D position offsets */
-.p0-0-0 { transform: translate3d(-16.5svmin, -16.5svmin, -16.5svmin); }
-.p0-0-1 { transform: translate3d(-16.5svmin, -16.5svmin, 0         ); }
-.p0-0-2 { transform: translate3d(-16.5svmin, -16.5svmin, 16.5svmin ); }
-.p0-1-0 { transform: translate3d(-16.5svmin, 0         , -16.5svmin); }
-.p0-1-1 { transform: translate3d(-16.5svmin, 0         , 0         ); }
-.p0-1-2 { transform: translate3d(-16.5svmin, 0         , 16.5svmin ); }
-.p0-2-0 { transform: translate3d(-16.5svmin, 16.5svmin , -16.5svmin); }
-.p0-2-1 { transform: translate3d(-16.5svmin, 16.5svmin , 0         ); }
-.p0-2-2 { transform: translate3d(-16.5svmin, 16.5svmin , 16.5svmin ); }
-.p1-0-0 { transform: translate3d(0         , -16.5svmin, -16.5svmin); }
-.p1-0-1 { transform: translate3d(0         , -16.5svmin, 0         ); }
-.p1-0-2 { transform: translate3d(0         , -16.5svmin, 16.5svmin ); }
-.p1-1-0 { transform: translate3d(0         , 0         , -16.5svmin); }
+.p0-0-0 { transform: translate3d(-17svmin, -17svmin, -17svmin); }
+.p0-0-1 { transform: translate3d(-17svmin, -17svmin, 0         ); }
+.p0-0-2 { transform: translate3d(-17svmin, -17svmin, 17svmin ); }
+.p0-1-0 { transform: translate3d(-17svmin, 0         , -17svmin); }
+.p0-1-1 { transform: translate3d(-17svmin, 0         , 0         ); }
+.p0-1-2 { transform: translate3d(-17svmin, 0         , 17svmin ); }
+.p0-2-0 { transform: translate3d(-17svmin, 17svmin , -17svmin); }
+.p0-2-1 { transform: translate3d(-17svmin, 17svmin , 0         ); }
+.p0-2-2 { transform: translate3d(-17svmin, 17svmin , 17svmin ); }
+.p1-0-0 { transform: translate3d(0         , -17svmin, -17svmin); }
+.p1-0-1 { transform: translate3d(0         , -17svmin, 0         ); }
+.p1-0-2 { transform: translate3d(0         , -17svmin, 17svmin ); }
+.p1-1-0 { transform: translate3d(0         , 0         , -17svmin); }
 .p1-1-1 { transform: translate3d(0         , 0         , 0         ); }
-.p1-1-2 { transform: translate3d(0         , 0         , 16.5svmin ); }
-.p1-2-0 { transform: translate3d(0         , 16.5svmin , -16.5svmin); }
-.p1-2-1 { transform: translate3d(0         , 16.5svmin , 0         ); }
-.p1-2-2 { transform: translate3d(0         , 16.5svmin , 16.5svmin ); }
-.p2-0-0 { transform: translate3d(16.5svmin , -16.5svmin, -16.5svmin); }
-.p2-0-1 { transform: translate3d(16.5svmin , -16.5svmin, 0         ); }
-.p2-0-2 { transform: translate3d(16.5svmin , -16.5svmin, 16.5svmin ); }
-.p2-1-0 { transform: translate3d(16.5svmin , 0         , -16.5svmin); }
-.p2-1-1 { transform: translate3d(16.5svmin , 0         , 0         ); }
-.p2-1-2 { transform: translate3d(16.5svmin , 0         , 16.5svmin ); }
-.p2-2-0 { transform: translate3d(16.5svmin , 16.5svmin , -16.5svmin); }
-.p2-2-1 { transform: translate3d(16.5svmin , 16.5svmin , 0         ); }
-.p2-2-2 { transform: translate3d(16.5svmin , 16.5svmin , 16.5svmin ); }
+.p1-1-2 { transform: translate3d(0         , 0         , 17svmin ); }
+.p1-2-0 { transform: translate3d(0         , 17svmin , -17svmin); }
+.p1-2-1 { transform: translate3d(0         , 17svmin , 0         ); }
+.p1-2-2 { transform: translate3d(0         , 17svmin , 17svmin ); }
+.p2-0-0 { transform: translate3d(17svmin , -17svmin, -17svmin); }
+.p2-0-1 { transform: translate3d(17svmin , -17svmin, 0         ); }
+.p2-0-2 { transform: translate3d(17svmin , -17svmin, 17svmin ); }
+.p2-1-0 { transform: translate3d(17svmin , 0         , -17svmin); }
+.p2-1-1 { transform: translate3d(17svmin , 0         , 0         ); }
+.p2-1-2 { transform: translate3d(17svmin , 0         , 17svmin ); }
+.p2-2-0 { transform: translate3d(17svmin , 17svmin , -17svmin); }
+.p2-2-1 { transform: translate3d(17svmin , 17svmin , 0         ); }
+.p2-2-2 { transform: translate3d(17svmin , 17svmin , 17svmin ); }
 
 /* ---------- vtally visual crank ---------- */
 
