@@ -2444,6 +2444,60 @@ body.menu-mode .main-view {
     width: min(100%, 72rem);
 }
 
+/* combined goal tracker: horizontal cousin of the RRT/CCT
+   .progress-bar-vertical widget, same fill-state colors */
+.menu__goals {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: min(100%, 72rem);
+    margin-bottom: 1.5rem;
+}
+
+.menu-goal {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.menu-goal__label {
+    font-family: 'Oxanium', sans-serif;
+    font-weight: 700;
+    font-size: var(--step--2);
+    letter-spacing: 0.15em;
+    min-width: 6.5rem;
+    text-align: right;
+}
+
+.menu-goal__track {
+    flex: 1;
+    height: 14px;
+    background-color: var(--label-background-color);
+    border: 2px solid var(--accent-color);
+    border-radius: 0;
+    overflow: hidden;
+}
+
+.menu-goal__fill {
+    height: 100%;
+    width: 0;
+    background-color: var(--accent-dim-color);
+    transition: width 0.5s ease;
+}
+
+.menu-goal__fill.halfway {
+    background-color: var(--progress-halfway-color);
+}
+
+.menu-goal__fill.complete {
+    background-color: var(--accent-color);
+}
+
+.menu-goal__value {
+    font-size: var(--step--2);
+    min-width: 9ch;
+}
+
 .menu-card {
     display: flex;
     flex-direction: column;
