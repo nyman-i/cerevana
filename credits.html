@@ -5,9 +5,10 @@
 		<title>Cerevana — Credits</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="theme-color" content="#7cb6a8" />
-		<link rel="icon" type="image/png" href="favicon.png">
+		<link rel="icon" type="image/png" href="favicon.png?v=5">
 		<link rel="stylesheet" href="fonts/cool/coolicons.css">
 		<link rel="stylesheet" href="css/styles.css">
+		<script src="js/shared/boot.js"></script>
 	</head>
 	<body class="menu-mode">
 
@@ -41,25 +42,36 @@
 				</section>
 
 				<section class="study-card">
-					<h2 class="study-card__title panel-heading">N-Back — Brain Workshop</h2>
-					<p class="study-card__summary">The dual n-back protocol Cerevana
-					reimplements comes from Brain Workshop by Paul Hoskinson with
-					Jonathan Toomim
+					<h2 class="study-card__title panel-heading">N-Back — Quad Box &amp; Brain Workshop</h2>
+					<p class="study-card__summary">Cerevana&rsquo;s N-Back merges two
+					lineages into one game. It is built on the game engine of
+					<a href="https://github.com/soamsy/quad-box" target="_blank" rel="noopener">soamsy/quad-box</a>
+					(MIT,
+					<a href="https://quad-box.netlify.app" target="_blank" rel="noopener">playable original</a>)
+					&mdash; by soamsy, the same developer whose Syllogimous-v3 fork
+					Cerevana&rsquo;s RRT grew from. The classic mode families
+					(Position/Sound, Combination, Arithmetic, Jaeggi, Multi-Square,
+					crab) reimplement the protocol of Brain Workshop by Paul Hoskinson
+					with Jonathan Toomim
 					(<a href="https://brainworkshop.sourceforge.net/" target="_blank" rel="noopener">brainworkshop<wbr>.sourceforge.net</a>,
-					<a href="https://github.com/brain-workshop/brainworkshop" target="_blank" rel="noopener">maintained fork</a>).
-					Cerevana shares no code with Brain Workshop (GPL-2.0) and credits it
-					as protocol source and inspiration.</p>
+					<a href="https://github.com/brain-workshop/brainworkshop" target="_blank" rel="noopener">maintained fork</a>)
+					&mdash; Cerevana shares no code with Brain Workshop (GPL-2.0) and
+					credits it as protocol source and inspiration.</p>
 				</section>
 
 				<section class="study-card">
-					<h2 class="study-card__title panel-heading">Quad Box — soamsy</h2>
-					<p class="study-card__summary">The Quad Box exercise is
-					<a href="https://github.com/soamsy/quad-box" target="_blank" rel="noopener">soamsy/quad-box</a>
-					(MIT), vendored into Cerevana and restyled to match the app &mdash;
-					game mechanics unchanged
-					(<a href="https://quad-box.netlify.app" target="_blank" rel="noopener">playable original</a>).
-					Built by soamsy, the same developer whose Syllogimous-v3 fork
-					Cerevana&rsquo;s RRT grew from.</p>
+					<h2 class="study-card__title panel-heading">CCT &mdash; the PASAT mechanics</h2>
+					<p class="study-card__summary">Cerevana&rsquo;s CCT (Cognitive Control
+					Training) adapts the adaptive-interval PASAT mechanics from
+					<a href="https://github.com/tim22dev22/CCT" target="_blank" rel="noopener">tim22dev22/CCT</a>
+					(MIT,
+					<a href="https://tim22dev22.github.io/CCT/" target="_blank" rel="noopener">playable original</a>)
+					&mdash; the digit-pair adaptive interval/streak state machine and
+					pre-recorded voice packs are ported and restructured into Cerevana&rsquo;s
+					own module layout (see <code>js/cct/PROVENANCE.md</code>); the
+					settings, history, chart and profile UI is original Cerevana code
+					following the same shell as RRT and N-Back. CCT&rsquo;s own README
+					credits &ldquo;EEE&rdquo; for supplying its original source code.</p>
 				</section>
 
 				<section class="study-card">
@@ -85,9 +97,12 @@
 					<a href="https://fonts.google.com/specimen/Zen+Dots" target="_blank" rel="noopener">Zen Dots</a>
 					by Yoshimichi Ohira (<a href="fonts/OFL-ZenDots.txt">OFL</a>),
 					<a href="https://github.com/sevmeyer/oxanium" target="_blank" rel="noopener">Oxanium</a>
-					by Severin Meyer (<a href="fonts/OFL-Oxanium.txt">OFL</a>), and
+					by Severin Meyer (<a href="fonts/OFL-Oxanium.txt">OFL</a>),
 					<a href="https://github.com/JetBrains/JetBrainsMono" target="_blank" rel="noopener">JetBrains Mono</a>
-					by JetBrains (<a href="fonts/OFL-JetBrainsMono.txt">OFL</a>).</p>
+					by JetBrains (<a href="fonts/OFL-JetBrainsMono.txt">OFL</a>), and the
+					CEREVANA wordmark
+					<a href="https://github.com/velvetyne/Format_1452" target="_blank" rel="noopener">Format 1452</a>
+					by Frank Adebiaye / Velvetyne (<a href="fonts/OFL-Format1452.txt">OFL</a>).</p>
 					<p class="study-card__summary">Charts drawn with
 					<a href="https://www.chartjs.org/" target="_blank" rel="noopener">Chart.js</a>
 					(MIT, vendored in <code>js/lib/</code>).</p>

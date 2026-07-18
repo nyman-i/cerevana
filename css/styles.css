@@ -26,6 +26,14 @@
     src: url("../fonts/ZenDots-Regular.woff2") format("woff2");
 }
 
+/* wordmark only — the CEREVANA logo on the menu; never for UI text */
+@font-face {
+    font-family: "Format 1452";
+    font-style: normal;
+    font-weight: normal;
+    src: url("../fonts/Format1452.woff2") format("woff2");
+}
+
 ::-webkit-scrollbar {
     width: 4px;
 }
@@ -35,7 +43,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #eddb7e;
+    background-color: var(--bracket-color);
 }
 
 *,
@@ -46,7 +54,7 @@
 }
 
 :is(button, a, input, select, textarea, summary, label, [tabindex]):focus-visible {
-    outline: 2px solid #2bdef9;
+    outline: 2px solid var(--accent-color);
     outline-offset: 2px;
 }
 
@@ -69,18 +77,28 @@
         -0.04em 0.04em 0.06em #11111175,
         0.04em -0.04em 0.06em #11111175,
         0.04em 0.04em 0.06em #11111175;
+    /* Single accent: ONE user-chosen hue at fixed S/L. Every accent token below
+       is hsl(var(--accent-hue) S% L%) — S and L are locked so the contrast
+       relationships hold for any hue (see UI_DESIGN §2). Default 165 = the
+       original sage-teal (#7cb6a8/#4f7d72/#3c6c64). --accent-color is the only
+       "look here" colour — spend it on selected states, nav, brackets, progress. */
+    --accent-hue: 165;
+    --accent-color: hsl(var(--accent-hue) 28% 60%);
+    --accent-dim-color: hsl(var(--accent-hue) 23% 40%);
+    --accent-deep-color: hsl(var(--accent-hue) 29% 33%);
+
     --text-color: #fffffd;
-    --background-color: #111;
+    --background-color: #131312;
     --preamble-color: #fffa;
     --big-input-bg-color: #000a;
-    --bracket-color: #eddb7e;
-    --bracket-box-shadow: 0 0 0.33rem #9e8847;
+    --bracket-color: var(--accent-color);
+    --bracket-box-shadow: 0;
     --display-label-color: #fffffd;
     --offcanvas-fg: #fffffd;
-    --offcanvas-bg: radial-gradient(circle at top center, #000, #100);
+    --offcanvas-bg: radial-gradient(circle at top center, #0c0c0b, #131312);
     --small-input-bg-color: #111a;
     --profile-bg: #222;
-    --profile-arrow-bg: #111;
+    --profile-arrow-bg: #131312;
     --profile-border: 1px solid #333;
     --profile-select-bg: #222;
     --profile-select-border: 1px solid #333;
@@ -88,40 +106,60 @@
     --single-input-bg: #222a;
     --spinner-bg: #111a;
     --folder-bg: #222;
-    --profile-select-highlight: #248;
+    --profile-select-highlight: hsl(var(--accent-hue) 31% 27%);
     --profile-select-hover: #444;
-    --profile-select-highlight-hover: #36A;
+    --profile-select-highlight-hover: hsl(var(--accent-hue) 29% 35%);
     --profile-select-delete: #523;
     --profile-select-delete-hover: #956;
     --switch-background-color: #333;
     --switch-unselected-color: #444;
-    --switch-selected-color: #CFF;
+    --switch-selected-color: var(--accent-color);
     --switch-border-color: #666;
-    --switch-border-checked-color: #cff9;
+    --switch-border-checked-color: var(--accent-color);
     --linear-settings-background-color: #222;
-    --select-background-color: #191919;
-    --correct-color: #192;
-    --wrong-color: #912;
+    --select-background-color: #191918;
+    /* Verdict pair: semantic green/red, desaturated toward the palette. Each
+       is BOTH a button background and answer text, so lightness is a
+       compromise (see UI_DESIGN §2.5). Tuned for deuteranopia separation. */
+    --correct-color: #4c8434;
+    --wrong-color: #8a5264;
     --background-image-bg-color: #000c;
     --background-brightness: 0.50;
     --label-background-color: #0009;
-    --label-color: #abf4ff;
+    --label-color: var(--accent-color);
     --overlay-background-color: #000;
-    --three-d-background: radial-gradient(circle at center, #555555E0, #222222E0);
+    --three-d-background: radial-gradient(circle at center, #54534fE0, #222220E0);
     --inline-input-bg-color: #282828;
+
+    /* Tokenised strays (were hardcoded outside this block) */
+    --link-color: var(--accent-color);
+    --button-fg-color: hsl(var(--accent-hue) 19% 90%);
+    --button-disabled-bg-color: hsl(var(--accent-hue) 15% 20%);
+    --danger-color: #7d2f38;
+    --danger-glow-color: #8a4d55;
+    --frame-glow: 0 0 12px hsl(var(--accent-hue) 25% 23%);
+    --progress-halfway-color: hsl(var(--accent-hue) 24% 49%);
+    --nback-missed-color: #4a6a7a;
 }
 
 .light-mode {
-    --text-color: #111;
-    --background-color: #FFF;
+    /* Same relationships as dark, re-derived for a warm off-white room at the
+       same hue but higher chroma / lower lightness (the accent must carry
+       label/link text on near-white). --accent-deep-color is theme-identical,
+       so it inherits from :root — not redeclared here. */
+    --accent-color: hsl(var(--accent-hue) 39% 30%);
+    --accent-dim-color: hsl(var(--accent-hue) 22% 46%);
+
+    --text-color: #171613;
+    --background-color: #faf9f7;
     --text-outline: 0 0.01em 0.04em #11111175;
-    --preamble-color: #111;
+    --preamble-color: #3f3d38;
     --big-input-bg-color: #AAAa;
-    --bracket-color: #1798B0;
+    --bracket-color: var(--accent-color);
     --bracket-box-shadow: 0;
-    --display-label-color: #001122;
-    --offcanvas-fg: #111;
-    --offcanvas-bg: radial-gradient(circle at top center, #FFF, #DEF);
+    --display-label-color: hsl(var(--accent-hue) 23% 10%);
+    --offcanvas-fg: #171613;
+    --offcanvas-bg: radial-gradient(circle at top center, #faf9f7, hsl(var(--accent-hue) 18% 92%));
     --small-input-bg-color: #fffa;
     --profile-bg: #eee;
     --profile-arrow-bg: #bbb;
@@ -132,27 +170,36 @@
     --single-input-bg: #eeea;
     --spinner-bg: #fffa;
     --folder-bg: #bbba;
-    --profile-select-highlight: #9BF;
+    --profile-select-highlight: hsl(var(--accent-hue) 26% 78%);
     --profile-select-hover: #BBB;
-    --profile-select-highlight-hover: #ACF;
+    --profile-select-highlight-hover: hsl(var(--accent-hue) 32% 85%);
     --profile-select-delete: #D67;
     --profile-select-delete-hover: #F89;
     --switch-background-color: #DDD;
     --switch-unselected-color: #FFF;
-    --switch-selected-color: #38B;
+    --switch-selected-color: var(--accent-color);
     --switch-border-color: #888;
-    --switch-border-checked-color: #393939;
+    --switch-border-checked-color: var(--accent-color);
     --linear-settings-background-color: #DDD;
-    --select-background-color: #DDD;
-    --correct-color: #093;
-    --wrong-color: #A03;
-    --background-image-bg-color: #FFF;
+    --select-background-color: #e6e4e0;
+    --correct-color: #307e2c;
+    --wrong-color: #582234;
+    --background-image-bg-color: #faf9f7;
     --background-brightness: 0.75;
     --label-background-color: #FFF9;
-    --label-color: #1E4D5A;
+    --label-color: var(--accent-color);
     --overlay-background-color: #DDDA;
-    --three-d-background: radial-gradient(circle at center, #FFFFFFE0, #BBDDEEE0);
+    --three-d-background: radial-gradient(circle at center, #FFFFFFE0, hsl(var(--accent-hue) 19% 89% / 0.88));
     --inline-input-bg-color: #FAFAFA;
+
+    /* Tokenised strays (--button-fg-color is theme-identical → inherits :root) */
+    --link-color: var(--accent-color);
+    --button-disabled-bg-color: hsl(var(--accent-hue) 7% 63%);
+    --danger-color: #7d2f38;
+    --danger-glow-color: #a8737a;
+    --frame-glow: 0 0 12px hsl(var(--accent-hue) 19% 75%);
+    --progress-halfway-color: hsl(var(--accent-hue) 29% 41%);
+    --nback-missed-color: #4a6a7a;
 }
 
 body {
@@ -190,7 +237,7 @@ ul li:not(:last-child) {
 }
 
 a {
-  color: #1e90ff;
+  color: var(--link-color);
   text-decoration: none;
   transition: color 0.3s ease;
 }
@@ -199,26 +246,26 @@ button {
     padding: 0.25em 0.75em;
     font-family: inherit;
     font-size: inherit;
-    color: #dfe9ec;
+    color: var(--button-fg-color);
     border: 0;
-    background-color: #3c6c64;
+    background-color: var(--accent-deep-color);
     cursor: pointer;
 }
 
 button:disabled {
-    background-color: #2b3a37;
+    background-color: var(--button-disabled-bg-color);
 }
 
 button:not(:disabled):hover {
-    box-shadow: 0 2px 4px #4aa39a;
+    box-shadow: 0 2px 4px var(--accent-dim-color);
 }
 
 button.delete {
-    background-color: #981f25;
+    background-color: var(--danger-color);
 }
 
 button.delete:hover {
-    box-shadow: 0 2px 4px #bf3f65;
+    box-shadow: 0 2px 4px var(--danger-glow-color);
 }
 
 /* start of Utils */
@@ -350,8 +397,8 @@ button.delete:hover {
 .main-view {
     align-content: center;
     align-items: center;
-    border: 4px solid #3c6c64;
-    box-shadow: 0 0 20px #4aa39a;
+    border: 4px solid var(--accent-deep-color);
+    box-shadow: var(--frame-glow);
     display: grid;
     height: 100%;
     letter-spacing: 0.1em;
@@ -383,6 +430,26 @@ button.delete:hover {
     background-size: cover;
     background-position: center;
     filter: brightness(var(--background-brightness));
+}
+
+/* Quad Box host page: the game fills the frame; its own body is
+   transparent so .background-image/.overlay show through. Corner tabs
+   and .game-menu (z-index 50) float above. */
+#quadbox-frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    z-index: 0;
+}
+
+/* Quad Box host: fade corner tabs while a panel is open inside the frame */
+label.open.tabs-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;
 }
 
 .metal-gear {
@@ -424,13 +491,13 @@ button.delete:hover {
     position: relative;
 }
 .timer__bar {
-    background-color: #2bdef9;
+    background-color: var(--accent-color);
     height: 8px;
     transition: width .25s ease;
 }
 
 .timer__bar.override {
-    background-color: #21A179;
+    background-color: var(--accent-dim-color);
 }
 
 .custom-time-info {
@@ -665,14 +732,14 @@ input[type="number"]::-moz-inner-spin-button {
     background-color: var(--correct-color)!important;
 }
 .confirmation-true:hover {
-    box-shadow: 0 3px 5px 0 #0908!important;
+    box-shadow: 0 3px 5px 0 #4c843488!important;
 }
 
 .confirmation-false {
     background-color: var(--wrong-color)!important;
 }
 .confirmation-false:hover {
-    box-shadow: 0 3px 5px 0 #9008!important;
+    box-shadow: 0 3px 5px 0 #8a526488!important;
 }
 
 .score {
@@ -1020,7 +1087,7 @@ input[type="number"]::-moz-inner-spin-button {
 }
 
 .is-connector {
-    color: #2bdef9;
+    color: var(--accent-dim-color);
     text-transform: uppercase;
 }
 
@@ -1033,7 +1100,7 @@ input[type="number"]::-moz-inner-spin-button {
 }
 
 .negation-explainer {
-    color: #eddb7e;
+    color: var(--accent-color);
     font-size: var(--step--1);
     font-style: italic;
 }
@@ -1089,7 +1156,7 @@ label.open {
 }
 
 label.open:hover {
-    text-shadow: 0px 0px 5px #affa;
+    text-shadow: 0 0 5px var(--accent-dim-color);
 }
 
 input:checked + .offcanvas {
@@ -1176,8 +1243,48 @@ input:checked + .offcanvas {
     gap: 0.6rem;
 }
 
+/* Accent hue picker: the track IS the choice — a hue wheel rendered at the
+   accent's own S/L so the thumb position previews the resulting colour. */
+.accent-range {
+    flex: 1;
+    min-width: 6rem;
+    height: 0.75rem;
+    padding: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    background: linear-gradient(to right,
+        hsl(0 28% 60%), hsl(60 28% 60%), hsl(120 28% 60%),
+        hsl(180 28% 60%), hsl(240 28% 60%), hsl(300 28% 60%), hsl(360 28% 60%));
+    cursor: pointer;
+}
+.accent-range::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 0.9rem;
+    height: 1.4rem;
+    background: var(--accent-color);
+    border: 2px solid var(--text-color);
+}
+.accent-range::-moz-range-thumb {
+    width: 0.9rem;
+    height: 1.4rem;
+    border: 2px solid var(--text-color);
+    border-radius: 0;
+    background: var(--accent-color);
+}
+
 .big-input {
     font-size: var(--step-0);
+}
+
+/* settings rows whose input a mode has locked (e.g. Jaeggi) — dimmed, showing the effective value */
+.ctrl__inner:has(input:disabled, select:disabled),
+.inline-input__outer:has(input:disabled) {
+    opacity: 0.45;
+}
+
+.ctrl__inner:has(input:disabled) .switch {
+    cursor: default;
 }
 
 .switch {
@@ -1210,7 +1317,7 @@ input:checked + .offcanvas {
 
 input[type="checkbox"]:checked + .switch {
     border-color: var(--switch-border-checked-color);
-    box-shadow: 0 0 4px 1px var(--switch-border-checked-color);
+    box-shadow: 0 0 4px var(--switch-border-checked-color);
     transition-timing-function: ease-in;
 }
 
@@ -1400,7 +1507,7 @@ input[type="checkbox"]:checked + .switch::after {
     height: 2px; 
     margin: 10px 0;
     width: 100%;
-    background-color: #2bdef9;
+    background-color: var(--accent-dim-color);
 }
 
 .depth-a {
@@ -1488,8 +1595,8 @@ table.distinction {
     content: 'HISTORY';
 }
 
-.credits-label::before {
-    content: 'SHORTCUTS';
+.info-label::before {
+    content: 'INFO';
 }
 
 .graph-label::before {
@@ -1505,7 +1612,7 @@ table.distinction {
     width: 20px;
     height: 20px;
     padding-left: 2px;
-    background-color: #404E4D;
+    background-color: hsl(var(--accent-hue) 10% 25%);
     color: #fff;
     font-size: var(--step--2);
     font-weight: bold;
@@ -1892,11 +1999,11 @@ table.distinction {
 }
 
 .graph-select.selected {
-    background: #1c3c30;
+    background: hsl(var(--accent-hue) 36% 17%);
 }
 
 .graph-select.selected:hover {
-    background: #316154;
+    background: hsl(var(--accent-hue) 33% 29%);
 }
 
 .graph-end-controls {
@@ -1981,7 +2088,7 @@ table.distinction {
     height: 40vh;
     width: 24px;
     background: rgba(0, 0, 0, 0.5);
-    border: 2px solid #3c6c64;
+    border: 2px solid var(--accent-deep-color);
     position: relative;
     overflow: hidden;
     display: flex;
@@ -1993,19 +2100,16 @@ table.distinction {
     position: absolute;
     bottom: 0;
     width: 100%;
-    background-color: #2bdef9;
-    box-shadow: 0 0 10px rgba(43, 222, 249, 0.7);
+    background-color: var(--accent-dim-color);
     transition: height 0.5s ease;
 }
 
 .progress-fill.halfway {
-    background-color: #4aa39a;
-    box-shadow: 0 0 10px rgba(74, 163, 154, 0.7);
+    background-color: var(--progress-halfway-color);
 }
 
 .progress-fill.complete {
-    background-color: #eddb7e;
-    box-shadow: 0 0 10px rgba(237, 219, 126, 0.7);
+    background-color: var(--accent-color);
 }
 
 .progress-content {
@@ -2153,6 +2257,7 @@ table.distinction {
     padding: 1rem;
     text-decoration: none;
     border-bottom: 3px solid transparent;
+    white-space: nowrap;
 }
 
 .game-menu__item:hover { opacity: 0.9; }
@@ -2237,7 +2342,7 @@ body.nback-mode .progress-container { display: none; }
 
 .nback__match--right { background-color: var(--correct-color); }
 .nback__match--wrong { background-color: var(--wrong-color); }
-.nback__match--missed { background-color: #28c; }
+.nback__match--missed { background-color: var(--nback-missed-color); }
 
 /* typed answer readout for the arithmetic modes */
 .nback__answer { font-size: var(--step-0); }
@@ -2310,8 +2415,8 @@ body.menu-mode .main-view {
 
 .menu__title {
     color: var(--label-color);
-    font-family: "Zen Dots", sans-serif;
-    letter-spacing: 0.3em;
+    font-family: "Format 1452", "Zen Dots", sans-serif;
+    letter-spacing: 0.22em;
     font-size: var(--step-4);
     margin: 0;
     text-shadow: var(--text-outline);
@@ -2329,12 +2434,6 @@ body.menu-mode .main-view {
     .menu__subtitle {
         font-size: var(--step--2);
     }
-}
-
-.menu-card__player {
-    font-size: var(--step--2);
-    letter-spacing: 0.15em;
-    color: var(--preamble-color);
 }
 
 .menu__cards {
@@ -2404,6 +2503,9 @@ body.menu-mode .main-view {
 
 .menu-card__stats { font-size: var(--step--1); }
 
+/* the panel-empty utility's popup padding is too airy inside a card row */
+.menu-card .panel-empty { padding: 0; }
+
 .menu-card__recent {
     font-size: var(--step--2);
     color: var(--preamble-color);
@@ -2446,11 +2548,16 @@ body.menu-mode .main-view {
 
 .menu__pages a {
     color: var(--preamble-color);
+    text-decoration: none;
+    padding-bottom: 2px;
+    border-bottom: 3px solid transparent; /* same hover affordance as .menu-card__name */
+    transition: border-color 0.15s ease, color 0.15s ease;
 }
 
 .menu__pages a:hover,
 .menu__pages a:focus-visible {
     color: var(--label-color);
+    border-bottom-color: var(--label-color);
 }
 
 .menu__footer {
@@ -2462,31 +2569,31 @@ body.menu-mode .main-view {
     padding-top: 1.5rem;
 }
 
-.menu__backup {
+/* labels the backup/reset row so the footer scans as a section */
+.menu__footer-heading {
+    font-size: var(--step--2);
+    letter-spacing: 0.15em;
+    color: var(--preamble-color);
+    text-shadow: var(--text-outline);
+}
+
+/* footer control rows: settings chrome, same size as the offcanvas panels */
+.menu__backup,
+.menu__appearance {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0.75rem;
+    font-size: var(--step--1);
 }
 
-.menu__backup button {
-    font-size: var(--step--2);
-    background-color: transparent;
-    color: var(--preamble-color);
-    border: 1px solid var(--switch-border-color);
-    padding: 0.25em 0.75em;
+.menu__appearance {
+    gap: 0.75rem 2rem;
 }
 
-/* the destructive one stands apart: pushed right, tinted like button.delete */
+/* the destructive one stands apart from the safe backup actions */
 .menu__backup button.delete {
     margin-left: 1.5rem;
-    color: var(--wrong-color);
-    border-color: var(--wrong-color);
-}
-
-.menu__backup button:hover {
-    box-shadow: none;
-    color: var(--label-color);
-    border-color: var(--label-color);
 }
 
 .menu__community {
@@ -2552,6 +2659,18 @@ body.menu-mode .main-view {
     margin: 0;
     font-size: var(--step--1);
     line-height: 1.5;
+}
+
+.study-card__figures {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.study-card__figure {
+    max-width: min(100%, 360px);
+    height: auto;
+    border: 1px solid #333;
 }
 
 .studies-empty {

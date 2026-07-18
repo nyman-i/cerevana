@@ -2,6 +2,8 @@
 // - close any open offcanvas when clicking outside it
 // - let corner labels and ✕ labels be toggled with Enter/Space (labels don't get
 //   native keyboard activation)
+// - close the graph popup (#graph-popup, opened by #graph-label) on ESC or
+//   an outside click — same dismissal on every game page
 // Pairs are discovered from the DOM: input#offcanvas-X + div#sidebar-X.
 (() => {
     const pairs = [...document.querySelectorAll('input[id^="offcanvas-"]')]
@@ -21,6 +23,20 @@
             if (event.key !== 'Enter' && event.key !== ' ') return;
             event.preventDefault();
             el.click();
+        });
+    }
+
+    const graphPopup = document.getElementById('graph-popup');
+    const graphLabel = document.getElementById('graph-label');
+    if (graphPopup && graphLabel) {
+        document.addEventListener('click', event => {
+            if (graphPopup.classList.contains('visible')
+                    && !graphPopup.contains(event.target) && !graphLabel.contains(event.target)) {
+                graphPopup.classList.remove('visible');
+            }
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape') graphPopup.classList.remove('visible');
         });
     }
 

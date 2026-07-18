@@ -1,0 +1,507 @@
+/* Quad Box game rendering (quadbox.html only).
+   Geometry/behavior ported from the vendored Svelte components
+   (Grid/Cell/VisualCrank, Quad Box by soamsy, MIT — js/quadbox/LICENSE);
+   chrome/controls use the shared design system in styles.css. */
+
+/* ---------- stage ---------- */
+
+#qb-stage {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    user-select: none;
+}
+
+/* ---------- HUD strip (label-bar material, under the game-menu) ---------- */
+
+.qb-hud {
+    position: absolute;
+    top: 4.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 40;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.35rem 1.25rem;
+    background-color: var(--label-background-color);
+    font-family: "Oxanium", sans-serif;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* ---------- controls (original Quad Box layout, Cerevana styling) ----------
+   Key slabs attached flush to the screen edges, filling the vertical band
+   between the corner tabs (like upstream's game-button-lg columns):
+   position/color family left, shape/image/audio right. START/NEXT sit
+   top-right (upstream's Play), the trial counter bottom-right. Buttons keep
+   .nback__match / .nback__start colors, fonts and states. */
+
+.qb-side {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 52svh;
+    width: clamp(5rem, 9svw, 8rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.75rem;
+    z-index: 10;
+}
+
+.qb-side--left {
+    left: 0;
+}
+
+.qb-side--right {
+    right: 0;
+}
+
+/* slabs wear the page's label material (corner tabs / START button):
+   label bg, accent text and border, sharp corners, Oxanium caption */
+.qb-side .nback__match {
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background-color: var(--label-background-color);
+    color: var(--label-color);
+    border: 1px solid var(--accent-color);
+    border-radius: 0; /* sharp corners, per the design system */
+}
+
+/* feedback flashes must outrank the slab's label bg (these selectors are
+   more specific than styles.css's plain .nback__match--* rules) */
+.qb-side .nback__match--right { background-color: var(--correct-color); color: #fffffd; }
+.qb-side .nback__match--wrong { background-color: var(--wrong-color); color: #fffffd; }
+.qb-side .nback__match--missed { background-color: var(--nback-missed-color); color: #fffffd; }
+
+.qb-key-name {
+    font-family: "Oxanium", sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: var(--step--1);
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.qb-key-hot {
+    font-family: "JetBrains Mono", monospace;
+    font-size: var(--step-1);
+    opacity: 0.85;
+    line-height: 1;
+}
+
+.qb-side button[hidden] {
+    display: none;
+}
+
+.qb-side button:disabled {
+    background-color: transparent;
+    opacity: 0.35;
+}
+
+.qb-actions {
+    position: absolute;
+    top: 4.6rem;
+    right: 4rem;
+    display: flex;
+    gap: 0.75rem;
+    z-index: 10;
+}
+
+.qb-answer {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 10;
+}
+
+.qb-count {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 4rem;
+    font-size: 2.25rem;
+    opacity: 0.3;
+    user-select: none;
+    z-index: 5;
+}
+
+/* narrow screens: edge slabs would crowd the board — stack rows at the
+   bottom instead (left keys above right keys above START) */
+@media (max-width: 768px) {
+    .qb-side {
+        top: auto;
+        transform: none;
+        height: auto;
+        width: auto;
+        left: 0.5rem;
+        right: 0.5rem;
+        flex-direction: row;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .qb-side--left {
+        bottom: 9.25rem;
+    }
+
+    .qb-side--right {
+        bottom: 5.25rem;
+    }
+
+    .qb-side .nback__match {
+        flex: 0 1 auto;
+        flex-direction: row;
+        gap: 0.5rem;
+        min-height: 3rem;
+    }
+
+    .qb-key-hot {
+        font-size: var(--step-0);
+    }
+
+    .qb-actions {
+        top: auto;
+        right: auto;
+        left: 0;
+        bottom: 1.25rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .qb-answer {
+        bottom: 13.5rem;
+    }
+}
+
+/* variable-N ghost number over the board */
+.qb-variable-n {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+    font-size: 9rem;
+    font-weight: bold;
+    color: #d1d5db;
+    opacity: 0.8;
+    text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+}
+
+body.light-mode .qb-variable-n {
+    color: #374151;
+}
+
+/* ---------- 3D scene (rotate3D) ---------- */
+
+.qb-wrap3d {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 93svmin;
+    /* below-center shift buys HUD clearance for the bigger cube; on the wrap
+       so the perspective origin moves with the scene (symmetric projection) */
+    transform: translateY(7svh);
+    overflow: hidden;
+}
+
+.qb-scene {
+    position: absolute;
+    width: 51svmin;
+    height: 51svmin;
+    transform-style: preserve-3d;
+    translate: 0 0 -12.2svmin;
+    animation: qb-spin 60s linear 0s infinite normal forwards running;
+    will-change: transform;
+}
+
+@keyframes qb-spin {
+    from {
+        transform: rotateX(var(--rotation-start-x, 0deg)) rotateY(var(--rotation-start-y, 0deg)) rotateZ(var(--rotation-start-z, 0deg));
+    }
+    to {
+        transform: rotateX(calc(var(--rotation-start-x, 0deg) + 360deg))
+                   rotateY(calc(var(--rotation-start-y, 0deg) + 360deg))
+                   rotateZ(calc(var(--rotation-start-z, 0deg) + 360deg));
+    }
+}
+
+.qb-frame {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* fixed neutral lattice by default — the original quad-box values
+       (#d4d4d4 dark / #0a0a0a light, full opacity) */
+    color: #d4d4d4;
+}
+
+body.light-mode .qb-frame {
+    color: #0a0a0a;
+}
+
+/* opt-in (Settings → Display): lattice follows the user's accent.
+   Last so it wins over the light-mode rule in both themes. */
+body.qb-lattice-accent .qb-frame {
+    color: var(--accent-color);
+    opacity: 0.65;
+}
+.qb-frame line,
+.qb-frame rect {
+    stroke: currentColor;
+    stroke-width: 1;
+}
+
+/* ---------- 2D board (static2D) ---------- */
+
+.qb-wrap2d {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.qb-board2d {
+    position: absolute;
+    width: 64.5svmin;
+    height: 64.5svmin;
+    margin-bottom: 2.5rem;
+}
+
+/* ---------- cells ---------- */
+
+.qb-cell {
+    position: absolute;
+    width: 17svmin;
+    height: 17svmin;
+    left: 17svmin;
+    top: 17svmin;
+    transform-style: preserve-3d;
+}
+
+.qb-cell2d {
+    position: absolute;
+    width: 21.5svmin;
+    height: 21.5svmin;
+    left: 21.5svmin;
+    top: 21.5svmin;
+}
+
+.qb-cell[hidden],
+.qb-cell2d[hidden],
+.qb-vcell[hidden] {
+    display: none;
+}
+
+.qb-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: var(--face-bg-color);
+    background-image: var(--shape-url);
+    opacity: var(--face-opacity, 1.0);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: var(--face-size, 82%) var(--face-size, 82%);
+    transition: filter 0.05s ease-out;
+}
+
+.qb-face--front  { translate: 0 0 8.5svmin; }
+.qb-face--back   { translate: 0 0 -8.5svmin; rotate: y 180deg; }
+.qb-face--right  { translate: 8.5svmin 0 0; rotate: y -90deg; }
+.qb-face--left   { translate: -8.5svmin 0 0; rotate: y 90deg; }
+.qb-face--bottom { translate: 0 8.5svmin 0; rotate: x 90deg; }
+.qb-face--top    { translate: 0 -8.5svmin 0; rotate: x -90deg; }
+
+/* flash / multi-position styling (dark is the default theme) */
+.qb-flash .qb-face {
+    filter: drop-shadow(0 0 8px #FFFFFF);
+}
+
+body.light-mode .qb-flash .qb-face {
+    filter: drop-shadow(0 0 8px #111111);
+}
+
+.qb-see-through .qb-face {
+    outline: 3px solid #FFF9;
+}
+
+body.light-mode .qb-see-through .qb-face {
+    outline: 3px solid #0009;
+}
+
+/* text stimuli (classic modes: combo letters, arithmetic numbers) render
+   inside faces; empty text leaves engine stimuli untouched */
+.qb-face {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Oxanium", sans-serif;
+    font-weight: bold;
+    font-size: 7.6svmin;
+    color: #fffffd;
+    user-select: none;
+}
+
+body.light-mode .qb-face {
+    color: #171613;
+}
+
+/* center overlay: stimulus display for position-less modes */
+.qb-center-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.qb-center-wrap[hidden] {
+    display: none;
+}
+
+.qb-center-wrap .qb-face {
+    position: static;
+    width: 21.5svmin;
+    height: 21.5svmin;
+    font-size: 10.5svmin;
+}
+
+.qb-no-padding .qb-face {
+    background-size: 100% 100%;
+}
+
+.qb-little-padding .qb-face {
+    background-size: 95% 95%;
+}
+
+/* 2D position offsets */
+.p0-0   { transform: translate(-21.5svmin, -21.5svmin); }
+.p0-1   { transform: translate(-21.5svmin,     0svmin); }
+.p0-2   { transform: translate(-21.5svmin,  21.5svmin); }
+.p1-0   { transform: translate(0,          -21.5svmin); }
+.p1-1   { transform: translate(0,              0svmin); }
+.p1-2   { transform: translate(0,           21.5svmin); }
+.p2-0   { transform: translate(21.5svmin,  -21.5svmin); }
+.p2-1   { transform: translate(21.5svmin,      0svmin); }
+.p2-2   { transform: translate(21.5svmin,   21.5svmin); }
+
+/* 3D position offsets */
+.p0-0-0 { transform: translate3d(-17svmin, -17svmin, -17svmin); }
+.p0-0-1 { transform: translate3d(-17svmin, -17svmin, 0         ); }
+.p0-0-2 { transform: translate3d(-17svmin, -17svmin, 17svmin ); }
+.p0-1-0 { transform: translate3d(-17svmin, 0         , -17svmin); }
+.p0-1-1 { transform: translate3d(-17svmin, 0         , 0         ); }
+.p0-1-2 { transform: translate3d(-17svmin, 0         , 17svmin ); }
+.p0-2-0 { transform: translate3d(-17svmin, 17svmin , -17svmin); }
+.p0-2-1 { transform: translate3d(-17svmin, 17svmin , 0         ); }
+.p0-2-2 { transform: translate3d(-17svmin, 17svmin , 17svmin ); }
+.p1-0-0 { transform: translate3d(0         , -17svmin, -17svmin); }
+.p1-0-1 { transform: translate3d(0         , -17svmin, 0         ); }
+.p1-0-2 { transform: translate3d(0         , -17svmin, 17svmin ); }
+.p1-1-0 { transform: translate3d(0         , 0         , -17svmin); }
+.p1-1-1 { transform: translate3d(0         , 0         , 0         ); }
+.p1-1-2 { transform: translate3d(0         , 0         , 17svmin ); }
+.p1-2-0 { transform: translate3d(0         , 17svmin , -17svmin); }
+.p1-2-1 { transform: translate3d(0         , 17svmin , 0         ); }
+.p1-2-2 { transform: translate3d(0         , 17svmin , 17svmin ); }
+.p2-0-0 { transform: translate3d(17svmin , -17svmin, -17svmin); }
+.p2-0-1 { transform: translate3d(17svmin , -17svmin, 0         ); }
+.p2-0-2 { transform: translate3d(17svmin , -17svmin, 17svmin ); }
+.p2-1-0 { transform: translate3d(17svmin , 0         , -17svmin); }
+.p2-1-1 { transform: translate3d(17svmin , 0         , 0         ); }
+.p2-1-2 { transform: translate3d(17svmin , 0         , 17svmin ); }
+.p2-2-0 { transform: translate3d(17svmin , 17svmin , -17svmin); }
+.p2-2-1 { transform: translate3d(17svmin , 17svmin , 0         ); }
+.p2-2-2 { transform: translate3d(17svmin , 17svmin , 17svmin ); }
+
+/* ---------- vtally visual crank ---------- */
+
+.qb-crank-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.qb-crank {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 5px;
+    width: 46svmin;
+    height: 46svmin;
+}
+
+.qb-vcell-wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.qb-vcell {
+    position: absolute;
+    inset: 0;
+}
+
+/* ---------- recent games table (graph popup) ---------- */
+
+/* preset modes are view-only: dim their locked per-mode settings
+   (switch labels don't inherit the native disabled look) */
+#sidebar-settings input:disabled + .switch {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+#sidebar-settings select:disabled,
+#sidebar-settings input:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+/* history panel: stacked per-game cards (.hqli shell from styles.css) */
+.qb-hist-card {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    font-size: var(--step--1);
+}
+
+.qb-hist-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+/* .hqli-footer's RRT styling assumes its wide card layout (negative margin)
+   and a dark backdrop (#fff6) — neutralize both inside the history cards */
+.qb-hist-card .hqli-footer {
+    margin-right: 0;
+    color: var(--text-color);
+    opacity: 0.55;
+}
+
+.qb-chip {
+    display: inline-block;
+    padding: 0.1rem 0.45rem;
+    border-radius: 0.25rem;
+    color: #fffffd;
+}

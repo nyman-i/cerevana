@@ -2,8 +2,10 @@
 
 Cerevana is an open, local-first brain-training app that unites multiple
 evidence-based cognitive exercises under one roof. Today that's **RRT**
-(relational reasoning), **Dual N-Back** (working memory) and **Quad Box**
-(3D quad n-back); the ambition is one place for the whole training stack.
+(relational reasoning), **N-Back** (working memory — one merged game
+taking the best of the modern Quad Box protocol and the classic Brain
+Workshop one), and **CCT** (Cognitive Control Training — adaptive-interval
+serial addition); the ambition is one place for the whole training stack.
 It is a plain static site — no build step, no dependencies, no accounts —
 and all of your data stays in your browser (localStorage and IndexedDB).
 
@@ -19,44 +21,48 @@ negation, and anti-strategy scrambling. Play untimed, or against a timer with
 auto-progression that raises premise count and tightens the clock as your
 accuracy holds up.
 
-### Dual N-Back
+### N-Back
 
-The classic dual n-back protocol: squares light up on a 3×3 grid while
-letters are spoken, and you signal whenever the position or the sound matches
-the one from N trials back. The level adapts per mode based on your session
-scores; a Jaeggi mode reproduces the original-study protocol, and a manual
-mode lets you play any level freely. Beyond the classic dual mode there are
-color and combination variants, arithmetic modes (a number is shown, an
-operation is spoken, and you type the answer against the number from N back),
-multi-square tracking, and anti-strategy options like variable-N, crab and
-self-paced play, with tunable progression thresholds and an optional daily
-level reset.
+One n-back, best of both worlds. The core is the modern community
+protocol, built to resist the strategies that make n-back gameable:
+positions on a rotating 3D cube, audio, colors, shapes and unnameable
+generated images tracked simultaneously, deliberate n±1 interference
+lures, variable N, and self-paced tally modes where you enter the
+*count* of matches instead of reacting to each one — with tunable
+auto-progression and per-mode levels. On top of it, the classic Brain
+Workshop mode families: Position/Sound/Color presets, cross-modal
+combination modes, arithmetic modes (a number is shown, an operation is
+spoken, and you type the answer against the number from N back),
+multi-square tracking, a Jaeggi mode reproducing the original-study
+protocol, and crab / self-paced variants — plus an optional daily level
+reset and a choice between recorded voices and your browser's speech
+synthesis. Built on the game engine of soamsy's Quad Box (see Credits);
+the classic modes reimplement Brain Workshop's protocol without sharing
+any code with it.
 
-### Quad Box
+### CCT
 
-The modern community n-back, built to resist the strategies that make the
-classic protocol gameable: positions on a rotating 3D cube, audio, colors,
-shapes and unnameable generated images tracked simultaneously, deliberate
-n±1 interference lures, variable N, and self-paced tally modes where you
-enter the *count* of matches instead of reacting to each one. Includes
-tunable auto-progression, a progress chart and a year activity heatmap.
-Vendored from soamsy's Quad Box and restyled to match Cerevana — the game
-itself is unchanged.
+Cognitive Control Training: the classic PASAT (Paced Auditory Serial
+Addition Test) protocol. Digits from 1–9 play one at a time — for each new
+one, answer with the result of it and the digit right before it (addition
+by default; multiplication, subtraction and difference are also available).
+The pace is adaptive: answer streaks speed the interval up, miss streaks
+slow it back down, clamped between a configurable floor and ceiling. Choose
+from four pre-recorded voice packs and an adjustable playback speed. Core
+mechanics adapted from tim22dev22's CCT (see Credits).
 
 ## Roadmap
 
 The goal is to grow Cerevana into one roof for the training methods the
 [Mindbuilding community](https://discord.gg/brain) has converged on.
 Possible future exercises — no promises, in no particular order — include
-Cognitive Control Training (CCT), 3D Multiple Object Tracking, the Posner
-task, and UFOV. Suggestions and implementations are welcome.
+3D Multiple Object Tracking, the Posner task, and UFOV. Suggestions and
+implementations are welcome.
 
 ## Features
 
 - Main menu with a live overview of the exercises: active profile, totals,
   accuracy and recent results at a glance.
-- Quad Box: the community's modern 3D quad n-back, vendored whole (see
-  Credits) with all of its modes, stats and settings intact.
 - Studies library: browse, search and filter the research behind cognitive
   training, collected by the Mindbuilding community.
 - In-app Credits page with the full attribution: exercise lineage, protocol
@@ -66,11 +72,27 @@ task, and UFOV. Suggestions and implementations are welcome.
   the Import box on another.
 - History export/import to a JSON file, with **merge** (timestamp-deduplicated)
   or **overwrite** semantics, covering score, question history, progress-graph
-  data and n-back sessions.
+  data, all n-back games and all CCT sessions (older export files remain
+  importable).
+- The same four corner panels on every game page: Settings, History (RRT's
+  per-question log; N-Back's per-game list with score chips; CCT's
+  per-session list with accuracy chips), Info (how to play, keyboard
+  shortcuts, credits, resets) and Graphs.
 - Progress graphs: time spent, average correct times, premise speed and totals
-  for RRT; per-mode level and score history for N-Back.
-- Timers with auto-progression (RRT) and adaptive levels (N-Back).
-- Dark and light themes, custom background image, sound effects.
+  for RRT; per-mode level history and daily time spent for N-Back, with
+  pre-merge sessions shown as legacy lines; accuracy-per-session and daily
+  time spent for CCT.
+- Timers with auto-progression (RRT), adaptive per-mode levels (N-Back), and
+  an adaptive answer interval (CCT).
+- A calm, focus-first look in both dark and light: one restrained accent,
+  spent only where attention is earned (selected states, the active tab, the
+  timer). The accent hue is **yours to choose** — a slider in the menu's
+  Appearance section recolours the whole app (both themes, every page) from a
+  single hue, defaulting to the original sage-teal; every shade is derived at
+  fixed saturation/lightness so it stays WCAG-AA readable at any hue. The
+  correct/wrong colours are tuned against a colour-blindness simulation —
+  always paired with a word, never colour alone. Custom background image and
+  sound effects.
 - Desktop launcher installer for Linux (`create-shortcut.sh`) that serves the
   app locally and opens it in its own app window.
 
@@ -83,10 +105,7 @@ localhost (the History API and IndexedDB behave better than on `file://`):
 python3 -m http.server 8080
 ```
 
-then open http://localhost:8080. (Quad Box's built output is committed at
-`quadbox/dist/`, so no npm/build is needed to serve; rebuilding it is only
-required when changing `quadbox/src/` — see `quadbox/VENDORED.md`.)
-For an app-like window:
+then open http://localhost:8080. For an app-like window:
 
 ```bash
 chromium --app=http://localhost:8080
@@ -114,18 +133,28 @@ codebase Cerevana grew from
 [giladkingsley](https://github.com/giladkingsley/) is also a credited
 Syllogimous contributor.
 
-**Dual N-Back** is inspired by **Brain Workshop** by Paul Hoskinson with
-Jonathan Toomim ([brainworkshop.sourceforge.net](https://brainworkshop.sourceforge.net/),
-[maintained fork](https://github.com/brain-workshop/brainworkshop)).
+**N-Back** merges two lineages. It is built on the game engine of
+[soamsy/quad-box](https://github.com/soamsy/quad-box)
+(MIT, [playable original](https://quad-box.netlify.app)) by
+[soamsy](https://github.com/soamsy/) — the same developer behind the
+Syllogimous-v3 fork RRT grew from; the engine lives in
+`js/quadbox/engine/` with per-file MIT attribution headers and its
+license at `js/quadbox/LICENSE` (full provenance in
+`js/quadbox/PROVENANCE.md`). Its classic mode families are inspired by
+**Brain Workshop** by Paul Hoskinson with Jonathan Toomim
+([brainworkshop.sourceforge.net](https://brainworkshop.sourceforge.net/),
+[maintained fork](https://github.com/brain-workshop/brainworkshop)) —
 Cerevana reimplements the protocol in JavaScript and shares no code with
 Brain Workshop.
 
-**Quad Box** is [soamsy/quad-box](https://github.com/soamsy/quad-box)
-(MIT, [playable original](https://quad-box.netlify.app)) by
-[soamsy](https://github.com/soamsy/) — the same developer behind the
-Syllogimous-v3 fork RRT grew from. It is vendored into `quadbox/` and
-restyled to match Cerevana; the game mechanics are unchanged and its MIT
-license is kept at `quadbox/LICENSE` (details in `quadbox/VENDORED.md`).
+**CCT**'s core mechanics — the adaptive-interval PASAT rule — are adapted
+from [tim22dev22/CCT](https://github.com/tim22dev22/CCT) (MIT,
+[playable original](https://tim22dev22.github.io/CCT/)); the derived files
+live in `js/cct/engine/` with per-file MIT attribution headers and their
+license at `js/cct/LICENSE` (full provenance in `js/cct/PROVENANCE.md`).
+The four pre-recorded voice packs (`js/cct/audio/`) are vendored from the
+same source under the same MIT license. CCT's own README credits "EEE" for
+supplying its original source code.
 
 The menu background photo is by
 [Simon Berger on Pexels](https://www.pexels.com/photo/photography-of-mountains-under-cloudy-sky-1183099/)
@@ -145,10 +174,21 @@ The header/logo typeface is [Zen Dots](https://fonts.google.com/specimen/Zen+Dot
 by Yoshimichi Ohira, the display/HUD typeface is
 [Oxanium](https://github.com/sevmeyer/oxanium) by Severin Meyer, and the
 monospace typeface is
-[JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) by JetBrains —
+[JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) by JetBrains, and
+the CEREVANA wordmark on the menu is set in
+[Format 1452](https://github.com/velvetyne/Format_1452) by
+Frank Adebiaye (Velvetyne) —
 all licensed under the SIL Open Font License 1.1
 ([Zen Dots](fonts/OFL-ZenDots.txt), [Oxanium](fonts/OFL-Oxanium.txt),
-[JetBrains Mono](fonts/OFL-JetBrainsMono.txt)) and bundled locally.
+[JetBrains Mono](fonts/OFL-JetBrainsMono.txt),
+[Format 1452](fonts/OFL-Format1452.txt)) and bundled locally.
+
+Bundled libraries, all vendored in `js/lib/`:
+[Chart.js](https://www.chartjs.org/) (MIT) for the progress graphs, and —
+for Quad Box's generated image stimuli —
+[d3-delaunay](https://github.com/d3/d3-delaunay)/[delaunator](https://github.com/mapbox/delaunator)/[robust-predicates](https://github.com/mourner/robust-predicates)
+and [d3-shape](https://github.com/d3/d3-shape)/[d3-path](https://github.com/d3/d3-path)
+(ISC, see [js/lib/LICENSE-d3-stimuli.txt](js/lib/LICENSE-d3-stimuli.txt)).
 
 ## License
 

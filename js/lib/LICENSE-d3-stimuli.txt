@@ -1,0 +1,41 @@
+Vendored ES modules for Quad Box's generated image stimuli
+(js/lib/d3-delaunay.esm.js, delaunator.esm.js, robust-predicates.esm.js,
+d3-shape.esm.js, d3-path.esm.js — jsDelivr +esm bundles with sub-dependency
+specifiers rewritten to local files).
+
+----------------------------------------------------------------------
+d3-delaunay v6.0.4 — https://github.com/d3/d3-delaunay
+Copyright 2018-2021 Observable, Inc.
+Copyright 2021 Mapbox
+
+d3-shape v3.2.0 — https://github.com/d3/d3-shape
+d3-path v3.1.0 — https://github.com/d3/d3-path
+Copyright 2010-2022 Mike Bostock
+
+ISC License
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+----------------------------------------------------------------------
+delaunator v5.0.0 — https://github.com/mapbox/delaunator
+Copyright (c) 2021, Mapbox
+
+ISC License (terms as above).
+
+----------------------------------------------------------------------
+robust-predicates v3.0.0 — https://github.com/mourner/robust-predicates
+Copyright (c) 2019, Vladimir Agafonkin
+Based on "Robust adaptive floating-point geometric predicates" by
+Jonathan Richard Shewchuk, which is in the public domain.
+
+ISC License (terms as above).

@@ -1,0 +1,88 @@
+/* CCT (PASAT-style serial addition) stage layout. Original Cerevana CSS —
+   chrome/controls reuse the shared design system in styles.css
+   (.nback__answer / .nback__start), mechanics adapted from tim22dev22/CCT
+   (MIT, see js/cct/PROVENANCE.md). */
+
+#cct-stage {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    user-select: none;
+}
+
+.cct-hud {
+    position: absolute;
+    top: 4.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 40;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.35rem 1.25rem;
+    background-color: var(--label-background-color);
+    font-family: "Oxanium", sans-serif;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.cct-digit {
+    font-family: "Oxanium", sans-serif;
+    font-weight: bold;
+    font-size: clamp(4rem, 18svh, 9rem);
+    color: var(--accent-color);
+    min-height: 1.2em;
+    line-height: 1.2em;
+}
+
+.cct-answer-input {
+    font-family: "Oxanium", sans-serif;
+    font-size: var(--step-1);
+    text-align: center;
+    width: 6ch;
+    background-color: var(--single-input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--switch-border-color);
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+}
+
+.cct-answer-input.cct-flash-right { border-color: var(--correct-color); }
+.cct-answer-input.cct-flash-wrong { border-color: var(--wrong-color); }
+
+.cct-actions {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+}
+
+/* history panel: stacked per-session cards (.hqli shell from styles.css,
+   same tier-color chip idiom as N-Back's .qb-hist-card/.qb-chip) */
+.cct-hist-card {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    font-size: var(--step--1);
+}
+
+.cct-hist-card .hqli-footer {
+    margin-right: 0;
+    color: var(--text-color);
+    opacity: 0.55;
+}
+
+.cct-chip {
+    display: inline-block;
+    padding: 0.1rem 0.45rem;
+    border-radius: 0.25rem;
+    color: #fffffd;
+}
