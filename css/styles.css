@@ -2661,6 +2661,18 @@ body.menu-mode .main-view {
     line-height: 1.5;
 }
 
+.study-card__figures {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.study-card__figure {
+    max-width: min(100%, 360px);
+    height: auto;
+    border: 1px solid #333;
+}
+
 .studies-empty {
     font-size: var(--step--1);
     color: var(--preamble-color);
