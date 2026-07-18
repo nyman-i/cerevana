@@ -1,5 +1,7 @@
 # Cerevana
 
+**Live at [cerevana.com](https://cerevana.com)** — free, no account needed.
+
 Cerevana is an open, local-first brain-training app that unites multiple
 evidence-based cognitive exercises under one roof. Today that's **RRT**
 (relational reasoning), **N-Back** (working memory — one merged game
@@ -13,6 +15,9 @@ and all of your data stays in your browser (localStorage and IndexedDB).
 
 ### RRT
 
+*Trains: fluid reasoning — relational integration, logical inference and
+mental-model building under time pressure.*
+
 Relational reasoning training: read a set of premises like "A is north-east
 of B", hold the relations in mind, and judge whether a conclusion follows.
 Question types include distinction (same/opposite), linear orderings,
@@ -22,6 +27,9 @@ auto-progression that raises premise count and tightens the clock as your
 accuracy holds up.
 
 ### N-Back
+
+*Trains: working memory — continuous updating, attention control and
+interference resolution.*
 
 One n-back, best of both worlds. The core is the modern community
 protocol, built to resist the strategies that make n-back gameable:
@@ -38,9 +46,13 @@ protocol, and crab / self-paced variants — plus an optional daily level
 reset and a choice between recorded voices and your browser's speech
 synthesis. Built on the game engine of soamsy's Quad Box (see Credits);
 the classic modes reimplement Brain Workshop's protocol without sharing
-any code with it.
+any code with it. Implementation notes and the classic-mode protocol
+spec live in [`nback-spec.md`](nback-spec.md).
 
 ### CCT
+
+*Trains: cognitive control — divided attention, processing speed and
+resistance to interference under time pressure.*
 
 Cognitive Control Training: the classic PASAT (Paced Auditory Serial
 Addition Test) protocol. Digits from 1–9 play one at a time — for each new
@@ -65,6 +77,12 @@ implementations are welcome.
   accuracy and recent results at a glance.
 - Studies library: browse, search and filter the research behind cognitive
   training, collected by the Mindbuilding community.
+- Transfer page: log your scores on an external test battery (fluid
+  intelligence, working memory, general aptitude, personality/mental
+  control) before starting training and again after 4-6+ months, and see
+  each test's baseline-to-latest delta — flagged if retested too soon to be
+  reliable — next to how much RRT/N-Back/CCT training happened in that same
+  window.
 - In-app Credits page with the full attribution: exercise lineage, protocol
   sources and bundled assets.
 - Per-exercise profiles, each with its own settings and progress.
@@ -72,8 +90,8 @@ implementations are welcome.
   the Import box on another.
 - History export/import to a JSON file, with **merge** (timestamp-deduplicated)
   or **overwrite** semantics, covering score, question history, progress-graph
-  data, all n-back games and all CCT sessions (older export files remain
-  importable).
+  data, all n-back games, all CCT sessions and all logged test-battery scores
+  (older export files remain importable).
 - The same four corner panels on every game page: Settings, History (RRT's
   per-question log; N-Back's per-game list with score chips; CCT's
   per-session list with accuracy chips), Info (how to play, keyboard
@@ -84,6 +102,10 @@ implementations are welcome.
   time spent for CCT.
 - Timers with auto-progression (RRT), adaptive per-mode levels (N-Back), and
   an adaptive answer interval (CCT).
+- Daily and weekly play-time goals for every exercise — progress bars beside
+  the play area on RRT and CCT, HUD and history readouts on N-Back — plus a
+  combined tracker on the main menu that sums the goals you've set across
+  exercises and derives a monthly target from them.
 - A calm, focus-first look in both dark and light: one restrained accent,
   spent only where attention is earned (selected states, the active tab, the
   timer). The accent hue is **yours to choose** — a slider in the menu's
@@ -120,6 +142,14 @@ Issues and pull requests are welcome. The codebase is deliberately simple:
 plain HTML/CSS/JS, no build step, no framework — clone, serve, edit, reload.
 Note the license below is **NonCommercial** (inherited from the Syllogimous
 lineage), so contributions land under CC BY-NC 3.0 too.
+
+Development happens on `dev`, which auto-deploys to a preview at
+[cerevana-dev.fly.dev](https://cerevana-dev.fly.dev) on every push; `main`
+is release-only and only moves via pull request. Every push to `dev` and
+every PR into `main` runs the same gate: ESLint, Stylelint, html-validate,
+a gitleaks secret scan, four pure-logic test suites (`tests/*.mjs`), and a
+headless-browser smoke test that loads every page and checks for console
+errors.
 
 ## Credits
 
