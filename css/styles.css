@@ -3147,3 +3147,37 @@ body.menu-mode .main-view {
         padding: 1rem;
     }
 }
+
+/* Stats page (stats.html) - the shared graph components rendered inline
+   instead of inside the 60vh graph popup, so each section stays compact */
+.stats-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.stats-filter input[type="date"] {
+    color-scheme: dark;
+}
+
+.light-mode .stats-filter input[type="date"] {
+    color-scheme: light;
+}
+
+.stats-section {
+    /* .menu is an align-items: flex-start flex column - without an explicit
+       width each section (and its chart) shrinks to content width */
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.stats-section .graph-popup-content {
+    height: 22rem;
+}
+
+.stats-chart-wrap {
+    position: relative;
+    height: 22rem;
+}

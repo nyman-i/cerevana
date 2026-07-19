@@ -100,6 +100,10 @@ implementations are welcome.
   correct times, premise speed and totals for RRT; per-mode level, accuracy,
   reaction time and daily time spent for N-Back; accuracy, response time and
   daily time spent for CCT.
+- Stats page: every exercise's progress graphs gathered on one page over
+  your full history (the game pages' popups show the recent window), plus a
+  combined minutes-per-day chart across all three exercises - filterable to
+  presets (last week/month/90 days/year) or any custom date range.
 - Timers with auto-progression (RRT), adaptive per-mode levels (N-Back), and
   an adaptive answer interval (CCT).
 - Daily and weekly play-time goals for every exercise - progress bars beside

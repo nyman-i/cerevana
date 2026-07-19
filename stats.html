@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Cerevana - Training Stats</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#7cb6a8" />
+		<meta name="description" content="Your training history across every Cerevana exercise - progress and time-spent graphs for RRT, N-Back and CCT over any date range.">
+		<link rel="canonical" href="https://cerevana.com/stats.html">
+		<meta property="og:type" content="website">
+		<meta property="og:site_name" content="Cerevana">
+		<meta property="og:title" content="Cerevana - Training Stats">
+		<meta property="og:description" content="Your training history across every Cerevana exercise - progress and time-spent graphs for RRT, N-Back and CCT over any date range.">
+		<meta property="og:image" content="https://cerevana.com/img/og-image.jpg">
+		<meta property="og:url" content="https://cerevana.com/stats.html">
+		<meta name="twitter:card" content="summary_large_image">
+		<meta property="og:locale" content="en_US">
+		<meta property="og:image:width" content="1200">
+		<meta property="og:image:height" content="630">
+		<meta property="og:image:alt" content="Cerevana logo">
+		<meta name="twitter:image:alt" content="Cerevana logo">
+		<link rel="icon" type="image/png" href="favicon.png?v=5">
+		<link rel="manifest" href="manifest.json">
+		<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+		<link rel="stylesheet" href="fonts/cool/coolicons.css">
+		<link rel="stylesheet" href="css/styles.css">
+		<script src="js/rrt/graphs.js"></script>
+		<script src="js/components/metric-graphs.js"></script>
+		<script src="js/quadbox/graphs.js"></script>
+		<script src="js/cct/graphs.js"></script>
+		<script src="js/shared/boot.js"></script>
+	</head>
+	<body class="menu-mode">
+
+		<div class="main-view">
+
+		<div class="background-image"></div>
+
+		<div class="overlay"></div>
+
+		<div class="menu ffmono">
+			<header class="menu__header">
+				<h1 class="menu__title">STATS</h1>
+				<p class="menu__subtitle">Your training history across every exercise. <a href="index.html">&larr; Back to menu</a></p>
+			</header>
+
+			<div class="stats-filter">
+				<select id="stats-range" class="select-item">
+					<option value="all">All time</option>
+					<option value="7">Last 7 days</option>
+					<option value="30">Last 30 days</option>
+					<option value="90">Last 90 days</option>
+					<option value="365">Last year</option>
+				</select>
+				<input type="date" id="stats-from" class="select-item" title="From date">
+				<input type="date" id="stats-to" class="select-item" title="To date">
+			</div>
+
+			<section class="stats-section">
+				<div class="mb-05 panel-heading">Combined Training Time</div>
+				<div class="panel-empty" id="stats-combined-empty" hidden>No training recorded in this range.</div>
+				<div class="stats-chart-wrap"><canvas id="stats-combined-canvas"></canvas></div>
+			</section>
+
+			<section class="stats-section">
+				<div class="mb-05 panel-heading">RRT</div>
+				<rrt-graphs></rrt-graphs>
+			</section>
+
+			<section class="stats-section">
+				<div class="mb-05 panel-heading">N-Back</div>
+				<nback-graphs></nback-graphs>
+			</section>
+
+			<section class="stats-section">
+				<div class="mb-05 panel-heading">CCT</div>
+				<cct-graphs></cct-graphs>
+			</section>
+		</div>
+
+		</div>
+
+		<div id="error-popup" class="error-popup">
+			<div class="error-popup-content">
+				<p id="error-message"></p>
+				<button type="button" id="error-close-popup" class="error-close-popup">Close</button>
+				<textarea id="error-stack" readonly></textarea>
+			</div>
+		</div>
+
+		<script src="js/shared/constants.js"></script>
+		<script src="js/shared/backwards-compatibility.js"></script>
+		<script src="js/shared/db.js"></script>
+		<script src="js/shared/history-transfer.js"></script>
+		<script src="js/shared/error-handling.js"></script>
+		<script src="js/shared/background.js"></script>
+		<script src="js/lib/chart.min.js"></script>
+		<script src="js/lib/chartjs-adapter-date-fns.min.js"></script>
+		<script src="js/lib/date-fns.min.js"></script>
+		<script type="module" src="js/stats/page.js"></script>
+	</body>
+</html>
