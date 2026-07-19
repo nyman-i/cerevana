@@ -5,7 +5,23 @@
 		<title>Cerevana - Credits</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="theme-color" content="#7cb6a8" />
+		<meta name="description" content="The people and projects Cerevana builds on.">
+		<link rel="canonical" href="https://cerevana.com/credits.html">
+		<meta property="og:type" content="website">
+		<meta property="og:site_name" content="Cerevana">
+		<meta property="og:title" content="Cerevana - Credits">
+		<meta property="og:description" content="The people and projects Cerevana builds on.">
+		<meta property="og:image" content="https://cerevana.com/img/og-image.jpg">
+		<meta property="og:url" content="https://cerevana.com/credits.html">
+		<meta name="twitter:card" content="summary_large_image">
+		<meta property="og:locale" content="en_US">
+		<meta property="og:image:width" content="1200">
+		<meta property="og:image:height" content="630">
+		<meta property="og:image:alt" content="Cerevana logo">
+		<meta name="twitter:image:alt" content="Cerevana logo">
 		<link rel="icon" type="image/png" href="favicon.png?v=5">
+		<link rel="manifest" href="manifest.json">
+		<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 		<link rel="stylesheet" href="fonts/cool/coolicons.css">
 		<link rel="stylesheet" href="css/styles.css">
 		<script src="js/shared/boot.js"></script>
@@ -86,8 +102,11 @@
 					<p class="study-card__summary">Menu background photo by Simon Berger
 					(<a href="https://www.pexels.com/photo/photography-of-mountains-under-cloudy-sky-1183099/" target="_blank" rel="noopener">Pexels</a>,
 					Pexels License).</p>
-					<p class="study-card__summary">Favicon and app icon: the Cerevana
-					head logo, created with <a href="https://www.canva.com/" target="_blank" rel="noopener">Canva Pro</a>
+					<p class="study-card__summary">Favicon, app and PWA/iOS icons
+					(<code>favicon.png</code>, <code>img/icon-512.png</code>,
+					<code>img/icon-192.png</code>, <code>img/apple-touch-icon.png</code>)
+					and the social-preview image (<code>img/og-image.jpg</code>): the
+					Cerevana head logo, created with <a href="https://www.canva.com/" target="_blank" rel="noopener">Canva Pro</a>
 					(<a href="https://www.canva.com/policies/content-license-agreement/" target="_blank" rel="noopener">Canva Content License</a>,
 					separate from the app&rsquo;s CC BY-NC license).</p>
 					<p class="study-card__summary">Typefaces, all under the SIL Open Font
@@ -103,9 +122,21 @@
 					CEREVANA wordmark
 					<a href="https://github.com/velvetyne/Format_1452" target="_blank" rel="noopener">Format 1452</a>
 					by Frank Adebiaye / Velvetyne (<a href="fonts/OFL-Format1452.txt">OFL</a>).</p>
-					<p class="study-card__summary">Charts drawn with
+					<p class="study-card__summary">UI icons:
+					<a href="https://github.com/krystonschwarze/coolicons" target="_blank" rel="noopener">coolicons</a>
+					by Kryston Schwarze (MIT), bundled as an icon webfont in
+					<code>fonts/cool/</code>.</p>
+					<p class="study-card__summary">Libraries, all vendored in
+					<code>js/lib/</code>:
 					<a href="https://www.chartjs.org/" target="_blank" rel="noopener">Chart.js</a>
-					(MIT, vendored in <code>js/lib/</code>).</p>
+					(MIT) for the progress graphs, with
+					<a href="https://github.com/date-fns/date-fns" target="_blank" rel="noopener">date-fns</a>
+					and
+					<a href="https://github.com/chartjs/chartjs-adapter-date-fns" target="_blank" rel="noopener">chartjs-adapter-date-fns</a>
+					(both MIT) for the Transfer chart's time axis; and, for the N-Back
+					generated image stimuli, d3-delaunay / delaunator / robust-predicates
+					and d3-shape / d3-path (ISC, see
+					<a href="js/lib/LICENSE-d3-stimuli.txt">LICENSE-d3-stimuli.txt</a>).</p>
 				</section>
 
 				<section class="study-card">

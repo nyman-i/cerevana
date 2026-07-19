@@ -2,7 +2,7 @@
 
 **Live at [cerevana.com](https://cerevana.com)** - free, no account needed.
 
-Cerevana is an open, local-first brain-training app that unites multiple
+Cerevana is an open, local-first Mindbuilding app that unites multiple
 evidence-based cognitive exercises under one roof. Today that's **RRT**
 (relational reasoning), **N-Back** (working memory - one merged game
 taking the best of the modern Quad Box protocol and the classic Brain
@@ -122,6 +122,9 @@ implementations are welcome.
   JetBrains Mono, Zen Dots, or the default per-role mix) applies app-wide.
 - Desktop launcher installer for Linux (`create-shortcut.sh`) that serves the
   app locally and opens it in its own app window.
+- Installable as a PWA: any browser's "Install app" adds Cerevana as a
+  standalone window with its own icon (no service worker, so it still needs a
+  connection - this is install convenience, not offline support).
 
 ## Running locally
 
@@ -201,9 +204,11 @@ The menu background photo is by
 The favicon and app icon are the Cerevana head logo, created with
 [Canva Pro](https://www.canva.com/) and used under the
 [Canva Content License](https://www.canva.com/policies/content-license-agreement/);
-bundled as `favicon.png` and `img/icon-512.png`. Note: the logo is licensed
-separately from the app - the repository's CC BY-NC license does not apply
-to it.
+bundled as `favicon.png`, `img/icon-512.png`, `img/icon-192.png` and
+`img/apple-touch-icon.png` (the PWA/iOS icons). The social-preview image
+`img/og-image.jpg` is the same logo set beside the CEREVANA wordmark (Format
+1452, below). Note: the logo is licensed separately from the app - the
+repository's CC BY-NC license does not apply to it.
 
 The body typeface is [Space Grotesk](https://github.com/floriankarsten/space-grotesk)
 by Florian Karsten, licensed under the
@@ -221,9 +226,17 @@ all licensed under the SIL Open Font License 1.1
 [JetBrains Mono](fonts/OFL-JetBrainsMono.txt),
 [Format 1452](fonts/OFL-Format1452.txt)) and bundled locally.
 
+The UI icons are [coolicons](https://github.com/krystonschwarze/coolicons)
+by Kryston Schwarze (MIT), bundled as an icon webfont in `fonts/cool/`
+(license: [fonts/cool/LICENSE-coolicons.txt](fonts/cool/LICENSE-coolicons.txt)).
+
 Bundled libraries, all vendored in `js/lib/`:
-[Chart.js](https://www.chartjs.org/) (MIT) for the progress graphs, and -
-for Quad Box's generated image stimuli -
+[Chart.js](https://www.chartjs.org/) (MIT) for the progress graphs, with
+[date-fns](https://github.com/date-fns/date-fns) and
+[chartjs-adapter-date-fns](https://github.com/chartjs/chartjs-adapter-date-fns)
+(both MIT, license: [js/lib/LICENSE-date-fns.txt](js/lib/LICENSE-date-fns.txt))
+powering the Transfer chart's time axis; and - for Quad Box's generated image
+stimuli -
 [d3-delaunay](https://github.com/d3/d3-delaunay)/[delaunator](https://github.com/mapbox/delaunator)/[robust-predicates](https://github.com/mourner/robust-predicates)
 and [d3-shape](https://github.com/d3/d3-shape)/[d3-path](https://github.com/d3/d3-path)
 (ISC, see [js/lib/LICENSE-d3-stimuli.txt](js/lib/LICENSE-d3-stimuli.txt)).
