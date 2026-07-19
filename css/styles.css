@@ -1634,6 +1634,14 @@ table.distinction {
     margin-left: 100px;
 }
 
+/* bounds width instead of relying on a fixed shift to dodge clipping -
+   for tooltips whose content varies (e.g. per-mode copy) and needs to
+   stay clear of a narrow sidebar's edges at any viewport width */
+.tooltip-text.wrap {
+    white-space: normal;
+    max-width: 180px;
+}
+
 .tooltip-container:hover .tooltip-text,
 .tooltip-container:focus-within .tooltip-text,
 .tooltip-container.show .tooltip-text {
