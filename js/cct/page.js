@@ -12,6 +12,11 @@ import {
 
 const $ = id => document.getElementById(id)
 
+// ---- theme follows the app-wide setting (like every game page) ----
+appStateStartup()
+document.body.classList.toggle('light-mode', appState.darkMode === false)
+applySavedBackground()
+
 const keySettingMap = {
   'cct-mode': 'arithmeticMode',
   'cct-endcondition': 'endCondition',
@@ -51,7 +56,10 @@ function populateSettings() {
     const el = $(id)
     if (!el || el === document.activeElement) continue
     if (el.type === 'checkbox') el.checked = settings[key]
-    else el.value = settings[key] ?? ''
+    else if (NULLABLE_KEYS.has(key)) el.value = settings[key] ?? ''
+    // a missing key (e.g. stale cached settings.js next to fresh markup)
+    // must not blank the field - leave it on what it already shows
+    else if (settings[key] != null) el.value = settings[key]
   }
   syncConditionalRows(settings)
 }
