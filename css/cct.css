@@ -33,6 +33,7 @@
 
 .cct-frame {
     --cct-digit-size: clamp(4rem, 18svh, 9rem);
+
     position: relative;
     display: flex;
     flex-direction: column;

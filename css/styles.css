@@ -221,7 +221,7 @@ body {
    a custom font (menu's Appearance panel) and js/shared/appearance.js /
    js/shared/boot.js add .font-override to <html>, which forces every role to
    --main-font too - except the CEREVANA wordmark and coolicons glyphs. */
-html.font-override :not(.menu__title):not(i) {
+html.font-override :not(.menu__title, i) {
     font-family: var(--main-font) !important;
 }
 
