@@ -46,8 +46,7 @@ protocol, and crab / self-paced variants - plus an optional daily level
 reset and a choice between recorded voices and your browser's speech
 synthesis. Built on the game engine of soamsy's Quad Box (see Credits);
 the classic modes reimplement Brain Workshop's protocol without sharing
-any code with it. Implementation notes and the classic-mode protocol
-spec live in [`nback-spec.md`](nback-spec.md).
+any code with it.
 
 ### CCT
 
