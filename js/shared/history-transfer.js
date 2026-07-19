@@ -166,6 +166,39 @@ function pickImportFile(mode) {
     input.click();
 }
 
+// Human-readable "what's in this file" summary for the import confirmation
+// dialogs (native confirm() is plain text + \n only, no HTML). Both merge
+// and overwrite show the per-exercise breakdown; overwrite additionally
+// lists profiles/settings/appearance since merge-mode never touches those
+// (per its tooltip's promise).
+function describeImportContents(file, data, quadboxImport, cctImport, testScoresImport, overwrite) {
+    const plural = (n, singular, pluralForm = `${singular}s`) => `${n} ${n === 1 ? singular : pluralForm}`;
+    const exportedAt = typeof data.exportedAt === 'number' ? new Date(data.exportedAt).toLocaleString() : null;
+    const lines = [
+        `File: ${file.name}${exportedAt ? ` (exported ${exportedAt})` : ''}`,
+        '',
+        `  RRT: ${plural(data.questions.length, 'answered question')}, ${plural(data.rrtHistory.length, 'progress-graph entry', 'progress-graph entries')}`,
+        `  N-Back: ${plural(quadboxImport.length, 'game')}`,
+        `  CCT: ${plural(cctImport.length, 'session')}`,
+        `  Test Tracker: ${plural(testScoresImport.length, 'logged score')}`,
+    ];
+    if (overwrite) {
+        const profileCounts = [
+            Array.isArray(data.rrtProfiles) ? `${data.rrtProfiles.length} RRT` : null,
+            Array.isArray(data.nbackProfiles) ? `${data.nbackProfiles.length} N-Back` : null,
+            Array.isArray(data.cctProfiles) ? `${data.cctProfiles.length} CCT` : null,
+        ].filter(Boolean);
+        if (profileCounts.length) lines.push(`  Profiles: ${profileCounts.join(', ')}`);
+        const settingsFor = [
+            data.nbackSettings && typeof data.nbackSettings === 'object' ? 'N-Back' : null,
+            data.cctSettings && typeof data.cctSettings === 'object' ? 'CCT' : null,
+        ].filter(Boolean);
+        if (settingsFor.length) lines.push(`  Live settings: ${settingsFor.join(', ')}`);
+        if (data.appState && typeof data.appState === 'object') lines.push('  Appearance/app state: included');
+    }
+    return lines.join('\n');
+}
+
 async function handleHistoryImport(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -186,7 +219,11 @@ async function handleHistoryImport(event) {
     if (!valid) { alert('Not a Cerevana history export.'); return; }
 
     const overwrite = importMode === 'overwrite';
-    if (overwrite && !confirm('Replace ALL local history with the file contents? This cannot be undone.')) return;
+    const summary = describeImportContents(file, data, quadboxImport, cctImport, testScoresImport, overwrite);
+    const prompt = overwrite
+        ? `${summary}\n\nThis REPLACES ALL local history, profiles, settings and appearance with the above. This cannot be undone.\n\nContinue?`
+        : `${summary}\n\nThis merges into your existing history - duplicates are skipped automatically, nothing is deleted, and profiles/settings/appearance stay untouched.\n\nContinue?`;
+    if (!confirm(prompt)) return;
 
     const base = overwrite ? [] : appState.questions;
     const seen = new Set(base.map(q => q.answeredAt));
