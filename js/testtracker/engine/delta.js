@@ -40,6 +40,16 @@ export function computeTimeline(records) {
   })
 }
 
+// Maps a raw delta to 'right'/'wrong'/'' given which direction counts as
+// improvement for this test - 'higher' (default), 'lower' (e.g. Neuroticism,
+// CERQ's maladaptive subscales), or 'neutral' (no stated hypothesis, never
+// colored).
+export function deltaClass(deltaRaw, direction) {
+  if (deltaRaw === 0 || direction === 'neutral') return ''
+  const improved = direction === 'lower' ? deltaRaw < 0 : deltaRaw > 0
+  return improved ? 'right' : 'wrong'
+}
+
 // True once RELIABLE_INTERVAL_MS has passed since the most recent attempt -
 // a test with at least one logged score that's old enough a retest is due.
 export function isDueForRetest(records, now = Date.now()) {

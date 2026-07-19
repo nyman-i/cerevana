@@ -40,40 +40,35 @@
 				<p class="menu__subtitle">Log external test-battery scores and see how they move alongside your training. <a href="index.html">&larr; Back to menu</a></p>
 			</header>
 
-			<div class="transfer-layout">
+			<section id="transfer-due-section" class="transfer-due-section" hidden>
+				<div class="panel-heading">Ready to retest</div>
+				<div id="transfer-due" class="transfer-due"></div>
+			</section>
 
-				<div class="transfer-main">
-					<section id="transfer-due-section" class="transfer-due-section" hidden>
-						<div class="panel-heading">Ready to retest</div>
-						<div id="transfer-due" class="transfer-due"></div>
-					</section>
+			<details class="transfer-protocol">
+				<summary>Testing protocol - read before your first session</summary>
+				<ul class="explainer">
+					<li>Wait <strong>4&ndash;6 months</strong> of consistent training between your before- and after-test on any one test. Testing too soon mostly measures practice effects, not real change - a popup's delta summary flags any pair under ~120 days.</li>
+					<li>Test in a quiet, distraction-free environment.</li>
+					<li>Be rested (8+ hours of sleep), fed and hydrated. Don't test while sick or under acute stress.</li>
+					<li>Max 2 tests per day, to avoid mental fatigue.</li>
+					<li>5&ndash;10 minutes of light warm-up is fine, but avoid intense Mindbuilding right before a test - it can cause fatigue effects.</li>
+				</ul>
+			</details>
 
-					<details class="transfer-protocol">
-						<summary>Testing protocol &mdash; read before your first session</summary>
-						<ul class="explainer">
-							<li>Wait <strong>4&ndash;6 months</strong> of consistent training between your before- and after-test on any one test. Testing too soon mostly measures practice effects, not real change &mdash; the results panel flags any pair under ~120 days.</li>
-							<li>Test in a quiet, distraction-free environment.</li>
-							<li>Be rested (8+ hours of sleep), fed and hydrated. Don't test while sick or under acute stress.</li>
-							<li>Max 2 tests per day, to avoid mental fatigue.</li>
-							<li>5&ndash;10 minutes of light warm-up is fine, but avoid intense brain training right before a test &mdash; it can cause fatigue effects.</li>
-						</ul>
-					</details>
-
-					<div id="transfer-list" class="transfer-list"></div>
-				</div>
-
-				<div class="transfer-sidebar">
-					<section id="transfer-results-section" class="transfer-section" hidden>
-						<div class="panel-heading">Results</div>
-						<div id="transfer-results" class="transfer-results"></div>
-					</section>
-				</div>
-
-			</div>
+			<div id="transfer-list" class="transfer-list"></div>
 
 			<div class="transfer-bottom">
-				<section id="transfer-chart-section" class="transfer-section" hidden>
+				<section id="transfer-chart-section" class="transfer-section">
 					<div class="panel-heading">Progress &amp; training time over time</div>
+					<div class="transfer-chart-picker">
+						<div class="inline-input__outer transfer-chart-add">
+							Add to graph
+							<span class="inline-input__inner"><select id="transfer-chart-add"></select></span>
+						</div>
+						<div id="transfer-chart-lines" class="transfer-chart-lines"></div>
+					</div>
+					<div id="transfer-chart-empty" class="panel-empty">Pick a test score or a training method above to plot it.</div>
 					<div class="transfer-chart-wrap"><canvas id="transfer-chart"></canvas></div>
 				</section>
 			</div>
@@ -82,16 +77,30 @@
 
 		</div>
 
+		<div id="test-popup-backdrop" class="test-popup-backdrop"></div>
 		<div id="test-popup" class="test-popup">
 			<div class="test-popup-content">
 				<button type="button" id="test-popup-close" class="test-popup-close" aria-label="Close">&times;</button>
 				<h3 id="test-popup-title" class="test-card__title"></h3>
-				<div id="test-popup-meta" class="test-card__meta"></div>
-				<p id="test-popup-summary" class="test-card__summary-text"></p>
+				<div id="test-popup-metrics" class="test-popup-metrics"></div>
+				<div class="test-popup-columns">
+					<div>
+						<div id="test-popup-meta" class="test-card__meta"></div>
+						<p id="test-popup-summary" class="test-card__summary-text"></p>
+					</div>
+					<div>
+						<div id="test-popup-history" class="test-card__history"></div>
+						<div id="test-popup-delta" class="test-popup-delta"></div>
+					</div>
+				</div>
 				<form id="test-popup-log" class="test-card__log">
 					<div class="inline-input__outer">
 						Date
 						<span class="inline-input__inner"><input type="date" id="test-popup-date" required></span>
+					</div>
+					<div class="inline-input__outer" id="test-popup-variant-field" hidden>
+						Variant
+						<span class="inline-input__inner"><select id="test-popup-variant"></select></span>
 					</div>
 					<div class="inline-input__outer">
 						Score
@@ -103,7 +112,6 @@
 					</div>
 					<button type="submit">Log score</button>
 				</form>
-				<div id="test-popup-history" class="test-card__history"></div>
 			</div>
 		</div>
 

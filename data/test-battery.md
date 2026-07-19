@@ -84,7 +84,7 @@ Category: General aptitude
 Access: Free
 Time: 40 min
 
-A highly reliable test spanning verbal, quantitative and spatial ability. Check the site for a current free-results code before paying for the extended report (historically PIWI/FREJARD - codes rotate, so confirm before relying on one).
+A highly reliable test spanning verbal, quantitative and spatial ability. Check the site for a current free-results code before paying for the extended report (historically PIWI/FREJARD - codes rotate, so confirm before relying on one). Log the single overall AGCT score here - whether the paid extended report breaks this out into per-domain subscores couldn't be confirmed, so this entry isn't split.
 
 https://cognitivemetrics.com/test/AGCT
 
@@ -108,33 +108,228 @@ Considered one of the most g-loaded tests ever given at scale, from before exten
 
 https://1980sat.anvil.app/
 
-# CORE (CognitiveMetrics)
+# CORE - Verbal Comprehension
 
 Category: General aptitude
 Access: Free
 Time: 30 min (abbreviated) to 2 hr (full battery)
+Variants: Abbreviated, Full battery
 
-A modern battery platform measuring several cognitive indices at once - pick the abbreviated or optimized battery for a pre/post pair short enough to repeat.
+One of CORE's six reported cognitive indices: crystallized knowledge, verbal reasoning, and the ability to understand and express ideas through language. CORE is a modern battery platform measuring several indices at once - pick the abbreviated or optimized battery for a pre/post pair short enough to repeat, and log this index's own subscore here, not the overall composite.
 
 https://cognitivemetrics.com/test/CORE
 
-# IPIP-120 / IPIP-300 (Big Five)
+# CORE - Fluid Reasoning
+
+Category: General aptitude
+Access: Free
+Time: 30 min (abbreviated) to 2 hr (full battery)
+Variants: Abbreviated, Full battery
+
+One of CORE's six reported cognitive indices: problem-solving, relational and logical thinking with novel, nonverbal tasks. Log this index's own subscore here, not the overall composite.
+
+https://cognitivemetrics.com/test/CORE
+
+# CORE - Visual Spatial
+
+Category: General aptitude
+Access: Free
+Time: 30 min (abbreviated) to 2 hr (full battery)
+Variants: Abbreviated, Full battery
+
+One of CORE's six reported cognitive indices: the ability to analyze and manipulate spatial information. Log this index's own subscore here, not the overall composite.
+
+https://cognitivemetrics.com/test/CORE
+
+# CORE - Quantitative Reasoning
+
+Category: General aptitude
+Access: Free
+Time: 30 min (abbreviated) to 2 hr (full battery)
+Variants: Abbreviated, Full battery
+
+One of CORE's six reported cognitive indices: numerical problem-solving and the ability to reason using quantitative concepts. Log this index's own subscore here, not the overall composite.
+
+https://cognitivemetrics.com/test/CORE
+
+# CORE - Working Memory
+
+Category: General aptitude
+Access: Free
+Time: 30 min (abbreviated) to 2 hr (full battery)
+Variants: Abbreviated, Full battery
+
+One of CORE's six reported cognitive indices: short-term memory capacity and the ability to mentally manipulate information. Log this index's own subscore here, not the overall composite.
+
+https://cognitivemetrics.com/test/CORE
+
+# CORE - Processing Speed
+
+Category: General aptitude
+Access: Free
+Time: 30 min (abbreviated) to 2 hr (full battery)
+Variants: Abbreviated, Full battery
+
+One of CORE's six reported cognitive indices: efficiency in visual scanning, processing, and rapid decision-making. Log this index's own subscore here, not the overall composite.
+
+https://cognitivemetrics.com/test/CORE
+
+# IPIP-120/300 - Openness
 
 Category: Personality & emotional control
 Access: Free
 Time: 10-15 min (120-item) or 40-60 min (300-item)
+Variants: 120-item, 300-item
+Direction: neutral
 
-Measures the five broad personality traits. The community's usual read on training effects is a drop in Neuroticism and a rise in Conscientiousness. Take the 120-item version for speed, or 300-item for more precision at the same result page - not both.
+One of the Big Five traits from the IPIP inventory. No consistent training-effect hypothesis is documented for this trait in this community - log it to track your own baseline, not to chase a "better" direction. Take the 120-item version for speed, or 300-item for more precision at the same result page - not both.
 
 https://www.personalityassessor.com/ipip-120/
 
-# CERQ (Emotional Control Test)
+# IPIP-120/300 - Conscientiousness
+
+Category: Personality & emotional control
+Access: Free
+Time: 10-15 min (120-item) or 40-60 min (300-item)
+Variants: 120-item, 300-item
+Direction: higher
+
+One of the Big Five traits from the IPIP inventory. The community's usual read on training effects is a rise in Conscientiousness alongside a drop in Neuroticism (see that entry). Take the 120-item version for speed, or 300-item for more precision at the same result page - not both.
+
+https://www.personalityassessor.com/ipip-120/
+
+# IPIP-120/300 - Extraversion
+
+Category: Personality & emotional control
+Access: Free
+Time: 10-15 min (120-item) or 40-60 min (300-item)
+Variants: 120-item, 300-item
+Direction: neutral
+
+One of the Big Five traits from the IPIP inventory. No consistent training-effect hypothesis is documented for this trait in this community - log it to track your own baseline, not to chase a "better" direction. Take the 120-item version for speed, or 300-item for more precision at the same result page - not both.
+
+https://www.personalityassessor.com/ipip-120/
+
+# IPIP-120/300 - Agreeableness
+
+Category: Personality & emotional control
+Access: Free
+Time: 10-15 min (120-item) or 40-60 min (300-item)
+Variants: 120-item, 300-item
+Direction: neutral
+
+One of the Big Five traits from the IPIP inventory. No consistent training-effect hypothesis is documented for this trait in this community - log it to track your own baseline, not to chase a "better" direction. Take the 120-item version for speed, or 300-item for more precision at the same result page - not both.
+
+https://www.personalityassessor.com/ipip-120/
+
+# IPIP-120/300 - Neuroticism
+
+Category: Personality & emotional control
+Access: Free
+Time: 10-15 min (120-item) or 40-60 min (300-item)
+Variants: 120-item, 300-item
+Direction: lower
+
+One of the Big Five traits from the IPIP inventory. The community's usual read on training effects is a drop in Neuroticism alongside a rise in Conscientiousness (see that entry). Take the 120-item version for speed, or 300-item for more precision at the same result page - not both.
+
+https://www.personalityassessor.com/ipip-120/
+
+# CERQ - Self-blame
 
 Category: Personality & emotional control
 Access: Free
 Time: 10 min
+Direction: lower
 
-Measures how well you regulate your own thoughts and feelings after something goes wrong.
+One of the CERQ's nine coping-strategy subscales: how much you blame yourself for what happened. Grouped with the test's other less-adaptive strategies (other-blame, rumination, catastrophizing) - a downward trend across those four is the generally desired direction.
+
+https://psytests.org/coping/cerqen.html
+
+# CERQ - Other-blame
+
+Category: Personality & emotional control
+Access: Free
+Time: 10 min
+Direction: lower
+
+One of the CERQ's nine coping-strategy subscales: how much you put the blame for what happened on others. Grouped with the test's other less-adaptive strategies (self-blame, rumination, catastrophizing).
+
+https://psytests.org/coping/cerqen.html
+
+# CERQ - Rumination
+
+Category: Personality & emotional control
+Access: Free
+Time: 10 min
+Direction: lower
+
+One of the CERQ's nine coping-strategy subscales: how much you dwell on the thoughts and feelings tied to a negative event. Grouped with the test's other less-adaptive strategies (self-blame, other-blame, catastrophizing).
+
+https://psytests.org/coping/cerqen.html
+
+# CERQ - Catastrophizing
+
+Category: Personality & emotional control
+Access: Free
+Time: 10 min
+Direction: lower
+
+One of the CERQ's nine coping-strategy subscales: how much you emphasize the terror of what you've experienced. Grouped with the test's other less-adaptive strategies (self-blame, other-blame, rumination).
+
+https://psytests.org/coping/cerqen.html
+
+# CERQ - Putting into perspective
+
+Category: Personality & emotional control
+Access: Free
+Time: 10 min
+Direction: higher
+
+One of the CERQ's nine coping-strategy subscales: how much you downplay the severity of an event relative to other events. Grouped with the test's other adaptive strategies (positive refocusing, positive reappraisal, refocus on planning, acceptance).
+
+https://psytests.org/coping/cerqen.html
+
+# CERQ - Positive refocusing
+
+Category: Personality & emotional control
+Access: Free
+Time: 10 min
+Direction: higher
+
+One of the CERQ's nine coping-strategy subscales: how much you think about pleasant matters instead of the actual event. Grouped with the test's other adaptive strategies (putting into perspective, positive reappraisal, refocus on planning, acceptance).
+
+https://psytests.org/coping/cerqen.html
+
+# CERQ - Positive reappraisal
+
+Category: Personality & emotional control
+Access: Free
+Time: 10 min
+Direction: higher
+
+One of the CERQ's nine coping-strategy subscales: how much you attach a positive meaning to the event in terms of personal growth. Grouped with the test's other adaptive strategies (putting into perspective, positive refocusing, refocus on planning, acceptance).
+
+https://psytests.org/coping/cerqen.html
+
+# CERQ - Refocus on planning
+
+Category: Personality & emotional control
+Access: Free
+Time: 10 min
+Direction: higher
+
+One of the CERQ's nine coping-strategy subscales: how much you think about what steps to take to handle the event. Grouped with the test's other adaptive strategies (putting into perspective, positive refocusing, positive reappraisal, acceptance).
+
+https://psytests.org/coping/cerqen.html
+
+# CERQ - Acceptance
+
+Category: Personality & emotional control
+Access: Free
+Time: 10 min
+Direction: higher
+
+One of the CERQ's nine coping-strategy subscales: how much you resign yourself to accepting what has happened. Grouped with the test's other adaptive strategies (putting into perspective, positive refocusing, positive reappraisal, refocus on planning).
 
 https://psytests.org/coping/cerqen.html
 

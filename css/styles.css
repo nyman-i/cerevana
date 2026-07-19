@@ -2756,45 +2756,8 @@ body.menu-mode .main-view {
 
 /* ---- Transfer page (transfer.html) ---- */
 
-/* Full-width two-column dashboard: a wide main column to browse/log tests
-   (cards flow into a responsive grid - there's room), a narrower sidebar
-   that stays in view for Results/correlation while the main column scrolls. */
-.transfer-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(19rem, 26rem);
-    gap: 2rem;
-    width: 100%;
-    align-items: start;
-}
-
-.transfer-main {
-    min-width: 0; /* let grid children shrink instead of blowing out the column */
-}
-
-.transfer-sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    position: sticky;
-    top: 1.5rem;
-    max-height: calc(100vh - 3rem);
-    overflow-y: auto;
-}
-
-@media (width <= 900px) {
-    .transfer-layout {
-        grid-template-columns: 1fr;
-    }
-    .transfer-sidebar {
-        position: static;
-        max-height: none;
-    }
-}
-
-/* Full-width row below the two-column layout: the chart gets the room it
-   needs to actually be readable. Training activity is plotted as bars
-   inside the chart itself, not a separate panel, so this is just the one
-   section. */
+/* Single-column: browse/log tests at the top, the filterable chart below -
+   nothing sits in a persistent sidebar anymore. */
 .transfer-bottom {
     width: 100%;
     margin-top: 2rem;
@@ -2835,6 +2798,18 @@ body.menu-mode .main-view {
 
 .transfer-due__name {
     font-weight: bold;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Only shown when a multi-metric test's siblings have drifted out of sync -
+   names the specific metrics that are overdue, not just the parent test. */
+.transfer-due__partial {
+    font-weight: normal;
+    font-size: var(--step--2);
+    color: var(--preamble-color);
 }
 
 .transfer-due__age {
@@ -2864,31 +2839,24 @@ body.menu-mode .main-view {
     margin-top: 0.5rem;
 }
 
+/* Wrapping flex, not a fixed-column grid: cards grow to fill each row edge
+   to edge, so a category with a leftover card doesn't strand empty space on
+   the right. */
 .transfer-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 0.75rem;
-    align-items: start;
+    align-items: stretch;
     width: 100%;
     padding-bottom: 1rem;
 }
 
-/* Capped to roughly 3 cards before it scrolls internally - otherwise a long
-   results list can make the sidebar (and so the whole two-column row)
-   taller than the main test-browsing column, leaving a visible gap above
-   .transfer-bottom under the shorter column. */
-.transfer-results {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    width: 100%;
-    max-height: 38rem;
-    overflow-y: auto;
-    padding-right: 0.25rem; /* room for the scrollbar so it doesn't sit on the card border */
+.transfer-list .test-card {
+    flex: 1 1 19rem;
 }
 
 .transfer-category {
-    grid-column: 1 / -1;
+    width: 100%;
     font-size: var(--step--1);
     margin-top: 1.25rem;
     padding-bottom: 0.25rem;
@@ -2910,8 +2878,10 @@ body.menu-mode .main-view {
 .test-card {
     display: flex;
     align-items: center;
-    flex-wrap: nowrap;
-    gap: 0.75rem;
+    /* wrap, not nowrap: a delta badge + "Retest ready" side by side would
+       otherwise crush the flexible name to zero width in a ~19rem grid cell */
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
     width: 100%;
     text-align: left;
     font: inherit;
@@ -2981,6 +2951,29 @@ body.menu-mode .main-view {
     line-height: 1.65;
 }
 
+/* Only rendered when a test has more than one metric (e.g. IPIP-120/300's
+   five Big Five traits) - picks which metric the rest of the popup (meta,
+   summary, delta, history, log form) is scoped to. The selected one gets the
+   accent left border, the app's usual "this is the active item" marker. */
+.test-popup-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+}
+
+.test-popup-metrics .graph-select.selected {
+    border-left: 3px solid var(--accent-color);
+}
+
+.test-popup-delta {
+    margin: 0.75rem 0 0;
+}
+
+.test-popup-delta:empty {
+    display: none; /* no phantom margin when the metric has under 2 records */
+}
+
 .test-card__log {
     display: flex;
     flex-wrap: wrap;
@@ -2988,7 +2981,7 @@ body.menu-mode .main-view {
     gap: 0.75rem 1rem;
     background-color: var(--big-input-bg-color);
     padding: 0.75rem 1rem;
-    margin-bottom: 0.75rem;
+    margin-top: 0.75rem; /* sits full-width below the info | history columns */
 }
 
 .test-card__log .inline-input__outer {
@@ -3012,9 +3005,13 @@ body.menu-mode .main-view {
     overflow-y: auto;
 }
 
+.test-card__history:empty {
+    display: none; /* no bare bordered box before the first score is logged */
+}
+
 .test-card__history-row {
     display: grid;
-    grid-template-columns: 7rem 5rem 1fr auto;
+    grid-template-columns: 7rem 4rem auto 1fr auto;
     align-items: center;
     gap: 0.5rem;
     padding: 0.4rem 0.75rem;
@@ -3043,6 +3040,15 @@ body.menu-mode .main-view {
     white-space: nowrap;
 }
 
+/* Which administration form was taken (e.g. "120-item" vs "300-item") - only
+   set for tests with more than one non-equivalent form (data/test-battery.md's
+   `Variants:` field). */
+.test-card__history-variant {
+    background-color: var(--folder-bg);
+    padding: 0.05rem 0.35rem;
+    border-radius: 0.2rem;
+}
+
 .test-card__history-delete {
     background: none;
     color: var(--preamble-color);
@@ -3065,13 +3071,50 @@ body.menu-mode .main-view {
     top: 8%;
     left: 50%;
     transform: translateX(-50%);
-    width: min(90vw, 36rem);
-    max-height: 84vh;
+    width: min(92vw, 42rem);
+    max-height: 86vh;
     overflow-y: auto;
     background-color: var(--background-color);
     border-radius: 8px;
     box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
-    padding: 1.5rem;
+    padding: 2rem;
+}
+
+/* Dim + blur everything behind the popup so it gets full focus. A real
+   element (not a pseudo) so clicking it lands outside the popup and the
+   existing outside-click close handler fires. */
+.test-popup-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 999; /* just under .test-popup's 1000 */
+    display: none;
+    background: rgb(0 0 0 / 35%);
+    backdrop-filter: blur(5px);
+}
+
+.test-popup-backdrop.visible {
+    display: block;
+}
+
+/* Once a test has logged scores (.test-popup--wide, set by fillPopup) the
+   popup widens and splits: info + log form left, results (delta timeline +
+   score history) right - so real history doesn't push everything into one
+   long scroll. With nothing logged there are no results to show, and the
+   popup stays a narrow single column. */
+.test-popup-columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0 1.5rem;
+    align-items: start;
+}
+
+@media (width > 700px) {
+    .test-popup--wide {
+        width: min(94vw, 64rem);
+    }
+    .test-popup--wide .test-popup-columns {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 .test-popup.visible {
@@ -3098,59 +3141,8 @@ body.menu-mode .main-view {
     color: var(--danger-color);
 }
 
-/* ---- Results section: full attempt history, not just baseline/latest ---- */
-
-.transfer-result {
-    background-color: var(--background-color);
-    border: 1px solid #333;
-    border-left: 4px solid var(--switch-border-color);
-    box-shadow: 0 1px 10px 5px #0004;
-    padding: 1rem 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.transfer-result--right { border-left-color: var(--correct-color); }
-.transfer-result--wrong { border-left-color: var(--wrong-color); }
-
-.transfer-result__title {
-    font-size: var(--step-0);
-    margin: 0;
-    overflow-wrap: anywhere;
-}
-
-.transfer-result__timeline {
-    display: flex;
-    flex-direction: column;
-    font-size: var(--step--1);
-    border: 1px solid #333;
-}
-
-/* Content-sized, not fixed rem tracks - a wider date format or a multi-digit
-   score is never cramped against a column that assumed something narrower. */
-.transfer-result__row {
-    display: grid;
-    grid-template-columns: auto auto 1fr;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.3rem 0.6rem;
-}
-
-.transfer-result__row:nth-child(even) {
-    background-color: #fff1;
-}
-
-.transfer-result__row-date {
-    color: var(--preamble-color);
-    font-family: "JetBrains Mono", monospace;
-    font-size: var(--step--2);
-}
-
-.transfer-result__row-score {
-    font-family: "JetBrains Mono", monospace;
-    font-weight: bold;
-}
+/* ---- Popup delta bits: per-step delta inside the merged history rows,
+   overall summary line below the history box. ---- */
 
 .transfer-result__row-delta {
     font-family: "JetBrains Mono", monospace;
@@ -3171,8 +3163,8 @@ body.menu-mode .main-view {
     font-size: var(--step-0);
 }
 
-.transfer-result--right .transfer-result__summary strong { color: var(--correct-color); }
-.transfer-result--wrong .transfer-result__summary strong { color: var(--wrong-color); }
+.transfer-result__summary--right strong { color: var(--correct-color); }
+.transfer-result__summary--wrong strong { color: var(--wrong-color); }
 
 /* Compact - a one-word-ish reliability chip inline after the headline delta,
    not a full sentence on its own line (the full explanation is a title
@@ -3187,6 +3179,44 @@ body.menu-mode .main-view {
 .transfer-result__warning { color: var(--accent-color); }
 .transfer-result__ok { color: var(--preamble-color); }
 
+/* ---- Chart picker: one "Add to graph" dropdown (everything selectable,
+   grouped by test/category) plus one row of removable colored chips for the
+   lines actually plotted - the chips are the chart's legend. ---- */
+.transfer-chart-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.transfer-chart-add {
+    width: fit-content; /* inline-input__outer is full-width by default */
+}
+
+.transfer-chart-lines {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.transfer-chart-lines:empty {
+    display: none;
+}
+
+/* Same shape as .qb-chip/.cct-chip, but clickable: the background is the
+   line's assigned color, clicking removes the line from the graph. */
+.transfer-chart-line {
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
+    font: inherit;
+    font-size: var(--step--1);
+    color: #fffffd;
+}
+
+.transfer-chart-line__x {
+    opacity: 0.65;
+}
+
 .transfer-chart-wrap {
     position: relative;
     height: 22rem;
@@ -3195,7 +3225,7 @@ body.menu-mode .main-view {
 
 @media (width <= 500px) {
     .test-card__history-row {
-        grid-template-columns: 5.5rem 3.5rem 1fr auto;
+        grid-template-columns: 5.5rem 3rem auto 1fr auto;
     }
     .test-popup {
         top: 3%;

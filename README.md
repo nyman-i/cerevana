@@ -175,9 +175,10 @@ Development happens on `dev`, which auto-deploys to a preview at
 [cerevana-dev.fly.dev](https://cerevana-dev.fly.dev) on every push; `main`
 is release-only and only moves via pull request. Every push to `dev` and
 every PR into `main` runs the same gate: ESLint, Stylelint, html-validate,
-a gitleaks secret scan, four pure-logic test suites (`tests/*.mjs`), and a
-headless-browser smoke test that loads every page and checks for console
-errors.
+a gitleaks secret scan, five pure-logic test suites (`tests/*-pure.mjs`,
+covering RRT, N-Back, Quad Box, CCT and the transfer tracker), and a
+headless-browser smoke test (`tests/smoke.mjs`) that loads every page and
+checks for console errors.
 
 ## Credits
 

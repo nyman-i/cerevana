@@ -1,6 +1,6 @@
 // Pure-function checks for js/testtracker/engine/delta.js
 // run with: node tests/testtracker-pure.mjs
-import { computeDelta, computeTimeline, isDueForRetest, bucketByMonth, RELIABLE_INTERVAL_MS } from '../js/testtracker/engine/delta.js'
+import { computeDelta, computeTimeline, isDueForRetest, bucketByMonth, deltaClass, RELIABLE_INTERVAL_MS } from '../js/testtracker/engine/delta.js'
 
 let fail = 0
 const assert = (c, l) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + l); if (!c) fail++ }
@@ -122,6 +122,16 @@ assert(JSON.stringify(bucketByMonth([])) === '[]', 'bucketByMonth: no entries ->
     'bucketByMonth: buckets sorted chronologically regardless of input order')
   assert(b[1].y === 5, 'bucketByMonth: Jan 31 stays in January, not spilling into February')
 }
+
+// --- deltaClass ---
+assert(deltaClass(15, 'higher') === 'right', 'deltaClass: higher-is-better + positive delta -> right')
+assert(deltaClass(-15, 'higher') === 'wrong', 'deltaClass: higher-is-better + negative delta -> wrong')
+assert(deltaClass(-15, 'lower') === 'right', 'deltaClass: lower-is-better + negative delta -> right')
+assert(deltaClass(15, 'lower') === 'wrong', 'deltaClass: lower-is-better + positive delta -> wrong')
+assert(deltaClass(15, 'neutral') === '', 'deltaClass: neutral direction is never colored')
+assert(deltaClass(-15, 'neutral') === '', 'deltaClass: neutral direction is never colored, either sign')
+assert(deltaClass(0, 'higher') === '', 'deltaClass: zero delta is never colored, regardless of direction')
+assert(deltaClass(0, 'lower') === '', 'deltaClass: zero delta is never colored (lower-is-better)')
 
 console.log(fail ? fail + ' FAILURES' : 'ALL PASS')
 process.exit(fail ? 1 : 0)
