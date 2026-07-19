@@ -74,7 +74,7 @@ export const genArith = (numbers, n, t, ops, maxNumber, negatives, back = n) => 
     if (t >= n) {
       const legal = []
       for (let x = min; x <= maxNumber; x++) {
-        if (divisorOk(numbers[t - n], x)) legal.push(x)
+        if (divisorOk(numbers[t - back], x)) legal.push(x)
       }
       number = legal[Math.floor(Math.random() * legal.length)]
     } else {

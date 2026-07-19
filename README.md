@@ -117,6 +117,9 @@ implementations are welcome.
   fixed saturation/lightness so it stays WCAG-AA readable at any hue. The
   correct/wrong colours are tuned against a colour-blindness simulation -
   always paired with a word, never colour alone. Custom background image and
+  sound effects. A main-font picker in the same Appearance section (Oxanium,
+  JetBrains Mono, Zen Dots, or the default per-role mix) applies app-wide.
+- Desktop launcher installer for Linux (`create-shortcut.sh`) that serves the
   app locally and opens it in its own app window - in Chrome (recommended,
   gets a real chromeless app window) or Firefox (opens as a normal browser
   window, since Firefox dropped its app-mode support). Works on any distro
@@ -125,9 +128,6 @@ implementations are welcome.
   - not tied to a specific distro. A "Run Locally" panel on the main menu
   offers a one-line `curl | bash` install command for either browser, or a
   plain download of the script.
-  JetBrains Mono, Zen Dots, or the default per-role mix) applies app-wide.
-- Desktop launcher installer for Linux (`create-shortcut.sh`) that serves the
-  app locally and opens it in its own app window.
 - Installable as a PWA: any browser's "Install app" adds Cerevana as a
   standalone window with its own icon (no service worker, so it still needs a
   connection - this is install convenience, not offline support).

@@ -397,7 +397,7 @@ const MODE_TIPS = {
   tripleArithmetic: 'Arithmetic plus position|and color match|streams.',
 }
 const MODE_MAIN_FALLBACK = 'Dual and Quad are|fixed protocols:|settings view-only,|scores comparable.|Pick a Custom mode|to edit everything.'
-const MODE_ADVANCED_FALLBACK = 'Preset variants,|view-only like|Dual/Quad. Tally:|count the matches|each trial,|self-paced.'
+const MODE_ADVANCED_FALLBACK = 'Experimental preset|variants, view-only|like Dual/Quad. Tally:|count the matches|each trial, self-paced.|May be buggy.'
 const setTip = (id, text) => { $(id).innerHTML = text.split('|').join('<br>') + '<br>' }
 
 // Per-mode game settings are view-only outside the Custom modes: presets
