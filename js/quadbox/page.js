@@ -497,7 +497,7 @@ const syncPanel = () => {
   // stimuli rows (arithmetic speaks operations via TTS - no stimulus sources)
   $('qb-stimuli-heading').hidden = isArith
   $('qb-stimuli-rows').hidden = isArith
-  $('qb-row-audio').hidden = mode === 'vtally'
+  $('qb-row-audio').hidden = mode === 'vtally' || !(hasToggles || mode === 'quad' || gs.enableAudio)
   $('qb-en-audio').parentElement.hidden = !hasToggles
   $('qb-en-color').parentElement.hidden = !hasToggles
   $('qb-en-shape').parentElement.hidden = !hasToggles
@@ -519,6 +519,10 @@ const syncPanel = () => {
   const editable = mode === 'custom' || mode === 'customB'
   for (const id of MODE_SETTING_INPUTS) $(id).disabled = !editable
   $('qb-chain-rows').querySelectorAll('input').forEach(i => { i.disabled = !editable })
+  // squares picks which Multi-Square variant is being played (like nBack,
+  // not a comparability-locked difficulty knob) - editable whenever that
+  // mode is active, unlike the rest of MODE_SETTING_INPUTS above
+  $('qb-squares').disabled = mode !== 'multiSquare'
 }
 
 subscribe(() => { syncPanel(); renderKeys(); refreshUi() })

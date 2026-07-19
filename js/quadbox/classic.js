@@ -62,9 +62,10 @@ export const divisorOk = (a, x) => {
 
 // one arithmetic trial: op uniform from the enabled set; number uniform in
 // [0, max] ([-max, max] with negatives). Divide draws only legal divisors of
-// the n-back number (plain n - not the crab/variable effective back);
+// the number back trials ago at this trial's effective back (crab/variable -
+// defaults to n), since that's the number it's actually scored against;
 // before trial n, divide numbers are just nonzero.
-export const genArith = (numbers, n, t, ops, maxNumber, negatives) => {
+export const genArith = (numbers, n, t, ops, maxNumber, negatives, back = n) => {
   const op = ops[Math.floor(Math.random() * ops.length)]
   const min = negatives ? -maxNumber : 0
   const range = () => min + Math.floor(Math.random() * (maxNumber - min + 1))
@@ -301,7 +302,7 @@ export const generateClassicGame = (modeKey, gs) => {
         seq[s].push(jaeggi ? jaeggiSeq[s][t] : gen(seq[s], n, t, back, pMatch, pLure))
       }
       if (isArith) {
-        const { number, op } = genArith(numbers, n, t, ops, gs.arithMaxNumber ?? 12, !!gs.arithNegatives)
+        const { number, op } = genArith(numbers, n, t, ops, gs.arithMaxNumber ?? 12, !!gs.arithNegatives, back)
         numbers.push(number)
         opsSeq.push(op)
       }

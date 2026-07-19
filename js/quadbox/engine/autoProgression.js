@@ -26,7 +26,7 @@ export const runAutoProgression = async (gameInfo, settings, hooks) => {
   const successComboRequired = settings.successComboRequired
   const failureComboRequired = settings.failureComboRequired
 
-  const recentGames = await getLast48HoursGames(Math.max(successComboRequired, failureComboRequired))
+  const recentGames = await getLast48HoursGames()
   const sameGames = recentGames.filter(game => ['completed', 'tombstone'].includes(game.status) && game.title === gameInfo.title && game.nBack === gameInfo.nBack)
   const applicableGames = takeUntil(sameGames, game => game.status === 'tombstone')
   const successGames = applicableGames.slice(0, successComboRequired)

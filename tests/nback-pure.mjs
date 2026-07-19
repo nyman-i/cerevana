@@ -295,6 +295,27 @@ function checkShape(modeKey, gs, label) {
   assert(ok, 'crab dual: matches computed against the block-reversed back')
 }
 
+// crab arithmetic: division divisors must be legal against the trial's
+// actual scored back (crab), not plain n - a mismatch there produces answers
+// that fall off the m/40 grid and can never be typed exactly (regression)
+{
+  const gs = {
+    ...gsBase, nBack: 3, numTrials: 21, crab: true,
+    arithOps: { add: false, sub: false, mul: false, div: true }, arithMaxNumber: 12, arithNegatives: false,
+  }
+  const { trials } = generateClassicGame('arithmetic', gs)
+  const n = gs.nBack
+  let ok = true
+  for (let t = n; t < trials.length; t++) {
+    const back = 1 + 2 * (t % n)
+    const dividend = Number(trials[t - back].text)
+    const divisor = Number(trials[t].text)
+    if (!divisorOk(dividend, divisor)) ok = false
+    if (trials[t].answer !== arithAnswer(dividend, 'divide', divisor)) ok = false
+  }
+  assert(ok, 'crab arithmetic: division divisor legal against the crab back, not plain n')
+}
+
 // variable rules: variableNBack annotated and matches follow it
 {
   const { trials } = generateClassicGame('dualCombo', { ...gsBase, rules: 'variable' })

@@ -60,12 +60,15 @@ const cellClasses = (base, position, svgId, flash, transparent) => {
   return classNames.join(' ')
 }
 
-const cellStyle = (node, boxColor, svgId, shapeOuterColor, transparent) => {
+const cellStyle = (node, boxColor, svgId, shapeOuterColor, transparent, textColor) => {
   node.style.cssText = ''
   if (boxColor) {
     node.style.setProperty('--face-bg-color', `${boxColor}${transparent ? '3A' : ''}`)
   } else if (shapeOuterColor) {
     node.style.setProperty('--face-bg-color', `${shapeOuterColor}${transparent ? '2A' : ''}`)
+  }
+  if (textColor) {
+    node.style.setProperty('--face-text-color', textColor)
   }
   if (svgId) {
     node.style.setProperty('--shape-url', `url('${getSvgUrl(svgId)}')`)
@@ -74,6 +77,14 @@ const cellStyle = (node, boxColor, svgId, shapeOuterColor, transparent) => {
     node.style.setProperty('--face-size', '72%')
   }
 }
+
+// findBoxColor's shapeless/colorless fallback is a plain near-white (dark theme) /
+// near-black (light theme) box, meant for blank position highlights (dual, jaeggi,
+// tally...) - it happens to match .qb-face's default text color, so any mode that
+// also draws text on that same blank box (arithmetic, letter combos) needs the
+// text flipped to the opposite theme's tone or it's invisible.
+const plainBoxTextColor = (shape, color, image, settings) =>
+  (shape || color || image) ? '' : (settings.theme === 'dark' ? '#171613' : '#fffffd')
 
 const MAX_CELLS = 4
 
@@ -202,7 +213,7 @@ export class BoardRenderer {
       const shapeOuterColor = findShapeOuterColor(trial.color, settings)
       cell.hidden = false
       cell.className = cellClasses(base, position, svgId, multi ? flash : false, transparent)
-      cellStyle(cell, boxColor, svgId, shapeOuterColor, transparent)
+      cellStyle(cell, boxColor, svgId, shapeOuterColor, transparent, plainBoxTextColor(trial.shape, trial.color, trial.image, settings))
       // findBoxColor always returns a truthy default (plain white/dark) when
       // there's no shape/color/image, so !boxColor never fires here - check
       // the actual stimuli instead, or the stream-identity tint never shows
@@ -217,7 +228,8 @@ export class BoardRenderer {
     if (wantCenter) {
       const svgId = createSvgId(trial.shape, trial.color, trial.image, settings)
       cellStyle(this.centerWrap, findBoxColor(trial.shape, trial.color, trial.image, settings),
-        svgId, findShapeOuterColor(trial.color, settings), false)
+        svgId, findShapeOuterColor(trial.color, settings), false,
+        plainBoxTextColor(trial.shape, trial.color, trial.image, settings))
       this.centerFace.textContent = trial.text == null ? '' : String(trial.text)
       this.centerWrap.hidden = false
     } else {
