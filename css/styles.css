@@ -220,8 +220,15 @@ body {
    monospace panels, Zen Dots headings) - only body follows --main-font. Pick
    a custom font (menu's Appearance panel) and js/shared/appearance.js /
    js/shared/boot.js add .font-override to <html>, which forces every role to
-   --main-font too - except the CEREVANA wordmark and coolicons glyphs. */
-html.font-override :not(.menu__title, i) {
+   --main-font too - except the CEREVANA wordmark and coolicons glyphs.
+   The plain ":not(...)" is an implicit "*" - it does NOT reach ::before/
+   ::after, so real words rendered via `content:` (corner tab captions,
+   RIGHT/WRONG/MISSED fast-UI banners, history-card "Answer:" labels) need
+   their own explicit pseudo-element selectors here or they silently keep
+   whatever font-family the rule for that pseudo happens to hardcode. */
+html.font-override :not(.menu__title, i),
+html.font-override :not(.menu__title, i)::before,
+html.font-override :not(.menu__title, i)::after {
     font-family: var(--main-font) !important;
 }
 
@@ -267,6 +274,7 @@ button {
 
 button:disabled {
     background-color: var(--button-disabled-bg-color);
+    cursor: default;
 }
 
 button:not(:disabled):hover {
@@ -282,6 +290,14 @@ button.delete:hover {
 }
 
 /* start of Utils */
+/* The UA's [hidden] { display: none } has the same specificity as any
+   single-class rule (e.g. .inline-input__outer { display: flex }) and loses
+   to whichever comes last - so JS-toggled `hidden` silently fails on such
+   elements. Make hidden always mean hidden. */
+[hidden] {
+    display: none !important;
+}
+
 .mb-05 {
     margin-bottom: 1rem;
 }
@@ -565,8 +581,13 @@ input[type="number"]::-moz-inner-spin-button {
   margin-left: 5px; /* Adds distance from text in Firefox */
 }
 
-.inline-input__inner > select option {
-    color: #000;
+/* Explicit color + background pair: the dropdown list's default background
+   varies by browser/theme (Chrome dark-renders it), so relying on the UA
+   default makes one of the two unreadable. */
+.inline-input__inner > select option,
+.inline-input__inner > select optgroup {
+    color: var(--text-color);
+    background-color: var(--background-color);
 }
 
 .inline-input__inner > input[type="file"] {
@@ -616,7 +637,7 @@ input[type="number"]::-moz-inner-spin-button {
     background-color: var(--select-background-color);
     color: var(--text-color);
     border: 1px solid #444;
-    padding: 8px 10px;
+    padding: 10px 12px;
     border-radius: 2px;
     cursor: pointer;
     appearance: none;
@@ -1727,11 +1748,12 @@ table.distinction {
 .profile-list {
     display: none;
     position: absolute;
+    left: 0;
     margin-top: 2px;
     border: var(--profile-select-border);
     background: var(--profile-select-bg);
     max-height: 300px;
-    width: 360px;
+    width: min(360px, calc(100vw - 2rem));
     overflow-y: auto;
     z-index: 1000;
     user-select: none;
@@ -2294,17 +2316,28 @@ table.distinction {
     border-bottom-color: var(--label-color);
 }
 
-/* keep the top nav clear of the corner tabs and on one line each
-   (after the base rules above so the overrides win at equal specificity) */
+/* the full nav doesn't fit next to the corner tabs at phone widths, and
+   wrapping it onto a second row (tried first) grew tall enough to cover
+   the HUD stats sitting right below it - show just a back-to-menu button
+   instead; switching games happens from the main menu (after the base
+   rules above so the overrides win at equal specificity) */
 @media (width <= 500px) {
     .game-menu {
         max-width: calc(100vw - 6.5rem);
+    }
+
+    .game-menu__item:not(:first-child) {
+        display: none;
     }
 
     .game-menu__item {
         font-size: var(--step--1);
         padding: 0.75rem 0.5rem;
         white-space: nowrap;
+    }
+
+    .game-menu__item:first-child::before {
+        content: '← ';
     }
 }
 
@@ -2418,6 +2451,16 @@ body.menu-mode .main-view {
     align-items: stretch;
     gap: 1.5rem;
     width: min(100%, 72rem);
+}
+
+/* 19rem grid track minimum exceeds available width below ~360px once
+   .menu's own padding is subtracted - go single-column, per the ≤500px
+   "go full-width" rule (UI_DESIGN.md §5). Must come after the base rule
+   above - same specificity, and source order decides the tie. */
+@media (width <= 500px) {
+    .menu__cards {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* combined goal tracker: card-material section above the exercise cards;
