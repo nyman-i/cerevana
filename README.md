@@ -118,7 +118,14 @@ implementations are welcome.
   fixed saturation/lightness so it stays WCAG-AA readable at any hue. The
   correct/wrong colours are tuned against a colour-blindness simulation -
   always paired with a word, never colour alone. Custom background image and
-  sound effects. A main-font picker in the same Appearance section (Oxanium,
+  app locally and opens it in its own app window - in Chrome (recommended,
+  gets a real chromeless app window) or Firefox (opens as a normal browser
+  window, since Firefox dropped its app-mode support). Works on any distro
+  with a `.desktop`-entry-compatible desktop (GNOME, KDE, XFCE, Cinnamon,
+  MATE, etc.) with `git`, `python3` and Chrome/Chromium or Firefox installed
+  - not tied to a specific distro. A "Run Locally" panel on the main menu
+  offers a one-line `curl | bash` install command for either browser, or a
+  plain download of the script.
   JetBrains Mono, Zen Dots, or the default per-role mix) applies app-wide.
 - Desktop launcher installer for Linux (`create-shortcut.sh`) that serves the
   app locally and opens it in its own app window.
@@ -141,8 +148,18 @@ then open http://localhost:8080. For an app-like window:
 chromium --app=http://localhost:8080
 ```
 
-Or run `./create-shortcut.sh` once to install a "Cerevana" entry in your
-application launcher that does both.
+Or, on Linux, run `./create-shortcut.sh` from a clone of this repo once to
+install a "Cerevana" entry in your application launcher that does both - pass
+`--browser=firefox` to launch in Firefox instead of the Chrome/Chromium
+default (the script refuses to run on macOS/Windows). Without a local clone,
+the same script is self-contained:
+
+```bash
+curl -fsSL https://cerevana.com/create-shortcut.sh | bash -s -- --browser=chrome
+```
+
+(`--browser=firefox` also works here) clones the app into
+`~/.local/share/cerevana-app` first, then installs the launcher.
 
 ## Contributing
 

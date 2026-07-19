@@ -1925,7 +1925,7 @@ table.distinction {
     resize: none;
 }
 
-#error-close-popup, #graph-close-popup {
+#error-close-popup, #graph-close-popup, #run-locally-close-popup {
     font-family: Oxanium, sans-serif;
     font-size: var(--step-1);
     background-color: #633;
@@ -1938,7 +1938,7 @@ table.distinction {
     background-color: #744;
 }
 
-#graph-close-popup:hover {
+#graph-close-popup:hover, #run-locally-close-popup:hover {
     box-shadow: 0 3px 5px 0 #7448;
 }
 
@@ -1955,6 +1955,10 @@ table.distinction {
     align-self: flex-end;
     white-space: nowrap;
     overflow: hidden;
+}
+
+#run-locally-close-popup {
+    white-space: nowrap;
 }
 
 .graph-popup {
@@ -1984,6 +1988,58 @@ table.distinction {
 
 .graph-popup-content.visible {
     display: block;
+}
+
+.run-locally-popup {
+    position: fixed;
+    display: none;
+    z-index: 1000;
+    padding: 1.25rem;
+    background-color: var(--background-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(360px, 90vw);
+}
+
+.run-locally-popup.visible {
+    display: block;
+}
+
+.run-locally-popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+/* select-row's own .mb-2 spacing would break the popup's uniform rhythm */
+.run-locally-popup-content .mb-2 {
+    margin-bottom: 0;
+}
+
+.run-locally-note {
+    margin: 0;
+    margin-top: -0.5rem;
+    font-size: var(--step--2);
+    color: var(--preamble-color);
+}
+
+.run-locally-steps {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: var(--step--2);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.run-locally-popup-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
 }
 
 .graph-controls {
@@ -2606,7 +2662,8 @@ body.menu-mode .main-view {
 
 /* footer control rows: settings chrome, same size as the offcanvas panels */
 .menu__backup,
-.menu__appearance {
+.menu__appearance,
+.menu__run-locally {
     display: flex;
     flex-wrap: wrap;
     align-items: center;

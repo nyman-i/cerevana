@@ -48,6 +48,8 @@
 		<link rel="stylesheet" href="fonts/cool/coolicons.css">
 		<link rel="stylesheet" href="css/styles.css">
 		<script src="js/shared/boot.js"></script>
+		<script src="js/components/help-tip.js"></script>
+		<script src="js/components/select-row.js"></script>
 		<script>
 			// old profile share links point at index.html; the RRT page owns that import now
 			if (location.search.includes('savedata=')) location.replace('rrt.html' + location.search);
@@ -202,6 +204,10 @@
 					<button type="button" class="delete" onclick="resetEverything()" title="Permanently erase ALL data for every exercise">Reset App</button>
 					<input type="file" id="history-import" accept=".json,application/json" style="display:none" onchange="handleHistoryImport(event)">
 				</div>
+				<div class="panel-heading menu__footer-heading">Run Locally (Linux)</div>
+				<div class="menu__run-locally">
+					<button type="button" id="run-locally-open" onclick="showRunLocallyPopup()" title="Get a desktop app shortcut in Chrome or Firefox - any Linux distro with GNOME, KDE, XFCE or similar">Run Locally</button>
+				</div>
 			</div>
 		</div>
 
@@ -215,11 +221,36 @@
 			</div>
 		</div>
 
+		<div id="run-locally-popup" class="run-locally-popup">
+			<div class="run-locally-popup-content">
+				<div class="panel-heading">Run Locally (Linux)</div>
+				<p class="run-locally-note">Any Linux distro with GNOME, KDE, XFCE or similar - needs git, python3 and Chrome/Chromium or Firefox installed.</p>
+				<select-row select-id="p-run-browser" label="Browser"
+					options="chrome=Chrome (recommended)|firefox=Firefox"
+					tooltip="Chrome opens in its own app window.|Firefox opens as a normal browser|window (Firefox dropped app-mode support)." tooltip-side="right"></select-row>
+				<div class="ctrl__inner">
+					<input type="text" id="run-locally-command" class="ffmono" readonly style="flex:1; min-width:0" title="Downloads and runs create-shortcut.sh in one step">
+					<button type="button" style="white-space:nowrap" onclick="copyRunLocallyCommand(event)" title="Copy this command to your clipboard">Copy Command</button>
+				</div>
+				<ol class="run-locally-steps">
+					<li>Click "Copy Command" above.</li>
+					<li>Open a terminal and paste it in.</li>
+					<li>Press Enter - it downloads and runs in one step.</li>
+					<li>Find "Cerevana" in your applications menu.</li>
+				</ol>
+				<div class="run-locally-popup-footer">
+					<a href="create-shortcut.sh" download>Download script</a>
+					<button type="button" id="run-locally-close-popup">Close</button>
+				</div>
+			</div>
+		</div>
+
 		<script src="js/shared/constants.js"></script>
 		<script src="js/shared/backwards-compatibility.js"></script>
 		<script src="js/shared/db.js"></script>
 		<script src="js/shared/rename-db.js"></script>
 		<script src="js/shared/history-transfer.js"></script>
+		<script src="js/shared/run-locally.js"></script>
 		<script src="js/shared/error-handling.js"></script>
 		<script src="js/shared/background.js"></script>
 		<script src="js/shared/appearance.js"></script>
