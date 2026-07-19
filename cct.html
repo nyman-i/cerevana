@@ -18,6 +18,8 @@
 		<script src="js/components/profile-picker.js"></script>
 		<script src="js/components/corner-panel.js"></script>
 		<script src="js/components/corner-tabs.js"></script>
+		<script src="js/components/metric-graphs.js"></script>
+		<script src="js/cct/graphs.js"></script>
 	</head>
 	<body>
 
@@ -151,15 +153,9 @@
 		</div>
 
 		<div id="graph-popup" class="graph-popup">
-			<div class="graph-controls">
-				<button type="button" id="cct-tab-progress" class="graph-select selected">Progress</button>
-				<button type="button" id="cct-tab-time" class="graph-select">Time Spent</button>
-			</div>
-			<div id="cct-graph-empty" class="panel-empty" hidden>No completed sessions yet.</div>
-			<div id="cct-progress-view" class="graph-popup-content visible"><canvas id="cct-graph-canvas"></canvas></div>
-			<div id="cct-time-view" class="graph-popup-content"><canvas id="cct-time-canvas"></canvas></div>
+			<cct-graphs></cct-graphs>
 			<div class="graph-end-controls">
-				<div>* Progress: last month &middot; Time Spent: last year</div>
+				<div>* Time Spent: last year &middot; other charts: last month</div>
 				<button type="button" id="graph-close-popup">Close</button>
 			</div>
 		</div>

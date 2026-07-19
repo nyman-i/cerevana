@@ -308,6 +308,18 @@ function checkShape(modeKey, gs, label) {
   assert(ok, 'variable rules: per-trial variableNBack in 1..n from trial n')
 }
 
+// configSnapshot: full active gameSettings carried on the record, so the
+// history graph can tell e.g. a 2D/3D grid switch apart from a level dip
+{
+  const gs = { ...gsBase, grid: 'rotate3D', crab: true }
+  const { meta } = generateClassicGame('dual', gs)
+  assert(JSON.stringify(meta.configSnapshot) === JSON.stringify(gs),
+    'configSnapshot: carries the full gameSettings object used to generate the game')
+  gs.grid = 'static2D'
+  assert(meta.configSnapshot.grid === 'rotate3D',
+    'configSnapshot: is a clone, unaffected by later mutation of the source settings')
+}
+
 // selfPaced flag propagates (and jaeggi ignores it)
 assert(generateClassicGame('dualCombo', { ...gsBase, selfPaced: true }).meta.selfPaced === true,
   'selfPaced: meta flag set')

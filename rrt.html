@@ -20,6 +20,7 @@
 		<script src="js/components/profile-picker.js"></script>
 		<script src="js/components/corner-panel.js"></script>
 		<script src="js/components/corner-tabs.js"></script>
+		<script src="js/rrt/graphs.js"></script>
 		<style id="live-styles"></style>
 	</head>
 	<body>
@@ -921,17 +922,7 @@
 		</div>
 
 		<div id="graph-popup" class="graph-popup">
-			<div class="graph-controls">
-				<button type="button" id="graph-select-time" class="graph-select selected">Time Spent</button>
-				<button type="button" id="graph-select-score" class="graph-select">Avg Correct Times</button>
-				<button type="button" id="graph-select-time-per-premise" class="graph-select">Premise Speed</button>
-				<button type="button" id="graph-select-count" class="graph-select">Total Answered</button>
-			</div>
-			<div id="graph-empty" class="panel-empty" hidden>No graph data yet &mdash; answer questions with the timer on and it appears here.</div>
-			<div id="graph-popup-time" class="graph-popup-content visible"><canvas id="graph-canvas-time"></canvas></div>
-			<div id="graph-popup-count" class="graph-popup-content"><canvas id="graph-canvas-count"></canvas></div>
-			<div id="graph-popup-time-per-premise" class="graph-popup-content"><canvas id="graph-canvas-time-per-premise"></canvas></div>
-			<div id="graph-popup-score" class="graph-popup-content"><canvas id="graph-canvas-score"></canvas></div>
+			<rrt-graphs></rrt-graphs>
 			<div class="graph-end-controls">
 				<div>* Only timed questions are displayed</div>
 				<button type="button" id="graph-close-popup" class="graph-close-popup">Close</button>

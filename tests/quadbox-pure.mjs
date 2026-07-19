@@ -16,6 +16,22 @@ mock.module(new URL('../js/quadbox/engine/utils.js', import.meta.url).href, {
       for (let i = 0; i < 10; i++) state = (48271 * state + 1) % m
       return () => { state = (48271 * state + 1) % m; return state / m }
     },
+    // real implementations (gamedb.js imports these via the mocked module)
+    getTruncatedDate: (timestamp) => {
+      const date = new Date(timestamp)
+      if (date.getHours() < 4) date.setDate(date.getDate() - 1)
+      date.setHours(0, 0, 0, 0)
+      return date
+    },
+    getGameDay: (timestamp) => {
+      const date = new Date(timestamp)
+      if (date.getHours() < 4) date.setDate(date.getDate() - 1)
+      date.setHours(0, 0, 0, 0)
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    },
   },
 })
 
@@ -71,6 +87,7 @@ test('generateGame: correct structure for regular stimuli', () => {
       title: 'tri',
       rules: undefined,
       tags: ['position', 'audio', 'shape'],
+      configSnapshot: mockGameSettings,
     },
   })
 })
@@ -108,8 +125,23 @@ test('generateGame: correct structure for tally stimuli', () => {
       positionWidth: 2,
       enablePositionWidthSequence: false,
       positionWidthSequence: [1, 2],
+      configSnapshot: mockGameSettings,
     },
   })
+})
+
+test('generateGame: configSnapshot carries the full gameSettings used, not just the destructured subset', () => {
+  const settingsWithGrid = { ...mockGameSettings, grid: 'static2D', crab: true }
+  const game = new NBackGame(settingsWithGrid, () => 0.99)
+  game.addStimulus('position', mockStimulusPool)
+
+  const result = game.generateGame()
+
+  assert.deepEqual(result.meta.configSnapshot, settingsWithGrid)
+  // it's a clone, not the live settings object, so later mutation of the
+  // source doesn't retroactively rewrite history
+  settingsWithGrid.grid = 'rotate3D'
+  assert.equal(result.meta.configSnapshot.grid, 'static2D')
 })
 
 test('createTitle: correct titles for regular games', () => {
@@ -147,6 +179,46 @@ test('generateGame: enablePosition false omits the position stimulus', async () 
   assert.deepEqual(soundOnly.meta.tags, ['audio'])
   assert.equal(soundOnly.meta.title, 'sound')
   assert.ok(soundOnly.trials.every(t => !('position' in t)), 'no trial carries a position')
+})
+
+test('addScoreMetadata: ncalc is always set for non-tally games, even below the old 40% floor', async () => {
+  // ncalc used to only be computed when accuracy >= 40%, so a below-threshold
+  // game had no ncalc at all - the progress graph's `g.ncalc` filter then
+  // silently dropped the game entirely (not just clamped its level), which
+  // hit arithmetic-family modes hardest since a typed exact answer is much
+  // harder to get right first try than a position/color match.
+  const { addScoreMetadata } = await import('../js/quadbox/engine/gamedb.js')
+
+  const lowScore = { nBack: 1, tags: ['arithmetic'], scores: { arithmetic: { hits: 1, misses: 9 } }, timestamp: 1000, start: 0, trialTime: 2500, completedTrials: 10 }
+  addScoreMetadata(lowScore)
+  assert.equal(typeof lowScore.ncalc, 'number', 'ncalc must be set even at 10% accuracy')
+  assert.equal(lowScore.ncalc, 1 + (0.1 - 0.5) * 2.7)
+
+  const zeroScore = { nBack: 2, tags: ['position'], scores: { position: { hits: 0, misses: 5 } }, timestamp: 1000, start: 0, trialTime: 2500, completedTrials: 5 }
+  addScoreMetadata(zeroScore)
+  assert.equal(typeof zeroScore.ncalc, 'number', 'ncalc must be set even at 0% accuracy (not skipped as falsy)')
+
+  const tally = { nBack: 2, mode: 'tally', scores: { tally: { hits: 3, possible: 10 } }, timestamp: 1000, start: 0, trialTime: 2500, completedTrials: 10 }
+  addScoreMetadata(tally)
+  assert.equal(tally.ncalc, undefined, 'tally games still opt out of ncalc entirely')
+})
+
+test('addScoreMetadata: avgReactionMs averaged from recorded reactionTimes, absent otherwise', async () => {
+  const { addScoreMetadata } = await import('../js/quadbox/engine/gamedb.js')
+
+  const withTimes = { nBack: 2, tags: ['position'], scores: { position: { hits: 3, misses: 1 } }, timestamp: 1000, start: 0, trialTime: 2500, completedTrials: 4, reactionTimes: [400, 500, 600] }
+  addScoreMetadata(withTimes)
+  assert.equal(withTimes.avgReactionMs, 500)
+
+  // legacy record (saved before reaction times were recorded)
+  const legacy = { nBack: 2, tags: ['position'], scores: { position: { hits: 3, misses: 1 } }, timestamp: 1000, start: 0, trialTime: 2500, completedTrials: 4 }
+  addScoreMetadata(legacy)
+  assert.equal(legacy.avgReactionMs, undefined)
+
+  // no correct presses -> empty array never stored, but guard against it anyway
+  const empty = { nBack: 2, tags: ['position'], scores: { position: { hits: 0, misses: 4 } }, timestamp: 1000, start: 0, trialTime: 2500, completedTrials: 4, reactionTimes: [] }
+  addScoreMetadata(empty)
+  assert.equal(empty.avgReactionMs, undefined)
 })
 
 test('generateMatches: generates some true matches', () => {

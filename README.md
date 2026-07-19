@@ -96,9 +96,10 @@ implementations are welcome.
   per-question log; N-Back's per-game list with score chips; CCT's
   per-session list with accuracy chips), Info (how to play, keyboard
   shortcuts, credits, resets) and Graphs.
-- Progress graphs: time spent, average correct times, premise speed and totals
-  for RRT; per-mode level history and daily time spent for N-Back;
-  accuracy-per-session and daily time spent for CCT.
+- Progress graphs - one dedicated graph per metric: time spent, average
+  correct times, premise speed and totals for RRT; per-mode level, accuracy,
+  reaction time and daily time spent for N-Back; accuracy, response time and
+  daily time spent for CCT.
 - Timers with auto-progression (RRT), adaptive per-mode levels (N-Back), and
   an adaptive answer interval (CCT).
 - Daily and weekly play-time goals for every exercise - progress bars beside

@@ -28,13 +28,12 @@ export const getNumberKeys = (info) => {
   return keys
 }
 
-// gameRunningStore's `title` derived store
-export const displayTitle = (info) => {
-  if (!info?.title) return ''
-  if (info.title.startsWith('tally ')) return 'tally'
-  if (info.title.startsWith('vtally ')) return 'vtally'
-  return info.title
-}
+// gameRunningStore's `title` derived store + the variant grouping used by
+// the progress graph. Canonical implementations live in js/quadbox/graphs.js
+// (a classic <head> script shared with stats.html, so it always runs before
+// this module) - re-exported here for the module importers.
+export const displayTitle = (info) => window.cvNbackDisplay.title(info)
+export const displayVariant = (info) => window.cvNbackDisplay.variant(info)
 
 export class QuadBoxGame {
   // ui: { renderTrial(trial, opts), cacheNext(trial), rebuild(),
@@ -108,8 +107,13 @@ export class QuadBoxGame {
     resolve()
   }
 
+  // while a game is running this must reflect the mode it was STARTED with,
+  // not whatever the settings panel currently shows - switching the mode
+  // dropdown mid-game (or PgUp/PgDn) used to desync checkForMatch/handleKey/
+  // renderKeys from the trials actually in flight, stranding keypresses or
+  // running two independent trial-advance loops concurrently
   get tally() {
-    return isTallyMode(getSettings().mode)
+    return this.isPlaying ? this.isTallyGame : isTallyMode(getSettings().mode)
   }
 
   regenerate() {
@@ -182,11 +186,13 @@ export class QuadBoxGame {
     applyDailyResetIfDue()
     const gameSettings = getGameSettings()
     this.isPlaying = true
+    this.isTallyGame = isTallyMode(getSettings().mode)
     this.gameMeta = { ...this.game.meta, start: Date.now() }
     this.gameDisplayInfo = this.gameMeta
     audioPlayer.cacheAudioSource(gameSettings.audioSource)
     this.trials = structuredClone(this.game.trials)
     this.scoresheet = new Array(this.trials.length).fill().map(() => ({}))
+    this.reactionTimes = [] // ms from trial shown to each correct match press
 
     if (this.tally) {
       this.presentation.highlight = true
@@ -216,44 +222,60 @@ export class QuadBoxGame {
 
   async endGame(status) {
     if (!this.isPlaying) return
-
-    if (this.tally) {
-      if (status === 'completed') {
-        try { await this.delay(100) } catch { /* ignore */ }
-      }
-      const gameInfoRecord = { ...this.gameMeta, timestamp: Date.now() }
-      if (this.trialsIndex > gameInfoRecord.nBack) {
-        await analytics.scoreTallyTrials(gameInfoRecord, status === 'completed' ? this.scoresheet : this.scoresheet.slice(0, this.trialsIndex), status)
-      } else {
-        console.debug('Game not recorded', this.trialsIndex, gameInfoRecord)
-      }
-      this.timeoutCancelFns.forEach(fn => fn())
-      this.resetRuntimeData()
-      this.ui.resetTallyFeedback()
-    } else {
-      const gameInfoRecord = { ...this.gameMeta, timestamp: Date.now() }
-      if (this.trialsIndex > gameInfoRecord.nBack) {
-        await analytics.scoreTrials(gameInfoRecord, status === 'completed' ? this.scoresheet : this.scoresheet.slice(0, this.trialsIndex), status)
+    const gameInfoRecord = { ...this.gameMeta, timestamp: Date.now() }
+    // additive field: correct-press reaction times, for the Reaction Time
+    // graph (addScoreMetadata averages them at read time). Tally modes have
+    // no per-trial presses, so the array simply stays empty there.
+    if (this.reactionTimes?.length) gameInfoRecord.reactionTimes = this.reactionTimes
+    // cleanup/regenerate must run even if persistence below throws (a
+    // storage failure must not strand isPlaying=true with the STOP button
+    // stuck and every future keypress re-attempting the same failing write)
+    try {
+      if (this.tally) {
         if (status === 'completed') {
-          let s = getSettings()
-          if (this.gameMeta.jaeggi) {
-            // original-study thresholds, single session: ≥90 advance, <75 drop
-            s = { ...s, successCriteria: 90, successComboRequired: 1, failureCriteria: 75, failureComboRequired: 1 }
+          try { await this.delay(100) } catch { /* ignore */ }
+        }
+        if (this.trialsIndex > gameInfoRecord.nBack) {
+          await analytics.scoreTallyTrials(gameInfoRecord, status === 'completed' ? this.scoresheet : this.scoresheet.slice(0, this.trialsIndex), status)
+          if (status === 'completed') {
+            await runAutoProgression(gameInfoRecord, getSettings(), {
+              setNBack: (n) => setGameField('nBack', n),
+              onAdvance: () => this.ui.onProgression?.('advance'),
+              onFallback: () => this.ui.onProgression?.('fallback'),
+            })
           }
-          await runAutoProgression(gameInfoRecord, s, {
-            setNBack: (n) => setGameField('nBack', n),
-            onAdvance: () => this.ui.onProgression?.('advance'),
-            onFallback: () => this.ui.onProgression?.('fallback'),
-          })
+        } else {
+          console.debug('Game not recorded', this.trialsIndex, gameInfoRecord)
         }
       } else {
-        console.debug('Game not recorded', this.trialsIndex, gameInfoRecord)
+        if (this.trialsIndex > gameInfoRecord.nBack) {
+          await analytics.scoreTrials(gameInfoRecord, status === 'completed' ? this.scoresheet : this.scoresheet.slice(0, this.trialsIndex), status)
+          if (status === 'completed') {
+            let s = getSettings()
+            if (this.gameMeta.jaeggi) {
+              // original-study thresholds, single session: ≥90 advance, <75 drop
+              s = { ...s, successCriteria: 90, successComboRequired: 1, failureCriteria: 75, failureComboRequired: 1 }
+            }
+            await runAutoProgression(gameInfoRecord, s, {
+              setNBack: (n) => setGameField('nBack', n),
+              onAdvance: () => this.ui.onProgression?.('advance'),
+              onFallback: () => this.ui.onProgression?.('fallback'),
+            })
+          }
+        } else {
+          console.debug('Game not recorded', this.trialsIndex, gameInfoRecord)
+        }
       }
+    } finally {
+      // capture before resetRuntimeData flips isPlaying, so a mode switch
+      // mid-game can't make this reset the wrong feedback UI (see the
+      // `tally` getter above - it falls back to live settings once idle)
+      const wasTally = this.tally
       this.timeoutCancelFns.forEach(fn => fn())
       this.resetRuntimeData()
-      this.ui.resetFeedback()
+      wasTally ? this.ui.resetTallyFeedback() : this.ui.resetFeedback()
+      this.regenerate()
     }
-    this.regenerate()
   }
 
   // ---- DefaultGame flow ----
@@ -281,10 +303,14 @@ export class QuadBoxGame {
       this.answer = { digits: '', negative: false }
       this.ui.setAnswer?.('0')
     }
+    this.trialShownAt = Date.now()
     this.presentation.highlight = true
     this.ui.renderTrial(this.currentTrial, { highlight: true })
     this.ui.onState()
-    const audioWait = this.currentTrial.audio ? this.makeCancellable(audioPlayer.play(this.currentTrial.audio)) : Promise.resolve()
+    // a failed sound (missing file, blocked autoplay, no audio device) must
+    // not end the session - same "trial clock paces the game" rule audio.js
+    // already applies to speech
+    const audioWait = this.currentTrial.audio ? this.makeCancellable(audioPlayer.play(this.currentTrial.audio).catch(() => {})) : Promise.resolve()
     const presentationWait = this.delay(Math.min(2000, this.gameDisplayInfo.trialTime - 350)).then(() => {
       this.presentation.highlight = false
       this.ui.renderTrial(this.currentTrial, { highlight: false })
@@ -330,6 +356,7 @@ export class QuadBoxGame {
     if (type in this.currentTrial && !(type in this.scoresheet[this.trialsIndex])) {
       const isSuccess = this.currentTrial.matches.includes(type)
       this.scoresheet[this.trialsIndex][type] = isSuccess
+      if (isSuccess) this.reactionTimes.push(Date.now() - this.trialShownAt)
       // Jaeggi hides right/wrong (protocol), but still acknowledges the
       // press so the button doesn't look unresponsive
       this.ui.applyFeedback({ [type]: this.gameDisplayInfo.jaeggi ? 'pressed' : (isSuccess ? 'success' : 'failure') })

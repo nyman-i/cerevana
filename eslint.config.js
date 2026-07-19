@@ -28,6 +28,7 @@ const BROWSER_GLOBALS = {
     crypto: 'readonly', Blob: 'readonly', FileReader: 'readonly', performance: 'readonly',
     CustomEvent: 'readonly', Event: 'readonly', EventTarget: 'readonly',
     MutationObserver: 'readonly', ResizeObserver: 'readonly', IntersectionObserver: 'readonly',
+    customElements: 'readonly',
     structuredClone: 'readonly', getComputedStyle: 'readonly', matchMedia: 'readonly',
     Worker: 'readonly', Node: 'readonly', Element: 'readonly', HTMLElement: 'readonly',
     DOMParser: 'readonly', XMLHttpRequest: 'readonly', WebSocket: 'readonly',
@@ -84,10 +85,11 @@ const CLASSIC_FILES = [
 
 const classicGlobals = collectClassicGlobals(CLASSIC_FILES);
 // js/quadbox/** and js/cct/** are ES modules, but they run on pages that also
-// load js/shared/**'s classic scripts first (appState, getAllNBackSessions,
-// etc. land on `window` before the module tag runs) - module files legitimately
-// reference those without importing them.
-const sharedClassicGlobals = collectClassicGlobals(listJsFiles('js/shared').filter((f) => fs.existsSync(f)));
+// load js/shared/**'s and js/components/'s classic scripts first (appState,
+// getAllNBackSessions, CvMetricGraphs, etc. are in scope before the module
+// tag runs) - module files legitimately reference those without importing them.
+const sharedClassicGlobals = collectClassicGlobals(
+    [...listJsFiles('js/shared'), ...listJsFiles('js/components')].filter((f) => fs.existsSync(f)));
 
 export default [
     js.configs.recommended,

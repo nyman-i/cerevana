@@ -358,6 +358,7 @@ export const generateClassicGame = (modeKey, gs) => {
     rules: gs.rules ?? 'none',
     title: cfg?.title ?? CLASSIC_TITLES[modeKey] ?? modeKey,
     tags: mods.slice(),
+    configSnapshot: structuredClone(gs),
   }
   if (jaeggi) meta.jaeggi = true
   if (crab) meta.crab = true

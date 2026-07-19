@@ -6,7 +6,6 @@
 import { getSettings, getGameSettings, updateSetting, setGameField, subscribe, resetSettings } from './settings.js'
 import './profiles.js'
 import { getLastMonthGames, getYearOfPlayTime, deleteDB } from './engine/gamedb.js'
-import { formatSeconds } from './engine/utils.js'
 import { BoardRenderer } from './cube.js'
 import { QuadBoxGame, getNumberKeys, displayTitle } from './game.js'
 import { createFeedback, createTallyFeedback } from './feedback.js'
@@ -598,11 +597,12 @@ $('offcanvas-history').addEventListener('change', (e) => {
 })
 $('qb-show-cancelled').addEventListener('change', () => renderGames())
 
-// ---- graph popup (charts only) ----
+// ---- graph popup (charts live in <nback-graphs>, js/quadbox/graphs.js) ----
 const popup = $('graph-popup')
+const graphs = document.querySelector('nback-graphs')
 $('graph-label').addEventListener('click', async () => {
   popup.classList.add('visible')
-  await renderChart()
+  graphs.update({ records: await getLastMonthGames(), byDay: await getYearOfPlayTime() })
 })
 $('graph-close-popup').addEventListener('click', () => popup.classList.remove('visible'))
 // ESC + outside-click dismissal is shared: js/shared/sidebar-events.js
@@ -617,86 +617,6 @@ document.addEventListener('keydown', (e) => {
   cb.checked = !cb.checked
   cb.dispatchEvent(new Event('change'))
 })
-
-$('qb-tab-progress').addEventListener('click', () => switchTab('progress'))
-$('qb-tab-time').addEventListener('click', () => switchTab('time'))
-
-const switchTab = async (tab) => {
-  $('qb-tab-progress').classList.toggle('selected', tab === 'progress')
-  $('qb-tab-time').classList.toggle('selected', tab === 'time')
-  $('qb-progress-view').classList.toggle('visible', tab === 'progress')
-  $('qb-time-view').classList.toggle('visible', tab === 'time')
-  if (tab === 'progress') await renderChart()
-  else await renderTimeChart()
-}
-
-let chart
-const renderChart = async () => {
-  const games = (await getLastMonthGames())
-    .filter(g => g.status === 'completed' && g.ncalc)
-    .sort((a, b) => a.timestamp - b.timestamp)
-  const byTitle = {}
-  for (const g of games) {
-    const key = displayTitle(g)
-    byTitle[key] = byTitle[key] ?? []
-    byTitle[key].push({ x: g.timestamp, y: g.ncalc })
-  }
-  // Canvas can't read CSS vars, but JS can - pull the themed accent + text colour
-  // from the computed tokens so the chart follows the user's hue and theme.
-  const token = name => getComputedStyle(document.body).getPropertyValue(name).trim()
-  const accent = token('--accent-color')
-  const fg = token('--text-color')
-  const palette = [accent, '#a6712c', '#8a5264', '#4c8434', '#4a6a7a', '#6f9440']
-  const datasets = Object.entries(byTitle).map(([title, data], i) => ({
-    label: title, data, borderColor: palette[i % palette.length],
-    backgroundColor: palette[i % palette.length], tension: 0.2, pointRadius: 3,
-  }))
-  $('qb-graph-empty').hidden = datasets.some(d => d.data.length > 0)
-  chart?.destroy()
-  chart = new Chart($('qb-graph-canvas'), {
-    type: 'line',
-    data: { datasets },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        x: { type: 'time', ticks: { color: fg }, grid: { color: '#4444' } },
-        y: { title: { display: true, text: 'n-back level (ncalc)', color: fg }, ticks: { color: fg }, grid: { color: '#4444' } },
-      },
-      plugins: { legend: { labels: { color: fg } } },
-    },
-  })
-}
-
-// Daily play time over the last year (engine's 4 AM day boundary).
-let timeChart
-const renderTimeChart = async () => {
-  const byDay = await getYearOfPlayTime()
-  const data = Object.entries(byDay).sort(([a], [b]) => a.localeCompare(b))
-    .map(([day, minutes]) => ({ x: day, y: minutes }))
-  $('qb-graph-empty').hidden = data.length > 0
-  const token = name => getComputedStyle(document.body).getPropertyValue(name).trim()
-  const accent = token('--accent-color')
-  const fg = token('--text-color')
-  const totalMinutes = data.reduce((s, d) => s + d.y, 0)
-  timeChart?.destroy()
-  timeChart = new Chart($('qb-time-canvas'), {
-    type: 'bar',
-    data: { datasets: [{ label: 'Minutes played', data, backgroundColor: accent }] },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        x: { type: 'time', time: { unit: 'day' }, ticks: { color: fg }, grid: { color: '#4444' } },
-        y: { title: { display: true, text: 'minutes', color: fg }, ticks: { color: fg }, grid: { color: '#4444' } },
-      },
-      plugins: {
-        legend: { labels: { color: fg } },
-        title: { display: true, text: `Total: ${formatSeconds(totalMinutes * 60)}`, color: fg },
-      },
-    },
-  })
-}
 
 // ---- boot ----
 syncPanel()

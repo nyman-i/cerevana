@@ -316,7 +316,10 @@ select-row,
 goal-targets,
 profile-picker,
 corner-panel,
-corner-tabs {
+corner-tabs,
+rrt-graphs,
+nback-graphs,
+cct-graphs {
     display: contents;
 }
 
@@ -1993,6 +1996,7 @@ table.distinction {
     flex: 1 1 auto;
     white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .graph-select.selected {

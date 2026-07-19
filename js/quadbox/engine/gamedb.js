@@ -196,7 +196,7 @@ export const getYearOfPlayTime = async () => {
 }
 
 
-const addScoreMetadata = (game) => {
+export const addScoreMetadata = (game) => {
   if (game.status === 'tombstone') {
     return game
   }
@@ -232,12 +232,18 @@ const addScoreMetadata = (game) => {
     game.total.percent = game.total.hits / game.total.possible
   }
 
-  if (game.total.percent >= 0.4 && game?.mode !== 'tally') {
+  if (game?.mode !== 'tally') {
     game.ncalc = game.nBack + (game.total.percent - 0.5) * 2.7
   }
 
   if (game?.mode === 'tally') {
     game.total.averageTrialTime = (game.timestamp - game.start) / game.completedTrials
+  }
+
+  // correct-press reaction times (recorded by game.js since 2026-07; older
+  // records simply lack the field and get no average)
+  if (Array.isArray(game.reactionTimes) && game.reactionTimes.length > 0) {
+    game.avgReactionMs = game.reactionTimes.reduce((s, t) => s + t, 0) / game.reactionTimes.length
   }
 }
 
