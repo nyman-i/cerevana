@@ -16,6 +16,9 @@ const boldToHtml = s => escapeHtml(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</str
 // resolves to must appear here (else it sorts to the end of the dropdown).
 const CATEGORY_ORDER = ['Relational reasoning', 'Working memory', '3D MOT', 'Cognitive control', 'Brain endurance', 'Cognitive priming', 'Posner task', 'UFOV', 'Other'];
 
+// Categories that map to one of Cerevana's own exercises (RRT, N-Back, CCT) sort first.
+const OWN_EXERCISE_CATEGORIES = new Set(['Relational reasoning', 'Working memory', 'Cognitive control']);
+
 // Map a study to one training modality from its title + summary. Ordered: the
 // first match wins, so more-specific paradigms are checked before general ones
 // (e.g. the brain-endurance pilot mentions "cognitive and exercise" but is BET;
@@ -66,7 +69,7 @@ function parseStudies(md) {
         study.summary = study.summary.join(' ');
         study.category = deriveCategory(study.title + ' ' + study.summary);
         return study;
-    });
+    }).sort((a, b) => OWN_EXERCISE_CATEGORIES.has(b.category) - OWN_EXERCISE_CATEGORIES.has(a.category));
 }
 
 function cardHtml(study) {
