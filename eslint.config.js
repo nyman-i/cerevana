@@ -78,7 +78,9 @@ const CLASSIC_FILES = [
     ...listJsFiles('js/components'),
     'js/menu/page.js',
     'js/studies/page.js',
-].filter((f) => fs.existsSync(f));
+    // profile-bridge.js is js/shared's one ES module (see CLAUDE.md) - it
+    // belongs to the module tier below, not the classic script tier
+].filter((f) => fs.existsSync(f) && !f.endsWith('profile-bridge.js'));
 
 const classicGlobals = collectClassicGlobals(CLASSIC_FILES);
 // js/quadbox/** and js/cct/** are ES modules, but they run on pages that also
@@ -100,7 +102,7 @@ export default [
     },
     // Module-based app code: strict, full recommended + no-undef/no-unused-vars
     {
-        files: MODULE_DIRS.map((d) => `${d}/**/*.js`),
+        files: [...MODULE_DIRS.map((d) => `${d}/**/*.js`), 'js/shared/profile-bridge.js'],
         languageOptions: {
             ecmaVersion: 'latest',
             sourceType: 'module',
