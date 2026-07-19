@@ -370,6 +370,35 @@ function syncChainRows(gs) {
 
 const PRIMARY_MODES = ['dual', 'quad', 'custom', 'customB']
 
+// Per-mode tooltip copy (same '|' -> <br> line-break rule as cvTooltipHtml)
+// shown next to whichever dropdown holds the active mode; the other
+// dropdown falls back to its generic category blurb.
+const MODE_TIPS = {
+  dual: 'Position + audio,|the classic 2-stream|n-back baseline.',
+  quad: 'Position + audio +|shape + color,|hardest fixed preset.',
+  custom: 'Fully editable slot:|pick any stimuli,|trial time, chances.',
+  customB: 'A second editable|slot, defaults to|position + audio + image.',
+  tally: 'Positions flash on|the cube; type|the match count|each trial, self-paced.',
+  vtally: 'Same as Tally,|but visual (shape/|color/image) on a|scrolling strip.',
+  position: 'Classic single n-back:|grid position only.',
+  sound: 'Classic single n-back:|spoken letters only.',
+  positionColor: 'Position + color,|judged independently|(two match keys).',
+  colorSound: 'Color + audio,|judged independently|(two match keys).',
+  triple: 'Position + color +|audio, judged|independently (three keys).',
+  jaeggi: 'Position + audio,|Jaeggi et al. 2008|protocol: fixed match|counts, no per-trial|feedback.',
+  multiSquare: 'K grid cells lit|at once (2-4)|+ audio; set count|with Squares.',
+  dualCombo: 'Cross-modal: does today\'s|letter match what was|shown or spoken|N back?',
+  triCombo: 'Dual Combination plus|a plain position|match stream.',
+  quadCombo: 'Dual Combination plus|position and color|match streams.',
+  triComboColor: 'Dual Combination plus|a plain color|match stream.',
+  arithmetic: 'Type the answer:|N back\'s number|combined with today\'s|spoken operation.',
+  dualArithmetic: 'Arithmetic plus a|plain position match|stream.',
+  tripleArithmetic: 'Arithmetic plus position|and color match|streams.',
+}
+const MODE_MAIN_FALLBACK = 'Dual and Quad are|fixed protocols:|settings view-only,|scores comparable.|Pick a Custom mode|to edit everything.'
+const MODE_ADVANCED_FALLBACK = 'Preset variants,|view-only like|Dual/Quad. Tally:|count the matches|each trial,|self-paced.'
+const setTip = (id, text) => { $(id).innerHTML = text.split('|').join('<br>') + '<br>' }
+
 // Per-mode game settings are view-only outside the Custom modes: presets
 // are fixed protocols, so their scores stay comparable. nBack is exempt -
 // it's the level (auto-progression / daily reset / manual play write it),
@@ -401,6 +430,8 @@ const syncPanel = () => {
   const isPrimary = PRIMARY_MODES.includes(mode)
   $('qb-mode-main').value = isPrimary ? mode : ''
   $('qb-mode').value = isPrimary ? '' : mode
+  setTip('qb-mode-main-tip', isPrimary ? MODE_TIPS[mode] : MODE_MAIN_FALLBACK)
+  setTip('qb-mode-tip', isPrimary ? MODE_ADVANCED_FALLBACK : MODE_TIPS[mode])
   $('qb-grid').value = gs.grid ?? 'rotate3D'
   setValue('qb-nback', gs.nBack)
   $('qb-variable').checked = gs.rules === 'variable'
