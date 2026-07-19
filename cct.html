@@ -69,19 +69,32 @@
 						<num-row input-id="cct-beepvolume" label="Beep volume" min="0" max="100" step="5" width="5ch" suffix="%"></num-row>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Display</div>
+						<select-row select-id="cct-presentation" label="Digit presentation"
+							options="audiovisual=Audio + Visual|audio=Audio only|visual=Visual only"
+							tooltip="Whether each digit|is spoken, shown,|or both." tooltip-side="right"></select-row>
+						<select-row select-id="cct-inputmethod" label="Input method"
+							options="physical=Physical keyboard|keypad=On-screen keypad"
+							tooltip="Both show clickable|answer buttons; Physical|also types on your|keyboard, On-screen|is click-only." tooltip-side="right"></select-row>
 						<switch-row input-id="cct-intervaltiming" label="Track time per interval" tooltip="Records how long|each session spends|at every interval,|shown in History." tooltip-side="right"></switch-row>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Reset</div>
+						<p>Reset settings keeps your history. The full reset erases
+						all CCT data - irreversible.</p>
+						<div class="mb-1"><button type="button" id="cct-reset-settings">Reset Settings</button></div>
+						<div class="mb-1"><button type="button" id="cct-reset-all" class="delete">Reset CCT</button></div>
 			</corner-panel>
 
 			<corner-panel name="info" side="left">
 						<div class="mb-05 panel-heading">How to play</div>
 						<p>Digits from 1&ndash;9 play one at a time. For each new digit,
 						answer with the result of it and the digit <strong>right
-						before it</strong> &mdash; by default the sum, so hearing
+						before it</strong> - by default the sum, so hearing
 						"3" then "5" means you type <strong>8</strong>.</p>
-						<p>Type your answer as soon as you know it; there's no submit
-						button, it's checked as you type. Answer correctly several
-						times in a row and the pace speeds up; miss a few in a row
-						and it slows back down.</p>
+						<p>Answer as soon as you know it - type it or click it
+						on the answer buttons; there's no submit step, it's checked
+						instantly. Answer correctly several times in a row and the
+						pace speeds up; miss a few in a row and it slows back
+						down.</p>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Keyboard Shortcuts</div>
 						<div class="mb-2">
@@ -97,21 +110,15 @@
 						<p>CCT's core mechanics (the adaptive-interval PASAT
 						rule) are adapted from
 						<a href="https://github.com/tim22dev22/CCT" target="_blank" rel="noopener">CCT</a>
-						by tim22dev22 (MIT) &mdash; see
+						by tim22dev22 (MIT) - see
 						<a href="credits.html">Credits</a>.</p>
-						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Reset</div>
-						<p>Reset settings keeps your history. The full reset erases
-						all CCT data &mdash; irreversible.</p>
-						<div class="mb-1"><button type="button" id="cct-reset-settings">Reset Settings</button></div>
-						<div class="mb-1"><button type="button" id="cct-reset-all" class="delete">Reset CCT</button></div>
 			</corner-panel>
 
 			<corner-panel name="history" side="right" body-class="hql-frame">
 					<div>Sessions this month: <span id="cct-hist-count"></span></div>
 					<div>Avg accuracy, last 10: <span id="cct-hist-avg"></span></div>
 					<div>Play time today: <span id="cct-playtime"></span></div>
-					<div id="cct-sessions-empty" class="panel-empty" hidden>No sessions yet &mdash; finish one and your history appears here.</div>
+					<div id="cct-sessions-empty" class="panel-empty" hidden>No sessions yet - finish one and your history appears here.</div>
 					<div id="cct-history-list" class="hql"></div>
 			</corner-panel>
 
@@ -139,12 +146,15 @@
 					<div class="bracket-lip-bottom-right"></div>
 					<div class="cct-digit" id="cct-digit" hidden></div>
 					<input id="cct-answer" class="cct-answer-input" type="text" inputmode="numeric" autocomplete="off" autocapitalize="off" hidden>
+					<!-- one button per possible answer for the active operation, built by js/cct/page.js -->
+					<div id="cct-keypad" class="cct-keypad" hidden></div>
 					<div class="nback__result" id="cct-result" hidden></div>
 				</div>
 			</div>
 
 			<div class="cct-actions">
 				<button type="button" id="cct-start" class="nback__start">START</button>
+				<button type="button" id="cct-pause" class="nback__start" hidden>PAUSE</button>
 			</div>
 
 			<div id="daily-progress-container" class="progress-container">

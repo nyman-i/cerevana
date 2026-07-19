@@ -4,7 +4,8 @@
 // N-Back's qb-* three-table approach.
 import { getSettings, subscribe, updateSetting, resetSettings } from './settings.js'
 import './profiles.js'
-import { isRunning, startSession, submitAnswer, stopSession } from './game.js'
+import { isRunning, isPaused, startSession, submitAnswer, stopSession, pauseSession, resumeSession } from './game.js'
+import { getExpectedAnswer } from './engine/mechanics.js'
 import {
   storeSession, getLastMonthSessions, getPlayTimeSince4AM, getYearOfPlayTime, deleteDB as deleteCctDB,
 } from './engine/gamedb.js'
@@ -27,6 +28,8 @@ const keySettingMap = {
   'cct-beepvolume': 'beepVolume',
   'cct-beepenabled': 'beepEnabled',
   'cct-intervaltiming': 'showIntervalTiming',
+  'cct-presentation': 'presentationMode',
+  'cct-inputmethod': 'inputMethod',
   'cct-dailygoal': 'dailyProgressGoal',
   'cct-weeklygoal': 'weeklyProgressGoal',
 }
@@ -132,11 +135,27 @@ registerEventHandlers()
 renderGoalTrackers()
 
 // ---- gameplay ----
-let stats = { correctAnswers: 0, totalQuestions: 0, interval: 0 }
+let stats = { correctAnswers: 0, totalQuestions: 0, streak: 0, interval: 0 }
 
 function renderHud() {
-  $('cct-hud').textContent =
-    `Correct: ${stats.correctAnswers}/${stats.totalQuestions} · Interval: ${stats.interval}ms`
+  $('cct-hud').textContent = (isPaused() ? 'PAUSED · ' : '') +
+    `Correct: ${stats.correctAnswers}/${stats.totalQuestions} · Streak: ${stats.streak} · Interval: ${stats.interval}ms`
+}
+
+// one button per answer the active operation can produce (e.g. 2-18 for
+// addition) - a single click answers, no digit-by-digit entry
+let lastKeyBtn = null
+
+function buildKeypad(mode) {
+  const values = new Set()
+  for (let a = 1; a <= 9; a++) {
+    for (let b = 1; b <= 9; b++) values.add(getExpectedAnswer(a, b, mode))
+  }
+  lastKeyBtn = null
+  $('cct-keypad').innerHTML = [...values].sort((x, y) => x - y)
+    .map(v => `<button type="button" class="nback__match" data-key="${v}" tabindex="-1">${v}</button>`)
+    .join('')
+  return values.size
 }
 
 function flash(className) {
@@ -146,31 +165,61 @@ function flash(className) {
   void input.offsetWidth
   input.classList.add(className)
   setTimeout(() => input.classList.remove(className), 300)
+  // keypad-only mode has no visible input - flash the clicked button instead
+  // (a wrong answer only ever comes from a timeout, so no button to flash there)
+  if (input.hidden && lastKeyBtn && className === 'cct-flash-right') {
+    const btn = lastKeyBtn
+    btn.classList.add('nback__match--right')
+    setTimeout(() => btn.classList.remove('nback__match--right'), 300)
+  }
 }
 
 function beginUi() {
-  $('cct-start').hidden = true
+  const { inputMethod, presentationMode, startingInterval, arithmeticMode } = getSettings()
+  $('cct-start').textContent = 'STOP'
+  $('cct-pause').hidden = false
+  $('cct-pause').textContent = 'PAUSE'
   $('cct-result').hidden = true
-  $('cct-digit').hidden = false
+  $('cct-digit').hidden = presentationMode === 'audio'
   $('cct-hud').hidden = false
+  // the answer grid shows in both input methods (like upstream CCT) -
+  // physical keyboard just keeps the typing input focused as well
+  const keyCount = buildKeypad(arithmeticMode)
+  $('cct-keypad').hidden = false
+  // keypad mode is click-only: no typing input, bigger buttons
+  $('cct-keypad').classList.toggle('cct-keypad--primary', inputMethod === 'keypad')
+  // no digit on screen either - the grid alone fills the frame, so grow more
+  // (but not for multiplication's 36 buttons, which would overflow the screen)
+  $('cct-keypad').classList.toggle('cct-keypad--hero',
+    inputMethod === 'keypad' && presentationMode === 'audio' && keyCount <= 20)
+  $('cct-stage').classList.remove('cct-stage--paused')
   const answer = $('cct-answer')
-  answer.hidden = false
+  answer.hidden = inputMethod === 'keypad'
   answer.value = ''
-  answer.focus()
-  stats = { correctAnswers: 0, totalQuestions: 0, interval: getSettings().startingInterval }
+  answer.readOnly = inputMethod === 'keypad'
+  // no digit on screen + typing: let the input take the digit's space
+  answer.classList.toggle('cct-answer-input--hero',
+    presentationMode === 'audio' && inputMethod === 'physical')
+  if (inputMethod !== 'keypad') answer.focus()
+  stats = { correctAnswers: 0, totalQuestions: 0, streak: 0, interval: startingInterval }
   renderHud()
 }
 
 function endUi(record) {
   $('cct-digit').hidden = true
   $('cct-hud').hidden = true
+  $('cct-keypad').hidden = true
   $('cct-answer').hidden = true
-  $('cct-start').hidden = false
+  $('cct-start').textContent = 'START'
+  $('cct-pause').hidden = true
   const result = $('cct-result')
   result.hidden = false
+  const timing = record.averageResponseTimeMs != null
+    ? ` · avg ${Math.round(record.averageResponseTimeMs)}ms · fastest ${Math.round(record.fastestResponseTimeMs)}ms`
+    : ''
   result.textContent =
     `${record.status} · ${record.correctAnswers}/${record.totalQuestionsAsked} correct ` +
-    `(${record.accuracy.toFixed(0)}%) · ${Math.round(record.durationMs / 1000)}s`
+    `(${record.accuracy.toFixed(0)}%) · ${fmtElapsed(record.durationMs / 1000)}${timing}`
 }
 
 function begin() {
@@ -181,8 +230,8 @@ function begin() {
       $('cct-digit').textContent = digit
       $('cct-answer').value = ''
     },
-    onAnswer: ({ isCorrect, interval, correctAnswers, totalQuestions }) => {
-      stats = { correctAnswers, totalQuestions, interval }
+    onAnswer: ({ isCorrect, interval, correctAnswers, totalQuestions, streak }) => {
+      stats = { correctAnswers, totalQuestions, streak, interval }
       renderHud()
       flash(isCorrect ? 'cct-flash-right' : 'cct-flash-wrong')
     },
@@ -200,10 +249,36 @@ function end() {
   stopSession('exited')
 }
 
-$('cct-start').addEventListener('click', begin)
+// blur on click so the focused button can't be retriggered by Space mid-game
+// (same lesson as N-Back's qb-start)
+$('cct-start').addEventListener('click', (e) => {
+  e.currentTarget.blur()
+  if (isRunning()) end()
+  else begin()
+})
 
 $('cct-answer').addEventListener('input', (e) => {
   submitAnswer(e.target.value)
+})
+
+$('cct-keypad').addEventListener('click', (e) => {
+  const btn = e.target.closest('button')
+  if (!btn?.dataset.key || !isRunning()) return
+  lastKeyBtn = btn
+  const answer = $('cct-answer')
+  answer.value = btn.dataset.key
+  submitAnswer(btn.dataset.key)
+  // in physical mode the click steals focus from the input - hand it back
+  if (!answer.hidden) answer.focus()
+})
+
+$('cct-pause').addEventListener('click', (e) => {
+  e.currentTarget.blur()
+  if (!isRunning()) return
+  if (isPaused()) { resumeSession(); e.target.textContent = 'PAUSE' }
+  else { pauseSession(); e.target.textContent = 'RESUME' }
+  $('cct-stage').classList.toggle('cct-stage--paused', isPaused())
+  renderHud()
 })
 
 document.addEventListener('keydown', (event) => {

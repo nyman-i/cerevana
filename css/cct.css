@@ -45,7 +45,7 @@
     min-width: 14rem;
     /* idle height must match the running game (digit + gap + answer input),
        so the frame doesn't resize when a session starts */
-    min-height: calc(3rem + var(--cct-digit-size) * 1.2 + 1rem + 3.5rem);
+    min-height: calc(3rem + var(--cct-digit-size) * 1.2 + 1rem + 4.25rem);
 }
 
 .cct-digit {
@@ -59,15 +59,23 @@
 
 .cct-answer-input {
     font-family: Oxanium, sans-serif;
-    font-size: var(--step-1);
+    font-size: var(--step-2);
     text-align: center;
     width: 6ch;
-    height: 3.5rem;
+    height: 4.25rem;
     background-color: var(--single-input-bg);
     color: var(--text-color);
     border: 1px solid var(--switch-border-color);
     border-radius: 0.25rem;
     padding: 0.5rem;
+}
+
+/* audio-only + physical keyboard: the input is alone between the frame
+   brackets, so it takes over the hidden digit's space */
+.cct-answer-input--hero {
+    font-size: calc(var(--cct-digit-size) * 0.55);
+    height: calc(var(--cct-digit-size) * 1.2);
+    width: 4.5ch;
 }
 
 .cct-answer-input.cct-flash-right { border-color: var(--correct-color); }
@@ -80,6 +88,7 @@
     right: 0;
     display: flex;
     justify-content: center;
+    gap: 0.5rem;
     z-index: 10;
 }
 
@@ -103,4 +112,76 @@
     padding: 0.1rem 0.45rem;
     border-radius: 0.25rem;
     color: #fffffd;
+}
+
+/* on-screen keypad (Input method setting) - one button per possible answer,
+   wrapping rows below the frame; visuals come from the shared .nback__match
+   class. Button count varies by operation (9 difference / 17 addition,
+   subtraction / 36 multiplication). */
+.cct-keypad {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    max-width: 27rem;
+}
+
+.cct-keypad[hidden] {
+    display: none;
+}
+
+.cct-keypad button {
+    min-width: 3.25rem;
+    padding: 0.6rem 0.5rem;
+    font-family: Oxanium, sans-serif;
+    font-size: 1.1rem;
+}
+
+/* click-only keypad mode: the grid is the sole input, so the targets grow */
+.cct-keypad--primary {
+    max-width: 36rem;
+    gap: 0.65rem;
+}
+
+.cct-keypad--primary button {
+    min-width: 4.5rem;
+    padding: 1.1rem 0.75rem;
+    font-size: var(--step-1);
+}
+
+/* audio-only + keypad: no digit above it, so the grid takes the digit's room */
+.cct-keypad--hero {
+    max-width: 46rem;
+    gap: 0.75rem;
+}
+
+.cct-keypad--hero button {
+    min-width: 5.75rem;
+    padding: 1.5rem 1rem;
+    font-size: var(--step-2);
+}
+
+/* paused: the stimulus area visibly sleeps until RESUME */
+.cct-stage--paused .cct-digit,
+.cct-stage--paused .cct-keypad,
+.cct-stage--paused .cct-answer-input {
+    opacity: 0.35;
+    transition: opacity 0.15s;
+}
+
+/* narrow screens: give the frame back the margin/padding it eats
+   unconditionally today (was margin 0 3rem + min-width 14rem = 320px
+   fixed footprint, leaving zero slack on a 320-360px viewport) */
+@media (width <= 500px) {
+    .cct-frame {
+        margin: 0 1rem;
+        padding: 1rem 1.5rem;
+        min-width: 0;
+    }
+
+    .cct-hud {
+        max-width: calc(100vw - 1rem);
+        white-space: normal;
+        text-align: center;
+    }
 }
