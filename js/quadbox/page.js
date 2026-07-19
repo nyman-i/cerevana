@@ -321,7 +321,7 @@ for (const field of ['position', 'color', 'shape', 'audio']) {
 }
 
 // PgUp/PgDn cycle enabled modes (ModeSwapper behavior)
-const MODE_ORDER = ['quad', 'dual', 'custom', 'customB',
+const MODE_ORDER = ['quad', 'dual', 'quadClassic', 'dualClassic', 'custom', 'customB',
   'position', 'sound', 'positionColor', 'colorSound', 'triple', 'jaeggi', 'multiSquare',
   'dualCombo', 'triCombo', 'quadCombo', 'triComboColor',
   'arithmetic', 'dualArithmetic', 'tripleArithmetic', 'tally', 'vtally']
@@ -367,7 +367,7 @@ function syncChainRows(gs) {
   })
 }
 
-const PRIMARY_MODES = ['dual', 'quad', 'custom', 'customB']
+const PRIMARY_MODES = ['dual', 'quad', 'dualClassic', 'quadClassic', 'custom', 'customB']
 
 // Per-mode tooltip copy (same '|' -> <br> line-break rule as cvTooltipHtml)
 // shown next to whichever dropdown holds the active mode; the other
@@ -375,6 +375,8 @@ const PRIMARY_MODES = ['dual', 'quad', 'custom', 'customB']
 const MODE_TIPS = {
   dual: 'Position + audio,|the classic 2-stream|n-back baseline.',
   quad: 'Position + audio +|shape + color,|hardest fixed preset.',
+  dualClassic: 'Same as Dual,|but on a flat|2D grid instead|of the 3D cube.',
+  quadClassic: 'Same as Quad,|but on a flat|2D grid instead|of the 3D cube.',
   custom: 'Fully editable slot:|pick any stimuli,|trial time, chances.',
   customB: 'A second editable|slot, defaults to|position + audio + image.',
   tally: 'Positions flash on|the cube; type|the match count|each trial, self-paced.',

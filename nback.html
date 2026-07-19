@@ -48,9 +48,11 @@
 						<div class="mb-2">
 							<div class="ctrl__inner">
 								<select id="qb-mode-main" class="select-item">
-									<option value="" hidden>&mdash;</option>
+									<option value="" hidden>-</option>
 									<option value="dual">Dual</option>
 									<option value="quad">Quad</option>
+									<option value="dualClassic">Classic Dual</option>
+									<option value="quadClassic">Classic Quad</option>
 									<option value="custom">Custom A</option>
 									<option value="customB">Custom B</option>
 								</select>
@@ -63,49 +65,6 @@
 										scores comparable.<br>
 										Pick a Custom mode<br>
 										to edit everything.<br>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="mb-05 panel-heading">Advanced Modes</div>
-						<div class="mb-2">
-							<div class="ctrl__inner">
-								<select id="qb-mode" class="select-item">
-									<option value="" hidden>&mdash;</option>
-									<optgroup label="Quad Box">
-										<option value="tally">Tally</option>
-										<option value="vtally">Visual Tally</option>
-									</optgroup>
-									<optgroup label="Classic">
-										<option value="position">Position</option>
-										<option value="sound">Sound</option>
-										<option value="positionColor">Position + Color</option>
-										<option value="colorSound">Color + Sound</option>
-										<option value="triple">Triple</option>
-										<option value="jaeggi">Jaeggi Dual</option>
-										<option value="multiSquare">Multi-Square</option>
-									</optgroup>
-									<optgroup label="Combination">
-										<option value="dualCombo">Dual Combination</option>
-										<option value="triCombo">Tri Combination</option>
-										<option value="quadCombo">Quad Combination</option>
-										<option value="triComboColor">Tri Combination (Color)</option>
-									</optgroup>
-									<optgroup label="Arithmetic">
-										<option value="arithmetic">Arithmetic</option>
-										<option value="dualArithmetic">Dual Arithmetic</option>
-										<option value="tripleArithmetic">Triple Arithmetic</option>
-									</optgroup>
-								</select>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text right wrap" id="qb-mode-tip">
-										Preset variants,<br>
-										view-only like<br>
-										Dual/Quad. Tally:<br>
-										count the matches<br>
-										each trial,<br>
-										self-paced.<br>
 									</div>
 								</div>
 							</div>
@@ -241,6 +200,59 @@
 						<num-row input-id="qb-key-color" label="Color" type="text" maxlength="1" width="3ch"></num-row>
 						<num-row input-id="qb-key-shape" label="Shape / Image" type="text" maxlength="1" width="3ch"></num-row>
 						<num-row input-id="qb-key-audio" label="Audio" type="text" maxlength="1" width="3ch"></num-row>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Advanced Modes</div>
+						<p><strong>Experimental</strong> - these presets are less
+						tested than Dual/Quad/Custom and may be buggy or behave
+						incorrectly.</p>
+						<div class="mb-2">
+							<div class="ctrl__inner">
+								<select id="qb-mode" class="select-item">
+									<option value="" hidden>-</option>
+									<optgroup label="Quad Box">
+										<option value="tally">Tally</option>
+										<option value="vtally">Visual Tally</option>
+									</optgroup>
+									<optgroup label="Classic">
+										<option value="position">Position</option>
+										<option value="sound">Sound</option>
+										<option value="positionColor">Position + Color</option>
+										<option value="colorSound">Color + Sound</option>
+										<option value="triple">Triple</option>
+										<option value="jaeggi">Jaeggi Dual</option>
+										<option value="multiSquare">Multi-Square</option>
+									</optgroup>
+									<optgroup label="Combination">
+										<option value="dualCombo">Dual Combination</option>
+										<option value="triCombo">Tri Combination</option>
+										<option value="quadCombo">Quad Combination</option>
+										<option value="triComboColor">Tri Combination (Color)</option>
+									</optgroup>
+									<optgroup label="Arithmetic">
+										<option value="arithmetic">Arithmetic</option>
+										<option value="dualArithmetic">Dual Arithmetic</option>
+										<option value="tripleArithmetic">Triple Arithmetic</option>
+									</optgroup>
+								</select>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text right wrap" id="qb-mode-tip">
+										Preset variants,<br>
+										view-only like<br>
+										Dual/Quad. Tally:<br>
+										count the matches<br>
+										each trial,<br>
+										self-paced.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Reset</div>
+						<p>Reset settings keeps your history. The full reset erases
+						all N-Back data - irreversible.</p>
+						<div class="mb-1"><button type="button" id="qb-reset-settings">Reset Settings</button></div>
+						<div class="mb-1"><button type="button" id="qb-reset-all" class="delete">Reset N-Back</button></div>
 			</corner-panel>
 
 			<corner-panel name="info" side="left">
@@ -250,13 +262,15 @@
 						matching key whenever a modality repeats: position, color,
 						shape/image, or audio. Several can match at once.</p>
 						<p>In <strong>tally</strong> modes you instead type the
-						<em>count</em> of matches each trial &mdash; self-paced, no
+						<em>count</em> of matches each trial - self-paced, no
 						trial timer.</p>
 						<p>The <strong>Classic</strong>, <strong>Combination</strong>
 						and <strong>Arithmetic</strong> groups follow the Brain
 						Workshop protocol: grid positions and spoken letters,
 						cross-modal matches, typed arithmetic answers, and the crab,
-						self-paced and Jaeggi variants.</p>
+						self-paced and Jaeggi variants. These Advanced Modes are
+						<strong>experimental</strong> and less tested than
+						Dual/Quad/Custom - expect the occasional bug.</p>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Keyboard Shortcuts</div>
 						<div class="mb-2">
@@ -277,14 +291,8 @@
 						<a href="https://github.com/soamsy/quad-box" target="_blank" rel="noopener">Quad Box</a>
 						by soamsy (MIT); the classic modes reimplement the protocol of
 						<a href="https://brainworkshop.sourceforge.net/" target="_blank" rel="noopener">Brain Workshop</a>
-						(inspiration only, no shared code) &mdash; see
+						(inspiration only, no shared code) - see
 						<a href="credits.html">Credits</a>.</p>
-						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Reset</div>
-						<p>Reset settings keeps your history. The full reset erases
-						all N-Back data &mdash; irreversible.</p>
-						<div class="mb-1"><button type="button" id="qb-reset-settings">Reset Settings</button></div>
-						<div class="mb-1"><button type="button" id="qb-reset-all" class="delete">Reset N-Back</button></div>
 			</corner-panel>
 
 			<corner-panel name="history" side="right" body-class="hql-frame">

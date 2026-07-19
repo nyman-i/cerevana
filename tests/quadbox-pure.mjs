@@ -181,6 +181,27 @@ test('generateGame: enablePosition false omits the position stimulus', async () 
   assert.ok(soundOnly.trials.every(t => !('position' in t)), 'no trial carries a position')
 })
 
+test('generateGame: Classic Dual/Quad get distinct titles from their 3D counterparts', async () => {
+  // dualClassic/quadClassic are dual/quad on grid:'static2D' - same stimulus
+  // tags, so createDefaultTitle() alone would derive the identical 'dual'/
+  // 'quad' title and silently merge their auto-progression streaks and
+  // history/chart grouping with the 3D modes. CLASSIC_TITLES must give them
+  // their own title, and game.js's regenerate() must forward it (mirrors
+  // the 'sound' case above).
+  const { generateGame } = await import('../js/quadbox/engine/nback.js')
+  const { CLASSIC_TITLES } = await import('../js/quadbox/classic.js')
+  assert.notEqual(CLASSIC_TITLES.dualClassic, 'dual')
+  assert.notEqual(CLASSIC_TITLES.quadClassic, 'quad')
+
+  const dualBase = { ...mockGameSettings, enableAudio: true, enableShape: false, enableColor: false, enableImage: false, grid: 'static2D', audioSource: 'letters2' }
+  const dualClassic = generateGame({ ...dualBase, title: CLASSIC_TITLES.dualClassic }, {})
+  assert.equal(dualClassic.meta.title, CLASSIC_TITLES.dualClassic)
+
+  const quadBase = { ...mockGameSettings, enableAudio: true, enableShape: true, enableColor: true, enableImage: false, grid: 'static2D', audioSource: 'letters2', colorSource: 'basic', shapeSource: 'basic' }
+  const quadClassic = generateGame({ ...quadBase, title: CLASSIC_TITLES.quadClassic }, {})
+  assert.equal(quadClassic.meta.title, CLASSIC_TITLES.quadClassic)
+})
+
 test('addScoreMetadata: ncalc is always set for non-tally games, even below the old 40% floor', async () => {
   // ncalc used to only be computed when accuracy >= 40%, so a below-threshold
   // game had no ncalc at all - the progress graph's `g.ncalc` filter then

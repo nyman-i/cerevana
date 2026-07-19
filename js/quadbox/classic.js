@@ -38,6 +38,8 @@ export const CLASSIC_TITLES = {
   positionColor: 'position-color',
   colorSound: 'color-sound',
   triple: 'triple',
+  dualClassic: 'dual-classic',
+  quadClassic: 'quad-classic',
 }
 
 // BW's ARITHMETIC_ACCEPTABLE_DECIMALS (tenths, odd twentieths, eighths) - every
