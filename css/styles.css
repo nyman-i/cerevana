@@ -1039,45 +1039,15 @@ input[type="number"]::-moz-inner-spin-button {
 .progress-tracker {
     display: none;
     position: relative;
-    bottom: 10px;
-    height: 10px;
+    bottom: 6px;
     margin-top: -4px;
-    left: 5%;
-    width: 90%;
-    align-items: center;
-    justify-content: flex-start;
-    flex-direction: row-reverse;
-    opacity: 0.25;
+    text-align: center;
+    font-size: var(--step--2);
 }
 
 .progress-tracker.visible {
-    display: flex;
-}
-
-.trailing-dot {
-    width: 5%;
-    text-align: center;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.trailing-dot::before {
-    content: '';
-    display: inline-block;
-    width: 95%;
-    height: 6px;
-    border: 1px solid #0007;
-}
-
-.trailing-dot.success::before {
-    background-color: #1f4;
-}
-
-.trailing-dot.fail::before {
-    background-color: #e41;
+    display: block;
+    color: var(--correct-color);
 }
 
 .is-connector {

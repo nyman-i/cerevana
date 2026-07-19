@@ -780,6 +780,13 @@
 								</div>
 							</div>
 						</div>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Reset</div>
+						<p>Reset settings keeps your history. The full reset erases
+						all RRT data - irreversible. (N-Back is untouched either
+						way; a full reset for every exercise lives on the main menu.)</p>
+						<div class="mb-1"><button type="button" id="reset-rrt-settings" onclick="resetRRTSettings()">Reset Settings</button></div>
+						<div class="mb-1"><button type="button" id="reset-rrt" class="delete" onclick="resetRRT()">Reset RRT</button></div>
 			</corner-panel>
 			<corner-panel name="history" side="right" body-class="hql-frame">
 					<div>Total answer time: <span id="total-display"></span></div>
@@ -818,14 +825,7 @@
 						by 4skinSkywalker, extended through the v3 lineage of
 						ikokusovereignty and
 						<a href="https://github.com/soamsy/Syllogimous-v3" target="_blank" rel="noopener">soamsy</a>
-						&mdash; see <a href="credits.html">Credits</a>.</p>
-						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Reset</div>
-						<p>Reset settings keeps your history. The full reset erases
-						all RRT data &mdash; irreversible. (N-Back is untouched either
-						way; a full reset for every exercise lives on the main menu.)</p>
-						<div class="mb-1"><button type="button" id="reset-rrt-settings" onclick="resetRRTSettings()">Reset Settings</button></div>
-						<div class="mb-1"><button type="button" id="reset-rrt" class="delete" onclick="resetRRT()">Reset RRT</button></div>
+						- see <a href="credits.html">Credits</a>.</p>
 			</corner-panel>
 			<corner-tabs></corner-tabs>
 				<nav class="game-menu metal-gear">

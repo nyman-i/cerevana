@@ -513,7 +513,7 @@ function init() {
 
     carouselInit();
     displayInit();
-    PROGRESS_STORE.renderCurrentProgress(question);
+    PROGRESS_STORE.renderCurrentProgress();
     renderConclusionSpoiler();
 }
 
@@ -724,6 +724,7 @@ function renderHQL(didAddSingleQuestion=false) {
     updateAverage(appState.questions);
     correctlyAnsweredEl.innerText = appState.score;
     nextLevelEl.innerText = appState.questions.length;
+    PROGRESS_STORE.renderStreak();
 }
 
 function updateAverage(reverseChronological) {

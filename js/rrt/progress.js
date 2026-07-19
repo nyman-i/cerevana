@@ -150,7 +150,7 @@ class ProgressStore {
         trailingProgress.push(q);
         trailingProgress.sort((a, b) => a.timeElapsed - b.timeElapsed);
         const successes = trailingProgress.filter(p => p.correctness === 'right');
-        const commonTypes = this.findCommonTypes(question);
+        const commonTypes = this.findCommonTypes(q);
         if (trailingProgress.length < findAutoProgressionTrailing()) {
             const numFailures = trailingProgress.length - successes.length;
             const bestPercentagePossible = 100 * (findAutoProgressionTrailing() - numFailures) / findAutoProgressionTrailing();
@@ -176,30 +176,27 @@ class ProgressStore {
         populateSettings();
     }
 
-    async renderCurrentProgress(question) {
-        await this.renderAutoProgressionTrailing(question);
+    async renderCurrentProgress() {
+        this.renderStreak();
         await this.renderDailyProgress();
         await this.renderWeeklyProgress();
     }
 
-    async renderAutoProgressionTrailing(question) {
-        const q = this.convertForDatabase(question);
-        let trailingProgress = await getTopRRTProgress(this.calculateCommonKeys(q), findAutoProgressionTrailing());
-        progressTracker.innerHTML = '';
-        if (!savedata.autoProgression) {
-            progressTracker.classList.remove('visible');
-            return;
-        } 
-        progressTracker.classList.add('visible');
-        const width = 100 / findAutoProgressionTrailing();
-        trailingProgress.forEach(q => {
-            const isSuccess = q.correctness === 'right';
-            const span = document.createElement('span');
-            span.classList.add('trailing-dot');
-            span.style.width = `${width.toFixed(2)}%`;
-            span.classList.add(isSuccess ? 'success' : 'fail');
-            progressTracker.appendChild(span);
-        });
+    // Plain "how many in a row, right now" over every answered question -
+    // not scoped to auto-progression's per type/premise/timer window, which
+    // mostly read as stuck/empty since RRT mixes question types and each
+    // combo tracks its own separate window. Reflects appState.questions
+    // directly (always populated, unlike the IndexedDB progress rows which
+    // only exist while the timer is on), so it works in either mode.
+    renderStreak() {
+        let streak = 0;
+        const questions = appState.questions;
+        for (let i = questions.length - 1; i >= 0; i--) {
+            if (questions[i].correctness !== 'right') break;
+            streak++;
+        }
+        progressTracker.classList.toggle('visible', streak > 0);
+        progressTracker.textContent = streak > 0 ? `${streak} in a row` : '';
     }
 
     async renderDailyProgress() {
