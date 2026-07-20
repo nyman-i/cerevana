@@ -28,6 +28,12 @@ export const createProfileBridge = ({ profilesKey, selectedKey, liveKey, blobFie
   const profileList = document.getElementById('profile-list')
   const profileDropdown = document.querySelector('.profile-dropdown')
   const profilePlus = document.getElementById('profile-plus')
+  const profileShare = document.getElementById('profile-share')
+  const profileCopied = document.getElementById('profile-copied')
+
+  const shortId = () => Math.random().toString(36).slice(2, 11)
+  const sanitizeName = (value) =>
+    (value && value.length < 40) ? value.replace(/<[^>]*>/g, '') : ''
 
   const PROFILES = {
     profiles: [],
@@ -40,12 +46,51 @@ export const createProfileBridge = ({ profilesKey, selectedKey, liveKey, blobFie
       this.selected = (Number.isInteger(sel) && sel >= 0 && sel < this.profiles.length) ? sel : 0
       this.apply()
       this.persist()
+      this.loadUrl()
       // every settings change lands in the active profile
       subscribe(() => {
         if (this.applying) return
         this.current().data[blobField] = getSettings()
         this.persist()
       })
+    },
+
+    // share URL: always the public origin, even when running locally - a
+    // recipient opens the link on cerevana.com, not the sharer's localhost.
+    // The settings blob rides in a param named after the exercise's blob
+    // field ('quadbox' / 'cct'); apply() normalizes it through the settings
+    // module's migrate-and-merge load on import.
+    // ponytail: whole blob in the URL (~10KB for N-Back) - diff against
+    // defaults before encoding if a chat client ever truncates these
+    generateUrl() {
+      const id = encodeURIComponent(shortId())
+      const name = encodeURIComponent(this.current().name)
+      const blob = encodeURIComponent(JSON.stringify(this.current().data[blobField] ?? getSettings()))
+      return `https://cerevana.com${window.location.pathname}?id=${id}&name=${name}&${blobField}=${blob}`
+    },
+
+    loadUrl() {
+      const urlObj = new URL(window.location.href)
+      if (!urlObj.searchParams.get(blobField)) return
+      try {
+        window.history.replaceState({}, '', window.location.origin + window.location.pathname)
+      } catch { /* file:// - nothing to strip */ }
+      this.importFromUrl(urlObj)
+    },
+
+    importFromUrl(urlObj) {
+      const id = sanitizeName(urlObj.searchParams.get('id') || '')
+      const encodedBlob = urlObj.searchParams.get(blobField)
+      if (!id || !encodedBlob) return false
+      if (this.profiles.some(p => p.id === id)) return false
+      let blob
+      try { blob = JSON.parse(decodeURIComponent(encodedBlob)) } catch { return false }
+      if (Object.prototype.toString.call(blob) !== '[object Object]') return false
+      let name = sanitizeName(decodeURIComponent(urlObj.searchParams.get('name') || '')) || 'Imported'
+      while (this.profiles.some(p => p.name === name)) name += ' (imported)'
+      this.profiles.push({ name, id, data: { [blobField]: blob } })
+      this.select(this.profiles.length - 1)
+      return true
     },
 
     current() {
@@ -132,6 +177,13 @@ export const createProfileBridge = ({ profilesKey, selectedKey, liveKey, blobFie
   })
   profilePlus.addEventListener('click', () => PROFILES.add())
   profileInput.addEventListener('input', (e) => PROFILES.rename(e.target.value))
+  if (profileShare) {
+    profileShare.addEventListener('click', () => {
+      navigator.clipboard.writeText(PROFILES.generateUrl())
+      profileCopied.classList.add('toast')
+      setTimeout(() => profileCopied.classList.remove('toast'), 1500)
+    })
+  }
 
   PROFILES.startup()
   return PROFILES
