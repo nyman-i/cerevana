@@ -119,7 +119,6 @@ function load() {
     PROFILE_STORE.startup();
 
     renderHQL();
-    renderFolders();
     populateSettings();
 }
 
@@ -209,7 +208,7 @@ function displayInit() {
         displayText.classList.remove('big-question');
     }
 
-    imagePromise = imagePromise.then(() => updateCustomStyles());
+    imagePromise = imagePromise.then(() => updateCustomStyles()).catch(console.error);
 
     if (appState.darkMode) {
         document.body.classList.remove('light-mode');
@@ -476,8 +475,10 @@ function generateQuestion() {
         if (savedata.onlyBinary)
             return;
     }
-    if (generators.length === 0)
+    if (generators.length === 0) {
+        alert('Enable at least one question category.');
         return;
+    }
 
     const totalWeight = generators.reduce((sum, item) => sum + item.weight, 0);
     const randomValue = Math.random() * totalWeight;
@@ -610,7 +611,7 @@ function storeQuestionAndSave() {
 
 function checkIfTrue() {
     trueButton.blur();
-    if (processingAnswer) {
+    if (processingAnswer || !question) {
         return;
     }
     processingAnswer = true;
@@ -630,7 +631,7 @@ function checkIfTrue() {
 
 function checkIfFalse() {
     falseButton.blur();
-    if (processingAnswer) {
+    if (processingAnswer || !question) {
         return;
     }
     processingAnswer = true;
@@ -649,7 +650,7 @@ function checkIfFalse() {
 }
 
 function timeElapsed() {
-    if (processingAnswer) {
+    if (processingAnswer || !question) {
         return;
     }
     processingAnswer = true;
@@ -731,6 +732,10 @@ function updateAverage(reverseChronological) {
     let questions = reverseChronological.filter(q => q.answeredAt && q.startedAt);
     let times = questions.map(q => (q.answeredAt - q.startedAt) / 1000);
     if (times.length === 0) {
+        totalDisplay.innerHTML = '0m 0s';
+        averageDisplay.innerHTML = 'None yet';
+        percentCorrectDisplay.innerHTML = 'None yet';
+        averageCorrectDisplay.innerHTML = 'None yet';
         return;
     }
     const totalTime = times.reduce((a,b) => a + b, 0);
@@ -830,35 +835,6 @@ function createHQLI(question, i) {
         });
     }
     return parent.firstElementChild;
-}
-
-function toggleLegacyFolder() {
-    appState.isLegacyOpen = !appState.isLegacyOpen;
-    renderFolders();
-    save();
-}
-
-function toggleExperimentalFolder() {
-    appState.isExperimentalOpen = !appState.isExperimentalOpen;
-    renderFolders();
-    save();
-}
-
-function renderFolders() {
-    renderFolder('legacy-folder-arrow', 'legacy-folder-content', appState.isLegacyOpen);
-    renderFolder('experimental-folder-arrow', 'experimental-folder-content', appState.isExperimentalOpen);
-}
-
-function renderFolder(arrowId, contentId, isOpen) {
-    const folderArrow = document.getElementById(arrowId);
-    const folderContent = document.getElementById(contentId);
-    if (isOpen) {
-        folderContent.style.display = 'block';
-        folderArrow.classList.add('open');
-    } else {
-        folderContent.style.display = 'none';
-        folderArrow.classList.remove('open');
-    }
 }
 
 // Events

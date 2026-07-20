@@ -125,7 +125,7 @@ function createStimuli(numberOfStimuli, usedStimuli) {
     const stimuliCreated = [];
     for (let i = 0; i < numberOfStimuli; i++) {
         let config = nextConfig();
-        for (let j = 0; j < 9999 && config.unique.length >= config.limit; j++)
+        for (let j = 0; j < 9999 && config.unique.size >= config.limit; j++)
             config = nextConfig();
         let nextStimuli = config.generate();
         for (let j = 0; j < 9999 && config.unique.has(nextStimuli); j++) {
