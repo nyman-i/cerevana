@@ -2504,6 +2504,16 @@ body.menu-mode .main-view {
     color: var(--text-color);
 }
 
+.menu__logo {
+    position: absolute;
+    right: clamp(1rem, 3vw, 2rem);
+    bottom: clamp(1rem, 3vw, 2rem);
+    width: clamp(3.5rem, 10vw, 6rem);
+    height: clamp(3.5rem, 10vw, 6rem);
+    opacity: 0.85;
+    pointer-events: none;
+}
+
 .menu__title {
     color: var(--label-color);
     font-family: "Format 1452", "Zen Dots", sans-serif;
@@ -2777,6 +2787,80 @@ body.menu-mode .main-view {
 /* the destructive one stands apart from the safe backup actions */
 .menu__backup button.delete {
     margin-left: 1.5rem;
+}
+
+/* Heading + controls pairs are grouped in boxes for mobile's benefit; on
+   desktop the wrapper dissolves and the footer lays out exactly as before. */
+.menu__footer-box {
+    display: contents;
+}
+
+/* ≤500px: the footer's wrapping flex rows turn into a scannable stack -
+   the free-wrap layout lands controls at random x-positions on a 390px
+   screen and reads as clutter over the photo background. */
+@media (width <= 500px) {
+    /* 2x2 grid instead of a 3+1 wrap with CREDITS orphaned on its own line */
+    .menu__pages {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        width: 100%;
+    }
+
+    /* each section in its own card-material box, same surface as the
+       exercise cards/goals - loose controls floating on the photo don't
+       read as sections on a phone-length scroll */
+    .menu__footer {
+        width: 100%;
+        gap: 1rem;
+    }
+
+    .menu__footer-box {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        width: 100%;
+        background-color: var(--label-background-color);
+        padding: 1rem 1.25rem 1.25rem;
+    }
+
+    /* one control row per line, left-aligned - no chaotic wrap */
+    .menu__appearance {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.9rem;
+        width: 100%;
+    }
+
+    /* rows wrap as whole controls (Clear drops below Choose Image) instead
+       of overflowing the box or squeezing button text into two lines */
+    .menu__appearance .ctrl__inner {
+        flex-wrap: wrap;
+        max-width: 100%;
+    }
+
+    .menu__appearance button {
+        white-space: nowrap;
+    }
+
+    /* equal-width 2x2 button grid; the desktop margin that pushes Reset App
+       apart just makes the wrap ragged here */
+    .menu__backup {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: stretch; /* the base rule's center leaves 1-line buttons shorter than their 2-line row mates */
+        width: 100%;
+    }
+
+    .menu__backup button.delete {
+        margin-left: 0;
+    }
+
+    /* desktop-shortcut installer - meaningless on a phone */
+    .menu__footer-box:has(.menu__run-locally) {
+        display: none;
+    }
 }
 
 /* ---- Studies page (studies.html) ---- */

@@ -64,6 +64,8 @@
 		<div class="overlay"></div>
 
 		<div class="menu ffmono">
+			<img class="menu__logo" src="img/icon-192.png" alt="" width="96" height="96">
+
 			<header class="menu__header">
 				<h1 class="menu__title">CEREVANA</h1>
 				<p class="menu__subtitle">Forged in the Mindbuilding community.
@@ -158,6 +160,7 @@
 			</nav>
 
 			<div class="menu__footer">
+				<div class="menu__footer-box">
 				<div class="panel-heading menu__footer-heading">Appearance</div>
 				<div class="menu__appearance">
 					<div class="ctrl__inner">
@@ -196,6 +199,8 @@
 						<button type="button" onclick="clearBackgroundImage()" title="Back to the default background">Clear</button>
 					</div>
 				</div>
+				</div>
+				<div class="menu__footer-box">
 				<div class="panel-heading menu__footer-heading">Your Data</div>
 				<div class="menu__backup">
 					<button type="button" onclick="exportHistory()" title="Save all RRT, N-Back and CCT history, profiles, settings and appearance to a JSON file (background image not included)">Export Data</button>
@@ -204,9 +209,12 @@
 					<button type="button" class="delete" onclick="resetEverything()" title="Permanently erase ALL data for every exercise">Reset App</button>
 					<input type="file" id="history-import" accept=".json,application/json" style="display:none" onchange="handleHistoryImport(event)">
 				</div>
+				</div>
+				<div class="menu__footer-box">
 				<div class="panel-heading menu__footer-heading">Run Locally (Linux)</div>
 				<div class="menu__run-locally">
 					<button type="button" id="run-locally-open" onclick="showRunLocallyPopup()" title="Get a desktop app shortcut in Chrome or Firefox - any Linux distro with GNOME, KDE, XFCE or similar">Run Locally</button>
+				</div>
 				</div>
 			</div>
 
