@@ -497,7 +497,7 @@ popupForm.addEventListener('submit', async (e) => {
   const note = popupNote.value.trim()
   const variant = test.variants.length ? popupVariant.value : undefined
   if (!date || Number.isNaN(score)) return
-  await addScore({ testId, testName: test.name, category: test.category, timestamp: new Date(date).getTime(), score, note, variant })
+  await addScore({ testId, testName: test.name, category: test.category, timestamp: new Date(`${date}T00:00`).getTime(), score, note, variant })
   // Only clear score/note, not date: a multi-metric test's traits are logged
   // one at a time from the same real-world sitting, so keeping the date set
   // means logging the next metric doesn't require retyping it.
