@@ -2504,14 +2504,24 @@ body.menu-mode .main-view {
     color: var(--text-color);
 }
 
+/* Only fits as a corner watermark on wide desktop viewports - anything
+   narrower and the menu scrolls taller than one screen, so the logo ends
+   up floating over card content instead of the page background. */
 .menu__logo {
-    position: absolute;
-    right: clamp(1rem, 3vw, 2rem);
-    bottom: clamp(1rem, 3vw, 2rem);
-    width: clamp(3.5rem, 10vw, 6rem);
-    height: clamp(3.5rem, 10vw, 6rem);
-    opacity: 0.85;
-    pointer-events: none;
+    display: none;
+}
+
+@media (width > 900px) {
+    .menu__logo {
+        display: block;
+        position: absolute;
+        right: clamp(1rem, 3vw, 2rem);
+        bottom: clamp(1rem, 3vw, 2rem);
+        width: clamp(3.5rem, 10vw, 6rem);
+        height: clamp(3.5rem, 10vw, 6rem);
+        opacity: 0.85;
+        pointer-events: none;
+    }
 }
 
 .menu__title {
