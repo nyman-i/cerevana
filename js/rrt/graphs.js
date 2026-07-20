@@ -100,23 +100,26 @@ class RrtGraphs extends HTMLElement {
 			label: type,
 			data: premiseLevelData[type].map(e => ({ x: e.day, y: e.averageTime })),
 			borderColor: color(i),
+			backgroundColor: color(i),
 			fill: false,
 		}));
 		const premiseDatasets = Object.keys(premiseLevelData).map((type, i) => ({
 			label: type,
 			data: premiseLevelData[type].map(e => ({ x: e.day, y: e.numPremises / e.averageTime })),
 			borderColor: color(i),
+			backgroundColor: color(i),
 			fill: false,
 		}));
 		const countDatasets = Object.keys(typeData).map((type, i) => ({
 			label: type,
 			data: typeData[type].map(e => ({ x: e.day, y: e.count })),
 			borderColor: color(i),
+			backgroundColor: color(i),
 		}));
 
 		const timeData = this.calculateTimeSpentData(data);
-		const totalTimeSpent = timeData.reduce((s, e) => s + e.time, 0);
-		const totalDisplay = `Total = ${(totalTimeSpent / 60).toFixed(0)}h ${(totalTimeSpent % 60).toFixed(0)}m`;
+		const totalTimeSpent = Math.round(timeData.reduce((s, e) => s + e.time, 0));
+		const totalDisplay = `Total = ${Math.floor(totalTimeSpent / 60)}h ${totalTimeSpent % 60}m`;
 		const timeDatasets = [{
 			label: 'Time Spent (Minutes)',
 			data: timeData.map(e => ({ x: e.day, y: e.time })),
