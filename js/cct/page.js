@@ -220,6 +220,9 @@ function beginUi() {
   $('cct-stage').classList.remove('cct-stage--paused')
   const answer = $('cct-answer')
   answer.hidden = inputMethod === 'keypad'
+  // numeric touch keyboards have no minus key, and subtraction's answers go
+  // down to -8 - only that mode pays the full-keyboard price
+  answer.inputMode = arithmeticMode === 'subtraction' ? 'text' : 'numeric'
   answer.value = ''
   answer.readOnly = inputMethod === 'keypad'
   // no digit on screen + typing: let the input take the digit's space
