@@ -2462,9 +2462,9 @@ table.distinction {
 /* --- Main menu (title-screen style) --- */
 
 /* Default menu backdrop.
-   Photo: https://www.pexels.com/photo/photography-of-mountains-under-cloudy-sky-1183099/
-   Photographer: Simon Berger - Pexels License (free to use).
-   Local copy resized to 1920px wide, JPEG q80 (img/menu-bg.jpg).
+   Photo: https://www.pexels.com/photo/fog-over-green-forest-in-mountains-5407567/
+   Photographer: Kieren Ridley - Pexels License (free to use).
+   Local copy at 1920px wide (img/menu-bg.jpg).
    Scrim gradients sit in the same background list, so a user-set custom
    background (inline style from js/shared/background.js) overrides both. */
 body.menu-mode .background-image {

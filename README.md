@@ -232,7 +232,7 @@ same source under the same MIT license. CCT's own README credits "EEE" for
 supplying its original source code.
 
 The menu background photo is by
-[Simon Berger on Pexels](https://www.pexels.com/photo/photography-of-mountains-under-cloudy-sky-1183099/)
+[Kieren Ridley on Pexels](https://www.pexels.com/photo/fog-over-green-forest-in-mountains-5407567/)
 (Pexels License, free to use), bundled locally as `img/menu-bg.jpg`.
 
 The favicon and app icon are the Cerevana head logo, created with
