@@ -363,7 +363,11 @@ function createLinearQuestion(wording) {
 }
 
 function getEnabledLinearWordings() {
-    return savedata.linearWording.split(',').filter(wording => wording && wording.length > 0);
+    const wordings = savedata.linearWording.split(',').filter(wording => wording && wording.length > 0);
+    // Linear enabled with zero wordings would return an empty generator pool,
+    // crashing analogy/binary question assembly - fall back to the defaults
+    // (legacy profiles can carry an emptied linearWording string)
+    return wordings.length ? wordings : ['topunder', 'comparison', 'contains'];
 }
 
 function getEnabledLinearWeights() {
