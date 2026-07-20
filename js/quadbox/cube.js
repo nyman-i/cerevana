@@ -154,8 +154,11 @@ export class BoardRenderer {
         cell.hidden = true
         this.cells.push(cell)
       }
-      // Grid.svelte: 4 planes per axis at ±(scene/2) / ±(cell/2) svmin
-      for (const d of ['-25.5svmin', '-8.5svmin', '8.5svmin', '25.5svmin']) {
+      // Grid.svelte: 4 planes per axis at ±(scene/2) / ±(cell/2), in the
+      // same --qb-u unit the CSS cells/faces use (was svmin - a raw unit
+      // here desyncs the lattice from the cells wherever the compact
+      // layouts rescale --qb-u, leaving grid lines poking out of the cube)
+      for (const d of [-25.5, -8.5, 8.5, 25.5].map(n => `calc(${n} * var(--qb-u))`)) {
         frameImg(this.scene, `0 0 ${d}`)
         frameImg(this.scene, `0 ${d} 0`, 'x 90deg')
         frameImg(this.scene, `${d} 0 0`, 'y 90deg')
@@ -247,7 +250,7 @@ export class BoardRenderer {
       const angle = ((this._crankIndex ?? 0) % ticks) * 2 * Math.PI / ticks
       const radius = 7
       this.crank.style.transform =
-        `translate(${Math.cos(angle) * radius}svmin, ${Math.sin(angle) * radius}svmin)`
+        `translate(calc(${Math.cos(angle) * radius} * var(--qb-u)), calc(${Math.sin(angle) * radius} * var(--qb-u)))`
     }
     for (let i = 0; i < MAX_CELLS; i++) {
       const cell = this.cells[i]

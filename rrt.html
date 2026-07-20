@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Cerevana - RRT: Relational Reasoning Training</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 		<!-- ios support -->
 		<meta name="apple-mobile-web-app-status-bar" content="#7cb6a8" />
 		<meta name="theme-color" content="#7cb6a8" />
@@ -61,18 +61,12 @@
 		<div class="main-view">
 
 			<corner-panel name="settings" side="left">
-						<profile-picker heading="Current Profile" share></profile-picker>
+						<profile-picker share></profile-picker>
 						<goal-targets daily-id="p-63-optional" weekly-id="p-64-optional"
 							tooltip="Set your daily and weekly|time targets for training.|Progress bars will show on|the sides of the screen." tooltip-side="right"></goal-targets>
-						<div class="mb-05 panel-heading">Training</div>
-						<div class="mb-2">
-							<div class="inline-input__outer big-input">
-								Global Premises
-								<span class="inline-input__inner">
-									<input id="p-5" type="number" min="1" max="100" value="2" style="width: 5ch">qty
-								</span>
-							</div>
-						</div>
+						<details class="panel-section" open>
+						<summary class="panel-heading">Session</summary>
+						<num-row input-id="p-5" label="Global Premises" min="1" max="100" width="5ch" suffix="qty" outer-class="big-input"></num-row>
 						<div class="mb-1">
 							<div class="ctrl__inner">
 								<div>
@@ -149,7 +143,9 @@
 							</div>
 						</div>
 
-						<div class="mb-05 panel-heading">Words &amp; Stimuli</div>
+						</details>
+						<details class="panel-section">
+						<summary class="panel-heading">Stimuli</summary>
 						<switch-row input-id="p-20" label="Use Nonsense Words" checked></switch-row>		
 						<div class="mb-2" style="margin-left: 2rem;">
 							<div class="inline-input__outer">
@@ -209,8 +205,9 @@
 								</span>
 							</div>
 						</div>
-						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Anti-Strategy</div>
+						</details>
+						<details class="panel-section">
+						<summary class="panel-heading">Anti-Strategy</summary>
 						<div class="mb-1">
 							<div class="inline-input__outer">
 								Scramble Factor
@@ -236,8 +233,9 @@
 						</div>
 						<switch-row input-id="p-32" label="Enable Connection Branching" checked tooltip="Form of anti-strategy for space,|distinction and 180° modes.|Allows a word to appear in|more than 2 premises, creating|a branching structure such that|A &lt;relation&gt; B|A &lt;relation&gt; C|A &lt;relation&gt; D|is possible, where A appears in|3 premises, rather than 2.|Leave on if unsure (default)." tooltip-side="right"></switch-row>
 						<switch-row input-id="p-46" label="Spoiler Conclusion"></switch-row>
-						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Question Types</div>
+						</details>
+						<details class="panel-section">
+						<summary class="panel-heading">Question Types</summary>
 						<div class="mb-1">
 							<div class="ctrl__inner">
 								<div>
@@ -401,8 +399,9 @@
 								</span>
 							</div>
 						</div>
-						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Appearance</div>
+						</details>
+						<details class="panel-section">
+						<summary class="panel-heading">Display</summary>
 						<div class="mb-1">
 							<div class="ctrl__inner">
 								<div class="inline-input__outer">
@@ -436,17 +435,14 @@
 								</span>
 							</div>
 						</div>
-						<div class="folder" onclick="toggleExperimentalFolder()">
-							<span id="experimental-folder-arrow" class="folder-arrow">▶</span><span>Experimental</span>
-						</div>
-						<div id="experimental-folder-content" class="folder-content">
-							<switch-row input-id="p-48" label="Minimal Mode"></switch-row>
-							<switch-row input-id="p-66" label="Wide Premises"></switch-row>
-						</div>
-						<div class="folder" onclick="toggleLegacyFolder()">
-							<span id="legacy-folder-arrow" class="folder-arrow">▶</span><span>Legacy Options</span>
-						</div>
-						<div id="legacy-folder-content" class="legacy-folder-content">
+						</details>
+						<details class="panel-section">
+						<summary class="panel-heading">Experimental</summary>
+						<switch-row input-id="p-48" label="Minimal Mode"></switch-row>
+						<switch-row input-id="p-66" label="Wide Premises"></switch-row>
+						</details>
+						<details class="panel-section">
+						<summary class="panel-heading">Legacy Options</summary>
 							<div class="mb-1">
 								<div class="ctrl__inner">
 									<div>
@@ -779,14 +775,15 @@
 									</span>
 								</div>
 							</div>
-						</div>
-						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Reset</div>
+						</details>
+						<details class="panel-section">
+						<summary class="panel-heading">Reset</summary>
 						<p>Reset settings keeps your history. The full reset erases
 						all RRT data - irreversible. (N-Back is untouched either
 						way; a full reset for every exercise lives on the main menu.)</p>
 						<div class="mb-1"><button type="button" id="reset-rrt-settings" onclick="resetRRTSettings()">Reset Settings</button></div>
 						<div class="mb-1"><button type="button" id="reset-rrt" class="delete" onclick="resetRRT()">Reset RRT</button></div>
+						</details>
 			</corner-panel>
 			<corner-panel name="history" side="right" body-class="hql-frame">
 					<div>Total answer time: <span id="total-display"></span></div>

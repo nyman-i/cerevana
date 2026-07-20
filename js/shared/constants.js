@@ -10,8 +10,6 @@ let appState = {
     "backgroundImage": null,
     "gameAreaColor": "transparent",
     "gameAreaLightColor": "transparent",
-    "isExperimentalOpen": false,
-    "isLegacyOpen": false,
     "sfx": "none",
     "fastUi": true,
     "staticButtons": true,

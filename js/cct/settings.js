@@ -21,7 +21,10 @@ const defaultSettings = {
   targetCorrect: 500,
   arithmeticMode: 'addition', // 'addition' | 'multiplication' | 'subtraction' | 'difference'
   presentationMode: 'audiovisual', // 'audiovisual' | 'audio' | 'visual'
-  inputMethod: 'physical', // 'physical' | 'keypad'
+  // 'physical' | 'keypad' - touch devices default to the on-screen keypad
+  // so the OS keyboard never pops up over the play area
+  inputMethod: (typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches)
+    ? 'keypad' : 'physical',
   // audio
   voice: 'nathan',
   playbackSpeed: 1,

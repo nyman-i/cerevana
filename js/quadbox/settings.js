@@ -304,6 +304,7 @@ const defaultSettings = {
   dailyReset: false,
   lastResetDay: 0,
   latticeMatchesTheme: false, // cube lattice: fixed original grey vs accent-tinted
+  haptics: false, // vibrate on match-key presses (touch devices)
   dailyProgressGoal: null, // minutes of play time, null = no goal
   weeklyProgressGoal: null,
   // duplicate keys across entries are fine: pressing a key fires every bound

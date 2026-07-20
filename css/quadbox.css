@@ -5,6 +5,16 @@
 
 /* ---------- stage ---------- */
 
+/* --qb-u is the board's base unit: every cell/face/offset/scene dimension
+   below is calc(N * var(--qb-u)), so one variable scales the whole board
+   coherently (cells, faces and position offsets are mutually coupled - a
+   per-rule resize would misalign them). Desktop keeps the original svmin
+   geometry; the compact layouts at the end of this file retune it to fill
+   the space their chrome actually leaves free. */
+.main-view {
+    --qb-u: 1svmin;
+}
+
 #qb-stage {
     position: absolute;
     inset: 0;
@@ -12,17 +22,27 @@
     user-select: none;
 }
 
-/* ---------- HUD strip (label-bar material, under the game-menu) ---------- */
-
-/* wraps .qb-hud + .qb-count in nback.html - display:contents by default
-   so it's invisible to layout and both keep their own independent
-   absolute position (unchanged desktop behavior). On mobile (below) it
-   becomes a real flex column so .qb-count flows below however tall the
-   HUD actually rendered, instead of guessing a fixed offset that breaks
-   again whenever the HUD grows another line. */
-.qb-hud-stack {
-    display: contents;
+/* fast-tap protection: rapid taps are the core gesture here - without
+   these, mobile browsers hijack double-taps for zoom and long-presses
+   for text selection mid-game */
+.nback__match,
+.nback__start,
+.qb-pad button {
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
 }
+
+/* touch screens have no physical keys: the hotkey hints on the slabs and
+   the whole Keys remapping section are noise there */
+@media (pointer: coarse) {
+    .qb-key-hot,
+    #qb-sec-keys {
+        display: none;
+    }
+}
+
+/* ---------- HUD strip (label-bar material, under the game-menu) ---------- */
 
 .qb-hud {
     position: absolute;
@@ -45,8 +65,19 @@
    Key slabs attached flush to the screen edges, filling the vertical band
    between the corner tabs (like upstream's game-button-lg columns):
    position/color family left, shape/image/audio right. START/NEXT sit
-   top-right (upstream's Play), the trial counter bottom-right. Buttons keep
-   .nback__match / .nback__start colors, fonts and states. */
+   top-right (upstream's Play). Buttons keep .nback__match / .nback__start
+   colors, fonts and states.
+
+   Markup-wise everything lives inside .qb-band > (.qb-answer, .qb-actions,
+   .qb-keys > .qb-side x2, .qb-pad). On desktop the wrappers are
+   display:contents, so each child keeps its own absolute position exactly
+   as before; the compact layouts below turn the band into a real bottom
+   column (portrait) or dissolve it again (short landscape). */
+
+.qb-band,
+.qb-keys {
+    display: contents;
+}
 
 .qb-side {
     position: absolute;
@@ -71,7 +102,8 @@
 
 /* slabs wear the page's label material (corner tabs / START button):
    label bg, accent text and border, sharp corners, Oxanium caption */
-.qb-side .nback__match {
+.qb-side .nback__match,
+.qb-pad .nback__match {
     flex: 1 1 0;
     min-height: 0;
     width: 100%;
@@ -94,6 +126,24 @@
 .qb-side .nback__match--missed { background-color: var(--nback-missed-color); color: #fffffd; }
 /* Jaeggi's neutral "press acknowledged" flash - never right/wrong-coded */
 .qb-side .nback__match--pressed { background-color: var(--accent-color); color: var(--button-fg-color); }
+
+/* on-screen digit pad for the arithmetic modes (the only touch path to
+   game.arithInput - the keyboard route needs physical Digit* keys).
+   Desktop: one 12-key strip above the typed-answer readout. */
+.qb-pad {
+    position: absolute;
+    bottom: 3.4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: grid;
+    grid-template-columns: repeat(12, 3rem);
+    gap: 0.5rem;
+    z-index: 10;
+}
+
+.qb-pad[hidden] {
+    display: none;
+}
 
 .qb-key-name {
     font-family: Oxanium, sans-serif;
@@ -139,50 +189,56 @@
     z-index: 10;
 }
 
-.qb-count {
-    position: absolute;
-    bottom: 0.75rem;
-    right: 4rem;
-    font-size: 2.25rem;
-    opacity: 0.3;
-    user-select: none;
-    z-index: 5;
-}
-
-/* narrow screens: edge slabs would crowd the board - stack rows at the
-   bottom instead (left keys above right keys above START) */
+/* ---------- compact portrait (phones, narrow windows) ----------
+   RRT's answer-bar pattern: the band pins edge-to-edge to the very bottom
+   of the screen (hairline 2px gaps on the page background, safe-area
+   padded), and the INFO/GRAPH corner tabs ride up to sit on its top edge.
+   Unlike RRT's fixed two-button bar the band's height varies per mode
+   (2-5 match keys, tally counters, the 12-key digit pad), so page.js
+   measures it into --qb-band-h and both the tab lift and the board size
+   below derive from the real height. Thumb-zone order: keys/pad lowest,
+   actions above them - a mid-game mistap must not hit STOP. */
 @media (width <= 768px) {
+    .qb-band {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0 env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+        background-color: var(--background-color);
+        z-index: 60; /* over the corner tabs' 50, like RRT's bar */
+    }
+
+    /* bottom tabs sit on the band's measured top edge (RRT raises its
+       tabs the same way, just by a constant) */
+    .open--bottom-left,
+    .open--bottom-right {
+        bottom: var(--qb-band-h, 0);
+    }
+
+    /* both sides' buttons join one grid; JS sets --qb-cols per mode so
+       every key gets an equal, predictable cell however many a mode needs
+       (1 full-width, 2-up for word labels, 3-up for tally digits) */
+    .qb-keys {
+        display: grid;
+        grid-template-columns: repeat(var(--qb-cols, 2), 1fr);
+        gap: 2px;
+    }
+
     .qb-side {
-        top: auto;
-        transform: none;
-        height: auto;
-        width: auto;
-        left: 0.5rem;
-        right: 0.5rem;
-        flex-direction: row;
-        justify-content: center;
-        gap: 0.5rem;
+        display: contents;
     }
 
-    .qb-side--left {
-        bottom: 9.25rem;
-    }
-
-    .qb-side--right {
-        bottom: 5.25rem;
-        /* this row sits low enough to fall inside the bottom-left/right
-           corner tabs' footprint (INFO/GRAPH extend further in than the
-           row's base 0.5rem edge margin) - .qb-side--left sits higher and
-           already clears them, so only this row needs the extra inset */
-        left: 4rem;
-        right: 4rem;
-    }
-
-    .qb-side .nback__match {
-        flex: 0 1 auto;
+    .qb-side .nback__match,
+    .qb-pad .nback__match {
+        flex: none;
         flex-direction: row;
         gap: 0.5rem;
-        min-height: 3rem;
+        min-height: 3.5rem; /* RRT answer-bar height */
     }
 
     .qb-key-hot {
@@ -190,57 +246,182 @@
     }
 
     .qb-actions {
-        inset: auto auto 1.25rem 0;
-        width: 100%;
+        position: static;
         justify-content: center;
+        margin: 0.4rem 0;
+    }
+
+    .qb-actions .nback__start {
+        padding: 0.4rem 2rem;
     }
 
     .qb-answer {
-        bottom: 13.5rem;
-    }
-
-    /* .qb-actions goes full-width at the bottom above - the desktop
-       bottom-right trial counter would sit right underneath it (lower
-       z-index, so hidden behind the START button). Move it under the
-       HUD instead, in real flex flow rather than a fixed top offset -
-       the HUD can wrap onto multiple lines when there's a lot to show
-       (Last:/Today: stats after a finished game, CRAB/SP flags, etc),
-       and a fixed offset just gets overlapped again once it does. */
-    .qb-hud-stack {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-        position: absolute;
-        top: 4.2rem;
-        left: 50%;
-        transform: translateX(-50%);
-        max-width: calc(100vw - 1rem);
-        z-index: 40;
-    }
-
-    /* HUD can hold up to ~7 parts (N, W, mode, CRAB, SP, Last:, time) -
-       wrap instead of overflowing #qb-stage's overflow:hidden edges.
-       Now flowing inside .qb-hud-stack rather than independently
-       absolute-positioned. */
-    .qb-hud {
         position: static;
-        top: auto;
-        left: auto;
+        padding-top: 0.25rem;
+    }
+
+    .qb-pad {
+        position: static;
         transform: none;
-        max-width: 100%;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 2px;
+    }
+
+    /* HUD holds up to ~7 parts (N, mode, CRAB, SP, trials left, Last:,
+       Today:) - wrap between the top corner tabs instead of overflowing */
+    .qb-hud {
+        max-width: calc(100vw - 5.5rem);
         flex-wrap: wrap;
         justify-content: center;
         white-space: normal;
         text-align: center;
+        gap: 0.35rem 1rem;
     }
 
-    .qb-count {
-        position: static;
-        top: auto;
+    /* let the board fill exactly what the chrome leaves free: ~160px of
+       HUD above, the measured band below (the 2D board is the widest
+       footprint at 64.5u; the 3D cube's rotation sweep projects wider
+       than its 51u scene, so it gets a lower width cap). The shift
+       re-centers the board in that actual free space, so a tall band
+       (digit pad, many tally keys) shrinks and lifts the board on its
+       own - no per-mode special cases. */
+    .qb-wrap2d,
+    .qb-crank-wrap {
+        --qb-u: min(1.42svw, calc((100svh - 160px - var(--qb-band-h, 220px)) / 64.5));
+    }
+
+    .qb-wrap3d {
+        --qb-u: min(1.15svw, calc((100svh - 160px - var(--qb-band-h, 220px)) / 80));
+    }
+
+    .qb-wrap2d,
+    .qb-crank-wrap {
+        transform: translateY(calc((160px - var(--qb-band-h, 220px)) / 2));
+    }
+
+    /* (.qb-wrap3d's matching shift lives after its base rule below -
+       the base transform would win the source-order tie here) */
+
+    /* arithmetic: the digit pad makes the band tall enough that the
+       lifted INFO/GRAPH tabs reach the board's bottom corners - keep the
+       board narrower than the space between the two tab strips (45px
+       each) so no stimulus cell ever hides behind them */
+    .main-view:has(.qb-pad:not([hidden])) .qb-wrap2d {
+        --qb-u: min(calc((100svw - 100px) / 64.5), calc((100svh - 160px - var(--qb-band-h, 220px)) / 64.5));
+    }
+
+    .main-view:has(.qb-pad:not([hidden])) .qb-wrap3d {
+        --qb-u: min(calc((100svw - 100px) / 80), calc((100svh - 160px - var(--qb-band-h, 220px)) / 80));
+    }
+}
+
+/* ---------- short landscape (phones on their side) ----------
+   Height, not width, is the scarce axis: the bottom band would bury the
+   board, so dissolve it and go back to edge columns - inset past the
+   corner-tab strips this time - with the HUD tucked top-right and
+   START/NEXT bottom-center. Comes after the portrait block so it wins
+   the tie on small landscape phones that match both. */
+@media (height <= 500px) {
+    .qb-band,
+    .qb-keys {
+        display: contents;
+    }
+
+    .qb-side {
+        display: flex;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 52svh;
+        width: clamp(5.5rem, 12svw, 8rem);
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    /* full words ("POSITION") must fit the narrow slab columns */
+    .qb-key-name {
+        font-size: var(--step--2);
+    }
+
+    .qb-side--left {
+        left: 2.75rem;
         right: auto;
-        bottom: auto;
+    }
+
+    .qb-side--right {
+        right: 2.75rem;
+        left: auto;
+    }
+
+    .qb-side .nback__match {
+        flex: 1 1 0;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    /* below the nav bar (top-center), tucked right so the board stays clear */
+    .qb-hud {
+        top: 3.4rem;
+        left: auto;
+        right: 3rem;
         transform: none;
+        max-width: 40vw;
+        flex-wrap: wrap;
+        justify-content: center;
+        white-space: normal;
+        gap: 0.35rem 0.75rem;
+        padding: 0.25rem 0.75rem;
+    }
+
+    .qb-actions {
+        position: absolute;
+        inset: auto auto calc(0.4rem + env(safe-area-inset-bottom)) 50%;
+        transform: translateX(-50%);
+    }
+
+    .qb-actions .nback__start {
+        padding: 0.35rem 1.5rem;
+    }
+
+    /* only the arithmetic modes show the answer line, and they always have
+       the pad - stack it above the pad row, not on it */
+    .qb-answer {
+        position: absolute;
+        bottom: calc(6.6rem + env(safe-area-inset-bottom));
+        left: 0;
+        right: 0;
+    }
+
+    .qb-pad {
+        position: absolute;
+        bottom: calc(3.2rem + env(safe-area-inset-bottom));
+        left: 50%;
+        transform: translateX(-50%);
+        grid-template-columns: repeat(12, minmax(2.5rem, 3rem));
+    }
+
+    .qb-wrap2d,
+    .qb-crank-wrap {
+        --qb-u: calc((100svh - 140px) / 64.5);
+    }
+
+    .qb-wrap3d {
+        --qb-u: calc((100svh - 140px) / 80);
+    }
+
+    .qb-wrap2d,
+    .qb-crank-wrap {
+        transform: none;
+    }
+
+    /* arithmetic in landscape: pad + answer sit over the board's lower
+       rows - trade board size for clearance */
+    .main-view:has(.qb-pad:not([hidden])) .qb-wrap2d,
+    .main-view:has(.qb-pad:not([hidden])) .qb-wrap3d {
+        --qb-u: calc((100svh - 210px) / 64.5);
+
+        transform: translateY(-1.5rem);
     }
 }
 
@@ -272,7 +453,7 @@ body.light-mode .qb-variable-n {
     display: flex;
     align-items: center;
     justify-content: center;
-    perspective: 93svmin;
+    perspective: calc(93 * var(--qb-u));
     /* below-center shift buys HUD clearance for the bigger cube; on the wrap
        so the perspective origin moves with the scene (symmetric projection) */
     transform: translateY(7svh);
@@ -280,22 +461,34 @@ body.light-mode .qb-variable-n {
 }
 
 /* the desktop-only downward nudge above assumes side panels stay clear of
-   the vertical center - but .qb-side relocates to a bottom band on narrow
-   screens (≤768px block earlier in this file), so the same shift instead
-   crowds the cube against it. Recenter (must come after the base rule
-   above - same specificity, source order decides the tie). */
+   the vertical center - the compact layouts reshape the chrome, so each
+   re-centers the scene to its own free space instead (must come after the
+   base rule above - same specificity, source order decides the tie; the
+   :has() arithmetic overrides in the compact blocks outrank both). */
 @media (width <= 768px) {
     .qb-wrap3d {
+        transform: translateY(calc((160px - var(--qb-band-h, 220px)) / 2));
+        /* flatter projection on small screens: at the desktop 93u camera
+           distance the near planes bulge ~38% past the mid-depth edges,
+           which reads as depth on a big screen but as loose, poking lines
+           on a small one - pulling the camera back tightens the lattice */
+        perspective: calc(150 * var(--qb-u));
+    }
+}
+
+@media (height <= 500px) {
+    .qb-wrap3d {
         transform: none;
+        perspective: calc(150 * var(--qb-u));
     }
 }
 
 .qb-scene {
     position: absolute;
-    width: 51svmin;
-    height: 51svmin;
+    width: calc(51 * var(--qb-u));
+    height: calc(51 * var(--qb-u));
     transform-style: preserve-3d;
-    translate: 0 0 -12.2svmin;
+    translate: 0 0 calc(-12.2 * var(--qb-u));
     animation: qb-spin 60s linear 0s infinite normal forwards running;
     will-change: transform;
 }
@@ -334,6 +527,10 @@ body.qb-lattice-accent .qb-frame {
 .qb-frame rect {
     stroke: currentcolor;
     stroke-width: 1;
+    /* hairlines at any scale: the 300-unit viewBox stretches to the scene
+       size, and on small screens the scaled-up strokes go thick and smear
+       where planes overlap - the desktop look is thin, uniform lines */
+    vector-effect: non-scaling-stroke;
 }
 
 /* ---------- 2D board (static2D) ---------- */
@@ -349,8 +546,8 @@ body.qb-lattice-accent .qb-frame {
 
 .qb-board2d {
     position: absolute;
-    width: 64.5svmin;
-    height: 64.5svmin;
+    width: calc(64.5 * var(--qb-u));
+    height: calc(64.5 * var(--qb-u));
     margin-bottom: 2.5rem;
 }
 
@@ -358,19 +555,19 @@ body.qb-lattice-accent .qb-frame {
 
 .qb-cell {
     position: absolute;
-    width: 17svmin;
-    height: 17svmin;
-    left: 17svmin;
-    top: 17svmin;
+    width: calc(17 * var(--qb-u));
+    height: calc(17 * var(--qb-u));
+    left: calc(17 * var(--qb-u));
+    top: calc(17 * var(--qb-u));
     transform-style: preserve-3d;
 }
 
 .qb-cell2d {
     position: absolute;
-    width: 21.5svmin;
-    height: 21.5svmin;
-    left: 21.5svmin;
-    top: 21.5svmin;
+    width: calc(21.5 * var(--qb-u));
+    height: calc(21.5 * var(--qb-u));
+    left: calc(21.5 * var(--qb-u));
+    top: calc(21.5 * var(--qb-u));
 }
 
 .qb-cell[hidden],
@@ -392,12 +589,12 @@ body.qb-lattice-accent .qb-frame {
     transition: filter 0.05s ease-out;
 }
 
-.qb-face--front  { translate: 0 0 8.5svmin; }
-.qb-face--back   { translate: 0 0 -8.5svmin; rotate: y 180deg; }
-.qb-face--right  { translate: 8.5svmin 0 0; rotate: y -90deg; }
-.qb-face--left   { translate: -8.5svmin 0 0; rotate: y 90deg; }
-.qb-face--bottom { translate: 0 8.5svmin 0; rotate: x 90deg; }
-.qb-face--top    { translate: 0 -8.5svmin 0; rotate: x -90deg; }
+.qb-face--front  { translate: 0 0 calc(8.5 * var(--qb-u)); }
+.qb-face--back   { translate: 0 0 calc(-8.5 * var(--qb-u)); rotate: y 180deg; }
+.qb-face--right  { translate: calc(8.5 * var(--qb-u)) 0 0; rotate: y -90deg; }
+.qb-face--left   { translate: calc(-8.5 * var(--qb-u)) 0 0; rotate: y 90deg; }
+.qb-face--bottom { translate: 0 calc(8.5 * var(--qb-u)) 0; rotate: x 90deg; }
+.qb-face--top    { translate: 0 calc(-8.5 * var(--qb-u)) 0; rotate: x -90deg; }
 
 /* flash / multi-position styling (dark is the default theme) */
 .qb-flash .qb-face {
@@ -424,7 +621,7 @@ body.light-mode .qb-see-through .qb-face {
     justify-content: center;
     font-family: Oxanium, sans-serif;
     font-weight: bold;
-    font-size: 7.6svmin;
+    font-size: calc(7.6 * var(--qb-u));
     color: var(--face-text-color, #fffffd);
     user-select: none;
 }
@@ -452,9 +649,9 @@ body.light-mode .qb-face {
 
 .qb-center-wrap .qb-face {
     position: static;
-    width: 21.5svmin;
-    height: 21.5svmin;
-    font-size: 10.5svmin;
+    width: calc(21.5 * var(--qb-u));
+    height: calc(21.5 * var(--qb-u));
+    font-size: calc(10.5 * var(--qb-u));
 }
 
 .qb-no-padding .qb-face {
@@ -466,44 +663,44 @@ body.light-mode .qb-face {
 }
 
 /* 2D position offsets */
-.p0-0   { transform: translate(-21.5svmin, -21.5svmin); }
-.p0-1   { transform: translate(-21.5svmin,     0); }
-.p0-2   { transform: translate(-21.5svmin,  21.5svmin); }
-.p1-0   { transform: translate(0,          -21.5svmin); }
+.p0-0   { transform: translate(calc(-21.5 * var(--qb-u)), calc(-21.5 * var(--qb-u))); }
+.p0-1   { transform: translate(calc(-21.5 * var(--qb-u)),     0); }
+.p0-2   { transform: translate(calc(-21.5 * var(--qb-u)),  calc(21.5 * var(--qb-u))); }
+.p1-0   { transform: translate(0,          calc(-21.5 * var(--qb-u))); }
 .p1-1   { transform: translate(0,              0); }
-.p1-2   { transform: translate(0,           21.5svmin); }
-.p2-0   { transform: translate(21.5svmin,  -21.5svmin); }
-.p2-1   { transform: translate(21.5svmin,      0); }
-.p2-2   { transform: translate(21.5svmin,   21.5svmin); }
+.p1-2   { transform: translate(0,           calc(21.5 * var(--qb-u))); }
+.p2-0   { transform: translate(calc(21.5 * var(--qb-u)),  calc(-21.5 * var(--qb-u))); }
+.p2-1   { transform: translate(calc(21.5 * var(--qb-u)),      0); }
+.p2-2   { transform: translate(calc(21.5 * var(--qb-u)),   calc(21.5 * var(--qb-u))); }
 
 /* 3D position offsets */
-.p0-0-0 { transform: translate3d(-17svmin, -17svmin, -17svmin); }
-.p0-0-1 { transform: translate3d(-17svmin, -17svmin, 0         ); }
-.p0-0-2 { transform: translate3d(-17svmin, -17svmin, 17svmin ); }
-.p0-1-0 { transform: translate3d(-17svmin, 0         , -17svmin); }
-.p0-1-1 { transform: translate3d(-17svmin, 0         , 0         ); }
-.p0-1-2 { transform: translate3d(-17svmin, 0         , 17svmin ); }
-.p0-2-0 { transform: translate3d(-17svmin, 17svmin , -17svmin); }
-.p0-2-1 { transform: translate3d(-17svmin, 17svmin , 0         ); }
-.p0-2-2 { transform: translate3d(-17svmin, 17svmin , 17svmin ); }
-.p1-0-0 { transform: translate3d(0         , -17svmin, -17svmin); }
-.p1-0-1 { transform: translate3d(0         , -17svmin, 0         ); }
-.p1-0-2 { transform: translate3d(0         , -17svmin, 17svmin ); }
-.p1-1-0 { transform: translate3d(0         , 0         , -17svmin); }
+.p0-0-0 { transform: translate3d(calc(-17 * var(--qb-u)), calc(-17 * var(--qb-u)), calc(-17 * var(--qb-u))); }
+.p0-0-1 { transform: translate3d(calc(-17 * var(--qb-u)), calc(-17 * var(--qb-u)), 0         ); }
+.p0-0-2 { transform: translate3d(calc(-17 * var(--qb-u)), calc(-17 * var(--qb-u)), calc(17 * var(--qb-u)) ); }
+.p0-1-0 { transform: translate3d(calc(-17 * var(--qb-u)), 0         , calc(-17 * var(--qb-u))); }
+.p0-1-1 { transform: translate3d(calc(-17 * var(--qb-u)), 0         , 0         ); }
+.p0-1-2 { transform: translate3d(calc(-17 * var(--qb-u)), 0         , calc(17 * var(--qb-u)) ); }
+.p0-2-0 { transform: translate3d(calc(-17 * var(--qb-u)), calc(17 * var(--qb-u)) , calc(-17 * var(--qb-u))); }
+.p0-2-1 { transform: translate3d(calc(-17 * var(--qb-u)), calc(17 * var(--qb-u)) , 0         ); }
+.p0-2-2 { transform: translate3d(calc(-17 * var(--qb-u)), calc(17 * var(--qb-u)) , calc(17 * var(--qb-u)) ); }
+.p1-0-0 { transform: translate3d(0         , calc(-17 * var(--qb-u)), calc(-17 * var(--qb-u))); }
+.p1-0-1 { transform: translate3d(0         , calc(-17 * var(--qb-u)), 0         ); }
+.p1-0-2 { transform: translate3d(0         , calc(-17 * var(--qb-u)), calc(17 * var(--qb-u)) ); }
+.p1-1-0 { transform: translate3d(0         , 0         , calc(-17 * var(--qb-u))); }
 .p1-1-1 { transform: translate3d(0         , 0         , 0         ); }
-.p1-1-2 { transform: translate3d(0         , 0         , 17svmin ); }
-.p1-2-0 { transform: translate3d(0         , 17svmin , -17svmin); }
-.p1-2-1 { transform: translate3d(0         , 17svmin , 0         ); }
-.p1-2-2 { transform: translate3d(0         , 17svmin , 17svmin ); }
-.p2-0-0 { transform: translate3d(17svmin , -17svmin, -17svmin); }
-.p2-0-1 { transform: translate3d(17svmin , -17svmin, 0         ); }
-.p2-0-2 { transform: translate3d(17svmin , -17svmin, 17svmin ); }
-.p2-1-0 { transform: translate3d(17svmin , 0         , -17svmin); }
-.p2-1-1 { transform: translate3d(17svmin , 0         , 0         ); }
-.p2-1-2 { transform: translate3d(17svmin , 0         , 17svmin ); }
-.p2-2-0 { transform: translate3d(17svmin , 17svmin , -17svmin); }
-.p2-2-1 { transform: translate3d(17svmin , 17svmin , 0         ); }
-.p2-2-2 { transform: translate3d(17svmin , 17svmin , 17svmin ); }
+.p1-1-2 { transform: translate3d(0         , 0         , calc(17 * var(--qb-u)) ); }
+.p1-2-0 { transform: translate3d(0         , calc(17 * var(--qb-u)) , calc(-17 * var(--qb-u))); }
+.p1-2-1 { transform: translate3d(0         , calc(17 * var(--qb-u)) , 0         ); }
+.p1-2-2 { transform: translate3d(0         , calc(17 * var(--qb-u)) , calc(17 * var(--qb-u)) ); }
+.p2-0-0 { transform: translate3d(calc(17 * var(--qb-u)) , calc(-17 * var(--qb-u)), calc(-17 * var(--qb-u))); }
+.p2-0-1 { transform: translate3d(calc(17 * var(--qb-u)) , calc(-17 * var(--qb-u)), 0         ); }
+.p2-0-2 { transform: translate3d(calc(17 * var(--qb-u)) , calc(-17 * var(--qb-u)), calc(17 * var(--qb-u)) ); }
+.p2-1-0 { transform: translate3d(calc(17 * var(--qb-u)) , 0         , calc(-17 * var(--qb-u))); }
+.p2-1-1 { transform: translate3d(calc(17 * var(--qb-u)) , 0         , 0         ); }
+.p2-1-2 { transform: translate3d(calc(17 * var(--qb-u)) , 0         , calc(17 * var(--qb-u)) ); }
+.p2-2-0 { transform: translate3d(calc(17 * var(--qb-u)) , calc(17 * var(--qb-u)) , calc(-17 * var(--qb-u))); }
+.p2-2-1 { transform: translate3d(calc(17 * var(--qb-u)) , calc(17 * var(--qb-u)) , 0         ); }
+.p2-2-2 { transform: translate3d(calc(17 * var(--qb-u)) , calc(17 * var(--qb-u)) , calc(17 * var(--qb-u)) ); }
 
 /* ---------- vtally visual crank ---------- */
 
@@ -520,8 +717,8 @@ body.light-mode .qb-face {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
     gap: 5px;
-    width: 46svmin;
-    height: 46svmin;
+    width: calc(46 * var(--qb-u));
+    height: calc(46 * var(--qb-u));
 }
 
 .qb-vcell-wrap {

@@ -85,13 +85,16 @@ implementations are welcome.
 - In-app Credits page with the full attribution: exercise lineage, protocol
   sources and bundled assets.
 - Per-exercise profiles, each with its own settings and progress.
-- Profile sharing via URL - copy a share link on one device, paste it into
-  the Import box on another.
+- Profile sharing via URL on every game page - copy a share link on one
+  device, open it on another and the profile imports itself. Links always
+  point at cerevana.com so they work for anyone, even when copied from a
+  locally running copy.
 - History export/import to a JSON file, with **merge** (timestamp-deduplicated)
   or **overwrite** semantics, covering score, question history, progress-graph
   data, all n-back games, all CCT sessions and all logged test-battery scores
   (the current and previous export format import; older ones don't).
-- The same four corner panels on every game page: Settings, History (RRT's
+- The same four corner panels on every game page: Settings (organized into
+  the same collapsible sections on all three exercises), History (RRT's
   per-question log; N-Back's per-game list with score chips; CCT's
   per-session list with accuracy chips), Info (how to play, keyboard
   shortcuts, credits, resets) and Graphs.
@@ -131,6 +134,20 @@ implementations are welcome.
 - Installable as a PWA: any browser's "Install app" adds Cerevana as a
   standalone window with its own icon (no service worker, so it still needs a
   connection - this is install convenience, not offline support).
+- Mobile-friendly play: on phones the TRUE/FALSE controls become a fixed
+  full-width bar in the thumb zone, panels and graphs go full-screen,
+  landscape scrolls instead of clipping, and the UI respects notches and
+  home-indicator safe areas in standalone/PWA mode. CCT reflows into a
+  single column with a finger-sized answer grid (all 36 multiplication
+  answers fit on screen) and defaults to on-screen keypad input on touch
+  devices so the OS keyboard never covers the game. N-Back pins its match
+  keys in an RRT-style edge-to-edge bar at the bottom of the screen (the
+  corner tabs slide up to sit on the bar, whose height adapts to however
+  many keys the mode needs), scales the board to the remaining space, gets
+  a dedicated phone-landscape layout, adds an on-screen digit pad to the
+  arithmetic modes (previously physical-keyboard-only), keeps the screen
+  awake during a session, and offers an optional vibration cue on match
+  presses.
 
 ## Running locally
 

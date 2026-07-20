@@ -67,6 +67,9 @@ class CvMetricGraphs extends HTMLElement {
 		const el = this.querySelector('.panel-empty');
 		el.hidden = hasData;
 		el.textContent = message ?? this.emptyDefault;
+		// no data -> just the message, not a bare axes grid next to it
+		this.querySelector(`.graph-popup-content[data-view="${this.view}"]`)
+			?.classList.toggle('visible', hasData);
 	}
 
 	render() {
