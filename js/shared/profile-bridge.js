@@ -133,6 +133,9 @@ export const createProfileBridge = ({ profilesKey, selectedKey, liveKey, blobFie
 
     remove(index) {
       this.profiles.splice(index, 1)
+      // removing an earlier row shifts the selected one down a slot -
+      // follow it, or select() applies the *next* profile's settings
+      if (index < this.selected) this.selected--
       if (this.selected >= this.profiles.length) this.selected = 0
       this.select(this.selected)
     },
