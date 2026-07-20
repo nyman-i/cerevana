@@ -608,7 +608,10 @@ function wowFeedback() {
 function storeQuestionAndSave() {
     appState.questions.push(question);
     if (timerToggle.checked) {
-        PROGRESS_STORE.storeCompletedQuestion(question)
+        // save again once the async auto-progression has applied its level
+        // change - otherwise closing the tab right after the triggering
+        // answer loses the level-up while the DB row keeps the window reset
+        PROGRESS_STORE.storeCompletedQuestion(question).then(save)
     }
     save();
 }
