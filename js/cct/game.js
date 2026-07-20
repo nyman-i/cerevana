@@ -45,6 +45,7 @@ export function startSession(callbacks) {
     resolved: true,
     timeoutId: null,
     tickAt: 0,
+    scheduledInterval: 0,
     pausedAt: null,
     pausedMs: 0,
     callbacks,
@@ -69,7 +70,7 @@ export function resumeSession() {
   // timer end condition, response times and the in-flight tick
   if (session.endsAt) session.endsAt += pausedFor
   session.questionStartedAt += pausedFor
-  const remaining = Math.max(0, session.intervalState.interval - (session.pausedAt - session.tickAt))
+  const remaining = Math.max(0, session.scheduledInterval - (session.pausedAt - session.tickAt))
   session.pausedAt = null
   session.timeoutId = setTimeout(tick, remaining)
 }
@@ -103,7 +104,8 @@ function tick() {
   // (upstream's changeInterval does the latter for tighter responsiveness).
   // Upgrade if playtesting shows the one-tick lag feels sluggish.
   session.tickAt = Date.now()
-  session.timeoutId = setTimeout(tick, session.intervalState.interval)
+  session.scheduledInterval = session.intervalState.interval
+  session.timeoutId = setTimeout(tick, session.scheduledInterval)
 }
 
 function shouldEnd() {

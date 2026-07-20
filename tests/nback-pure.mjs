@@ -173,6 +173,15 @@ assert(parseFloat('0.3') === arithAnswer(3, 'divide', 10)
   let onlyDiv = true
   for (let i = 0; i < 200; i++) if (genArith([5], 1, 1, ['divide'], 12, false).op !== 'divide') onlyDiv = false
   assert(onlyDiv, 'genArith: op drawn from the enabled set only')
+
+  // maxNumber<=0 (corrupted/imported settings) used to hang the divide
+  // retry loop forever - must terminate and never pick 0 as a divisor
+  for (const maxNumber of [0, -5]) {
+    for (let i = 0; i < 50; i++) {
+      const { number } = genArith([5], 1, 0, ['divide'], maxNumber, false)
+      assert(number !== 0, `genArith: maxNumber=${maxNumber} still terminates without a zero divisor`)
+    }
+  }
 }
 
 // --- day rollover boundary (04:00) ---

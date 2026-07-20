@@ -35,6 +35,11 @@ mock.module(new URL('../js/quadbox/engine/utils.js', import.meta.url).href, {
   },
 })
 
+// svg.js's shapeSvgPool import touches `document` at module load (browser-only)
+mock.module(new URL('../js/quadbox/engine/shapeSvgPool.js', import.meta.url).href, {
+  defaultExport: { getShapeSvg: () => ({}), hasShape: () => false, getAllShapeIds: () => [], isLoaded: () => false },
+})
+
 const { NBackGame } = await import('../js/quadbox/engine/nbackGame.js')
 
 const mockGameSettings = {
@@ -252,4 +257,27 @@ test('generateMatches: generates some true matches', () => {
     false, false, false, false, false, false, false, false, false, false, false, false, false,
   ])
   assert.equal(matches.length, 20)
+})
+
+test('migrateToV2: v1 settings missing gameSettings migrates instead of throwing', async () => {
+  const { migrateToV2 } = await import('../js/quadbox/engine/migrations/v2.js')
+  const result = migrateToV2({ version: 'v1' })
+  assert.equal(result.version, 'v2')
+  assert.deepEqual(result.gameSettings, {})
+})
+
+test('SvgLruCache: delete() revokes the actual object URL, not undefined', async () => {
+  const { SvgLruCache } = await import('../js/quadbox/engine/svg.js')
+  const revoked = []
+  const originalRevoke = URL.revokeObjectURL
+  URL.revokeObjectURL = (url) => revoked.push(url)
+  try {
+    const cache = new SvgLruCache(1)
+    cache.store('a', '<svg></svg>')
+    const urlA = cache.get('a')
+    cache.store('b', '<svg></svg>') // evicts 'a' (maxSize 1)
+    assert.deepEqual(revoked, [urlA])
+  } finally {
+    URL.revokeObjectURL = originalRevoke
+  }
 })
