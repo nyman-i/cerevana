@@ -853,7 +853,7 @@ timerInput.addEventListener("input", evt => {
     timerTime = el.value;
     timerCount = findStartingTimerCount();
     el.style.width = (el.value.length + 4) + 'ch';
-    savedata.timer = el.value;
+    savedata.timer = +el.value;
     if (timerToggle.checked) {
         stopCountDown();
         startCountDown();

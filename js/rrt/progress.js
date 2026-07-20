@@ -77,7 +77,9 @@ class ProgressStore {
         q.timestamp = q.answeredAt;
         q.timeElapsed = q.answeredAt - q.startedAt;
         q.premises = q.plen || q.premises.length;
-        q.countdown = q.tlen || q.countdown || savedata.timer;
+        // coerce: legacy profiles stored the timer input as a string, and
+        // fail() does countdown + 5 - "30" + 5 would be "305"
+        q.countdown = +(q.tlen || q.countdown || savedata.timer);
         q.key = this.calculateKey(q);
         delete q.plen;
         delete q.startedAt;
