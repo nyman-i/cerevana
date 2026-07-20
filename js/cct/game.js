@@ -75,6 +75,7 @@ export function resumeSession() {
   // timer end condition, response times and the in-flight tick
   if (session.endsAt) session.endsAt += pausedFor
   session.questionStartedAt += pausedFor
+  session.tickAt += pausedFor
   const remaining = Math.max(0, session.scheduledInterval - (session.pausedAt - session.tickAt))
   session.pausedAt = null
   session.timeoutId = setTimeout(tick, remaining)
