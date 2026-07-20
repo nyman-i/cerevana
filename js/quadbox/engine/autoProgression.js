@@ -3,8 +3,11 @@
  * Copyright (c) 2025 The Quad Box Project Contributors
  * MIT License - see js/quadbox/LICENSE
  * Promoted from src/lib/autoProgression.js at upstream commit 83a9718.
- * Adapted: svelte store access replaced by plain arguments/hooks;
- * progression logic itself is unchanged.
+ * Adapted: svelte store access replaced by plain arguments/hooks; streaks
+ * additionally split on the caller's variantKey (grid/rules/crab/selfPaced
+ * - the same grouping the progress graph uses), so games played under a
+ * structurally different config don't count toward the same combo; the
+ * decision extracted into pure decideProgression for testing.
  */
 import { getLast48HoursGames, addGame } from './gamedb.js'
 
@@ -13,35 +16,42 @@ const takeUntil = (array, condition) => {
   return array.slice(0, i === -1 ? array.length : i)
 }
 
-// settings: { enableAutoProgression, successCriteria, failureCriteria,
-//             successComboRequired, failureComboRequired }
-// hooks:    { setNBack(n), onAdvance(), onFallback() }
-// Returns 'advance' | 'fallback' | null.
-export const runAutoProgression = async (gameInfo, settings, hooks) => {
-  if (!settings.enableAutoProgression) {
-    return null
-  }
-  const successCriteria = settings.successCriteria
-  const failureCriteria = settings.failureCriteria
-  const successComboRequired = settings.successComboRequired
-  const failureComboRequired = settings.failureComboRequired
-
-  const recentGames = await getLast48HoursGames()
-  const sameGames = recentGames.filter(game => ['completed', 'tombstone'].includes(game.status) && game.title === gameInfo.title && game.nBack === gameInfo.nBack)
+// Pure decision: 'advance' | 'fallback' | null from the recent-game list.
+export const decideProgression = (recentGames, gameInfo, settings, variantKey = () => '') => {
+  const { successCriteria, failureCriteria, successComboRequired, failureComboRequired } = settings
+  const sameGames = recentGames.filter(game => ['completed', 'tombstone'].includes(game.status)
+    && game.title === gameInfo.title && game.nBack === gameInfo.nBack
+    && variantKey(game) === variantKey(gameInfo))
   const applicableGames = takeUntil(sameGames, game => game.status === 'tombstone')
   const successGames = applicableGames.slice(0, successComboRequired)
   const failureGames = applicableGames.slice(0, failureComboRequired)
 
   if (successGames.length >= successComboRequired && successGames.every(game => (game.total.percent * 100) >= successCriteria)) {
-    hooks.setNBack(Math.min(gameInfo.nBack + 1, 12))
-    await addGame({ ...gameInfo, status: 'tombstone' })
-    hooks.onAdvance?.()
     return 'advance'
   } else if (failureGames.length >= failureComboRequired && failureGames.every(game => (game.total.percent * 100) < failureCriteria)) {
-    hooks.setNBack(Math.max(gameInfo.nBack - 1, 1))
-    await addGame({ ...gameInfo, status: 'tombstone' })
-    hooks.onFallback?.()
     return 'fallback'
   }
   return null
+}
+
+// settings: { enableAutoProgression, successCriteria, failureCriteria,
+//             successComboRequired, failureComboRequired }
+// hooks:    { setNBack(n), onAdvance(), onFallback(), variantKey(game) }
+// Returns 'advance' | 'fallback' | null.
+export const runAutoProgression = async (gameInfo, settings, hooks) => {
+  if (!settings.enableAutoProgression) {
+    return null
+  }
+  const recentGames = await getLast48HoursGames()
+  const result = decideProgression(recentGames, gameInfo, settings, hooks.variantKey)
+  if (result === 'advance') {
+    hooks.setNBack(Math.min(gameInfo.nBack + 1, 12))
+    await addGame({ ...gameInfo, status: 'tombstone' })
+    hooks.onAdvance?.()
+  } else if (result === 'fallback') {
+    hooks.setNBack(Math.max(gameInfo.nBack - 1, 1))
+    await addGame({ ...gameInfo, status: 'tombstone' })
+    hooks.onFallback?.()
+  }
+  return result
 }

@@ -242,6 +242,7 @@ export class QuadBoxGame {
               setNBack: (n) => setGameField('nBack', n),
               onAdvance: () => this.ui.onProgression?.('advance'),
               onFallback: () => this.ui.onProgression?.('fallback'),
+              variantKey: displayVariant,
             })
           }
         } else {
@@ -260,6 +261,7 @@ export class QuadBoxGame {
               setNBack: (n) => setGameField('nBack', n),
               onAdvance: () => this.ui.onProgression?.('advance'),
               onFallback: () => this.ui.onProgression?.('fallback'),
+              variantKey: displayVariant,
             })
           }
         } else {
