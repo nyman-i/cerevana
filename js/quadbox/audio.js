@@ -63,6 +63,11 @@ class AudioPlayer {
       audio = this.createAudio(url)
       this.audioCache.set(url, audio)
     }
+    // a real play may land while unlockAll's muted warm-up is still pending
+    // on this element - unmuting here also signals that warm-up's .then to
+    // leave the clip alone instead of pausing it (which would strand the
+    // 'ended' promise below and freeze the trial loop)
+    audio.muted = false
     return new Promise((resolve, reject) => {
       const done = () => {
         audio.removeEventListener('ended', done)
@@ -99,6 +104,7 @@ class AudioPlayer {
       audio.cvUnlocked = true
       audio.muted = true
       audio.play().then(() => {
+        if (!audio.muted) return // play() took over mid-warm-up - it's live
         audio.pause()
         audio.currentTime = 0
         audio.muted = false

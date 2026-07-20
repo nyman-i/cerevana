@@ -50,9 +50,14 @@ class CctAudioPlayer {
     for (const pool of Object.values(this.cache.get(voice))) {
       for (const audio of pool) {
         if (audio.cvUnlocked) continue
+        // a real play() is already in flight (digit #1 fires before unlock) -
+        // that play was inside the gesture, so it's blessed; the muted
+        // warm-up would pause it mid-clip
+        if (!audio.paused) { audio.cvUnlocked = true; continue }
         audio.cvUnlocked = true
         audio.muted = true
         audio.play().then(() => {
+          if (!audio.muted) return // playDigit took over mid-warm-up
           audio.pause()
           audio.currentTime = 0
           audio.muted = false
@@ -79,6 +84,9 @@ class CctAudioPlayer {
     if (!pool) return
     const clip = pool[this.poolIndex++ % pool.length]
     clip.playbackRate = playbackSpeed
+    // unmuting also signals a still-pending muted warm-up (slow load) in
+    // unlock() to leave this clip alone instead of pausing it
+    clip.muted = false
     clip.currentTime = 0
     clip.play().catch(() => {})
   }

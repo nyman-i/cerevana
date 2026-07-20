@@ -11,6 +11,10 @@ const ZEN_SOUNDS = {
 }
 
 function playSoundFor(sound, duration) {
+    // a real play may land while the first-gesture warm-up below still has
+    // this element muted - unmuting here also signals the warm-up's .then
+    // to leave the clip alone instead of pausing it mid-play
+    sound.muted = false;
     sound.currentTime = 0;
     sound.volume = 0.6;
     sound.play();
@@ -41,6 +45,7 @@ function cvUnlockSounds() {
         for (const { audio } of Object.values(pack)) {
             audio.muted = true;
             audio.play().then(() => {
+                if (!audio.muted) return; // playSoundFor took over - it's live
                 audio.pause();
                 audio.currentTime = 0;
                 audio.muted = false;

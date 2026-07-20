@@ -51,9 +51,11 @@ export function startSession(callbacks) {
     callbacks,
   }
   // still inside the START tap's gesture - unlock the voice clips and the
-  // beep context now, or iOS Safari refuses every timer-driven play below
-  cctAudio.unlock(settings.voice)
+  // beep context now, or iOS Safari refuses every timer-driven play below.
+  // tick() first: digit #1's real play() is itself the gesture blessing for
+  // its element, and unlocking first would mute that clip mid-flight
   tick()
+  cctAudio.unlock(settings.voice)
   return session
 }
 
