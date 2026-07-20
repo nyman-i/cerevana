@@ -147,7 +147,11 @@ implementations are welcome.
   a dedicated phone-landscape layout, adds an on-screen digit pad to the
   arithmetic modes (previously physical-keyboard-only), keeps the screen
   awake during a session, and offers an optional vibration cue on match
-  presses.
+  presses. On iOS Safari all game audio (N-Back stimuli, CCT digits and
+  beep, RRT sound effects) is unlocked during the session-start tap so
+  Apple's autoplay policy doesn't silence timer-driven sounds, and the app
+  requests persistent storage so Safari's 7-day inactivity cleanup doesn't
+  evict training history.
 
 ## Running locally
 

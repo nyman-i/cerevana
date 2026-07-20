@@ -29,6 +29,31 @@ function playSoundFor(sound, duration) {
     }, duration - 600);
 }
 
+// iOS Safari only allows programmatic play() on elements that have started
+// once inside a user gesture. Success/failure fire on answer taps (a
+// gesture), but the missed sound fires from the question timer - so unlock
+// every clip muted during the first tap/keypress on the page.
+let cvSfxUnlocked = false;
+function cvUnlockSounds() {
+    if (cvSfxUnlocked) return;
+    cvSfxUnlocked = true;
+    for (const pack of [DEFAULT_SOUNDS, ZEN_SOUNDS]) {
+        for (const { audio } of Object.values(pack)) {
+            audio.muted = true;
+            audio.play().then(() => {
+                audio.pause();
+                audio.currentTime = 0;
+                audio.muted = false;
+            }).catch(() => {
+                audio.muted = false;
+                cvSfxUnlocked = false; // no gesture credit - retry next input
+            });
+        }
+    }
+}
+document.addEventListener('pointerdown', cvUnlockSounds);
+document.addEventListener('keydown', cvUnlockSounds);
+
 function getCurrentSoundPack() {
     if (appState.sfx === 'sfx1') {
         return DEFAULT_SOUNDS;

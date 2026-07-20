@@ -50,6 +50,9 @@ export function startSession(callbacks) {
     pausedMs: 0,
     callbacks,
   }
+  // still inside the START tap's gesture - unlock the voice clips and the
+  // beep context now, or iOS Safari refuses every timer-driven play below
+  cctAudio.unlock(settings.voice)
   tick()
   return session
 }
@@ -181,6 +184,7 @@ export function stopSession(outcome = 'exited') {
     correctThreshold: session.intervalState.correctThreshold,
     incorrectThreshold: session.intervalState.incorrectThreshold,
     startingInterval: session.intervalState.startingInterval,
+    finalIntervalMs: session.intervalState.interval,
     minimumInterval: session.intervalState.minimumInterval,
     maximumInterval: session.intervalState.maximumInterval,
     intervalIncrement: session.intervalState.intervalIncrement,
