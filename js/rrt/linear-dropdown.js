@@ -33,6 +33,11 @@ function updateLinearWording(option, isSelected) {
     options.push(option);
   } else if (!isSelected) {
     options = options.filter(o => o !== option);
+    // at least one wording must stay checked - an empty set generates nothing
+    if (options.length === 0) {
+      populateLinearDropdown(); // re-check the box the click just cleared
+      return;
+    }
   }
 
   savedata.linearWording = options.join(',');

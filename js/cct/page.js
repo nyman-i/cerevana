@@ -5,6 +5,7 @@
 import { getSettings, subscribe, updateSetting, resetSettings } from './settings.js'
 import './profiles.js'
 import { isRunning, isPaused, startSession, submitAnswer, stopSession, pauseSession, resumeSession } from './game.js'
+import { cctAudio } from './audio.js'
 import { getExpectedAnswer } from './engine/mechanics.js'
 import {
   storeSession, getLastMonthSessions, getPlayTimeSince4AM, getYearOfPlayTime, deleteDB as deleteCctDB,
@@ -84,7 +85,13 @@ function registerEventHandlers() {
     if (!el) continue
     const eventName = (el.tagName === 'SELECT' || el.type === 'checkbox') ? 'change' : 'input'
     el.addEventListener(eventName, () => {
-      if (el.type === 'checkbox') { updateSetting(key, el.checked); return }
+      if (el.type === 'checkbox') {
+        updateSetting(key, el.checked)
+        // iOS: a mid-session beep enable must create/resume the AudioContext
+        // inside this change gesture, or it stays suspended until next start
+        if (key === 'beepEnabled' && el.checked && isRunning()) cctAudio.unlock(getSettings().voice)
+        return
+      }
       if (NUMBER_KEYS.has(key)) {
         if (NULLABLE_KEYS.has(key) && el.value === '') { updateSetting(key, null); return }
         const value = clampNumber(el.value, Number(el.min), Number(el.max))
@@ -97,6 +104,9 @@ function registerEventHandlers() {
         return
       }
       updateSetting(key, el.value)
+      // iOS: a mid-session voice switch needs its clips gesture-blessed now -
+      // timer-driven play() on never-blessed elements is silently refused
+      if (key === 'voice' && isRunning()) cctAudio.unlock(el.value)
     })
   }
 }
@@ -210,6 +220,9 @@ function beginUi() {
   $('cct-stage').classList.remove('cct-stage--paused')
   const answer = $('cct-answer')
   answer.hidden = inputMethod === 'keypad'
+  // numeric touch keyboards have no minus key, and subtraction's answers go
+  // down to -8 - only that mode pays the full-keyboard price
+  answer.inputMode = arithmeticMode === 'subtraction' ? 'text' : 'numeric'
   answer.value = ''
   answer.readOnly = inputMethod === 'keypad'
   // no digit on screen + typing: let the input take the digit's space
@@ -251,6 +264,18 @@ function begin() {
       flash(isCorrect ? 'cct-flash-right' : 'cct-flash-wrong')
     },
     onEnd: async (record) => {
+      // next session picks up at the pace this one ended on (same idea as
+      // N-Back auto-progression writing the level back); the settings input
+      // shows the new value and stays editable
+      // ponytail: carries over on manual exit too - a bailed session barely
+      // moved the interval, and a too-fast start self-corrects upward.
+      // Clamped to the input's own range so the field never holds a value
+      // its min/max reject
+      const si = $('cct-startinginterval')
+      const carried = Math.min(Number(si.max), Math.max(Number(si.min), record.finalIntervalMs))
+      if (carried !== getSettings().startingInterval) {
+        updateSetting('startingInterval', carried)
+      }
       endUi(record)
       await storeSession(record)
       renderGoalTrackers()

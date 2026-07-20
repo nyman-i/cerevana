@@ -58,7 +58,9 @@ Addition Test) protocol. Digits from 1–9 play one at a time - for each new
 one, answer with the result of it and the digit right before it (addition
 by default; multiplication, subtraction and difference are also available).
 The pace is adaptive: answer streaks speed the interval up, miss streaks
-slow it back down, clamped between a configurable floor and ceiling. Choose
+slow it back down, clamped between a configurable floor and ceiling. Each
+session starts at the pace the last one ended on, so you pick up where you
+left off. Choose
 from four pre-recorded voice packs and an adjustable playback speed. Core
 mechanics adapted from tim22dev22's CCT (see Credits).
 
@@ -147,7 +149,11 @@ implementations are welcome.
   a dedicated phone-landscape layout, adds an on-screen digit pad to the
   arithmetic modes (previously physical-keyboard-only), keeps the screen
   awake during a session, and offers an optional vibration cue on match
-  presses.
+  presses. On iOS Safari all game audio (N-Back stimuli, CCT digits and
+  beep, RRT sound effects) is unlocked during the session-start tap so
+  Apple's autoplay policy doesn't silence timer-driven sounds, and the app
+  requests persistent storage so Safari's 7-day inactivity cleanup doesn't
+  evict training history.
 
 ## Running locally
 

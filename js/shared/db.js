@@ -1,3 +1,8 @@
+// Safari evicts IndexedDB + localStorage after ~7 days without a visit
+// unless the site holds persistent storage - a silent total data loss for
+// a local-first app. Best-effort request; other browsers grant or ignore.
+navigator.storage?.persist?.().catch(() => {});
+
 const openDatabase = () => {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open('SyllDB', 6);

@@ -389,8 +389,10 @@ export const updateSetting = (key, value) => {
   notify()
 }
 
-export const setGameField = (field, value) => {
-  settings.gameSettings[settings.mode][field] = value
+// mode param: auto-progression writes the level of the mode the game was
+// STARTED with - the dropdown/PgUp may have moved settings.mode mid-game
+export const setGameField = (field, value, mode = settings.mode) => {
+  settings.gameSettings[mode][field] = value
   saveSettings(settings)
   notify()
 }

@@ -492,8 +492,12 @@ function generateQuestion() {
         }
     }
 
-    if (!savedata.removeNegationExplainer && /is-negated/.test(JSON.stringify(q)))
+    if (!savedata.removeNegationExplainer && /is-negated/.test(JSON.stringify(q))) {
+        // the explainer line is not a premise: freeze the real count first so
+        // the level label, DB row and auto-progression don't count it
+        if (!q.plen) q.plen = q.premises.length;
         q.premises.unshift('<span class="negation-explainer">Invert the <span class="is-negated">Red</span> text</span>');
+    }
 
     return q;
 }
@@ -604,7 +608,10 @@ function wowFeedback() {
 function storeQuestionAndSave() {
     appState.questions.push(question);
     if (timerToggle.checked) {
-        PROGRESS_STORE.storeCompletedQuestion(question)
+        // save again once the async auto-progression has applied its level
+        // change - otherwise closing the tab right after the triggering
+        // answer loses the level-up while the DB row keeps the window reset
+        PROGRESS_STORE.storeCompletedQuestion(question).then(save)
     }
     save();
 }
@@ -703,6 +710,7 @@ function deleteQuestion(i, isRight) {
 
 function renderHQL(didAddSingleQuestion=false) {
     if (didAddSingleQuestion) {
+        historyList.querySelector('.panel-empty')?.remove();
         const index = appState.questions.length - 1;
         const recentQuestion = appState.questions[index];
         const firstChild = historyList.firstElementChild;
@@ -739,9 +747,11 @@ function updateAverage(reverseChronological) {
         return;
     }
     const totalTime = times.reduce((a,b) => a + b, 0);
-    const minutes = Math.floor(totalTime / 60);
-    const seconds = totalTime % 60;
-    totalDisplay.innerHTML = minutes.toFixed(0) + 'm ' + seconds.toFixed(0) + 's';
+    // round before splitting, or 59.5s renders as "0m 60s"
+    const totalRounded = Math.round(totalTime);
+    const minutes = Math.floor(totalRounded / 60);
+    const seconds = totalRounded % 60;
+    totalDisplay.innerHTML = minutes + 'm ' + seconds + 's';
     
     const average =  totalTime / times.length;
     averageDisplay.innerHTML = average.toFixed(1) + 's';
@@ -843,7 +853,7 @@ timerInput.addEventListener("input", evt => {
     timerTime = el.value;
     timerCount = findStartingTimerCount();
     el.style.width = (el.value.length + 4) + 'ch';
-    savedata.timer = el.value;
+    savedata.timer = +el.value;
     if (timerToggle.checked) {
         stopCountDown();
         startCountDown();

@@ -24,6 +24,15 @@ const speak = (text) => {
 // 'LettersM1/a' → 'a', 'Nato/alfa' → 'alfa'
 const spokenName = (url) => String(url).split('/').pop()
 
+// iOS Safari drops the first utterance unless speechSynthesis is first
+// used inside a user gesture - an empty utterance is silent everywhere
+let speechWarmed = false
+const warmSpeechOnce = () => {
+  if (speechWarmed || typeof speechSynthesis === 'undefined') return
+  speechWarmed = true
+  speechSynthesis.speak(new SpeechSynthesisUtterance(''))
+}
+
 const canOpus = typeof Audio !== 'undefined' &&
   new Audio().canPlayType('audio/ogg; codecs=opus') !== ''
 
@@ -54,6 +63,11 @@ class AudioPlayer {
       audio = this.createAudio(url)
       this.audioCache.set(url, audio)
     }
+    // a real play may land while unlockAll's muted warm-up is still pending
+    // on this element - unmuting here also signals that warm-up's .then to
+    // leave the clip alone instead of pausing it (which would strand the
+    // 'ended' promise below and freeze the trial loop)
+    audio.muted = false
     return new Promise((resolve, reject) => {
       const done = () => {
         audio.removeEventListener('ended', done)
@@ -72,9 +86,33 @@ class AudioPlayer {
     })
   }
 
+  // Called from startGame, i.e. inside the START click/keypress - the one
+  // moment iOS Safari lets audio be unlocked for later trial-clock playback.
   cacheAudioSource(audioSource) {
+    warmSpeechOnce()
     if (getSettings().voice === 'browser') return
     getAudioPool(audioSource).forEach(url => this.preload(url))
+    this.unlockAll()
+  }
+
+  // iOS: an Audio element must start once inside a user gesture before
+  // programmatic (timer-driven) play() is allowed - run each cached clip
+  // muted now, and it stays unlocked for the rest of the page's life
+  unlockAll() {
+    for (const audio of this.audioCache.values()) {
+      if (audio.cvUnlocked) continue
+      audio.cvUnlocked = true
+      audio.muted = true
+      audio.play().then(() => {
+        if (!audio.muted) return // play() took over mid-warm-up - it's live
+        audio.pause()
+        audio.currentTime = 0
+        audio.muted = false
+      }).catch(() => {
+        audio.muted = false
+        audio.cvUnlocked = false // no gesture credit - retry next start
+      })
+    }
   }
 
   clearCache() {

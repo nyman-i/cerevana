@@ -243,9 +243,13 @@ async function handleHistoryImport(event) {
     const seenCct = new Set(existingCct.map(r => r.timestamp));
     const cctRows = cctImport.filter(r => !seenCct.has(r.timestamp));
 
+    // test-score timestamps are date-only midnights, so a bare timestamp
+    // collides across every score logged the same day (e.g. IPIP's five
+    // traits) - key on the full record identity instead
+    const testScoreKey = r => `${r.testId}|${r.variant ?? ''}|${r.timestamp}|${r.score}`;
     const existingTestScores = overwrite ? [] : await getAllTestScores();
-    const seenTestScores = new Set(existingTestScores.map(r => r.timestamp));
-    const testScoreRows = testScoresImport.filter(r => !seenTestScores.has(r.timestamp));
+    const seenTestScores = new Set(existingTestScores.map(testScoreKey));
+    const testScoreRows = testScoresImport.filter(r => !seenTestScores.has(testScoreKey(r)));
 
     try {
         await importRRTRows(rows, overwrite); // atomic IDB write first; localStorage only after it commits

@@ -187,6 +187,7 @@ export class QuadBoxGame {
     const gameSettings = getGameSettings()
     this.isPlaying = true
     this.isTallyGame = isTallyMode(getSettings().mode)
+    this.startedMode = getSettings().mode
     this.gameMeta = { ...this.game.meta, start: Date.now() }
     this.gameDisplayInfo = this.gameMeta
     audioPlayer.cacheAudioSource(gameSettings.audioSource)
@@ -239,7 +240,7 @@ export class QuadBoxGame {
           await analytics.scoreTallyTrials(gameInfoRecord, status === 'completed' ? this.scoresheet : this.scoresheet.slice(0, this.trialsIndex), status)
           if (status === 'completed') {
             await runAutoProgression(gameInfoRecord, getSettings(), {
-              setNBack: (n) => setGameField('nBack', n),
+              setNBack: (n) => setGameField('nBack', n, this.startedMode),
               onAdvance: () => this.ui.onProgression?.('advance'),
               onFallback: () => this.ui.onProgression?.('fallback'),
               variantKey: displayVariant,
@@ -258,7 +259,7 @@ export class QuadBoxGame {
               s = { ...s, successCriteria: 90, successComboRequired: 1, failureCriteria: 75, failureComboRequired: 1 }
             }
             await runAutoProgression(gameInfoRecord, s, {
-              setNBack: (n) => setGameField('nBack', n),
+              setNBack: (n) => setGameField('nBack', n, this.startedMode),
               onAdvance: () => this.ui.onProgression?.('advance'),
               onFallback: () => this.ui.onProgression?.('fallback'),
               variantKey: displayVariant,

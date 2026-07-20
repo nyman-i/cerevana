@@ -82,6 +82,9 @@ class ProfileStore {
 
     deleteProfile(index) {
         this.profiles.splice(index, 1);
+        // removing an earlier row shifts the selected one down a slot -
+        // follow it, or the change handler applies the next profile's savedata
+        if (index < this.selectedProfile) this.selectedProfile--;
         if (this.selectedProfile >= this.profiles.length) {
             this.selectedProfile = 0;
         }
