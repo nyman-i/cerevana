@@ -5,6 +5,7 @@
 import { getSettings, subscribe, updateSetting, resetSettings } from './settings.js'
 import './profiles.js'
 import { isRunning, isPaused, startSession, submitAnswer, stopSession, pauseSession, resumeSession } from './game.js'
+import { cctAudio } from './audio.js'
 import { getExpectedAnswer } from './engine/mechanics.js'
 import {
   storeSession, getLastMonthSessions, getPlayTimeSince4AM, getYearOfPlayTime, deleteDB as deleteCctDB,
@@ -84,7 +85,13 @@ function registerEventHandlers() {
     if (!el) continue
     const eventName = (el.tagName === 'SELECT' || el.type === 'checkbox') ? 'change' : 'input'
     el.addEventListener(eventName, () => {
-      if (el.type === 'checkbox') { updateSetting(key, el.checked); return }
+      if (el.type === 'checkbox') {
+        updateSetting(key, el.checked)
+        // iOS: a mid-session beep enable must create/resume the AudioContext
+        // inside this change gesture, or it stays suspended until next start
+        if (key === 'beepEnabled' && el.checked && isRunning()) cctAudio.unlock(getSettings().voice)
+        return
+      }
       if (NUMBER_KEYS.has(key)) {
         if (NULLABLE_KEYS.has(key) && el.value === '') { updateSetting(key, null); return }
         const value = clampNumber(el.value, Number(el.min), Number(el.max))
@@ -97,6 +104,9 @@ function registerEventHandlers() {
         return
       }
       updateSetting(key, el.value)
+      // iOS: a mid-session voice switch needs its clips gesture-blessed now -
+      // timer-driven play() on never-blessed elements is silently refused
+      if (key === 'voice' && isRunning()) cctAudio.unlock(el.value)
     })
   }
 }
