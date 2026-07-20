@@ -36,7 +36,8 @@ class CctAudioPlayer {
   // fire-and-forget: the stimulus clock paces the game, not clip completion -
   // clone so a fast interval can overlap the previous clip instead of cutting it
   playDigit(digit) {
-    const { voice, playbackSpeed } = getSettings()
+    const { voice, playbackSpeed, presentationMode } = getSettings()
+    if (presentationMode === 'visual') return
     this.preloadVoice(voice)
     const template = this.cache.get(voice)[digit]
     if (!template) return

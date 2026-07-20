@@ -49,7 +49,15 @@ portions, including the vendored voice-pack audio, are not subject to
 this repository's CC BY-NC terms). Everything else in js/cct/ (settings,
 game loop, history, profiles, page controller) is original Cerevana code.
 
-Bundled third-party assets carry their own licenses: Space Grotesk and
-Zen Dots typefaces (SIL OFL 1.1, see fonts/), menu background photo by
-Simon Berger (Pexels License), Chart.js (MIT, vendored in js/lib/), CCT
-voice-pack audio (MIT, vendored in js/cct/audio/, see js/cct/LICENSE).
+Bundled third-party assets carry their own licenses: the Space Grotesk,
+Zen Dots, Oxanium, JetBrains Mono and Format 1452 typefaces (all SIL OFL
+1.1, see fonts/); the coolicons UI icon webfont (MIT, see
+fonts/cool/LICENSE-coolicons.txt); the menu background photo by Simon
+Berger (Pexels License, img/menu-bg.jpg); the Cerevana head logo used for
+the favicon, app/PWA/iOS icons and social-preview image (Canva Content
+License, separate from this repository's CC BY-NC terms); Chart.js with
+date-fns and chartjs-adapter-date-fns (all MIT, vendored in js/lib/, see
+js/lib/LICENSE-date-fns.txt); the d3 stimulus libraries d3-delaunay,
+delaunator, robust-predicates, d3-shape and d3-path (ISC, see
+js/lib/LICENSE-d3-stimuli.txt); and the CCT voice-pack audio (MIT,
+vendored in js/cct/audio/, see js/cct/LICENSE).

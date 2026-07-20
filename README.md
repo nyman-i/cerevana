@@ -2,7 +2,7 @@
 
 **Live at [cerevana.com](https://cerevana.com)** - free, no account needed.
 
-Cerevana is an open, local-first brain-training app that unites multiple
+Cerevana is an open, local-first Mindbuilding app that unites multiple
 evidence-based cognitive exercises under one roof. Today that's **RRT**
 (relational reasoning), **N-Back** (working memory - one merged game
 taking the best of the modern Quad Box protocol and the classic Brain
@@ -46,8 +46,7 @@ protocol, and crab / self-paced variants - plus an optional daily level
 reset and a choice between recorded voices and your browser's speech
 synthesis. Built on the game engine of soamsy's Quad Box (see Credits);
 the classic modes reimplement Brain Workshop's protocol without sharing
-any code with it. Implementation notes and the classic-mode protocol
-spec live in [`nback-spec.md`](nback-spec.md).
+any code with it.
 
 ### CCT
 
@@ -91,15 +90,19 @@ implementations are welcome.
 - History export/import to a JSON file, with **merge** (timestamp-deduplicated)
   or **overwrite** semantics, covering score, question history, progress-graph
   data, all n-back games, all CCT sessions and all logged test-battery scores
-  (older export files remain importable).
+  (the current and previous export format import; older ones don't).
 - The same four corner panels on every game page: Settings, History (RRT's
   per-question log; N-Back's per-game list with score chips; CCT's
   per-session list with accuracy chips), Info (how to play, keyboard
   shortcuts, credits, resets) and Graphs.
-- Progress graphs: time spent, average correct times, premise speed and totals
-  for RRT; per-mode level history and daily time spent for N-Back, with
-  pre-merge sessions shown as legacy lines; accuracy-per-session and daily
-  time spent for CCT.
+- Progress graphs - one dedicated graph per metric: time spent, average
+  correct times, premise speed and totals for RRT; per-mode level, accuracy,
+  reaction time and daily time spent for N-Back; accuracy, response time and
+  daily time spent for CCT.
+- Stats page: every exercise's progress graphs gathered on one page over
+  your full history (the game pages' popups show the recent window), plus a
+  combined minutes-per-day chart across all three exercises - filterable to
+  presets (last week/month/90 days/year) or any custom date range.
 - Timers with auto-progression (RRT), adaptive per-mode levels (N-Back), and
   an adaptive answer interval (CCT).
 - Daily and weekly play-time goals for every exercise - progress bars beside
@@ -114,9 +117,20 @@ implementations are welcome.
   fixed saturation/lightness so it stays WCAG-AA readable at any hue. The
   correct/wrong colours are tuned against a colour-blindness simulation -
   always paired with a word, never colour alone. Custom background image and
-  sound effects.
+  sound effects. A main-font picker in the same Appearance section (Oxanium,
+  JetBrains Mono, Zen Dots, or the default per-role mix) applies app-wide.
 - Desktop launcher installer for Linux (`create-shortcut.sh`) that serves the
-  app locally and opens it in its own app window.
+  app locally and opens it in its own app window - in Chrome (recommended,
+  gets a real chromeless app window) or Firefox (opens as a normal browser
+  window, since Firefox dropped its app-mode support). Works on any distro
+  with a `.desktop`-entry-compatible desktop (GNOME, KDE, XFCE, Cinnamon,
+  MATE, etc.) with `git`, `python3` and Chrome/Chromium or Firefox installed
+  - not tied to a specific distro. A "Run Locally" panel on the main menu
+  offers a one-line `curl | bash` install command for either browser, or a
+  plain download of the script.
+- Installable as a PWA: any browser's "Install app" adds Cerevana as a
+  standalone window with its own icon (no service worker, so it still needs a
+  connection - this is install convenience, not offline support).
 
 ## Running locally
 
@@ -133,8 +147,18 @@ then open http://localhost:8080. For an app-like window:
 chromium --app=http://localhost:8080
 ```
 
-Or run `./create-shortcut.sh` once to install a "Cerevana" entry in your
-application launcher that does both.
+Or, on Linux, run `./create-shortcut.sh` from a clone of this repo once to
+install a "Cerevana" entry in your application launcher that does both - pass
+`--browser=firefox` to launch in Firefox instead of the Chrome/Chromium
+default (the script refuses to run on macOS/Windows). Without a local clone,
+the same script is self-contained:
+
+```bash
+curl -fsSL https://cerevana.com/create-shortcut.sh | bash -s -- --browser=chrome
+```
+
+(`--browser=firefox` also works here) clones the app into
+`~/.local/share/cerevana-app` first, then installs the launcher.
 
 ## Contributing
 
@@ -150,9 +174,10 @@ Development happens on `dev`, which auto-deploys to a preview at
 [cerevana-dev.fly.dev](https://cerevana-dev.fly.dev) on every push; `main`
 is release-only and only moves via pull request. Every push to `dev` and
 every PR into `main` runs the same gate: ESLint, Stylelint, html-validate,
-a gitleaks secret scan, four pure-logic test suites (`tests/*.mjs`), and a
-headless-browser smoke test that loads every page and checks for console
-errors.
+a gitleaks secret scan, five pure-logic test suites (`tests/*-pure.mjs`,
+covering RRT, N-Back, Quad Box, CCT and the transfer tracker), and a
+headless-browser smoke test (`tests/smoke.mjs`) that loads every page and
+checks for console errors.
 
 ## Credits
 
@@ -196,9 +221,11 @@ The menu background photo is by
 The favicon and app icon are the Cerevana head logo, created with
 [Canva Pro](https://www.canva.com/) and used under the
 [Canva Content License](https://www.canva.com/policies/content-license-agreement/);
-bundled as `favicon.png` and `img/icon-512.png`. Note: the logo is licensed
-separately from the app - the repository's CC BY-NC license does not apply
-to it.
+bundled as `favicon.png`, `img/icon-512.png`, `img/icon-192.png` and
+`img/apple-touch-icon.png` (the PWA/iOS icons). The social-preview image
+`img/og-image.jpg` is the same logo set beside the CEREVANA wordmark (Format
+1452, below). Note: the logo is licensed separately from the app - the
+repository's CC BY-NC license does not apply to it.
 
 The body typeface is [Space Grotesk](https://github.com/floriankarsten/space-grotesk)
 by Florian Karsten, licensed under the
@@ -216,9 +243,17 @@ all licensed under the SIL Open Font License 1.1
 [JetBrains Mono](fonts/OFL-JetBrainsMono.txt),
 [Format 1452](fonts/OFL-Format1452.txt)) and bundled locally.
 
+The UI icons are [coolicons](https://github.com/krystonschwarze/coolicons)
+by Kryston Schwarze (MIT), bundled as an icon webfont in `fonts/cool/`
+(license: [fonts/cool/LICENSE-coolicons.txt](fonts/cool/LICENSE-coolicons.txt)).
+
 Bundled libraries, all vendored in `js/lib/`:
-[Chart.js](https://www.chartjs.org/) (MIT) for the progress graphs, and -
-for Quad Box's generated image stimuli -
+[Chart.js](https://www.chartjs.org/) (MIT) for the progress graphs, with
+[date-fns](https://github.com/date-fns/date-fns) and
+[chartjs-adapter-date-fns](https://github.com/chartjs/chartjs-adapter-date-fns)
+(both MIT, license: [js/lib/LICENSE-date-fns.txt](js/lib/LICENSE-date-fns.txt))
+powering the Transfer chart's time axis; and - for Quad Box's generated image
+stimuli -
 [d3-delaunay](https://github.com/d3/d3-delaunay)/[delaunator](https://github.com/mapbox/delaunator)/[robust-predicates](https://github.com/mourner/robust-predicates)
 and [d3-shape](https://github.com/d3/d3-shape)/[d3-path](https://github.com/d3/d3-path)
 (ISC, see [js/lib/LICENSE-d3-stimuli.txt](js/lib/LICENSE-d3-stimuli.txt)).

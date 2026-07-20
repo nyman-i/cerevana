@@ -60,12 +60,15 @@ const cellClasses = (base, position, svgId, flash, transparent) => {
   return classNames.join(' ')
 }
 
-const cellStyle = (node, boxColor, svgId, shapeOuterColor, transparent) => {
+const cellStyle = (node, boxColor, svgId, shapeOuterColor, transparent, textColor) => {
   node.style.cssText = ''
   if (boxColor) {
     node.style.setProperty('--face-bg-color', `${boxColor}${transparent ? '3A' : ''}`)
   } else if (shapeOuterColor) {
     node.style.setProperty('--face-bg-color', `${shapeOuterColor}${transparent ? '2A' : ''}`)
+  }
+  if (textColor) {
+    node.style.setProperty('--face-text-color', textColor)
   }
   if (svgId) {
     node.style.setProperty('--shape-url', `url('${getSvgUrl(svgId)}')`)
@@ -74,6 +77,14 @@ const cellStyle = (node, boxColor, svgId, shapeOuterColor, transparent) => {
     node.style.setProperty('--face-size', '72%')
   }
 }
+
+// findBoxColor's shapeless/colorless fallback is a plain near-white (dark theme) /
+// near-black (light theme) box, meant for blank position highlights (dual, jaeggi,
+// tally...) - it happens to match .qb-face's default text color, so any mode that
+// also draws text on that same blank box (arithmetic, letter combos) needs the
+// text flipped to the opposite theme's tone or it's invisible.
+const plainBoxTextColor = (shape, color, image, settings) =>
+  (shape || color || image) ? '' : (settings.theme === 'dark' ? '#171613' : '#fffffd')
 
 const MAX_CELLS = 4
 
@@ -91,10 +102,10 @@ export class BoardRenderer {
     this.grid = null
     this.theme = 'dark'
     this.cells = []
-    this.variableN = el('div', 'qb-variable-n', stage)
+    this.variableN = el('div', 'qb-variable-n', null)
     this.variableN.hidden = true
     // center overlay: stimulus display for position-less modes
-    this.centerWrap = el('div', 'qb-center-wrap', stage)
+    this.centerWrap = el('div', 'qb-center-wrap', null)
     this.centerFace = el('div', 'qb-face', this.centerWrap)
     this.centerWrap.hidden = true
   }
@@ -105,6 +116,7 @@ export class BoardRenderer {
     this.theme = theme
     this.wrap?.remove()
     this.cells = []
+    this.board = null
 
     if (grid === 'visualCrank') {
       this.wrap = el('div', 'qb-crank-wrap', this.stage)
@@ -149,6 +161,13 @@ export class BoardRenderer {
         frameImg(this.scene, `${d} 0 0`, 'y 90deg')
       }
     }
+    // position-less overlays (combo modes with no position stream, the
+    // variable-N ghost number) must share whichever container carries the
+    // board's own HUD-clearance offset - qb-board2d's margin-bottom or
+    // qb-wrap3d's translateY - or they drift off the visible board
+    const overlayParent = this.board ?? this.wrap
+    overlayParent.appendChild(this.variableN)
+    overlayParent.appendChild(this.centerWrap)
   }
 
   setRotationSpeed(rotationSpeed) {
@@ -194,8 +213,11 @@ export class BoardRenderer {
       const shapeOuterColor = findShapeOuterColor(trial.color, settings)
       cell.hidden = false
       cell.className = cellClasses(base, position, svgId, multi ? flash : false, transparent)
-      cellStyle(cell, boxColor, svgId, shapeOuterColor, transparent)
-      if (timedMulti && !boxColor) {
+      cellStyle(cell, boxColor, svgId, shapeOuterColor, transparent, plainBoxTextColor(trial.shape, trial.color, trial.image, settings))
+      // findBoxColor always returns a truthy default (plain white/dark) when
+      // there's no shape/color/image, so !boxColor never fires here - check
+      // the actual stimuli instead, or the stream-identity tint never shows
+      if (timedMulti && !trial.shape && !trial.color && !trial.image) {
         cell.style.setProperty('--face-bg-color', STREAM_COLORS[i])
       }
       setFaceText(cell, multi ? '' : trial?.text)
@@ -206,7 +228,8 @@ export class BoardRenderer {
     if (wantCenter) {
       const svgId = createSvgId(trial.shape, trial.color, trial.image, settings)
       cellStyle(this.centerWrap, findBoxColor(trial.shape, trial.color, trial.image, settings),
-        svgId, findShapeOuterColor(trial.color, settings), false)
+        svgId, findShapeOuterColor(trial.color, settings), false,
+        plainBoxTextColor(trial.shape, trial.color, trial.image, settings))
       this.centerFace.textContent = trial.text == null ? '' : String(trial.text)
       this.centerWrap.hidden = false
     } else {

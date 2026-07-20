@@ -34,7 +34,6 @@ class AnalogyQuestion {
      create(length) {
         const timeOffset = savedata.offsetAnalogyTime;
         const premiseOffset = getPremisesFor('offsetAnalogyPremises', 0);
-        const choiceIndices = [];
 
         let generators = [];
         if (savedata.enableDistinction)

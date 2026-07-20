@@ -2,10 +2,26 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Cerevana - N-Back</title>
+		<title>Cerevana - N-Back Training</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="theme-color" content="#7cb6a8" />
-		<link rel="icon" type="image/png" href="favicon.png?v=4">
+		<meta name="description" content="One n-back, best of both worlds - the modern Quad Box protocol and classic Brain Workshop modes merged. Trains working memory.">
+		<link rel="canonical" href="https://cerevana.com/nback.html">
+		<meta property="og:type" content="website">
+		<meta property="og:site_name" content="Cerevana">
+		<meta property="og:title" content="Cerevana - N-Back Training">
+		<meta property="og:description" content="One n-back, best of both worlds - the modern Quad Box protocol and classic Brain Workshop modes merged. Trains working memory.">
+		<meta property="og:image" content="https://cerevana.com/img/og-image.jpg">
+		<meta property="og:url" content="https://cerevana.com/nback.html">
+		<meta name="twitter:card" content="summary_large_image">
+		<meta property="og:locale" content="en_US">
+		<meta property="og:image:width" content="1200">
+		<meta property="og:image:height" content="630">
+		<meta property="og:image:alt" content="Cerevana logo">
+		<meta name="twitter:image:alt" content="Cerevana logo">
+		<link rel="icon" type="image/png" href="favicon.png?v=5">
+		<link rel="manifest" href="manifest.json">
+		<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 		<link rel="stylesheet" href="fonts/cool/coolicons.css">
 		<link rel="stylesheet" href="css/styles.css">
 		<link rel="stylesheet" href="css/quadbox.css">
@@ -18,6 +34,8 @@
 		<script src="js/components/profile-picker.js"></script>
 		<script src="js/components/corner-panel.js"></script>
 		<script src="js/components/corner-tabs.js"></script>
+		<script src="js/components/metric-graphs.js"></script>
+		<script src="js/quadbox/graphs.js"></script>
 	</head>
 	<body>
 
@@ -30,64 +48,23 @@
 						<div class="mb-2">
 							<div class="ctrl__inner">
 								<select id="qb-mode-main" class="select-item">
-									<option value="" hidden>&mdash;</option>
+									<option value="" hidden>-</option>
 									<option value="dual">Dual</option>
 									<option value="quad">Quad</option>
+									<option value="dualClassic">Classic Dual</option>
+									<option value="quadClassic">Classic Quad</option>
 									<option value="custom">Custom A</option>
 									<option value="customB">Custom B</option>
 								</select>
 								<div class="tooltip-container" tabindex="0">
 									?
-									<div class="tooltip-text">
+									<div class="tooltip-text shift-right wrap" id="qb-mode-main-tip">
 										Dual and Quad are<br>
 										fixed protocols:<br>
 										settings view-only,<br>
 										scores comparable.<br>
 										Pick a Custom mode<br>
 										to edit everything.<br>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="mb-05 panel-heading">Advanced Modes</div>
-						<div class="mb-2">
-							<div class="ctrl__inner">
-								<select id="qb-mode" class="select-item">
-									<option value="" hidden>&mdash;</option>
-									<optgroup label="Quad Box">
-										<option value="tally">Tally</option>
-										<option value="vtally">Visual Tally</option>
-									</optgroup>
-									<optgroup label="Classic">
-										<option value="position">Position</option>
-										<option value="sound">Sound</option>
-										<option value="positionColor">Position + Color</option>
-										<option value="colorSound">Color + Sound</option>
-										<option value="triple">Triple</option>
-										<option value="jaeggi">Jaeggi Dual</option>
-										<option value="multiSquare">Multi-Square</option>
-									</optgroup>
-									<optgroup label="Combination">
-										<option value="dualCombo">Dual Combination</option>
-										<option value="triCombo">Tri Combination</option>
-										<option value="quadCombo">Quad Combination</option>
-										<option value="triComboColor">Tri Combination (Color)</option>
-									</optgroup>
-									<optgroup label="Arithmetic">
-										<option value="arithmetic">Arithmetic</option>
-										<option value="dualArithmetic">Dual Arithmetic</option>
-										<option value="tripleArithmetic">Triple Arithmetic</option>
-									</optgroup>
-								</select>
-								<div class="tooltip-container" tabindex="0">
-									?
-									<div class="tooltip-text right">
-										Preset variants,<br>
-										view-only like<br>
-										Dual/Quad. Tally:<br>
-										count the matches<br>
-										each trial,<br>
-										self-paced.<br>
 									</div>
 								</div>
 							</div>
@@ -223,6 +200,59 @@
 						<num-row input-id="qb-key-color" label="Color" type="text" maxlength="1" width="3ch"></num-row>
 						<num-row input-id="qb-key-shape" label="Shape / Image" type="text" maxlength="1" width="3ch"></num-row>
 						<num-row input-id="qb-key-audio" label="Audio" type="text" maxlength="1" width="3ch"></num-row>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Advanced Modes</div>
+						<p><strong>Experimental</strong> - these presets are less
+						tested than Dual/Quad/Custom and may be buggy or behave
+						incorrectly.</p>
+						<div class="mb-2">
+							<div class="ctrl__inner">
+								<select id="qb-mode" class="select-item">
+									<option value="" hidden>-</option>
+									<optgroup label="Quad Box">
+										<option value="tally">Tally</option>
+										<option value="vtally">Visual Tally</option>
+									</optgroup>
+									<optgroup label="Classic">
+										<option value="position">Position</option>
+										<option value="sound">Sound</option>
+										<option value="positionColor">Position + Color</option>
+										<option value="colorSound">Color + Sound</option>
+										<option value="triple">Triple</option>
+										<option value="jaeggi">Jaeggi Dual</option>
+										<option value="multiSquare">Multi-Square</option>
+									</optgroup>
+									<optgroup label="Combination">
+										<option value="dualCombo">Dual Combination</option>
+										<option value="triCombo">Tri Combination</option>
+										<option value="quadCombo">Quad Combination</option>
+										<option value="triComboColor">Tri Combination (Color)</option>
+									</optgroup>
+									<optgroup label="Arithmetic">
+										<option value="arithmetic">Arithmetic</option>
+										<option value="dualArithmetic">Dual Arithmetic</option>
+										<option value="tripleArithmetic">Triple Arithmetic</option>
+									</optgroup>
+								</select>
+								<div class="tooltip-container" tabindex="0">
+									?
+									<div class="tooltip-text right wrap" id="qb-mode-tip">
+										Preset variants,<br>
+										view-only like<br>
+										Dual/Quad. Tally:<br>
+										count the matches<br>
+										each trial,<br>
+										self-paced.<br>
+									</div>
+								</div>
+							</div>
+						</div>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Reset</div>
+						<p>Reset settings keeps your history. The full reset erases
+						all N-Back data - irreversible.</p>
+						<div class="mb-1"><button type="button" id="qb-reset-settings">Reset Settings</button></div>
+						<div class="mb-1"><button type="button" id="qb-reset-all" class="delete">Reset N-Back</button></div>
 			</corner-panel>
 
 			<corner-panel name="info" side="left">
@@ -232,13 +262,15 @@
 						matching key whenever a modality repeats: position, color,
 						shape/image, or audio. Several can match at once.</p>
 						<p>In <strong>tally</strong> modes you instead type the
-						<em>count</em> of matches each trial &mdash; self-paced, no
+						<em>count</em> of matches each trial - self-paced, no
 						trial timer.</p>
 						<p>The <strong>Classic</strong>, <strong>Combination</strong>
 						and <strong>Arithmetic</strong> groups follow the Brain
 						Workshop protocol: grid positions and spoken letters,
 						cross-modal matches, typed arithmetic answers, and the crab,
-						self-paced and Jaeggi variants.</p>
+						self-paced and Jaeggi variants. These Advanced Modes are
+						<strong>experimental</strong> and less tested than
+						Dual/Quad/Custom - expect the occasional bug.</p>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Keyboard Shortcuts</div>
 						<div class="mb-2">
@@ -259,14 +291,8 @@
 						<a href="https://github.com/soamsy/quad-box" target="_blank" rel="noopener">Quad Box</a>
 						by soamsy (MIT); the classic modes reimplement the protocol of
 						<a href="https://brainworkshop.sourceforge.net/" target="_blank" rel="noopener">Brain Workshop</a>
-						(inspiration only, no shared code) &mdash; see
+						(inspiration only, no shared code) - see
 						<a href="credits.html">Credits</a>.</p>
-						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Reset</div>
-						<p>Reset settings keeps your history. The full reset erases
-						all N-Back data &mdash; irreversible.</p>
-						<div class="mb-1"><button type="button" id="qb-reset-settings">Reset Settings</button></div>
-						<div class="mb-1"><button type="button" id="qb-reset-all" class="delete">Reset N-Back</button></div>
 			</corner-panel>
 
 			<corner-panel name="history" side="right" body-class="hql-frame">
@@ -281,7 +307,7 @@
 						</div>
 						<label for="qb-show-cancelled">Show cancelled</label>
 					</div>
-					<div id="qb-games-empty" class="panel-empty" hidden>No games yet &mdash; finish a session and your history appears here.</div>
+					<div id="qb-games-empty" class="panel-empty" hidden>No games yet - finish a session and your history appears here.</div>
 					<div id="qb-history-list" class="hql"></div>
 			</corner-panel>
 
@@ -298,7 +324,10 @@
 
 			<div class="overlay"></div>
 
-			<div class="qb-hud" id="qb-hud"></div>
+			<div class="qb-hud-stack">
+				<div class="qb-hud" id="qb-hud"></div>
+				<div class="qb-count" id="qb-count"></div>
+			</div>
 
 			<div id="qb-stage"></div>
 
@@ -310,20 +339,12 @@
 			</div>
 			<div class="nback__answer qb-answer" id="qb-answer" hidden>Answer: 0</div>
 
-			<div class="qb-count" id="qb-count"></div>
-
 		</div>
 
 		<div id="graph-popup" class="graph-popup">
-			<div class="graph-controls">
-				<button type="button" id="qb-tab-progress" class="graph-select selected">Progress</button>
-				<button type="button" id="qb-tab-time" class="graph-select">Time Spent</button>
-			</div>
-			<div id="qb-graph-empty" class="panel-empty" hidden>No completed sessions yet.</div>
-			<div id="qb-progress-view" class="graph-popup-content visible"><canvas id="qb-graph-canvas"></canvas></div>
-			<div id="qb-time-view" class="graph-popup-content"><canvas id="qb-time-canvas"></canvas></div>
+			<nback-graphs></nback-graphs>
 			<div class="graph-end-controls">
-				<div>* Progress: last month &middot; Time Spent: last year</div>
+				<div>* Time Spent: last year &middot; other charts: last month</div>
 				<button type="button" id="graph-close-popup">Close</button>
 			</div>
 		</div>

@@ -110,7 +110,7 @@ function readGoals() {
 async function renderGoalTracker(qbAll, cctAll) {
     const goals = readGoals();
 
-    const earliest = Math.min(goalDayStart(), goalWeekStart(), goalMonthStart());
+    const earliest = Math.min(goalDayStart(), goalWeekStart());
     let rrtRecords = [];
     try { rrtRecords = await getRRTProgressFrom(earliest); } catch (e) {}
     // per-game minutes since a timestamp - units mirror each game's own math:
@@ -134,19 +134,6 @@ async function renderGoalTracker(qbAll, cctAll) {
     const daily = sumPeriod('daily', goalDayStart());
     const weekly = sumPeriod('weekly', goalWeekStart());
 
-    // monthly is derived: per game the stronger of its daily rate and weekly/7,
-    // scaled to this month's length; progress counts every game with any goal
-    const gameDate = new Date(Date.now() - 4 * 3600 * 1000);
-    const daysInMonth = new Date(gameDate.getFullYear(), gameDate.getMonth() + 1, 0).getDate();
-    let monthlyGoal = 0, monthlyMinutes = 0;
-    for (const game of ['rrt', 'qb', 'cct']) {
-        const { daily: d, weekly: w } = goals[game];
-        if (!d && !w) continue;
-        monthlyGoal += Math.max(d ?? 0, (w ?? 0) / 7) * daysInMonth;
-        monthlyMinutes += mins[game](goalMonthStart());
-    }
-    monthlyGoal = Math.ceil(monthlyGoal);
-
     const fillRow = (id, minutes, goal) => {
         const row = document.getElementById(id);
         if (!goal) { row.hidden = true; return false; }
@@ -162,7 +149,6 @@ async function renderGoalTracker(qbAll, cctAll) {
     const anyRow = [
         fillRow('menu-goal-daily', daily.minutes, daily.goal),
         fillRow('menu-goal-weekly', weekly.minutes, weekly.goal),
-        fillRow('menu-goal-monthly', monthlyMinutes, monthlyGoal),
     ].some(Boolean);
     document.getElementById('menu-goals').hidden = !anyRow;
 }

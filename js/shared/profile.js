@@ -29,32 +29,17 @@ class ProfileStore {
     }
 
     loadProfiles() {
-        const oldMigratedSettings = getLocalStorageObj(oldSettingsKey);
-
         const storedProfiles = getLocalStorageObj(profilesKey);
         if (storedProfiles && Array.isArray(storedProfiles) && storedProfiles.length > 0) {
             this.profiles = storedProfiles;
         } else {
             let starterSettings = structuredClone(defaultSavedata);
-            if (oldMigratedSettings) {
-                this.overrideExistingKeys(starterSettings, oldMigratedSettings);
-                // Backwards compatibility: don't blow away everyone's history
-                for (const movedKey of ["score", "questions", "backgroundImage", "gameAreaColor"]) {
-                    if (Object.hasOwn(oldMigratedSettings, movedKey)) {
-                        appState[movedKey] = oldMigratedSettings[movedKey];
-                    }
-                }
-            }
             let defaultProfiles = [{
                 name: "Default",
                 id: '12345678',
                 savedata: starterSettings,
             }];
             this.profiles = defaultProfiles;
-        }
-
-        if (oldMigratedSettings) {
-            localStorage.removeItem(oldSettingsKey);
         }
 
         let profileIndex = 0

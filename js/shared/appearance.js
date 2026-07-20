@@ -18,6 +18,34 @@ function handleSfxChange(event) {
     save();
 }
 
+// keep in sync with js/shared/boot.js's copy (duplicated, not shared - boot.js
+// must stay dependency-free and runs before this file loads)
+const FONT_STACKS = {
+    oxanium: '"Oxanium", sans-serif',
+    jetbrains: '"JetBrains Mono", monospace',
+    zendots: '"Zen Dots", sans-serif',
+};
+
+// js/shared/boot.js applies the saved value pre-paint on every page. The
+// font-override class is what makes a custom pick take over every UI text
+// role (see css/styles.css); at "default" it's absent and each role keeps
+// its own font.
+function applyMainFont() {
+    const stack = FONT_STACKS[appState.mainFont];
+    document.documentElement.classList.toggle('font-override', !!stack);
+    if (stack) {
+        document.documentElement.style.setProperty('--main-font', stack);
+    } else {
+        document.documentElement.style.removeProperty('--main-font');
+    }
+}
+
+function handleMainFontChange(event) {
+    appState.mainFont = event.target.value;
+    save();
+    applyMainFont();
+}
+
 // The accent is ONE hue; styles.css locks S/L, so this sets a single integer.
 // js/shared/boot.js applies the saved value pre-paint on every page.
 function applyAccentHue() {
@@ -71,4 +99,5 @@ function populateAppearanceSettings() {
     document.getElementById('p-dark-mode').checked = appState.darkMode !== false;
     document.getElementById('p-sfx').value = appState.sfx || 'none';
     document.getElementById('p-accent').value = appState.accentHue ?? 165;
+    document.getElementById('p-font').value = appState.mainFont || 'default';
 }

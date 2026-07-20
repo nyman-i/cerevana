@@ -2,10 +2,26 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Cerevana - CCT</title>
+		<title>Cerevana - CCT: Cognitive Control Training</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="theme-color" content="#7cb6a8" />
-		<link rel="icon" type="image/png" href="favicon.png?v=4">
+		<meta name="description" content="Cognitive Control Training: adaptive-interval PASAT serial addition. Trains divided attention and processing speed under pressure.">
+		<link rel="canonical" href="https://cerevana.com/cct.html">
+		<meta property="og:type" content="website">
+		<meta property="og:site_name" content="Cerevana">
+		<meta property="og:title" content="Cerevana - CCT: Cognitive Control Training">
+		<meta property="og:description" content="Cognitive Control Training: adaptive-interval PASAT serial addition. Trains divided attention and processing speed under pressure.">
+		<meta property="og:image" content="https://cerevana.com/img/og-image.jpg">
+		<meta property="og:url" content="https://cerevana.com/cct.html">
+		<meta name="twitter:card" content="summary_large_image">
+		<meta property="og:locale" content="en_US">
+		<meta property="og:image:width" content="1200">
+		<meta property="og:image:height" content="630">
+		<meta property="og:image:alt" content="Cerevana logo">
+		<meta name="twitter:image:alt" content="Cerevana logo">
+		<link rel="icon" type="image/png" href="favicon.png?v=5">
+		<link rel="manifest" href="manifest.json">
+		<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 		<link rel="stylesheet" href="fonts/cool/coolicons.css">
 		<link rel="stylesheet" href="css/styles.css">
 		<link rel="stylesheet" href="css/cct.css">
@@ -18,6 +34,8 @@
 		<script src="js/components/profile-picker.js"></script>
 		<script src="js/components/corner-panel.js"></script>
 		<script src="js/components/corner-tabs.js"></script>
+		<script src="js/components/metric-graphs.js"></script>
+		<script src="js/cct/graphs.js"></script>
 	</head>
 	<body>
 
@@ -38,7 +56,7 @@
 						<div class="mb-05 panel-heading">Adaptive Interval</div>
 						<num-row input-id="cct-startinginterval" label="Starting interval" min="200" max="5000" step="50" width="6ch" suffix="ms" tooltip="Time between|digits when a|session starts." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
 						<num-row input-id="cct-mininterval" label="Minimum interval" min="100" max="5000" step="50" width="6ch" suffix="ms" tooltip="Fastest the|interval can|ever get." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
-						<num-row input-id="cct-maxinterval" label="Maximum interval" min="200" max="10000" step="50" width="6ch" suffix="ms" tooltip="Slowest the|interval can|ever get &mdash;|can rise above|the starting|interval on a|bad streak." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
+						<num-row input-id="cct-maxinterval" label="Maximum interval" min="200" max="10000" step="50" width="6ch" suffix="ms" tooltip="Slowest the|interval can|ever get -|can rise above|the starting|interval on a|bad streak." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
 						<num-row input-id="cct-increment" label="Step" min="10" max="500" step="10" width="5ch" suffix="ms"></num-row>
 						<num-row input-id="cct-correctthreshold" label="Correct streak" min="1" max="20" step="1" width="4ch" tooltip="This many right|in a row speeds|the interval up." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
 						<num-row input-id="cct-incorrectthreshold" label="Incorrect streak" min="1" max="20" step="1" width="4ch" tooltip="This many wrong|in a row slows|the interval down." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
@@ -51,19 +69,32 @@
 						<num-row input-id="cct-beepvolume" label="Beep volume" min="0" max="100" step="5" width="5ch" suffix="%"></num-row>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Display</div>
+						<select-row select-id="cct-presentation" label="Digit presentation"
+							options="audiovisual=Audio + Visual|audio=Audio only|visual=Visual only"
+							tooltip="Whether each digit|is spoken, shown,|or both." tooltip-side="right"></select-row>
+						<select-row select-id="cct-inputmethod" label="Input method"
+							options="physical=Physical keyboard|keypad=On-screen keypad"
+							tooltip="Both show clickable|answer buttons; Physical|also types on your|keyboard, On-screen|is click-only." tooltip-side="right"></select-row>
 						<switch-row input-id="cct-intervaltiming" label="Track time per interval" tooltip="Records how long|each session spends|at every interval,|shown in History." tooltip-side="right"></switch-row>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Reset</div>
+						<p>Reset settings keeps your history. The full reset erases
+						all CCT data - irreversible.</p>
+						<div class="mb-1"><button type="button" id="cct-reset-settings">Reset Settings</button></div>
+						<div class="mb-1"><button type="button" id="cct-reset-all" class="delete">Reset CCT</button></div>
 			</corner-panel>
 
 			<corner-panel name="info" side="left">
 						<div class="mb-05 panel-heading">How to play</div>
 						<p>Digits from 1&ndash;9 play one at a time. For each new digit,
 						answer with the result of it and the digit <strong>right
-						before it</strong> &mdash; by default the sum, so hearing
+						before it</strong> - by default the sum, so hearing
 						"3" then "5" means you type <strong>8</strong>.</p>
-						<p>Type your answer as soon as you know it; there's no submit
-						button, it's checked as you type. Answer correctly several
-						times in a row and the pace speeds up; miss a few in a row
-						and it slows back down.</p>
+						<p>Answer as soon as you know it - type it or click it
+						on the answer buttons; there's no submit step, it's checked
+						instantly. Answer correctly several times in a row and the
+						pace speeds up; miss a few in a row and it slows back
+						down.</p>
 						<hr class="divider"/>
 						<div class="mb-05 panel-heading">Keyboard Shortcuts</div>
 						<div class="mb-2">
@@ -79,21 +110,15 @@
 						<p>CCT's core mechanics (the adaptive-interval PASAT
 						rule) are adapted from
 						<a href="https://github.com/tim22dev22/CCT" target="_blank" rel="noopener">CCT</a>
-						by tim22dev22 (MIT) &mdash; see
+						by tim22dev22 (MIT) - see
 						<a href="credits.html">Credits</a>.</p>
-						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Reset</div>
-						<p>Reset settings keeps your history. The full reset erases
-						all CCT data &mdash; irreversible.</p>
-						<div class="mb-1"><button type="button" id="cct-reset-settings">Reset Settings</button></div>
-						<div class="mb-1"><button type="button" id="cct-reset-all" class="delete">Reset CCT</button></div>
 			</corner-panel>
 
 			<corner-panel name="history" side="right" body-class="hql-frame">
 					<div>Sessions this month: <span id="cct-hist-count"></span></div>
 					<div>Avg accuracy, last 10: <span id="cct-hist-avg"></span></div>
 					<div>Play time today: <span id="cct-playtime"></span></div>
-					<div id="cct-sessions-empty" class="panel-empty" hidden>No sessions yet &mdash; finish one and your history appears here.</div>
+					<div id="cct-sessions-empty" class="panel-empty" hidden>No sessions yet - finish one and your history appears here.</div>
 					<div id="cct-history-list" class="hql"></div>
 			</corner-panel>
 
@@ -121,12 +146,15 @@
 					<div class="bracket-lip-bottom-right"></div>
 					<div class="cct-digit" id="cct-digit" hidden></div>
 					<input id="cct-answer" class="cct-answer-input" type="text" inputmode="numeric" autocomplete="off" autocapitalize="off" hidden>
+					<!-- one button per possible answer for the active operation, built by js/cct/page.js -->
+					<div id="cct-keypad" class="cct-keypad" hidden></div>
 					<div class="nback__result" id="cct-result" hidden></div>
 				</div>
 			</div>
 
 			<div class="cct-actions">
 				<button type="button" id="cct-start" class="nback__start">START</button>
+				<button type="button" id="cct-pause" class="nback__start" hidden>PAUSE</button>
 			</div>
 
 			<div id="daily-progress-container" class="progress-container">
@@ -151,15 +179,9 @@
 		</div>
 
 		<div id="graph-popup" class="graph-popup">
-			<div class="graph-controls">
-				<button type="button" id="cct-tab-progress" class="graph-select selected">Progress</button>
-				<button type="button" id="cct-tab-time" class="graph-select">Time Spent</button>
-			</div>
-			<div id="cct-graph-empty" class="panel-empty" hidden>No completed sessions yet.</div>
-			<div id="cct-progress-view" class="graph-popup-content visible"><canvas id="cct-graph-canvas"></canvas></div>
-			<div id="cct-time-view" class="graph-popup-content"><canvas id="cct-time-canvas"></canvas></div>
+			<cct-graphs></cct-graphs>
 			<div class="graph-end-controls">
-				<div>* Progress: last month &middot; Time Spent: last year</div>
+				<div>* Time Spent: last year &middot; other charts: last month</div>
 				<button type="button" id="graph-close-popup">Close</button>
 			</div>
 		</div>

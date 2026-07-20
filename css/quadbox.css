@@ -14,6 +14,16 @@
 
 /* ---------- HUD strip (label-bar material, under the game-menu) ---------- */
 
+/* wraps .qb-hud + .qb-count in nback.html - display:contents by default
+   so it's invisible to layout and both keep their own independent
+   absolute position (unchanged desktop behavior). On mobile (below) it
+   becomes a real flex column so .qb-count flows below however tall the
+   HUD actually rendered, instead of guessing a fixed offset that breaks
+   again whenever the HUD grows another line. */
+.qb-hud-stack {
+    display: contents;
+}
+
 .qb-hud {
     position: absolute;
     top: 4.2rem;
@@ -82,6 +92,8 @@
 .qb-side .nback__match--right { background-color: var(--correct-color); color: #fffffd; }
 .qb-side .nback__match--wrong { background-color: var(--wrong-color); color: #fffffd; }
 .qb-side .nback__match--missed { background-color: var(--nback-missed-color); color: #fffffd; }
+/* Jaeggi's neutral "press acknowledged" flash - never right/wrong-coded */
+.qb-side .nback__match--pressed { background-color: var(--accent-color); color: var(--button-fg-color); }
 
 .qb-key-name {
     font-family: Oxanium, sans-serif;
@@ -158,6 +170,12 @@
 
     .qb-side--right {
         bottom: 5.25rem;
+        /* this row sits low enough to fall inside the bottom-left/right
+           corner tabs' footprint (INFO/GRAPH extend further in than the
+           row's base 0.5rem edge margin) - .qb-side--left sits higher and
+           already clears them, so only this row needs the extra inset */
+        left: 4rem;
+        right: 4rem;
     }
 
     .qb-side .nback__match {
@@ -179,6 +197,50 @@
 
     .qb-answer {
         bottom: 13.5rem;
+    }
+
+    /* .qb-actions goes full-width at the bottom above - the desktop
+       bottom-right trial counter would sit right underneath it (lower
+       z-index, so hidden behind the START button). Move it under the
+       HUD instead, in real flex flow rather than a fixed top offset -
+       the HUD can wrap onto multiple lines when there's a lot to show
+       (Last:/Today: stats after a finished game, CRAB/SP flags, etc),
+       and a fixed offset just gets overlapped again once it does. */
+    .qb-hud-stack {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        position: absolute;
+        top: 4.2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: calc(100vw - 1rem);
+        z-index: 40;
+    }
+
+    /* HUD can hold up to ~7 parts (N, W, mode, CRAB, SP, Last:, time) -
+       wrap instead of overflowing #qb-stage's overflow:hidden edges.
+       Now flowing inside .qb-hud-stack rather than independently
+       absolute-positioned. */
+    .qb-hud {
+        position: static;
+        top: auto;
+        left: auto;
+        transform: none;
+        max-width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+        white-space: normal;
+        text-align: center;
+    }
+
+    .qb-count {
+        position: static;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        transform: none;
     }
 }
 
@@ -215,6 +277,17 @@ body.light-mode .qb-variable-n {
        so the perspective origin moves with the scene (symmetric projection) */
     transform: translateY(7svh);
     overflow: hidden;
+}
+
+/* the desktop-only downward nudge above assumes side panels stay clear of
+   the vertical center - but .qb-side relocates to a bottom band on narrow
+   screens (≤768px block earlier in this file), so the same shift instead
+   crowds the cube against it. Recenter (must come after the base rule
+   above - same specificity, source order decides the tie). */
+@media (width <= 768px) {
+    .qb-wrap3d {
+        transform: none;
+    }
 }
 
 .qb-scene {
@@ -352,12 +425,12 @@ body.light-mode .qb-see-through .qb-face {
     font-family: Oxanium, sans-serif;
     font-weight: bold;
     font-size: 7.6svmin;
-    color: #fffffd;
+    color: var(--face-text-color, #fffffd);
     user-select: none;
 }
 
 body.light-mode .qb-face {
-    color: #171613;
+    color: var(--face-text-color, #171613);
 }
 
 /* center overlay: stimulus display for position-less modes */
@@ -368,6 +441,9 @@ body.light-mode .qb-face {
     align-items: center;
     justify-content: center;
     pointer-events: none;
+    /* above .qb-variable-n's z-index:10 - the real stimulus must never sit
+       under the variable-n-back ghost number, they occupy the same spot */
+    z-index: 11;
 }
 
 .qb-center-wrap[hidden] {

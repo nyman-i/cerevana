@@ -121,7 +121,6 @@ function createExplanationBuckets(question) {
             .join('<div class="divider"></div>');
     }
     const filler = createFiller(question.buckets);
-    const verticalLength = question.buckets.reduce((a, b) => Math.max(a, b));
     let s = '<table class="distinction">';
     s += '<tr>';
     for (const bucket of question.buckets) {

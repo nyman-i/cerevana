@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Cerevana - Seed mock data (dev)</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+			body { font-family: monospace; background: #1a201e; color: #d7e0dc; max-width: 40rem; margin: 3rem auto; padding: 0 1rem; }
+			button { font: inherit; padding: 0.5rem 1rem; margin-right: 0.5rem; cursor: pointer; }
+			#log { white-space: pre-line; margin-top: 1rem; color: #9fb3ab; }
+			a { color: #7cb6a8; }
+		</style>
+	</head>
+	<body>
+		<h1>Seed mock data</h1>
+		<p>Dev-only (tests/ is excluded from the deploy image). Fills the three
+		IndexedDB stores with ~90 days of realistic-looking training history so
+		<a href="../stats.html">stats.html</a> and the game pages' graph popups
+		can be tested visually. Seeded rows carry a <code>mock: true</code>
+		marker so Clear removes only them, never your real history.</p>
+		<button id="seed">Seed ~90 days</button>
+		<button id="clear">Clear seeded data</button>
+		<div id="log"></div>
+
+		<script src="../js/shared/constants.js"></script>
+		<script src="../js/shared/db.js"></script>
+		<script src="../js/shared/history-transfer.js"></script>
+		<script>
+			const log = (msg) => { document.getElementById('log').textContent += msg + '\n'; };
+			const DAY = 24 * 60 * 60 * 1000;
+			const rand = (min, max) => min + Math.random() * (max - min);
+			const randInt = (min, max) => Math.floor(rand(min, max + 1));
+			const pick = (arr) => arr[randInt(0, arr.length - 1)];
+
+			// progress 0 (90 days ago) -> 1 (today), used to trend all metrics upward
+			const progressAt = (daysAgo) => 1 - daysAgo / 90;
+
+			function makeRrtRows() {
+				const rows = [];
+				const types = ['Distinction', 'Comparison', 'Syllogism', 'Space Two D', 'Linear'];
+				for (let daysAgo = 90; daysAgo >= 0; daysAgo--) {
+					if (Math.random() < 0.3) continue; // rest day
+					const p = progressAt(daysAgo);
+					const dayStart = Date.now() - daysAgo * DAY;
+					const questions = randInt(10, 35);
+					const premises = 2 + Math.floor(p * 2 + rand(0, 1)); // 2 -> 4-5
+					for (let q = 0; q < questions; q++) {
+						rows.push({
+							mock: true,
+							timestamp: dayStart + q * 60000 + randInt(0, 30000),
+							timeElapsed: Math.round(rand(4000, 26000 - p * 12000)),
+							correctness: Math.random() < 0.72 + p * 0.2 ? 'right' : 'wrong',
+							type: pick(types),
+							premises,
+							modifiers: [],
+							tags: [],
+						});
+					}
+				}
+				return rows;
+			}
+
+			function makeNbackRows() {
+				const rows = [];
+				// title/tags/scores shapes follow js/quadbox/classic.js + analytics.js
+				const modes = [
+					{ title: 'dual', tags: ['position', 'audio'], grid: 'rotate3D', weight: 5 },
+					{ title: 'quad', tags: ['position', 'audio', 'shape', 'color'], grid: 'rotate3D', weight: 2 },
+					{ title: 'dual-classic', tags: ['position', 'audio'], grid: 'static2D', weight: 2 },
+					{ title: 'arithmetic', tags: ['arithmetic'], grid: 'rotate3D', weight: 1 },
+				];
+				const pool = modes.flatMap(m => Array(m.weight).fill(m));
+				for (let daysAgo = 90; daysAgo >= 0; daysAgo--) {
+					if (Math.random() < 0.35) continue;
+					const p = progressAt(daysAgo);
+					const dayStart = Date.now() - daysAgo * DAY;
+					const games = randInt(2, 5);
+					for (let g = 0; g < games; g++) {
+						const mode = pick(pool);
+						const nBack = Math.max(1, Math.round(1.5 + p * 2 + rand(-0.5, 0.5))); // ~2 -> ~4
+						const trials = randInt(25, 45);
+						const accuracy = Math.min(0.95, rand(0.35, 0.6) + p * 0.3);
+						const scores = {};
+						for (const tag of mode.tags) {
+							const possible = randInt(8, 14);
+							const hits = Math.round(possible * Math.min(1, accuracy + rand(-0.08, 0.08)));
+							scores[tag] = { hits, misses: possible - hits };
+						}
+						const trialTime = 2500;
+						const start = dayStart + g * 8 * 60000;
+						// correct-press reaction times, trending ~900ms -> ~500ms
+						const hits = Object.values(scores).reduce((sum, sc) => sum + sc.hits, 0);
+						const reactionTimes = Array.from({ length: hits },
+							() => Math.round(rand(950 - p * 400, 1250 - p * 400)));
+						rows.push({
+							mock: true,
+							title: mode.title, nBack, tags: mode.tags, scores,
+							status: 'completed', completedTrials: trials,
+							start, timestamp: start + trials * trialTime,
+							trialTime, matchChance: 25, interference: 12,
+							configSnapshot: { grid: mode.grid },
+							reactionTimes,
+						});
+					}
+				}
+				return rows;
+			}
+
+			function makeCctRows() {
+				const rows = [];
+				for (let daysAgo = 90; daysAgo >= 0; daysAgo--) {
+					if (Math.random() < 0.45) continue;
+					const p = progressAt(daysAgo);
+					const dayStart = Date.now() - daysAgo * DAY;
+					const sessions = randInt(1, 2);
+					for (let s = 0; s < sessions; s++) {
+						const asked = randInt(40, 90);
+						const accuracy = Math.min(96, rand(50, 65) + p * 30);
+						rows.push({
+							mock: true,
+							timestamp: dayStart + s * 15 * 60000,
+							status: 'Completed',
+							accuracy,
+							totalQuestionsAsked: asked,
+							correctAnswers: Math.round(asked * accuracy / 100),
+							durationMs: randInt(4, 9) * 60000,
+							arithmeticMode: Math.random() < 0.8 ? 'addition' : 'multiplication',
+							averageResponseTimeMs: Math.round(rand(2200 - p * 900, 2800 - p * 900)),
+							fastestResponseTimeMs: Math.round(rand(600, 900)),
+							correctThreshold: 4, incorrectThreshold: 4,
+						});
+					}
+				}
+				return rows;
+			}
+
+			document.getElementById('seed').addEventListener('click', async () => {
+				const rrt = makeRrtRows();
+				const qb = makeNbackRows();
+				const cct = makeCctRows();
+				await importRRTRows(rrt, false);       // globals from js/shared/db.js
+				await importQuadBoxGames(qb, false);   // + js/shared/history-transfer.js
+				await importCctRows(cct, false);
+				log(`Seeded: ${rrt.length} RRT questions, ${qb.length} N-Back games, ${cct.length} CCT sessions.`);
+				log('Open ../stats.html (or any game page’s graph popup) to look at it.');
+			});
+
+			// deletes only rows carrying the mock marker, via each DB's own opener
+			const clearMock = (openDb, storeName) => openDb().then(db => new Promise((resolve, reject) => {
+				const tx = db.transaction(storeName, 'readwrite');
+				let removed = 0;
+				tx.objectStore(storeName).openCursor().onsuccess = (event) => {
+					const cursor = event.target.result;
+					if (cursor) {
+						if (cursor.value.mock) { cursor.delete(); removed++; }
+						cursor.continue();
+					}
+				};
+				tx.oncomplete = () => { db.close(); resolve(removed); };
+				tx.onerror = () => { db.close(); reject(tx.error); };
+			}));
+
+			document.getElementById('clear').addEventListener('click', async () => {
+				// initDB (db.js) owns the SyllDB connection; reuse it for RRTHistory
+				const rrtRemoved = await initDB().then(db => new Promise((resolve, reject) => {
+					const tx = db.transaction('RRTHistory', 'readwrite');
+					let removed = 0;
+					tx.objectStore('RRTHistory').openCursor().onsuccess = (event) => {
+						const cursor = event.target.result;
+						if (cursor) {
+							if (cursor.value.mock) { cursor.delete(); removed++; }
+							cursor.continue();
+						}
+					};
+					tx.oncomplete = () => resolve(removed);
+					tx.onerror = () => reject(tx.error);
+				}));
+				const qbRemoved = await clearMock(openQuadBoxDB, 'games');
+				const cctRemoved = await clearMock(openCctDB, 'sessions');
+				log(`Cleared: ${rrtRemoved} RRT, ${qbRemoved} N-Back, ${cctRemoved} CCT mock rows.`);
+			});
+		</script>
+	</body>
+</html>

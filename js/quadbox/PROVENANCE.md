@@ -15,9 +15,8 @@ Cerevana's **N-Back** exercise is one merged game with two lineages:
    self-paced, daily reset) reimplement the protocol of **Brain
    Workshop** (Paul Hoskinson & Jonathan Toomim, GPL-2.0). Cerevana
    shares **no code** with Brain Workshop - `classic.js` is original
-   Cerevana code (its precursor lived at `js/nback/game.js`; protocol
-   details in `nback-spec.md`) and Brain Workshop is credited as
-   inspiration only. Classic code must never be pasted into files
+   Cerevana code (its precursor lived at `js/nback/game.js`) and Brain
+   Workshop is credited as inspiration only. Classic code must never be pasted into files
    carrying quad-box MIT headers' upstream-derived sections, and no
    Brain Workshop source may ever be copied.
 

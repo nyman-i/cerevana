@@ -24,5 +24,6 @@ jobs:
       - run: node tests/cct-pure.mjs
       - run: node tests/nback-pure.mjs
       - run: node tests/rrt-pure.mjs
+      - run: node tests/testtracker-pure.mjs
       - run: node --experimental-test-module-mocks --test tests/quadbox-pure.mjs
       - run: node tests/smoke.mjs

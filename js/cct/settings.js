@@ -20,6 +20,8 @@ const defaultSettings = {
   endCondition: 'timer', // 'timer' | 'correct'
   targetCorrect: 500,
   arithmeticMode: 'addition', // 'addition' | 'multiplication' | 'subtraction' | 'difference'
+  presentationMode: 'audiovisual', // 'audiovisual' | 'audio' | 'visual'
+  inputMethod: 'physical', // 'physical' | 'keypad'
   // audio
   voice: 'nathan',
   playbackSpeed: 1,

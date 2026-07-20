@@ -59,7 +59,7 @@ export class NBackGame {
     let meta = (({ nBack, numTrials, trialTime, matchChance, interference, rules }) =>
                   ({ nBack, numTrials, trialTime, matchChance, interference, rules }))(this.gameSettings)
 
-    meta = { ...meta, title, tags }
+    meta = { ...meta, title, tags, configSnapshot: structuredClone(this.gameSettings) }
     if (this.tallyStimuli.size > 0) {
       meta = { ...meta,
         mode: 'tally',

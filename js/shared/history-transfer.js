@@ -1,7 +1,8 @@
-// App-wide history export/import (RRT questions + progress rows + legacy
-// n-back sessions + N-Back games + CCT sessions; the quadbox*/cct* names
-// reflect the storage identifiers, which never change). Pages define
-// onHistoryImported() to refresh their UI after an import.
+// App-wide data export/import: RRT questions + progress rows + legacy
+// n-back sessions + N-Back games + CCT sessions + test-battery scores, plus
+// (overwrite-mode only) every profile, live settings store and appearance
+// pref; the quadbox*/cct* names reflect the storage identifiers, which never
+// change. Pages define onHistoryImported() to refresh their UI after an import.
 
 let importMode;
 
@@ -87,8 +88,48 @@ function importCctRows(rows, clearFirst) {
     }));
 }
 
+// Test Tracker's IndexedDB (own database, own identifiers - NEVER rename).
+// The upgrade handler must mirror js/testtracker/engine/gamedb.js exactly:
+// opening the db here must never leave it without the store/index.
+function openTestTrackerDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open("TestTrackerHistory", 1);
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains("scores")) {
+                const store = db.createObjectStore("scores", { keyPath: "id", autoIncrement: true });
+                store.createIndex("timestampIndex", "timestamp");
+            }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+function getAllTestScores() {
+    return openTestTrackerDB().then(db => new Promise((resolve, reject) => {
+        const rq = db.transaction("scores").objectStore("scores").getAll();
+        rq.onsuccess = () => { db.close(); resolve(rq.result); };
+        rq.onerror = () => { db.close(); reject(rq.error); };
+    }));
+}
+
+function importTestScoreRows(rows, clearFirst) {
+    return openTestTrackerDB().then(db => new Promise((resolve, reject) => {
+        const tx = db.transaction("scores", "readwrite");
+        const store = tx.objectStore("scores");
+        if (clearFirst) store.clear();
+        for (const row of rows) {
+            const { id, ...score } = row; // ids are per-device (autoIncrement)
+            store.add(score);
+        }
+        tx.oncomplete = () => { db.close(); resolve(); };
+        tx.onerror = () => { db.close(); reject(tx.error); };
+    }));
+}
+
 function resetEverything() {
-    const confirmed = confirm("Reset the ENTIRE app? This permanently deletes ALL data for every exercise: RRT, N-Back and CCT profiles, settings, scores, game history, progress graphs, and the background image. Tip: Export History first - the button is right next to this one.")
+    const confirmed = confirm("Reset the ENTIRE app? This permanently deletes ALL data for every exercise: RRT, N-Back and CCT profiles, settings, scores, game history, progress graphs, logged test-battery scores, and the background image. Tip: Export Data first - the button is right next to this one.")
         && confirm("Last chance: this cannot be undone. Really erase all RRT, N-Back and CCT data?");
     if (!confirmed) return;
     // prefix sweep covers oldSettingsKey ("sllgms-v3") and every sllgms-v3-* key, present and future
@@ -97,14 +138,19 @@ function resetEverything() {
         .forEach(key => localStorage.removeItem(key));
     localStorage.removeItem('quad-box-settings');
     localStorage.removeItem('cct-settings');
-    Promise.all([deleteDatabase("SyllDB"), deleteDatabase("QuadBoxNBack"), deleteDatabase("CCTHistory")])
+    Promise.all([deleteDatabase("SyllDB"), deleteDatabase("QuadBoxNBack"), deleteDatabase("CCTHistory"), deleteDatabase("TestTrackerHistory")])
         .then(() => window.location.reload());
 }
 
 function exportHistory() {
-    Promise.all([getAllRRTProgress(), getAllNBackSessions(), getAllQuadBoxGames(), getAllCctSessions()]).then(([rrtHistory, nbackHistory, quadboxGames, cctHistory]) => {
-        const data = { exportVersion: 4, exportedAt: Date.now(),
-                       score: appState.score, questions: appState.questions, rrtHistory, nbackHistory, quadboxGames, cctHistory };
+    Promise.all([getAllRRTProgress(), getAllQuadBoxGames(), getAllCctSessions(), getAllTestScores()]).then(([rrtHistory, quadboxGames, cctHistory, testScores]) => {
+        const data = { exportVersion: 7, exportedAt: Date.now(),
+                       score: appState.score, questions: appState.questions, rrtHistory, quadboxGames, cctHistory, testScores,
+                       appState: structuredClone(appState),
+                       rrtProfiles: getLocalStorageObj(profilesKey), rrtSelectedProfile: getLocalStorageObj(selectedProfileKey),
+                       nbackProfiles: getLocalStorageObj('sllgms-v3-nback-profiles'), nbackSelectedProfile: getLocalStorageObj('sllgms-v3-nback-selected-profile'),
+                       cctProfiles: getLocalStorageObj('sllgms-v3-cct-profiles'), cctSelectedProfile: getLocalStorageObj('sllgms-v3-cct-selected-profile'),
+                       nbackSettings: getLocalStorageObj('quad-box-settings'), cctSettings: getLocalStorageObj('cct-settings') };
         const a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' }));
         a.download = `cerevana-history-${new Date().toISOString().slice(0, 10)}.json`;
@@ -120,25 +166,64 @@ function pickImportFile(mode) {
     input.click();
 }
 
+// Human-readable "what's in this file" summary for the import confirmation
+// dialogs (native confirm() is plain text + \n only, no HTML). Both merge
+// and overwrite show the per-exercise breakdown; overwrite additionally
+// lists profiles/settings/appearance since merge-mode never touches those
+// (per its tooltip's promise).
+function describeImportContents(file, data, quadboxImport, cctImport, testScoresImport, overwrite) {
+    const plural = (n, singular, pluralForm = `${singular}s`) => `${n} ${n === 1 ? singular : pluralForm}`;
+    const exportedAt = typeof data.exportedAt === 'number' ? new Date(data.exportedAt).toLocaleString() : null;
+    const lines = [
+        `File: ${file.name}${exportedAt ? ` (exported ${exportedAt})` : ''}`,
+        '',
+        `  RRT: ${plural(data.questions.length, 'answered question')}, ${plural(data.rrtHistory.length, 'progress-graph entry', 'progress-graph entries')}`,
+        `  N-Back: ${plural(quadboxImport.length, 'game')}`,
+        `  CCT: ${plural(cctImport.length, 'session')}`,
+        `  Test Tracker: ${plural(testScoresImport.length, 'logged score')}`,
+    ];
+    if (overwrite) {
+        const profileCounts = [
+            Array.isArray(data.rrtProfiles) ? `${data.rrtProfiles.length} RRT` : null,
+            Array.isArray(data.nbackProfiles) ? `${data.nbackProfiles.length} N-Back` : null,
+            Array.isArray(data.cctProfiles) ? `${data.cctProfiles.length} CCT` : null,
+        ].filter(Boolean);
+        if (profileCounts.length) lines.push(`  Profiles: ${profileCounts.join(', ')}`);
+        const settingsFor = [
+            data.nbackSettings && typeof data.nbackSettings === 'object' ? 'N-Back' : null,
+            data.cctSettings && typeof data.cctSettings === 'object' ? 'CCT' : null,
+        ].filter(Boolean);
+        if (settingsFor.length) lines.push(`  Live settings: ${settingsFor.join(', ')}`);
+        if (data.appState && typeof data.appState === 'object') lines.push('  Appearance/app state: included');
+    }
+    return lines.join('\n');
+}
+
 async function handleHistoryImport(event) {
     const file = event.target.files[0];
     if (!file) return;
     let data;
     try { data = JSON.parse(await file.text()); } catch { alert('Not a valid JSON file.'); return; }
 
-    const nbackImport = Array.isArray(data?.nbackHistory) ? data.nbackHistory : []; // absent in v1 exports
-    const quadboxImport = Array.isArray(data?.quadboxGames) ? data.quadboxGames : []; // absent in v1/v2 exports
-    const cctImport = Array.isArray(data?.cctHistory) ? data.cctHistory : []; // absent in v1-v3 exports
-    const valid = data && [1, 2, 3, 4].includes(data.exportVersion)
+    const quadboxImport = Array.isArray(data?.quadboxGames) ? data.quadboxGames : [];
+    const cctImport = Array.isArray(data?.cctHistory) ? data.cctHistory : [];
+    const testScoresImport = Array.isArray(data?.testScores) ? data.testScores : [];
+    // v1-v5 import support removed 2026-07; v6 still imports (its legacy
+    // nbackHistory field is ignored)
+    const valid = data && [6, 7].includes(data.exportVersion)
         && Array.isArray(data.questions) && data.questions.every(q => typeof q?.answeredAt === 'number')
         && Array.isArray(data.rrtHistory) && data.rrtHistory.every(r => typeof r?.timestamp === 'number')
-        && nbackImport.every(r => typeof r?.timestamp === 'number')
         && quadboxImport.every(r => typeof r?.timestamp === 'number')
-        && cctImport.every(r => typeof r?.timestamp === 'number');
+        && cctImport.every(r => typeof r?.timestamp === 'number')
+        && testScoresImport.every(r => typeof r?.timestamp === 'number');
     if (!valid) { alert('Not a Cerevana history export.'); return; }
 
     const overwrite = importMode === 'overwrite';
-    if (overwrite && !confirm('Replace ALL local history with the file contents? This cannot be undone.')) return;
+    const summary = describeImportContents(file, data, quadboxImport, cctImport, testScoresImport, overwrite);
+    const prompt = overwrite
+        ? `${summary}\n\nThis REPLACES ALL local history, profiles, settings and appearance with the above. This cannot be undone.\n\nContinue?`
+        : `${summary}\n\nThis merges into your existing history - duplicates are skipped automatically, nothing is deleted, and profiles/settings/appearance stay untouched.\n\nContinue?`;
+    if (!confirm(prompt)) return;
 
     const base = overwrite ? [] : appState.questions;
     const seen = new Set(base.map(q => q.answeredAt));
@@ -149,10 +234,6 @@ async function handleHistoryImport(event) {
     const seenRRT = new Set(existing.map(r => `${r.key}|${r.timestamp}`));
     const rows = data.rrtHistory.filter(r => !seenRRT.has(`${r.key}|${r.timestamp}`));
 
-    const existingNBack = overwrite ? [] : await getAllNBackSessions();
-    const seenNBack = new Set(existingNBack.map(r => r.timestamp));
-    const nbackRows = nbackImport.filter(r => !seenNBack.has(r.timestamp));
-
     // tombstones share the source game's timestamp, so dedup on timestamp+status
     const existingQuadBox = overwrite ? [] : await getAllQuadBoxGames();
     const seenQuadBox = new Set(existingQuadBox.map(r => `${r.timestamp}|${r.status}`));
@@ -162,20 +243,37 @@ async function handleHistoryImport(event) {
     const seenCct = new Set(existingCct.map(r => r.timestamp));
     const cctRows = cctImport.filter(r => !seenCct.has(r.timestamp));
 
+    const existingTestScores = overwrite ? [] : await getAllTestScores();
+    const seenTestScores = new Set(existingTestScores.map(r => r.timestamp));
+    const testScoreRows = testScoresImport.filter(r => !seenTestScores.has(r.timestamp));
+
     try {
         await importRRTRows(rows, overwrite); // atomic IDB write first; localStorage only after it commits
-        // only clear a store the file actually carries: overwriting from a v1 file
-        // (no nbackHistory) must not wipe local N-Back sessions
-        await importNBackRows(nbackRows, overwrite && Array.isArray(data.nbackHistory));
         await importQuadBoxGames(quadboxRows, overwrite && Array.isArray(data.quadboxGames));
         await importCctRows(cctRows, overwrite && Array.isArray(data.cctHistory));
+        await importTestScoreRows(testScoreRows, overwrite && Array.isArray(data.testScores));
     } catch (e) {
         alert('Import failed: ' + e);
         return;
+    }
+    // profiles/settings/appearance aren't mergeable (no meaningful way to combine two
+    // profile lists or two appearance prefs), so overwrite-mode is the only mode that
+    // touches them - merge-mode stays purely additive, per its tooltip's promise
+    if (overwrite) {
+        if (Array.isArray(data.rrtProfiles)) setLocalStorageObj(profilesKey, data.rrtProfiles);
+        if (Number.isInteger(data.rrtSelectedProfile)) setLocalStorageObj(selectedProfileKey, data.rrtSelectedProfile);
+        if (Array.isArray(data.nbackProfiles)) setLocalStorageObj('sllgms-v3-nback-profiles', data.nbackProfiles);
+        if (Number.isInteger(data.nbackSelectedProfile)) setLocalStorageObj('sllgms-v3-nback-selected-profile', data.nbackSelectedProfile);
+        if (Array.isArray(data.cctProfiles)) setLocalStorageObj('sllgms-v3-cct-profiles', data.cctProfiles);
+        if (Number.isInteger(data.cctSelectedProfile)) setLocalStorageObj('sllgms-v3-cct-selected-profile', data.cctSelectedProfile);
+        if (data.nbackSettings && typeof data.nbackSettings === 'object') setLocalStorageObj('quad-box-settings', data.nbackSettings);
+        if (data.cctSettings && typeof data.cctSettings === 'object') setLocalStorageObj('cct-settings', data.cctSettings);
+        if (data.appState && typeof data.appState === 'object') Object.assign(appState, data.appState);
     }
     appState.questions = questions;
     appState.score = questions.reduce((s, q) => s + (q.correctness === 'right' ? 1 : -1), 0);
     save();
     if (typeof onHistoryImported === 'function') onHistoryImported();
-    alert(`Import complete: ${questions.length - base.length} new questions, ${rows.length} new graph entries, ${nbackRows.length} legacy n-back sessions, ${quadboxRows.length} new N-Back games, ${cctRows.length} new CCT sessions.`);
+    alert(`Import complete: ${questions.length - base.length} new questions, ${rows.length} new graph entries, ${quadboxRows.length} new N-Back games, ${cctRows.length} new CCT sessions, ${testScoreRows.length} new test-battery scores.` + (overwrite ? ' Reloading to apply restored profiles and settings…' : ''));
+    if (overwrite) window.location.reload();
 }

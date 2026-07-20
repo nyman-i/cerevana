@@ -21,6 +21,7 @@ export function startSession(callbacks) {
   session = {
     startedAt: now,
     arithmeticMode: settings.arithmeticMode,
+    presentationMode: settings.presentationMode,
     endCondition: settings.endCondition,
     endsAt: settings.endCondition === 'timer' ? now + settings.duration * 60000 : null,
     targetCorrect: settings.targetCorrect,
@@ -37,15 +38,40 @@ export function startSession(callbacks) {
     numbers: [],
     correctAnswers: 0,
     totalQuestions: 0,
+    streak: 0,
     responseTimes: [],
     expectedAnswer: null,
     questionStartedAt: 0,
     resolved: true,
     timeoutId: null,
+    tickAt: 0,
+    pausedAt: null,
+    pausedMs: 0,
     callbacks,
   }
   tick()
   return session
+}
+
+export const isPaused = () => session !== null && session.pausedAt !== null
+
+export function pauseSession() {
+  if (!session || session.pausedAt) return
+  clearTimeout(session.timeoutId)
+  session.pausedAt = Date.now()
+}
+
+export function resumeSession() {
+  if (!session || !session.pausedAt) return
+  const pausedFor = Date.now() - session.pausedAt
+  session.pausedMs += pausedFor
+  // shift every wall-clock reference so the pause is invisible to the
+  // timer end condition, response times and the in-flight tick
+  if (session.endsAt) session.endsAt += pausedFor
+  session.questionStartedAt += pausedFor
+  const remaining = Math.max(0, session.intervalState.interval - (session.pausedAt - session.tickAt))
+  session.pausedAt = null
+  session.timeoutId = setTimeout(tick, remaining)
 }
 
 function tick() {
@@ -76,6 +102,7 @@ function tick() {
   // decision, not by canceling+rescheduling the timer already in flight
   // (upstream's changeInterval does the latter for tighter responsiveness).
   // Upgrade if playtesting shows the one-tick lag feels sluggish.
+  session.tickAt = Date.now()
   session.timeoutId = setTimeout(tick, session.intervalState.interval)
 }
 
@@ -97,7 +124,7 @@ function checkEnd() {
 // a partial/wrong-so-far value just keeps waiting (timeout is what marks it
 // wrong, mirroring upstream's isCorrectAnswerInput usage)
 export function submitAnswer(value) {
-  if (!session || session.resolved) return false
+  if (!session || session.resolved || session.pausedAt) return false
   if (!isCorrectAnswer(session.expectedAnswer, value)) return false
   finalizeAnswer(value)
   checkEnd()
@@ -115,12 +142,14 @@ function finalizeAnswer(value) {
   } else {
     cctAudio.playBeep()
   }
+  session.streak = isCorrect ? session.streak + 1 : 0
   session.intervalState = recordAnswer(session.intervalState, isCorrect)
   session.callbacks.onAnswer?.({
     isCorrect,
     interval: session.intervalState.interval,
     correctAnswers: session.correctAnswers,
     totalQuestions: session.totalQuestions,
+    streak: session.streak,
   })
 }
 
@@ -128,19 +157,25 @@ export function stopSession(outcome = 'exited') {
   if (!session) return null
   clearTimeout(session.timeoutId)
   const endedAt = Date.now()
+  // paused time doesn't count as play time
+  const pausedMs = session.pausedMs + (session.pausedAt ? endedAt - session.pausedAt : 0)
   const record = {
     startedAt: session.startedAt,
     endedAt,
     status: outcome === 'completed' ? 'Completed' : 'Manually exited',
     arithmeticMode: session.arithmeticMode,
+    presentationMode: session.presentationMode,
     endCondition: session.endCondition,
-    durationMs: endedAt - session.startedAt,
+    durationMs: endedAt - session.startedAt - pausedMs,
     correctAnswers: session.correctAnswers,
     totalQuestionsAsked: session.totalQuestions,
     accuracy: session.totalQuestions ? (session.correctAnswers / session.totalQuestions) * 100 : 0,
     averageResponseTimeMs: session.responseTimes.length
       ? session.responseTimes.reduce((a, b) => a + b, 0) / session.responseTimes.length
-      : 0,
+      : null,
+    fastestResponseTimeMs: session.responseTimes.length
+      ? Math.min(...session.responseTimes)
+      : null,
     correctThreshold: session.intervalState.correctThreshold,
     incorrectThreshold: session.intervalState.incorrectThreshold,
     startingInterval: session.intervalState.startingInterval,

@@ -8,11 +8,6 @@ const openDatabase = () => {
                 db.createObjectStore('ImageStore', { keyPath: 'id' });
             }
 
-            if (!db.objectStoreNames.contains('NBackHistory')) {
-                const nbackStore = db.createObjectStore('NBackHistory', { keyPath: 'id', autoIncrement: true });
-                nbackStore.createIndex('timestampIndex', 'timestamp', { unique: false });
-            }
-
             if (!db.objectStoreNames.contains('RRTHistory')) {
                 const progressStore = db.createObjectStore('RRTHistory', { keyPath: 'id', autoIncrement: true });
                 progressStore.createIndex('orderIndex', ['key', 'timestamp'], { unique: false });
@@ -22,8 +17,6 @@ const openDatabase = () => {
             if (!progressStore.indexNames.contains('timestampIndex')) {
                 progressStore.createIndex('timestampIndex', 'timestamp', { unique: false });
             }
-
-            new SettingsMigration().updateRRTHistory(progressStore);
         };
 
         request.onsuccess = (event) => resolve(event.target.result);
@@ -188,11 +181,6 @@ const goalWeekStart = () => {
     return weekStart.getTime();
 };
 
-const goalMonthStart = () => {
-    const g = new Date(Date.now() - 4 * 3600 * 1000);
-    return new Date(g.getFullYear(), g.getMonth(), 1, 4, 0, 0).getTime();
-};
-
 // 'YYYY-MM-DD' of this week's Monday - for filtering getYearOfPlayTime() maps
 const goalWeekStartKey = () => {
     const d = new Date(goalWeekStart());
@@ -208,45 +196,6 @@ const importRRTRows = async (rows, clearFirst) => {
     return new Promise((resolve, reject) => {
         const tx = db.transaction('RRTHistory', 'readwrite');
         const store = tx.objectStore('RRTHistory');
-        if (clearFirst) store.clear();
-        rows.forEach(({ id, ...row }) => store.add(row));
-        tx.oncomplete = () => resolve();
-        tx.onerror = () => reject(tx.error);
-        tx.onabort = () => reject(tx.error);
-    });
-};
-
-const storeNBackSession = async (record) => {
-    const db = await initDB();
-
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction('NBackHistory', 'readwrite');
-        const store = transaction.objectStore('NBackHistory');
-
-        const request = store.add(record);
-
-        request.onsuccess = () => resolve('NBackHistory stored successfully!');
-        request.onerror = (event) => reject(event.target.error);
-    });
-};
-
-const getAllNBackSessions = async () => {
-    const db = await initDB();
-
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction('NBackHistory', 'readonly');
-        const store = transaction.objectStore('NBackHistory');
-        const getAll = store.getAll();
-        getAll.onsuccess = () => resolve(getAll.result);
-        getAll.onerror = () => reject(getAll.error);
-    });
-};
-
-const importNBackRows = async (rows, clearFirst) => {
-    const db = await initDB();
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction('NBackHistory', 'readwrite');
-        const store = tx.objectStore('NBackHistory');
         if (clearFirst) store.clear();
         rows.forEach(({ id, ...row }) => store.add(row));
         tx.oncomplete = () => resolve();

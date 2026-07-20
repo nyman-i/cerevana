@@ -4,12 +4,18 @@
 // N-Back's qb-* three-table approach.
 import { getSettings, subscribe, updateSetting, resetSettings } from './settings.js'
 import './profiles.js'
-import { isRunning, startSession, submitAnswer, stopSession } from './game.js'
+import { isRunning, isPaused, startSession, submitAnswer, stopSession, pauseSession, resumeSession } from './game.js'
+import { getExpectedAnswer } from './engine/mechanics.js'
 import {
   storeSession, getLastMonthSessions, getPlayTimeSince4AM, getYearOfPlayTime, deleteDB as deleteCctDB,
 } from './engine/gamedb.js'
 
 const $ = id => document.getElementById(id)
+
+// ---- theme follows the app-wide setting (like every game page) ----
+appStateStartup()
+document.body.classList.toggle('light-mode', appState.darkMode === false)
+applySavedBackground()
 
 const keySettingMap = {
   'cct-mode': 'arithmeticMode',
@@ -27,6 +33,8 @@ const keySettingMap = {
   'cct-beepvolume': 'beepVolume',
   'cct-beepenabled': 'beepEnabled',
   'cct-intervaltiming': 'showIntervalTiming',
+  'cct-presentation': 'presentationMode',
+  'cct-inputmethod': 'inputMethod',
   'cct-dailygoal': 'dailyProgressGoal',
   'cct-weeklygoal': 'weeklyProgressGoal',
 }
@@ -48,7 +56,10 @@ function populateSettings() {
     const el = $(id)
     if (!el || el === document.activeElement) continue
     if (el.type === 'checkbox') el.checked = settings[key]
-    else el.value = settings[key] ?? ''
+    else if (NULLABLE_KEYS.has(key)) el.value = settings[key] ?? ''
+    // a missing key (e.g. stale cached settings.js next to fresh markup)
+    // must not blank the field - leave it on what it already shows
+    else if (settings[key] != null) el.value = settings[key]
   }
   syncConditionalRows(settings)
 }
@@ -132,11 +143,27 @@ registerEventHandlers()
 renderGoalTrackers()
 
 // ---- gameplay ----
-let stats = { correctAnswers: 0, totalQuestions: 0, interval: 0 }
+let stats = { correctAnswers: 0, totalQuestions: 0, streak: 0, interval: 0 }
 
 function renderHud() {
-  $('cct-hud').textContent =
-    `Correct: ${stats.correctAnswers}/${stats.totalQuestions} · Interval: ${stats.interval}ms`
+  $('cct-hud').textContent = (isPaused() ? 'PAUSED · ' : '') +
+    `Correct: ${stats.correctAnswers}/${stats.totalQuestions} · Streak: ${stats.streak} · Interval: ${stats.interval}ms`
+}
+
+// one button per answer the active operation can produce (e.g. 2-18 for
+// addition) - a single click answers, no digit-by-digit entry
+let lastKeyBtn = null
+
+function buildKeypad(mode) {
+  const values = new Set()
+  for (let a = 1; a <= 9; a++) {
+    for (let b = 1; b <= 9; b++) values.add(getExpectedAnswer(a, b, mode))
+  }
+  lastKeyBtn = null
+  $('cct-keypad').innerHTML = [...values].sort((x, y) => x - y)
+    .map(v => `<button type="button" class="nback__match" data-key="${v}" tabindex="-1">${v}</button>`)
+    .join('')
+  return values.size
 }
 
 function flash(className) {
@@ -146,31 +173,61 @@ function flash(className) {
   void input.offsetWidth
   input.classList.add(className)
   setTimeout(() => input.classList.remove(className), 300)
+  // keypad-only mode has no visible input - flash the clicked button instead
+  // (a wrong answer only ever comes from a timeout, so no button to flash there)
+  if (input.hidden && lastKeyBtn && className === 'cct-flash-right') {
+    const btn = lastKeyBtn
+    btn.classList.add('nback__match--right')
+    setTimeout(() => btn.classList.remove('nback__match--right'), 300)
+  }
 }
 
 function beginUi() {
-  $('cct-start').hidden = true
+  const { inputMethod, presentationMode, startingInterval, arithmeticMode } = getSettings()
+  $('cct-start').textContent = 'STOP'
+  $('cct-pause').hidden = false
+  $('cct-pause').textContent = 'PAUSE'
   $('cct-result').hidden = true
-  $('cct-digit').hidden = false
+  $('cct-digit').hidden = presentationMode === 'audio'
   $('cct-hud').hidden = false
+  // the answer grid shows in both input methods (like upstream CCT) -
+  // physical keyboard just keeps the typing input focused as well
+  const keyCount = buildKeypad(arithmeticMode)
+  $('cct-keypad').hidden = false
+  // keypad mode is click-only: no typing input, bigger buttons
+  $('cct-keypad').classList.toggle('cct-keypad--primary', inputMethod === 'keypad')
+  // no digit on screen either - the grid alone fills the frame, so grow more
+  // (but not for multiplication's 36 buttons, which would overflow the screen)
+  $('cct-keypad').classList.toggle('cct-keypad--hero',
+    inputMethod === 'keypad' && presentationMode === 'audio' && keyCount <= 20)
+  $('cct-stage').classList.remove('cct-stage--paused')
   const answer = $('cct-answer')
-  answer.hidden = false
+  answer.hidden = inputMethod === 'keypad'
   answer.value = ''
-  answer.focus()
-  stats = { correctAnswers: 0, totalQuestions: 0, interval: getSettings().startingInterval }
+  answer.readOnly = inputMethod === 'keypad'
+  // no digit on screen + typing: let the input take the digit's space
+  answer.classList.toggle('cct-answer-input--hero',
+    presentationMode === 'audio' && inputMethod === 'physical')
+  if (inputMethod !== 'keypad') answer.focus()
+  stats = { correctAnswers: 0, totalQuestions: 0, streak: 0, interval: startingInterval }
   renderHud()
 }
 
 function endUi(record) {
   $('cct-digit').hidden = true
   $('cct-hud').hidden = true
+  $('cct-keypad').hidden = true
   $('cct-answer').hidden = true
-  $('cct-start').hidden = false
+  $('cct-start').textContent = 'START'
+  $('cct-pause').hidden = true
   const result = $('cct-result')
   result.hidden = false
+  const timing = record.averageResponseTimeMs != null
+    ? ` · avg ${Math.round(record.averageResponseTimeMs)}ms · fastest ${Math.round(record.fastestResponseTimeMs)}ms`
+    : ''
   result.textContent =
     `${record.status} · ${record.correctAnswers}/${record.totalQuestionsAsked} correct ` +
-    `(${record.accuracy.toFixed(0)}%) · ${Math.round(record.durationMs / 1000)}s`
+    `(${record.accuracy.toFixed(0)}%) · ${fmtElapsed(record.durationMs / 1000)}${timing}`
 }
 
 function begin() {
@@ -181,8 +238,8 @@ function begin() {
       $('cct-digit').textContent = digit
       $('cct-answer').value = ''
     },
-    onAnswer: ({ isCorrect, interval, correctAnswers, totalQuestions }) => {
-      stats = { correctAnswers, totalQuestions, interval }
+    onAnswer: ({ isCorrect, interval, correctAnswers, totalQuestions, streak }) => {
+      stats = { correctAnswers, totalQuestions, streak, interval }
       renderHud()
       flash(isCorrect ? 'cct-flash-right' : 'cct-flash-wrong')
     },
@@ -200,10 +257,36 @@ function end() {
   stopSession('exited')
 }
 
-$('cct-start').addEventListener('click', begin)
+// blur on click so the focused button can't be retriggered by Space mid-game
+// (same lesson as N-Back's qb-start)
+$('cct-start').addEventListener('click', (e) => {
+  e.currentTarget.blur()
+  if (isRunning()) end()
+  else begin()
+})
 
 $('cct-answer').addEventListener('input', (e) => {
   submitAnswer(e.target.value)
+})
+
+$('cct-keypad').addEventListener('click', (e) => {
+  const btn = e.target.closest('button')
+  if (!btn?.dataset.key || !isRunning()) return
+  lastKeyBtn = btn
+  const answer = $('cct-answer')
+  answer.value = btn.dataset.key
+  submitAnswer(btn.dataset.key)
+  // in physical mode the click steals focus from the input - hand it back
+  if (!answer.hidden) answer.focus()
+})
+
+$('cct-pause').addEventListener('click', (e) => {
+  e.currentTarget.blur()
+  if (!isRunning()) return
+  if (isPaused()) { resumeSession(); e.target.textContent = 'PAUSE' }
+  else { pauseSession(); e.target.textContent = 'RESUME' }
+  $('cct-stage').classList.toggle('cct-stage--paused', isPaused())
+  renderHud()
 })
 
 document.addEventListener('keydown', (event) => {
@@ -227,7 +310,9 @@ const tierColor = (percent) => {
 const fmtElapsed = (s) => `${Math.floor(s / 60)}m ${String(Math.floor(s % 60)).padStart(2, '0')}s`
 const fmtPlayTime = (ms) => fmtElapsed(ms / 1000)
 
-const MODE_LABELS = { addition: 'Addition', subtraction: 'Subtraction', multiplication: 'Multiplication', difference: 'Difference' }
+// mode labels + variant grouping are canonical in js/cct/graphs.js (classic
+// <head> script shared with stats.html, so it always runs before this module)
+const MODE_LABELS = window.cvCctDisplay.modeLabels
 
 const renderSessions = async () => {
   const sessions = await getLastMonthSessions()
@@ -269,90 +354,12 @@ document.addEventListener('keydown', (e) => {
   cb.dispatchEvent(new Event('change'))
 })
 
-// ---- graph popup (charts only) ----
+// ---- graph popup (charts live in <cct-graphs>, js/cct/graphs.js) ----
 const popup = $('graph-popup')
+const graphs = document.querySelector('cct-graphs')
 $('graph-label').addEventListener('click', async () => {
   popup.classList.add('visible')
-  await renderChart()
+  graphs.update({ records: await getLastMonthSessions(), byDay: await getYearOfPlayTime() })
 })
 $('graph-close-popup').addEventListener('click', () => popup.classList.remove('visible'))
 // ESC + outside-click dismissal is shared: js/shared/sidebar-events.js
-
-$('cct-tab-progress').addEventListener('click', () => switchTab('progress'))
-$('cct-tab-time').addEventListener('click', () => switchTab('time'))
-
-const switchTab = async (tab) => {
-  $('cct-tab-progress').classList.toggle('selected', tab === 'progress')
-  $('cct-tab-time').classList.toggle('selected', tab === 'time')
-  $('cct-progress-view').classList.toggle('visible', tab === 'progress')
-  $('cct-time-view').classList.toggle('visible', tab === 'time')
-  if (tab === 'progress') await renderChart()
-  else await renderTimeChart()
-}
-
-let chart
-const renderChart = async () => {
-  const sessions = (await getLastMonthSessions())
-    .filter(s => s.status === 'Completed' && s.totalQuestionsAsked > 0)
-    .sort((a, b) => a.timestamp - b.timestamp)
-  const byMode = {}
-  for (const s of sessions) {
-    const key = MODE_LABELS[s.arithmeticMode] ?? s.arithmeticMode
-    byMode[key] = byMode[key] ?? []
-    byMode[key].push({ x: s.timestamp, y: s.accuracy })
-  }
-  // Canvas can't read CSS vars, but JS can - pull the themed accent + text colour
-  // from the computed tokens so the chart follows the user's hue and theme.
-  const token = name => getComputedStyle(document.body).getPropertyValue(name).trim()
-  const accent = token('--accent-color')
-  const fg = token('--text-color')
-  const palette = [accent, '#a6712c', '#8a5264', '#4c8434']
-  const datasets = Object.entries(byMode).map(([label, data], i) => ({
-    label, data, borderColor: palette[i % palette.length],
-    backgroundColor: palette[i % palette.length], tension: 0.2, pointRadius: 3,
-  }))
-  $('cct-graph-empty').hidden = datasets.some(d => d.data.length > 0)
-  chart?.destroy()
-  chart = new Chart($('cct-graph-canvas'), {
-    type: 'line',
-    data: { datasets },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        x: { type: 'time', ticks: { color: fg }, grid: { color: '#4444' } },
-        y: { min: 0, max: 100, title: { display: true, text: 'accuracy %', color: fg }, ticks: { color: fg }, grid: { color: '#4444' } },
-      },
-      plugins: { legend: { labels: { color: fg } } },
-    },
-  })
-}
-
-let timeChart
-const renderTimeChart = async () => {
-  const byDay = await getYearOfPlayTime()
-  const data = Object.entries(byDay).sort(([a], [b]) => a.localeCompare(b))
-    .map(([day, minutes]) => ({ x: day, y: minutes }))
-  $('cct-graph-empty').hidden = data.length > 0
-  const token = name => getComputedStyle(document.body).getPropertyValue(name).trim()
-  const accent = token('--accent-color')
-  const fg = token('--text-color')
-  const totalMinutes = data.reduce((sum, d) => sum + d.y, 0)
-  timeChart?.destroy()
-  timeChart = new Chart($('cct-time-canvas'), {
-    type: 'bar',
-    data: { datasets: [{ label: 'Minutes played', data, backgroundColor: accent }] },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        x: { type: 'time', time: { unit: 'day' }, ticks: { color: fg }, grid: { color: '#4444' } },
-        y: { title: { display: true, text: 'minutes', color: fg }, ticks: { color: fg }, grid: { color: '#4444' } },
-      },
-      plugins: {
-        legend: { labels: { color: fg } },
-        title: { display: true, text: `Total: ${fmtElapsed(totalMinutes * 60)}`, color: fg },
-      },
-    },
-  })
-}

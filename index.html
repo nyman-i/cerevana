@@ -2,13 +2,54 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Cerevana</title>
+		<title>Cerevana - Free Mindbuilding: RRT, N-Back and CCT</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="theme-color" content="#7cb6a8" />
+		<meta name="description" content="Cerevana is a free, local-first Mindbuilding app - RRT, N-Back and CCT cognitive training. No account, no ads, your data stays in your browser.">
+		<link rel="canonical" href="https://cerevana.com/">
+		<meta property="og:type" content="website">
+		<meta property="og:site_name" content="Cerevana">
+		<meta property="og:title" content="Cerevana - Free Mindbuilding: RRT, N-Back and CCT">
+		<meta property="og:description" content="Cerevana is a free, local-first Mindbuilding app - RRT, N-Back and CCT cognitive training. No account, no ads, your data stays in your browser.">
+		<meta property="og:image" content="https://cerevana.com/img/og-image.jpg">
+		<meta property="og:url" content="https://cerevana.com/">
+		<meta name="twitter:card" content="summary_large_image">
+		<meta property="og:locale" content="en_US">
+		<meta property="og:image:width" content="1200">
+		<meta property="og:image:height" content="630">
+		<meta property="og:image:alt" content="Cerevana logo">
+		<meta name="twitter:image:alt" content="Cerevana logo">
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "WebApplication",
+			"name": "Cerevana",
+			"url": "https://cerevana.com/",
+			"description": "Free, local-first Mindbuilding app with RRT, N-Back and CCT cognitive-training exercises.",
+			"applicationCategory": "HealthApplication",
+			"operatingSystem": "Any (web browser)",
+			"browserRequirements": "Requires JavaScript.",
+			"inLanguage": "en",
+			"isAccessibleForFree": true,
+			"image": "https://cerevana.com/img/og-image.jpg",
+			"featureList": [
+				"RRT - relational reasoning training",
+				"N-Back - working memory training",
+				"CCT - cognitive control training (PASAT)",
+				"Progress graphs and cross-exercise stats",
+				"Local-first: data stays in your browser"
+			],
+			"offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+		}
+		</script>
 		<link rel="icon" type="image/png" href="favicon.png?v=5">
+		<link rel="manifest" href="manifest.json">
+		<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 		<link rel="stylesheet" href="fonts/cool/coolicons.css">
 		<link rel="stylesheet" href="css/styles.css">
 		<script src="js/shared/boot.js"></script>
+		<script src="js/components/help-tip.js"></script>
+		<script src="js/components/select-row.js"></script>
 		<script>
 			// old profile share links point at index.html; the RRT page owns that import now
 			if (location.search.includes('savedata=')) location.replace('rrt.html' + location.search);
@@ -37,8 +78,8 @@
 								Read premises like &ldquo;A is north-east of B&rdquo;, hold the
 								relations in mind, and judge whether the conclusion follows.
 								Distinction, syllogisms, spatial reasoning in 2D/3D/4D, and more
-								&mdash; against the clock.<br><br>
-								<strong>Trains:</strong> fluid reasoning &mdash; relational
+								- against the clock.<br><br>
+								<strong>Trains:</strong> fluid reasoning - relational
 								integration, logical inference and mental-model building under
 								time pressure.<br><br>
 								Based on Syllogimous by 4skinSkywalker, continued by
@@ -57,10 +98,10 @@
 							<div class="tooltip-text">
 								One n-back, best of both worlds: positions on a rotating 3D
 								cube, sounds, colors, shapes and unnameable images at once,
-								interference lures and tally modes &mdash; plus the classic
+								interference lures and tally modes - plus the classic
 								Brain Workshop protocol: grid + letters, combination and
 								arithmetic modes, crab and Jaeggi variants.<br><br>
-								<strong>Trains:</strong> working memory &mdash; continuous
+								<strong>Trains:</strong> working memory - continuous
 								updating, attention control and interference
 								resolution.<br><br>
 								Built on Quad Box by soamsy; classic modes after Paul
@@ -68,7 +109,7 @@
 							</div>
 						</div>
 					</h2>
-					<p class="menu-card__info">Adaptive n-back &mdash; the modern protocol and the classic, merged.</p>
+					<p class="menu-card__info">Adaptive n-back - the modern protocol and the classic, merged.</p>
 					<div id="menu-nback-stats" class="menu-card__stats"></div>
 					<div id="menu-nback-recent" class="menu-card__recent"></div>
 					<span class="menu-card__enter">ENTER &rarr;</span>
@@ -78,10 +119,10 @@
 						<div class="tooltip-container" tabindex="0" onclick="event.preventDefault()">?
 							<div class="tooltip-text">
 								Digits play one at a time; answer with the result of the
-								current and previous digit &mdash; the classic PASAT task.
+								current and previous digit - the classic PASAT task.
 								The pace adapts to you: answer streaks speed it up, miss
 								streaks slow it back down.<br><br>
-								<strong>Trains:</strong> cognitive control &mdash; divided
+								<strong>Trains:</strong> cognitive control - divided
 								attention, processing speed and resistance to interference
 								under time pressure.<br><br>
 								Mechanics adapted from CCT by tim22dev22.
@@ -107,15 +148,12 @@
 					<div class="menu-goal__track"><div class="menu-goal__fill"></div></div>
 					<span class="menu-goal__value"></span>
 				</div>
-				<div class="menu-goal" id="menu-goal-monthly" hidden>
-					<span class="menu-goal__label">MONTHLY</span>
-					<div class="menu-goal__track"><div class="menu-goal__fill"></div></div>
-					<span class="menu-goal__value"></span>
-				</div>
 			</div>
 
 			<nav class="menu__pages">
+				<a href="stats.html" title="Your training history across every exercise - progress and time-spent graphs over any date range">STATS</a>
 				<a href="studies.html" title="Research library - brain endurance, working memory and cognitive control studies collected by the Mindbuilding community">STUDIES</a>
+				<a href="transfer.html" title="Log before/after scores on external cognitive tests and see them alongside your training progress">TRANSFER</a>
 				<a href="credits.html" title="The people and projects Cerevana builds on - lineage, protocol sources, assets, license">CREDITS</a>
 			</nav>
 
@@ -138,6 +176,15 @@
 						</select>
 					</div>
 					<div class="ctrl__inner">
+						<span>Font</span>
+						<select id="p-font" class="select-item" onchange="handleMainFontChange(event)">
+							<option value="default">Default</option>
+							<option value="oxanium" style="font-family: Oxanium, sans-serif">Oxanium</option>
+							<option value="jetbrains" style="font-family: 'JetBrains Mono', monospace">JetBrains Mono</option>
+							<option value="zendots" style="font-family: 'Zen Dots', sans-serif">Zen Dots</option>
+						</select>
+					</div>
+					<div class="ctrl__inner">
 						<span>Accent</span>
 						<input type="range" id="p-accent" class="accent-range" min="0" max="360" value="165" oninput="handleAccentChange(event)" aria-label="Accent color hue" title="Pick the app's accent hue">
 						<button type="button" onclick="resetAccentHue()" title="Back to the default sage accent">Reset</button>
@@ -151,11 +198,15 @@
 				</div>
 				<div class="panel-heading menu__footer-heading">Your Data</div>
 				<div class="menu__backup">
-					<button type="button" onclick="exportHistory()" title="Save all RRT, N-Back and CCT history to a JSON file">Export History</button>
-					<button type="button" onclick="pickImportFile('merge')" title="Combine a file with this device's history - no duplicates, nothing deleted">Import (merge)</button>
-					<button type="button" onclick="pickImportFile('overwrite')" title="Replace this device's history with the file's contents">Import (overwrite)</button>
+					<button type="button" onclick="exportHistory()" title="Save all RRT, N-Back and CCT history, profiles, settings and appearance to a JSON file (background image not included)">Export Data</button>
+					<button type="button" onclick="pickImportFile('merge')" title="Combine a file's history with this device's - no duplicates, nothing deleted. Profiles/settings/appearance are left untouched">Import (merge)</button>
+					<button type="button" onclick="pickImportFile('overwrite')" title="Replace this device's history, profiles, settings and appearance with the file's contents">Import (overwrite)</button>
 					<button type="button" class="delete" onclick="resetEverything()" title="Permanently erase ALL data for every exercise">Reset App</button>
 					<input type="file" id="history-import" accept=".json,application/json" style="display:none" onchange="handleHistoryImport(event)">
+				</div>
+				<div class="panel-heading menu__footer-heading">Run Locally (Linux)</div>
+				<div class="menu__run-locally">
+					<button type="button" id="run-locally-open" onclick="showRunLocallyPopup()" title="Get a desktop app shortcut in Chrome or Firefox - any Linux distro with GNOME, KDE, XFCE or similar">Run Locally</button>
 				</div>
 			</div>
 		</div>
@@ -170,11 +221,36 @@
 			</div>
 		</div>
 
+		<div id="run-locally-popup" class="run-locally-popup">
+			<div class="run-locally-popup-content">
+				<div class="panel-heading">Run Locally (Linux)</div>
+				<p class="run-locally-note">Any Linux distro with GNOME, KDE, XFCE or similar - needs git, python3 and Chrome/Chromium or Firefox installed.</p>
+				<select-row select-id="p-run-browser" label="Browser"
+					options="chrome=Chrome (recommended)|firefox=Firefox"
+					tooltip="Chrome opens in its own app window.|Firefox opens as a normal browser|window (Firefox dropped app-mode support)." tooltip-side="right"></select-row>
+				<div class="ctrl__inner">
+					<input type="text" id="run-locally-command" class="ffmono" readonly style="flex:1; min-width:0" title="Downloads and runs create-shortcut.sh in one step">
+					<button type="button" style="white-space:nowrap" onclick="copyRunLocallyCommand(event)" title="Copy this command to your clipboard">Copy Command</button>
+				</div>
+				<ol class="run-locally-steps">
+					<li>Click "Copy Command" above.</li>
+					<li>Open a terminal and paste it in.</li>
+					<li>Press Enter - it downloads and runs in one step.</li>
+					<li>Find "Cerevana" in your applications menu.</li>
+				</ol>
+				<div class="run-locally-popup-footer">
+					<a href="create-shortcut.sh" download>Download script</a>
+					<button type="button" id="run-locally-close-popup">Close</button>
+				</div>
+			</div>
+		</div>
+
 		<script src="js/shared/constants.js"></script>
 		<script src="js/shared/backwards-compatibility.js"></script>
 		<script src="js/shared/db.js"></script>
 		<script src="js/shared/rename-db.js"></script>
 		<script src="js/shared/history-transfer.js"></script>
+		<script src="js/shared/run-locally.js"></script>
 		<script src="js/shared/error-handling.js"></script>
 		<script src="js/shared/background.js"></script>
 		<script src="js/shared/appearance.js"></script>

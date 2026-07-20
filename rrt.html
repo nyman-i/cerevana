@@ -2,13 +2,29 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Cerevana - RRT</title>
+		<title>Cerevana - RRT: Relational Reasoning Training</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<!-- ios support -->
 		<meta name="apple-mobile-web-app-status-bar" content="#7cb6a8" />
 		<meta name="theme-color" content="#7cb6a8" />
+		<meta name="description" content="Relational reasoning training: hold premises in mind and judge whether a conclusion follows. Trains fluid reasoning under time pressure.">
+		<link rel="canonical" href="https://cerevana.com/rrt.html">
+		<meta property="og:type" content="website">
+		<meta property="og:site_name" content="Cerevana">
+		<meta property="og:title" content="Cerevana - RRT: Relational Reasoning Training">
+		<meta property="og:description" content="Relational reasoning training: hold premises in mind and judge whether a conclusion follows. Trains fluid reasoning under time pressure.">
+		<meta property="og:image" content="https://cerevana.com/img/og-image.jpg">
+		<meta property="og:url" content="https://cerevana.com/rrt.html">
+		<meta name="twitter:card" content="summary_large_image">
+		<meta property="og:locale" content="en_US">
+		<meta property="og:image:width" content="1200">
+		<meta property="og:image:height" content="630">
+		<meta property="og:image:alt" content="Cerevana logo">
+		<meta name="twitter:image:alt" content="Cerevana logo">
 
 		<link rel="icon" type="image/png" href="favicon.png?v=5">
+		<link rel="manifest" href="manifest.json">
+		<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 		<link rel="stylesheet" href="fonts/cool/coolicons.css">
 		<link rel="stylesheet" href="css/styles.css">
 		<script src="js/shared/boot.js"></script>
@@ -20,6 +36,7 @@
 		<script src="js/components/profile-picker.js"></script>
 		<script src="js/components/corner-panel.js"></script>
 		<script src="js/components/corner-tabs.js"></script>
+		<script src="js/rrt/graphs.js"></script>
 		<style id="live-styles"></style>
 	</head>
 	<body>
@@ -763,6 +780,13 @@
 								</div>
 							</div>
 						</div>
+						<hr class="divider"/>
+						<div class="mb-05 panel-heading">Reset</div>
+						<p>Reset settings keeps your history. The full reset erases
+						all RRT data - irreversible. (N-Back is untouched either
+						way; a full reset for every exercise lives on the main menu.)</p>
+						<div class="mb-1"><button type="button" id="reset-rrt-settings" onclick="resetRRTSettings()">Reset Settings</button></div>
+						<div class="mb-1"><button type="button" id="reset-rrt" class="delete" onclick="resetRRT()">Reset RRT</button></div>
 			</corner-panel>
 			<corner-panel name="history" side="right" body-class="hql-frame">
 					<div>Total answer time: <span id="total-display"></span></div>
@@ -776,8 +800,8 @@
 						<div class="mb-05 panel-heading">How to play</div>
 						<p>Read the premises, then judge whether the conclusion is
 						<strong>True</strong> or <strong>False</strong>. Premises
-						state relations &mdash; order, distinction, direction,
-						syllogisms &mdash; and the conclusion either follows from
+						state relations - order, distinction, direction,
+						syllogisms - and the conclusion either follows from
 						them or contradicts them.</p>
 						<p>Turn the timer on to score: correct answers raise your
 						level and harder questions follow. Pick question types and
@@ -801,14 +825,7 @@
 						by 4skinSkywalker, extended through the v3 lineage of
 						ikokusovereignty and
 						<a href="https://github.com/soamsy/Syllogimous-v3" target="_blank" rel="noopener">soamsy</a>
-						&mdash; see <a href="credits.html">Credits</a>.</p>
-						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Reset</div>
-						<p>Reset settings keeps your history. The full reset erases
-						all RRT data &mdash; irreversible. (N-Back is untouched either
-						way; a full reset for every exercise lives on the main menu.)</p>
-						<div class="mb-1"><button type="button" id="reset-rrt-settings" onclick="resetRRTSettings()">Reset Settings</button></div>
-						<div class="mb-1"><button type="button" id="reset-rrt" class="delete" onclick="resetRRT()">Reset RRT</button></div>
+						- see <a href="credits.html">Credits</a>.</p>
 			</corner-panel>
 			<corner-tabs></corner-tabs>
 				<nav class="game-menu metal-gear">
@@ -921,17 +938,7 @@
 		</div>
 
 		<div id="graph-popup" class="graph-popup">
-			<div class="graph-controls">
-				<button type="button" id="graph-select-time" class="graph-select selected">Time Spent</button>
-				<button type="button" id="graph-select-score" class="graph-select">Avg Correct Times</button>
-				<button type="button" id="graph-select-time-per-premise" class="graph-select">Premise Speed</button>
-				<button type="button" id="graph-select-count" class="graph-select">Total Answered</button>
-			</div>
-			<div id="graph-empty" class="panel-empty" hidden>No graph data yet &mdash; answer questions with the timer on and it appears here.</div>
-			<div id="graph-popup-time" class="graph-popup-content visible"><canvas id="graph-canvas-time"></canvas></div>
-			<div id="graph-popup-count" class="graph-popup-content"><canvas id="graph-canvas-count"></canvas></div>
-			<div id="graph-popup-time-per-premise" class="graph-popup-content"><canvas id="graph-canvas-time-per-premise"></canvas></div>
-			<div id="graph-popup-score" class="graph-popup-content"><canvas id="graph-canvas-score"></canvas></div>
+			<rrt-graphs></rrt-graphs>
 			<div class="graph-end-controls">
 				<div>* Only timed questions are displayed</div>
 				<button type="button" id="graph-close-popup" class="graph-close-popup">Close</button>
@@ -1958,6 +1965,7 @@
 		<script src="js/lib/chartjs-adapter-date-fns.min.js"></script>
 		<script src="js/lib/date-fns.min.js"></script>
 		<script src="js/shared/constants.js"></script>
+		<script src="js/rrt/generators/word-bank.js"></script>
 		<script src="js/rrt/generators/utils.js"></script>
 		<script src="js/rrt/generators/anchors.js"></script>
 		<script src="js/rrt/generators/color-comparator.js"></script>
@@ -1981,7 +1989,6 @@
 		<script src="js/rrt/explanation.js"></script>
 		<script src="js/shared/backwards-compatibility.js"></script>
 		<script src="js/shared/db.js"></script>
-		<script src="js/shared/rename-db.js"></script>
 		<script src="js/rrt/progress-dropdown.js"></script>
 		<script src="js/rrt/linear-dropdown.js"></script>
 		<script src="js/shared/profile.js"></script>

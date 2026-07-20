@@ -2,7 +2,7 @@
  * Cerevana N-Back - classic mode generation.
  * Original Cerevana code (CC BY-NC 3.0): a port of our own Brain Workshop
  * protocol reimplementation (formerly js/nback/game.js - no Brain
- * Workshop code; protocol details in nback-spec.md).
+ * Workshop code).
  * Produces engine-shaped { trials, meta } consumed by QuadBoxGame, so the
  * flow/scoring/recording path is identical to engine-generated games.
  */
@@ -38,6 +38,8 @@ export const CLASSIC_TITLES = {
   positionColor: 'position-color',
   colorSound: 'color-sound',
   triple: 'triple',
+  dualClassic: 'dual-classic',
+  quadClassic: 'quad-classic',
 }
 
 // BW's ARITHMETIC_ACCEPTABLE_DECIMALS (tenths, odd twentieths, eighths) - every
@@ -60,9 +62,10 @@ export const divisorOk = (a, x) => {
 
 // one arithmetic trial: op uniform from the enabled set; number uniform in
 // [0, max] ([-max, max] with negatives). Divide draws only legal divisors of
-// the n-back number (plain n - not the crab/variable effective back);
+// the number back trials ago at this trial's effective back (crab/variable -
+// defaults to n), since that's the number it's actually scored against;
 // before trial n, divide numbers are just nonzero.
-export const genArith = (numbers, n, t, ops, maxNumber, negatives) => {
+export const genArith = (numbers, n, t, ops, maxNumber, negatives, back = n) => {
   const op = ops[Math.floor(Math.random() * ops.length)]
   const min = negatives ? -maxNumber : 0
   const range = () => min + Math.floor(Math.random() * (maxNumber - min + 1))
@@ -71,7 +74,7 @@ export const genArith = (numbers, n, t, ops, maxNumber, negatives) => {
     if (t >= n) {
       const legal = []
       for (let x = min; x <= maxNumber; x++) {
-        if (divisorOk(numbers[t - n], x)) legal.push(x)
+        if (divisorOk(numbers[t - back], x)) legal.push(x)
       }
       number = legal[Math.floor(Math.random() * legal.length)]
     } else {
@@ -299,7 +302,7 @@ export const generateClassicGame = (modeKey, gs) => {
         seq[s].push(jaeggi ? jaeggiSeq[s][t] : gen(seq[s], n, t, back, pMatch, pLure))
       }
       if (isArith) {
-        const { number, op } = genArith(numbers, n, t, ops, gs.arithMaxNumber ?? 12, !!gs.arithNegatives)
+        const { number, op } = genArith(numbers, n, t, ops, gs.arithMaxNumber ?? 12, !!gs.arithNegatives, back)
         numbers.push(number)
         opsSeq.push(op)
       }
@@ -358,6 +361,7 @@ export const generateClassicGame = (modeKey, gs) => {
     rules: gs.rules ?? 'none',
     title: cfg?.title ?? CLASSIC_TITLES[modeKey] ?? modeKey,
     tags: mods.slice(),
+    configSnapshot: structuredClone(gs),
   }
   if (jaeggi) meta.jaeggi = true
   if (crab) meta.crab = true
