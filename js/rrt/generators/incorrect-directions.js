@@ -4,8 +4,8 @@ class IncorrectDirections {
         let permutation = correctCoord.map(d => 0);
         let permutate = (i) => {
             if (i >= permutation.length) {
-                if (!arraysEqual(permutation, correctCoord) && 
-                    !arraysEqual(permutation, correctCoord.slice(0, 3).map(d => 0)) &&
+                if (!arraysEqual(permutation, correctCoord) &&
+                    !arraysEqual(permutation, correctCoord.map(d => 0)) &&
                     combinations.findIndex(combo => arraysEqual(permutation, combo)) === -1) {
                     unused.push(permutation.slice());
                 }
@@ -44,9 +44,9 @@ class IncorrectDirections {
         const allShiftedEqually = diffCoord.every(x => Math.abs(x) === highest);
         const shifts = allShiftedEqually ? [-1, 1] : [-2, -1, 1, 2];
         if (isUsingHardMode) {
-            bannedDimensionShifts.add.apply(bannedDimensionShifts, dimensionPool.filter(d => !hardModeDimensions.some(h => h === d)));
+            dimensionPool.filter(d => !hardModeDimensions.some(h => h === d)).forEach(d => bannedDimensionShifts.add(d));
         } else if (!allShiftedEqually) {
-            bannedDimensionShifts.add.apply(bannedDimensionShifts, dimensionPool.filter(d => Math.abs(diffCoord[d]) === highest));
+            dimensionPool.filter(d => Math.abs(diffCoord[d]) === highest).forEach(d => bannedDimensionShifts.add(d));
         }
 
         let combinations = [];
