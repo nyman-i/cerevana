@@ -3095,6 +3095,10 @@ body.menu-mode .main-view {
     width: fit-content;
 }
 
+/* Desktop widths for the log form's inputs (mobile stretches them full-width) */
+#test-popup-score { width: 8ch; }
+#test-popup-note { width: 16ch; }
+
 .test-card__note-hint {
     color: var(--preamble-color);
     font-size: var(--step--2);
@@ -3295,6 +3299,16 @@ body.menu-mode .main-view {
 
 .transfer-chart-add {
     width: fit-content; /* inline-input__outer is full-width by default */
+    max-width: 100%;
+    white-space: nowrap; /* keep the "Add to graph" label on one line when squeezed */
+}
+
+.transfer-chart-add .inline-input__inner {
+    min-width: 0; /* let the select shrink instead of pushing past the viewport on narrow screens */
+}
+
+.transfer-chart-add select {
+    max-width: 100%; /* long option names truncate natively instead of setting the box width */
 }
 
 .transfer-chart-lines {
@@ -3335,7 +3349,42 @@ body.menu-mode .main-view {
         top: 3%;
         width: 94vw;
         max-height: 94vh;
-        padding: 1rem;
+        padding: 1.25rem 1rem;
+    }
+    /* Stacked, not side by side: the nowrap "last taken N days ago" text
+       otherwise crushes the test name down to a few characters + ellipsis. */
+    .transfer-due__row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.15rem;
+    }
+    .transfer-due__name {
+        white-space: normal;
+    }
+    /* The log form goes one full-width row per field: finger-sized targets,
+       and >= 16px input text stops iOS zooming the whole page on focus. */
+    .test-card__log .inline-input__outer {
+        width: 100%;
+    }
+    .test-card__log .inline-input__inner {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+    .test-card__log .inline-input__inner > input,
+    .test-card__log .inline-input__inner > select,
+    #test-popup-score,
+    #test-popup-note {
+        width: 100%;
+        margin: 0;
+        font-size: 16px; /* iOS auto-zoom threshold, not a type-scale step */
+        padding: 0.4rem 0.25rem;
+    }
+    .test-card__log button[type="submit"] {
+        width: 100%;
+        padding: 0.6rem;
+    }
+    .test-card__history-delete {
+        padding: 0.4rem 0.6rem; /* finger-sized */
     }
 }
 

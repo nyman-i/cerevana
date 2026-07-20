@@ -509,6 +509,7 @@ popupForm.addEventListener('submit', async (e) => {
 popupHistory.addEventListener('click', async (e) => {
   if (!e.target.classList.contains('test-card__history-delete')) return
   const row = e.target.closest('.test-card__history-row')
+  if (!confirm('Delete this score?')) return // a stray tap on the small × would otherwise silently lose the record
   await deleteScore(Number(row.dataset.id))
   await refresh(allTests)
 })

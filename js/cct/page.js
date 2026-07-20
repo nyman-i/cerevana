@@ -251,6 +251,14 @@ function begin() {
       flash(isCorrect ? 'cct-flash-right' : 'cct-flash-wrong')
     },
     onEnd: async (record) => {
+      // next session picks up at the pace this one ended on (same idea as
+      // N-Back auto-progression writing the level back); the settings input
+      // shows the new value and stays editable
+      // ponytail: carries over on manual exit too - a bailed session barely
+      // moved the interval, and a too-fast start self-corrects upward
+      if (record.finalIntervalMs !== getSettings().startingInterval) {
+        updateSetting('startingInterval', record.finalIntervalMs)
+      }
       endUi(record)
       await storeSession(record)
       renderGoalTrackers()
