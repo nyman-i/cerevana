@@ -492,8 +492,12 @@ function generateQuestion() {
         }
     }
 
-    if (!savedata.removeNegationExplainer && /is-negated/.test(JSON.stringify(q)))
+    if (!savedata.removeNegationExplainer && /is-negated/.test(JSON.stringify(q))) {
+        // the explainer line is not a premise: freeze the real count first so
+        // the level label, DB row and auto-progression don't count it
+        if (!q.plen) q.plen = q.premises.length;
         q.premises.unshift('<span class="negation-explainer">Invert the <span class="is-negated">Red</span> text</span>');
+    }
 
     return q;
 }
