@@ -570,7 +570,13 @@ const syncPanel = () => {
   // (runs last so the rebuilt chain-row inputs are covered too)
   const editable = mode === 'custom' || mode === 'customB'
   for (const id of MODE_SETTING_INPUTS) $(id).disabled = !editable
-  $('qb-chain-rows').querySelectorAll('input').forEach(i => { i.disabled = !editable })
+  // width/chain pick which Tally variant is played (same class as qb-squares
+  // below) - and they only render in tally modes, so locking them to the
+  // Custom modes would leave them permanently disabled
+  const tallyEditable = editable || isTally
+  $('qb-width').disabled = !tallyEditable
+  $('qb-chain').disabled = !tallyEditable
+  $('qb-chain-rows').querySelectorAll('input').forEach(i => { i.disabled = !tallyEditable })
   // squares picks which Multi-Square variant is being played (like nBack,
   // not a comparability-locked difficulty knob) - editable whenever that
   // mode is active, unlike the rest of MODE_SETTING_INPUTS above
