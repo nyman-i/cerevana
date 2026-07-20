@@ -118,9 +118,16 @@ const slabButton = (id, name, hot, onClick) => {
   btn.tabIndex = -1
   btn.innerHTML = `<span class="qb-key-name">${name}</span>`
     + (hot !== '' ? `<span class="qb-key-hot">${hot}</span>` : '')
-  btn.addEventListener('click', onClick)
+  btn.addEventListener('click', () => {
+    if (getSettings().haptics) navigator.vibrate?.(10)
+    onClick()
+  })
   return btn
 }
+
+// The arithmetic modes take digits; keyboards cover desktop, this pad is
+// the touch path (game.arithInput - same input rules, no backspace).
+const PAD_CHARS = ['1', '2', '3', '4', '5', '-', '6', '7', '8', '9', '0', '.']
 
 // Rebuilt only when settings change (rebuilding per-trial would wipe
 // feedback classes and re-run feedback.configure's reset mid-game).
@@ -130,6 +137,7 @@ function renderKeys() {
   const right = $('qb-keys-right')
   left.innerHTML = ''
   right.innerHTML = ''
+  let keyCount = 0
   if (game.tally) {
     const counts = getNumberKeys(game.gameDisplayInfo)
     counts.forEach((count, i) => {
@@ -137,6 +145,8 @@ function renderKeys() {
       const btn = slabButton(`qb-tally-${count}`, count, '', () => game.handleCount(count))
       ;(i < Math.ceil(counts.length / 2) ? left : right).appendChild(btn)
     })
+    tallyFeedback.configure(counts, settings.feedback)
+    keyCount = counts.length
   } else {
     const tags = (game.gameDisplayInfo.tags ?? []).filter(t => t !== 'arithmetic')
     let alternate = 0
@@ -150,6 +160,20 @@ function renderKeys() {
       side.appendChild(btn)
     }
     feedback.configure(tags, settings.feedback)
+    keyCount = tags.length
+  }
+  // compact layouts grid all keys equally: 1 key fills the row, tally's
+  // short digit labels take 3-up, word labels 2-up
+  $('qb-keys').style.setProperty('--qb-cols',
+    keyCount <= 1 ? 1 : (game.tally && keyCount > 4) ? 3 : 2)
+
+  const pad = $('qb-arith-pad')
+  pad.hidden = !game.gameDisplayInfo.arithmetic
+  if (game.gameDisplayInfo.arithmetic && !pad.childElementCount) {
+    for (const ch of PAD_CHARS) {
+      pad.appendChild(slabButton(`qb-arith-${ch}`, ch === '-' ? '−' : ch, '',
+        () => game.arithInput(ch)))
+    }
   }
   $('qb-answer').hidden = !game.gameDisplayInfo.arithmetic
 }
@@ -170,6 +194,10 @@ function renderHud() {
   if (info.squares) parts[parts.length - 1] = `${info.squares}× MULTI`
   if (info.crab) parts.push('CRAB')
   if (info.selfPaced) parts.push('SP')
+  // trial countdown lives here (was a separate dim corner number - one
+  // glance line beats two scattered readouts, especially on phones)
+  const remaining = game.trialDisplay()
+  if (game.isPlaying && remaining !== '') parts.push(`${remaining} left`)
   const a = analytics.get()
   if (!game.isPlaying && a.lastGame?.total) {
     parts.push(`Last: ${(a.lastGame.total.percent * 100).toFixed(0)}%`)
@@ -189,8 +217,31 @@ function refreshUi() {
   renderHud()
   $('qb-start').textContent = game.isPlaying ? 'STOP' : 'START'
   $('qb-next').hidden = !(game.isPlaying && game.gameDisplayInfo.selfPaced && !game.tally)
-  $('qb-count').textContent = game.trialDisplay()
+  syncWakeLock()
 }
+
+// Keep the screen awake during a session - a self-paced game dies to the
+// lock screen if the player thinks too long. Best-effort: denial (battery
+// saver) or an unsupported browser just means the OS default wins.
+let wakeLock = null
+let wakeLockBusy = false
+async function syncWakeLock() {
+  if (!('wakeLock' in navigator) || wakeLockBusy) return
+  wakeLockBusy = true
+  try {
+    if (game.isPlaying && !wakeLock && document.visibilityState === 'visible') {
+      wakeLock = await navigator.wakeLock.request('screen')
+      wakeLock.addEventListener('release', () => { wakeLock = null })
+    } else if (!game.isPlaying && wakeLock) {
+      await wakeLock.release()
+      wakeLock = null
+    }
+  } catch { /* not granted - fine */ } finally {
+    wakeLockBusy = false
+  }
+}
+// the OS releases the lock on tab switch; re-acquire when the game resumes view
+document.addEventListener('visibilitychange', () => syncWakeLock())
 
 analytics.subscribe(() => {
   renderHud()
@@ -286,6 +337,7 @@ const toggles = [
   }],
   ['qb-autoprog', v => updateSetting('enableAutoProgression', v)],
   ['qb-lattice-theme', v => updateSetting('latticeMatchesTheme', v)],
+  ['qb-haptics', v => updateSetting('haptics', v)],
 ]
 
 for (const [id, set] of toggles) {
@@ -447,6 +499,7 @@ const syncPanel = () => {
   // same shape as the light-mode toggle at the top of this file: a body
   // class the CSS keys off, applied on load and on every settings change
   document.body.classList.toggle('qb-lattice-accent', !!settings.latticeMatchesTheme)
+  $('qb-haptics').checked = !!settings.haptics
   $('qb-autoprog').checked = settings.enableAutoProgression
   setValue('qb-advance', settings.successCriteria)
   setValue('qb-winafter', settings.successComboRequired)
@@ -494,9 +547,8 @@ const syncPanel = () => {
     syncChainRows(gs)
   }
 
-  // stimuli rows (arithmetic speaks operations via TTS - no stimulus sources)
-  $('qb-stimuli-heading').hidden = isArith
-  $('qb-stimuli-rows').hidden = isArith
+  // stimuli section (arithmetic speaks operations via TTS - no stimulus sources)
+  $('qb-sec-stimuli').hidden = isArith
   $('qb-row-audio').hidden = mode === 'vtally' || !(hasToggles || mode === 'quad' || gs.enableAudio)
   $('qb-en-audio').parentElement.hidden = !hasToggles
   $('qb-en-color').parentElement.hidden = !hasToggles
@@ -625,6 +677,23 @@ document.addEventListener('keydown', (e) => {
 })
 
 // ---- boot ----
+// vibration is Android-only in practice; don't show a dead switch elsewhere
+$('qb-row-haptics').hidden = !('vibrate' in navigator)
+
+// The portrait band's height varies per mode (match keys, tally counters,
+// digit pad) - measure it into --qb-band-h so CSS can lift the bottom
+// corner tabs onto its edge and size the board to the real free space.
+// In desktop/landscape layouts the band is display:contents (no box), so
+// the measurement is 0 and everything falls back to its corner defaults.
+{
+  const band = document.querySelector('.qb-band')
+  const setBandH = () => document.documentElement.style.setProperty(
+    '--qb-band-h', `${Math.ceil(band.getBoundingClientRect().height)}px`)
+  new ResizeObserver(setBandH).observe(band)
+  window.addEventListener('resize', setBandH)
+  setBandH()
+}
+
 syncPanel()
 renderKeys()
 refreshUi()

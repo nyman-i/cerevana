@@ -3,6 +3,10 @@ name: PR checks
 on:
   pull_request:
     branches: [main]
+  # also re-check main itself after a merge/direct push - main is what a
+  # manual prod deploy ships, so it should never sit red without anyone knowing
+  push:
+    branches: [main]
 
 jobs:
   checks:

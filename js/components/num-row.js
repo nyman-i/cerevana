@@ -33,7 +33,7 @@ class NumRow extends HTMLElement {
 				<div class="inline-input__outer${a('outer-class') ? ' ' + a('outer-class') : ''}">
 					${label}
 					<span class="inline-input__inner">
-						<input id="${a('input-id')}" type="${a('type', 'number')}"${passthrough} style="width: ${a('width', '5ch')}">${a('suffix')}
+						<input id="${a('input-id')}" type="${a('type', 'number')}"${a('type', 'number') === 'number' ? ' inputmode="decimal"' : ''}${passthrough} style="width: ${a('width', '5ch')}">${a('suffix')}
 					</span>
 				</div>
 			</div>`;

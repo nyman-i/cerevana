@@ -44,6 +44,7 @@ export async function storeSession(record) {
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => { db.close(); resolve() }
     tx.onerror = () => { db.close(); reject(tx.error) }
+    tx.onabort = () => { db.close(); reject(tx.error) }
   })
 }
 

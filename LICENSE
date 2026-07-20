@@ -52,8 +52,8 @@ game loop, history, profiles, page controller) is original Cerevana code.
 Bundled third-party assets carry their own licenses: the Space Grotesk,
 Zen Dots, Oxanium, JetBrains Mono and Format 1452 typefaces (all SIL OFL
 1.1, see fonts/); the coolicons UI icon webfont (MIT, see
-fonts/cool/LICENSE-coolicons.txt); the menu background photo by Simon
-Berger (Pexels License, img/menu-bg.jpg); the Cerevana head logo used for
+fonts/cool/LICENSE-coolicons.txt); the menu background photo by Kieren
+Ridley (Pexels License, img/menu-bg.jpg); the Cerevana head logo used for
 the favicon, app/PWA/iOS icons and social-preview image (Canva Content
 License, separate from this repository's CC BY-NC terms); Chart.js with
 date-fns and chartjs-adapter-date-fns (all MIT, vendored in js/lib/, see

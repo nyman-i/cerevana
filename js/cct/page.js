@@ -88,7 +88,12 @@ function registerEventHandlers() {
       if (NUMBER_KEYS.has(key)) {
         if (NULLABLE_KEYS.has(key) && el.value === '') { updateSetting(key, null); return }
         const value = clampNumber(el.value, Number(el.min), Number(el.max))
-        if (value !== null) updateSetting(key, value)
+        if (value === null) return
+        updateSetting(key, value)
+        // keep the interval floor/ceiling from inverting - dragging one past
+        // the other pulls the other along instead of freezing the interval
+        if (key === 'minimumInterval' && value > getSettings().maximumInterval) updateSetting('maximumInterval', value)
+        if (key === 'maximumInterval' && value < getSettings().minimumInterval) updateSetting('minimumInterval', value)
         return
       }
       updateSetting(key, el.value)
@@ -190,16 +195,18 @@ function beginUi() {
   $('cct-result').hidden = true
   $('cct-digit').hidden = presentationMode === 'audio'
   $('cct-hud').hidden = false
-  // the answer grid shows in both input methods (like upstream CCT) -
-  // physical keyboard just keeps the typing input focused as well
-  const keyCount = buildKeypad(arithmeticMode)
-  $('cct-keypad').hidden = false
-  // keypad mode is click-only: no typing input, bigger buttons
-  $('cct-keypad').classList.toggle('cct-keypad--primary', inputMethod === 'keypad')
-  // no digit on screen either - the grid alone fills the frame, so grow more
-  // (but not for multiplication's 36 buttons, which would overflow the screen)
-  $('cct-keypad').classList.toggle('cct-keypad--hero',
-    inputMethod === 'keypad' && presentationMode === 'audio' && keyCount <= 20)
+  // each input method gets exactly one input UI: physical types into the
+  // answer field, on-screen taps the grid (upstream CCT showed both at
+  // once - redundant with a dedicated keypad mode)
+  const keypad = $('cct-keypad')
+  keypad.hidden = inputMethod !== 'keypad'
+  if (inputMethod === 'keypad') {
+    const keyCount = buildKeypad(arithmeticMode)
+    // no digit on screen - the grid alone fills the frame, so grow more
+    // (but not for multiplication's 36 buttons, which would overflow the screen)
+    keypad.classList.toggle('cct-keypad--hero',
+      presentationMode === 'audio' && keyCount <= 20)
+  }
   $('cct-stage').classList.remove('cct-stage--paused')
   const answer = $('cct-answer')
   answer.hidden = inputMethod === 'keypad'
@@ -273,11 +280,8 @@ $('cct-keypad').addEventListener('click', (e) => {
   const btn = e.target.closest('button')
   if (!btn?.dataset.key || !isRunning()) return
   lastKeyBtn = btn
-  const answer = $('cct-answer')
-  answer.value = btn.dataset.key
+  $('cct-answer').value = btn.dataset.key
   submitAnswer(btn.dataset.key)
-  // in physical mode the click steals focus from the input - hand it back
-  if (!answer.hidden) answer.focus()
 })
 
 $('cct-pause').addEventListener('click', (e) => {

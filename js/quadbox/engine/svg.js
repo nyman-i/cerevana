@@ -2,7 +2,10 @@
  * Derived from Quad Box - https://github.com/soamsy/quad-box
  * Copyright (c) 2025 The Quad Box Project Contributors
  * MIT License - see js/quadbox/LICENSE
- * Promoted from src/lib/svg.js at upstream commit 83a9718. Changes: import specifiers given .js extensions (buildless ESM).
+ * Promoted from src/lib/svg.js at upstream commit 83a9718. Changes: import
+ * specifiers given .js extensions (buildless ESM); delete() read the object
+ * URL before removing it from the map instead of after (Map#delete returns
+ * a boolean, not the value, so the old order always revoked undefined).
  */
 import { LIGHT_PALETTE, DARK_PALETTE } from "./constants.js"
 import { createArtSvg } from "./generative.js"
@@ -10,7 +13,7 @@ import { createGradient } from "./gradient.js"
 import { createVoronoiSvg } from "./voronoi.js"
 import shapeSvgPool from "./shapeSvgPool.js"
 
-class SvgLruCache {
+export class SvgLruCache {
   constructor(maxSize) {
     this.maxSize = maxSize
     this.cache = new Map()
@@ -44,11 +47,11 @@ class SvgLruCache {
   }
 
   delete(id) {
-    const url = this.cache.delete(id)
+    const url = this.cache.get(id)
     if (url) {
-      URL.revokeObjectURL(this.cache.get(id))
+      URL.revokeObjectURL(url)
     }
-    return url
+    return this.cache.delete(id)
   }
 
   size() {

@@ -66,6 +66,9 @@ export const divisorOk = (a, x) => {
 // defaults to n), since that's the number it's actually scored against;
 // before trial n, divide numbers are just nonzero.
 export const genArith = (numbers, n, t, ops, maxNumber, negatives, back = n) => {
+  // ponytail: maxNumber<=0 (corrupted/imported settings, no UI path) would make
+  // every draw 0 and hang the 'divide' retry loop below forever - clamp once here.
+  maxNumber = Math.max(1, maxNumber)
   const op = ops[Math.floor(Math.random() * ops.length)]
   const min = negatives ? -maxNumber : 0
   const range = () => min + Math.floor(Math.random() * (maxNumber - min + 1))

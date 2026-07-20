@@ -4,8 +4,6 @@ const profileList = document.getElementById('profile-list');
 const profileDropdown = document.querySelector('.profile-dropdown');
 const profilePlus = document.getElementById('profile-plus');
 const profileShare = document.getElementById('profile-share');
-const profileImport = document.getElementById('profile-import');
-const profileImportInput = document.getElementById('profile-import-input');
 const profileCopied = document.getElementById('profile-copied');
 
 class ProfileStore {
@@ -191,7 +189,9 @@ class ProfileStore {
         const encodedSaveData = encodeURIComponent(savedataString);
         const encodedId = encodeURIComponent(this.generateShortId(10));
         const encodedName = encodeURIComponent(this.current().name);
-        const url = `${window.location.origin}${window.location.pathname}?id=${encodedId}&name=${encodedName}&savedata=${encodedSaveData}`;
+        // always the public origin, even when running locally - a recipient
+        // opens the link on cerevana.com, not the sharer's localhost
+        const url = `https://cerevana.com${window.location.pathname}?id=${encodedId}&name=${encodedName}&savedata=${encodedSaveData}`;
         return url;
     }
 
@@ -327,40 +327,6 @@ profileShare.addEventListener('click', e => {
     const url = PROFILE_STORE.generateUrl();
     navigator.clipboard.writeText(url);
     profileToast('URL copied to clipboard');
-});
-
-// ponytail: inline input instead of prompt()/alert() - Chrome suppresses those in --app windows
-profileImport.addEventListener('click', e => {
-    const visible = profileImportInput.style.display === 'block';
-    profileImportInput.style.display = visible ? 'none' : 'block';
-    if (!visible) {
-        profileImportInput.value = '';
-        profileImportInput.focus();
-    }
-});
-
-function tryImportUrl(showError) {
-    let imported = false;
-    try {
-        imported = PROFILE_STORE.importFromUrl(new URL(profileImportInput.value.trim()));
-    } catch (err) {
-        // fall through
-    }
-    if (imported) {
-        profileImportInput.style.display = 'none';
-        profileToast('Profile imported');
-    } else if (showError) {
-        profileToast('Not a valid share URL (or profile already exists)');
-    }
-}
-
-profileImportInput.addEventListener('input', () => tryImportUrl(false));
-profileImportInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-        tryImportUrl(true);
-    } else if (e.key === 'Escape') {
-        profileImportInput.style.display = 'none';
-    }
 });
 
 function debounce(func, delay) {

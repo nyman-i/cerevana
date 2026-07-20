@@ -35,6 +35,11 @@ mock.module(new URL('../js/quadbox/engine/utils.js', import.meta.url).href, {
   },
 })
 
+// svg.js's shapeSvgPool import touches `document` at module load (browser-only)
+mock.module(new URL('../js/quadbox/engine/shapeSvgPool.js', import.meta.url).href, {
+  defaultExport: { getShapeSvg: () => ({}), hasShape: () => false, getAllShapeIds: () => [], isLoaded: () => false },
+})
+
 const { NBackGame } = await import('../js/quadbox/engine/nbackGame.js')
 
 const mockGameSettings = {
@@ -252,4 +257,47 @@ test('generateMatches: generates some true matches', () => {
     false, false, false, false, false, false, false, false, false, false, false, false, false,
   ])
   assert.equal(matches.length, 20)
+})
+
+test('migrateToV2: v1 settings missing gameSettings migrates instead of throwing', async () => {
+  const { migrateToV2 } = await import('../js/quadbox/engine/migrations/v2.js')
+  const result = migrateToV2({ version: 'v1' })
+  assert.equal(result.version, 'v2')
+  assert.deepEqual(result.gameSettings, {})
+})
+
+test('decideProgression: streaks split on variantKey, not just title+nBack', async () => {
+  const { decideProgression } = await import('../js/quadbox/engine/autoProgression.js')
+  const settings = { successCriteria: 80, failureCriteria: 50, successComboRequired: 3, failureComboRequired: 3 }
+  const variantKey = (g) => g.configSnapshot?.grid ?? ''
+  const win = (grid) => ({ status: 'completed', title: 'custom', nBack: 4, total: { percent: 0.9 }, configSnapshot: { grid } })
+
+  // 1 win at 3D + 2 wins at 2D used to advance the 3D track; must not anymore
+  const mixed = [win('rotate3D'), win('none'), win('none')]
+  assert.equal(decideProgression(mixed, mixed[0], settings, variantKey), null)
+  // 3 wins on the same variant still advance
+  const pure = [win('none'), win('none'), win('none')]
+  assert.equal(decideProgression(pure, pure[0], settings, variantKey), 'advance')
+  // a tombstone from another variant doesn't cut this variant's streak
+  const other = [{ ...win('rotate3D'), status: 'tombstone' }, ...pure]
+  assert.equal(decideProgression(other, pure[0], settings, variantKey), 'advance')
+  // ...but a same-variant tombstone does
+  const cut = [{ ...win('none'), status: 'tombstone' }, ...pure]
+  assert.equal(decideProgression(cut, pure[0], settings, variantKey), null)
+})
+
+test('SvgLruCache: delete() revokes the actual object URL, not undefined', async () => {
+  const { SvgLruCache } = await import('../js/quadbox/engine/svg.js')
+  const revoked = []
+  const originalRevoke = URL.revokeObjectURL
+  URL.revokeObjectURL = (url) => revoked.push(url)
+  try {
+    const cache = new SvgLruCache(1)
+    cache.store('a', '<svg></svg>')
+    const urlA = cache.get('a')
+    cache.store('b', '<svg></svg>') // evicts 'a' (maxSize 1)
+    assert.deepEqual(revoked, [urlA])
+  } finally {
+    URL.revokeObjectURL = originalRevoke
+  }
 })

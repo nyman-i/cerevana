@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Cerevana - N-Back Training</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 		<meta name="theme-color" content="#7cb6a8" />
 		<meta name="description" content="One n-back, best of both worlds - the modern Quad Box protocol and classic Brain Workshop modes merged. Trains working memory.">
 		<link rel="canonical" href="https://cerevana.com/nback.html">
@@ -42,7 +42,7 @@
 		<div class="main-view">
 
 			<corner-panel name="settings" side="left">
-						<profile-picker></profile-picker>
+						<profile-picker share></profile-picker>
 						<goal-targets daily-id="qb-dailygoal" weekly-id="qb-weeklygoal"></goal-targets>
 						<div class="mb-05 panel-heading">Game Mode</div>
 						<div class="mb-2">
@@ -71,7 +71,8 @@
 						</div>
 						<select-row select-id="qb-grid" label="Grid" row-id="qb-row-grid"
 							options="rotate3D=3D (rotating cube)|static2D=2D (static)"></select-row>
-						<div class="mb-05 panel-heading">Session</div>
+						<details class="panel-section" open>
+						<summary class="panel-heading">Session</summary>
 						<num-row input-id="qb-nback" label="N-Back" min="1" max="12" step="1" width="5ch"></num-row>
 						<switch-row input-id="qb-variable" label="Variable N-Back" row-id="qb-row-variable" tooltip="Makes N change|randomly each trial." tooltip-side="right"></switch-row>
 						<num-row input-id="qb-trialtime" label="Trial time" min="1000" max="5000" step="100" width="7ch" suffix="ms" row-id="qb-row-trialtime"></num-row>
@@ -109,7 +110,9 @@
 							</div>
 							<div id="qb-chain-rows"></div>
 						</div>
-						<div class="mb-05 panel-heading" id="qb-stimuli-heading">Stimuli</div>
+						</details>
+						<details class="panel-section" id="qb-sec-stimuli">
+						<summary class="panel-heading">Stimuli</summary>
 						<div id="qb-stimuli-rows">
 							<div class="mb-1" id="qb-row-audio">
 								<div class="ctrl__inner">
@@ -176,32 +179,35 @@
 								</div>
 							</div>
 						</div>
-						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Display</div>
+						</details>
+						<details class="panel-section">
+						<summary class="panel-heading">Display</summary>
 						<select-row select-id="qb-feedback" label="Feedback"
 							options="show=Show|hide=Hide|hide-counter=Hide counter only"></select-row>
 						<num-row input-id="qb-rotation" label="Rotation speed" min="0" max="999" step="1" width="5ch" row-id="qb-row-rotation"></num-row>
 						<switch-row input-id="qb-lattice-theme" label="Lattice matches theme" tooltip="Tint the cube's grid|with your accent|colour instead of|the original grey." tooltip-side="right"></switch-row>
+						<switch-row input-id="qb-haptics" label="Vibration" row-id="qb-row-haptics" tooltip="Short buzz on every|match-key press.|Phones only." tooltip-side="right"></switch-row>
 						<select-row select-id="qb-voice" label="Voice"
 							options="recorded=Cerevana (recorded)|browser=Browser voice"
 							tooltip="Audio stimuli:|bundled recordings|or your browser's|built-in voice." tooltip-side="right"></select-row>
-						<div id="qb-progression-rows">
-							<hr class="divider"/>
-							<div class="mb-05 panel-heading">Progression</div>
+						</details>
+						<details class="panel-section" id="qb-progression-rows">
+							<summary class="panel-heading">Progression</summary>
 							<switch-row input-id="qb-autoprog" label="Auto Progression" tooltip="Raises or lowers N|based on your|recent scores." tooltip-side="right"></switch-row>
 							<num-row input-id="qb-advance" label="Advance at" min="0" max="100" step="1" width="5ch" suffix="%"></num-row>
 							<num-row input-id="qb-winafter" label="Win after" min="1" max="9" step="1" width="4ch" suffix="in a row"></num-row>
 							<num-row input-id="qb-dropbelow" label="Drop below" min="0" max="100" step="1" width="5ch" suffix="%"></num-row>
 							<num-row input-id="qb-loseafter" label="Lose after" min="1" max="9" step="1" width="4ch" suffix="in a row"></num-row>
-						</div>
-						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Keys</div>
+						</details>
+						<details class="panel-section" id="qb-sec-keys">
+						<summary class="panel-heading">Keys</summary>
 						<num-row input-id="qb-key-position" label="Position" type="text" maxlength="1" width="3ch"></num-row>
 						<num-row input-id="qb-key-color" label="Color" type="text" maxlength="1" width="3ch"></num-row>
 						<num-row input-id="qb-key-shape" label="Shape / Image" type="text" maxlength="1" width="3ch"></num-row>
 						<num-row input-id="qb-key-audio" label="Audio" type="text" maxlength="1" width="3ch"></num-row>
-						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Advanced Modes</div>
+						</details>
+						<details class="panel-section">
+						<summary class="panel-heading">Advanced Modes</summary>
 						<p><strong>Experimental</strong> - these presets are less
 						tested than Dual/Quad/Custom and may be buggy or behave
 						incorrectly.</p>
@@ -247,12 +253,14 @@
 								</div>
 							</div>
 						</div>
-						<hr class="divider"/>
-						<div class="mb-05 panel-heading">Reset</div>
+						</details>
+						<details class="panel-section">
+						<summary class="panel-heading">Reset</summary>
 						<p>Reset settings keeps your history. The full reset erases
 						all N-Back data - irreversible.</p>
 						<div class="mb-1"><button type="button" id="qb-reset-settings">Reset Settings</button></div>
 						<div class="mb-1"><button type="button" id="qb-reset-all" class="delete">Reset N-Back</button></div>
+						</details>
 			</corner-panel>
 
 			<corner-panel name="info" side="left">
@@ -324,20 +332,24 @@
 
 			<div class="overlay"></div>
 
-			<div class="qb-hud-stack">
-				<div class="qb-hud" id="qb-hud"></div>
-				<div class="qb-count" id="qb-count"></div>
-			</div>
+			<div class="qb-hud" id="qb-hud"></div>
 
 			<div id="qb-stage"></div>
 
-			<div class="qb-side qb-side--left" id="qb-keys-left"></div>
-			<div class="qb-side qb-side--right" id="qb-keys-right"></div>
-			<div class="qb-actions">
-				<button type="button" id="qb-start" class="nback__start">START</button>
-				<button type="button" id="qb-next" class="nback__start" hidden>NEXT</button>
+			<!-- desktop: display:contents wrappers, children position themselves;
+			     compact layouts turn this into the bottom control band -->
+			<div class="qb-band">
+				<div class="nback__answer qb-answer" id="qb-answer" hidden>Answer: 0</div>
+				<div class="qb-actions">
+					<button type="button" id="qb-start" class="nback__start">START</button>
+					<button type="button" id="qb-next" class="nback__start" hidden>NEXT</button>
+				</div>
+				<div class="qb-keys" id="qb-keys">
+					<div class="qb-side qb-side--left" id="qb-keys-left"></div>
+					<div class="qb-side qb-side--right" id="qb-keys-right"></div>
+				</div>
+				<div class="qb-pad" id="qb-arith-pad" hidden></div>
 			</div>
-			<div class="nback__answer qb-answer" id="qb-answer" hidden>Answer: 0</div>
 
 		</div>
 

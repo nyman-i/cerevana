@@ -68,10 +68,10 @@ function createWidePremiseHTML(premise, allowReversal=true) {
     }
 
     if (savedata.enableNegation && coinFlip()) {
-        ab, abRev = `<span class="is-negated">${abRev}</span>`, `<span class="is-negated">${ab}</span>`;
+        [ab, abRev] = [`<span class="is-negated">${abRev}</span>`, `<span class="is-negated">${ab}</span>`];
     }
     if (savedata.enableNegation && coinFlip()) {
-        bc, bcRev = `<span class="is-negated">${bcRev}</span>`, `<span class="is-negated">${bc}</span>`;
+        [bc, bcRev] = [`<span class="is-negated">${bcRev}</span>`, `<span class="is-negated">${bc}</span>`];
     }
 
     if (!allowReversal || coinFlip()) {
