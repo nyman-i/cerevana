@@ -710,6 +710,7 @@ function deleteQuestion(i, isRight) {
 
 function renderHQL(didAddSingleQuestion=false) {
     if (didAddSingleQuestion) {
+        historyList.querySelector('.panel-empty')?.remove();
         const index = appState.questions.length - 1;
         const recentQuestion = appState.questions[index];
         const firstChild = historyList.firstElementChild;
@@ -746,9 +747,11 @@ function updateAverage(reverseChronological) {
         return;
     }
     const totalTime = times.reduce((a,b) => a + b, 0);
-    const minutes = Math.floor(totalTime / 60);
-    const seconds = totalTime % 60;
-    totalDisplay.innerHTML = minutes.toFixed(0) + 'm ' + seconds.toFixed(0) + 's';
+    // round before splitting, or 59.5s renders as "0m 60s"
+    const totalRounded = Math.round(totalTime);
+    const minutes = Math.floor(totalRounded / 60);
+    const seconds = totalRounded % 60;
+    totalDisplay.innerHTML = minutes + 'm ' + seconds + 's';
     
     const average =  totalTime / times.length;
     averageDisplay.innerHTML = average.toFixed(1) + 's';
