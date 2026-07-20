@@ -161,6 +161,16 @@ async function main() {
       assert(loaded, 'transfer.html: test-battery list renders after its data/test-battery.md fetch completes')
     })
 
+    await checkPage('stats.html', 'stats.html', async () => {
+      // fresh profile has no history: page.js unhides the empty-state panel
+      // only after loading all three exercises' stores and rendering - so this
+      // waits out the whole async pipeline, not just the static markup
+      const rendered = await waitFor(() => evaluate(browserWs, sessionId, `document.getElementById('stats-combined-empty')?.hidden === false`), { timeout: 5000 })
+      assert(rendered, 'stats.html: combined view renders (empty state shown with no history)')
+      const components = await evaluate(browserWs, sessionId, `!!customElements.get('rrt-graphs') && !!customElements.get('nback-graphs') && !!customElements.get('cct-graphs')`)
+      assert(components, 'stats.html: all three graph components are defined')
+    })
+
     await checkPage('credits.html', 'credits.html', async () => {
       const heading = await evaluate(browserWs, sessionId, `document.querySelector('h1')?.textContent`)
       assert(heading?.trim() === 'CREDITS', 'credits.html: main heading renders')
