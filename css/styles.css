@@ -688,12 +688,6 @@ input[type="number"]::-moz-inner-spin-button {
     border-color: #888;
 }
 
-.ux-customize {
-    display: flex;
-    justify-content: space-around;
-    gap: 1rem;
-}
-
 .divider {
     height: 1px; /* Line thickness */
     background-color: #ddd; /* Light gray color */
