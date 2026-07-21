@@ -25,6 +25,7 @@
 		<link rel="stylesheet" href="fonts/cool/coolicons.css">
 		<link rel="stylesheet" href="css/styles.css">
 		<script src="js/shared/boot.js"></script>
+		<script src="js/components/help-tip.js"></script>
 	</head>
 	<body class="menu-mode">
 
@@ -62,10 +63,7 @@
 				<section id="transfer-chart-section" class="transfer-section">
 					<div class="panel-heading">Progress &amp; training time over time</div>
 					<div class="transfer-chart-picker">
-						<div class="inline-input__outer transfer-chart-add">
-							Add to graph
-							<span class="inline-input__inner"><select id="transfer-chart-add"></select></span>
-						</div>
+						<button type="button" id="transfer-chart-add-open" class="transfer-chart-add-open">Add to graph</button>
 						<div id="transfer-chart-lines" class="transfer-chart-lines"></div>
 					</div>
 					<div id="transfer-chart-empty" class="panel-empty">Pick a test score or a training method above to plot it.</div>
@@ -82,36 +80,44 @@
 			<div class="test-popup-content">
 				<button type="button" id="test-popup-close" class="test-popup-close" aria-label="Close">&times;</button>
 				<h3 id="test-popup-title" class="test-card__title"></h3>
-				<div id="test-popup-metrics" class="test-popup-metrics"></div>
-				<div class="test-popup-columns">
-					<div>
-						<div id="test-popup-meta" class="test-card__meta"></div>
-						<p id="test-popup-summary" class="test-card__summary-text"></p>
-					</div>
-					<div>
-						<div id="test-popup-history" class="test-card__history"></div>
-						<div id="test-popup-delta" class="test-popup-delta"></div>
-					</div>
+				<div id="test-popup-meta" class="test-card__meta"></div>
+				<p id="test-popup-summary" class="test-card__summary-text"></p>
+
+				<div id="test-popup-history-section" class="test-popup-section" hidden>
+					<div class="panel-heading test-popup-section__heading">History</div>
+					<div id="test-popup-history" class="test-card__history"></div>
+					<div id="test-popup-delta" class="test-popup-delta"></div>
 				</div>
-				<form id="test-popup-log" class="test-card__log">
-					<div class="inline-input__outer">
-						Date
-						<span class="inline-input__inner"><input type="date" id="test-popup-date" required></span>
-					</div>
-					<div class="inline-input__outer" id="test-popup-variant-field" hidden>
-						Variant
-						<span class="inline-input__inner"><select id="test-popup-variant"></select></span>
-					</div>
-					<div class="inline-input__outer">
-						Score
-						<span class="inline-input__inner"><input type="number" step="any" id="test-popup-score" required></span>
-					</div>
-					<div class="inline-input__outer">
-						Note <span class="test-card__note-hint">(optional)</span>
-						<span class="inline-input__inner"><input type="text" id="test-popup-note" placeholder="e.g. subtest breakdown"></span>
-					</div>
-					<button type="submit">Log score</button>
-				</form>
+
+				<div class="test-popup-section">
+					<div class="panel-heading test-popup-section__heading">New entry</div>
+					<form id="test-popup-log" class="test-card__log">
+						<div class="inline-input__outer">
+							Date
+							<span class="inline-input__inner"><input type="date" id="test-popup-date" required></span>
+						</div>
+						<div class="inline-input__outer" id="test-popup-variant-field" hidden>
+							Variant
+							<span class="inline-input__inner"><select id="test-popup-variant"></select></span>
+						</div>
+						<div id="test-popup-scores" class="test-popup-scores"></div>
+						<div class="inline-input__outer">
+							Note <span class="test-card__note-hint">(optional)</span>
+							<span class="inline-input__inner"><input type="text" id="test-popup-note" placeholder="e.g. subtest breakdown"></span>
+						</div>
+						<button type="submit" id="test-popup-submit">Log score</button>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div id="chart-add-backdrop" class="test-popup-backdrop"></div>
+		<div id="chart-add-popup" class="test-popup">
+			<div class="test-popup-content">
+				<button type="button" id="chart-add-close" class="test-popup-close" aria-label="Close">&times;</button>
+				<h3 class="test-card__title">Add to graph</h3>
+				<div id="chart-add-options" class="chart-add-options"></div>
+				<button type="button" id="transfer-chart-add-btn" class="chart-add-submit">Add selected</button>
 			</div>
 		</div>
 
