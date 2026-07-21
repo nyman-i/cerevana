@@ -10,5 +10,4 @@ Dockerfile
 .dockerignore
 fly.toml
 logos
-data/image*.png
 rails-*.png
