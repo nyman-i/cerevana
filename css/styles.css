@@ -688,12 +688,6 @@ input[type="number"]::-moz-inner-spin-button {
     border-color: #888;
 }
 
-.ux-customize {
-    display: flex;
-    justify-content: space-around;
-    gap: 1rem;
-}
-
 .divider {
     height: 1px; /* Line thickness */
     background-color: #ddd; /* Light gray color */
@@ -850,15 +844,54 @@ input[type="number"]::-moz-inner-spin-button {
     overflow: hidden;
 }
 
+/* RRT's stage: the nav is an absolute overlay (63px desktop / 45px mobile),
+   so a tall question centered against the full viewport slides under it and
+   clips. Clear the nav with top padding, keep centering only while the
+   content fits (safe), and fall back to scrolling the stage instead of
+   clipping it. Scoped to RRT's #game-area - N-Back/CCT boards size
+   themselves to fit and the menu pages scroll in their own column.
+   :where() keeps specificity at a bare .main-view so the short-viewport
+   media block below can still override alignment and padding. */
+.main-view:where(:has(#game-area)) {
+    place-content: safe center space-evenly;
+    overflow: hidden auto;
+    padding: 4.5rem 0 0.5rem;
+}
+
 .display_text {
-    max-height: calc(100svh - 260px);
+    /* 385px = nav clearance (72) + the label/buttons/score chrome inside the
+       game area (~305) + breathing room - undersizing this let a tall
+       question push the whole stage past the viewport before the premise
+       list's own scrollbar kicked in. The floor keeps a usable list on very
+       short viewports, where the stage scrolls instead. */
+    max-height: max(calc(100svh - 385px), 14rem);
     min-width: 270px;
     line-height: 1.5;
     padding: 0.5rem 0.75rem 0 0.125rem;
     overflow: hidden auto;
 }
 
-.display_text.big-question .formatted-premise {
+/* Density steps for tall questions (classes set from the premise count in
+   js/rrt/index.js): from 8 premises tighten the leading and spacing, and
+   past 12 also step the type down - so the conclusion still lands on screen
+   instead of scrolling away with the premises. */
+.display_text.dense-question {
+    line-height: 1.4;
+}
+
+.display_text.dense-question .formatted-premise,
+.display_text.dense-question .formatted-operation {
+    font-size: 0.92em;
+    margin-bottom: 0.35rem;
+}
+
+.display_text.big-question {
+    line-height: 1.3;
+}
+
+.display_text.big-question .formatted-premise,
+.display_text.big-question .formatted-operation {
+    font-size: 0.85em;
     margin-bottom: 0.2rem;
 }
 
@@ -2348,6 +2381,7 @@ table.distinction {
         box-shadow: none;
         place-content: start space-evenly;
         overflow-y: auto;
+        padding: 0; /* .game-area's own margin-top clears the nav here - keeping the base rule's stage padding too would double it */
     }
     .game-area {
         margin-top: 4rem;
@@ -2885,6 +2919,10 @@ body.menu-mode .main-view {
     .studies-filters {
         grid-template-columns: 1fr 1fr;
     }
+
+    .studies-filters [type="search"] {
+        grid-column: 1 / -1;
+    }
 }
 
 .studies-count {
@@ -2895,13 +2933,17 @@ body.menu-mode .main-view {
 
 .studies-list {
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 0.75rem;
     width: 100%;
     padding-bottom: 2rem;
 }
 
 .study-card {
+    flex: 1 1 30rem;
+    box-sizing: border-box;
+    min-width: 0;
     background-color: var(--background-color);
     border: 1px solid #333;
     box-shadow: 0 1px 10px 5px #0004;
@@ -2911,16 +2953,49 @@ body.menu-mode .main-view {
     gap: 0.5rem;
 }
 
+/* Studies of Cerevana's own exercises (RRT / N-Back / CCT) carry the same
+   accent stripe .test-card--due uses on transfer.html. */
+.study-card--own {
+    border-left: 4px solid var(--accent-color);
+}
+
+/* Cards with a paper URL are fully clickable (delegated handler in
+   js/studies/page.js) - a small lift + tint signals it on hover. */
+.study-card--link {
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.study-card--link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 14px 5px #0004;
+}
+
 .study-card__title {
     font-size: var(--step-0);
     margin: 0;
     line-height: 1.4;
 }
 
-.study-card__meta {
-    font-size: var(--step--2);
-    letter-spacing: 0.05em;
-    color: var(--preamble-color);
+.study-card__title a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.study-card__title a:hover,
+.study-card__title a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.study-card__ext {
+    color: var(--accent-color);
+}
+
+.study-card__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
 }
 
 .study-card__summary {
@@ -2936,14 +3011,10 @@ body.menu-mode .main-view {
 }
 
 .study-card__figure {
-    max-width: min(100%, 360px);
-    height: auto;
+    max-height: 10rem;
+    width: auto;
+    max-width: 100%;
     border: 1px solid #333;
-}
-
-.studies-empty {
-    font-size: var(--step--1);
-    color: var(--preamble-color);
 }
 
 /* ---- Transfer page (transfer.html) ---- */
@@ -3049,6 +3120,9 @@ body.menu-mode .main-view {
 
 .transfer-category {
     width: 100%;
+    font-family: Oxanium, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
     font-size: var(--step--1);
     margin-top: 1.25rem;
     padding-bottom: 0.25rem;
@@ -3069,11 +3143,14 @@ body.menu-mode .main-view {
    popup just to see where you stand on it. */
 .test-card {
     display: flex;
-    align-items: center;
-    /* wrap, not nowrap: a delta badge + "Retest ready" side by side would
-       otherwise crush the flexible name to zero width in a ~19rem grid cell */
-    flex-wrap: wrap;
-    gap: 0.5rem 0.75rem;
+    /* Column, not a wrapping row: name line on top, badge line beneath, the
+       same geometry whether a card carries zero badges or two - a wrapping
+       row floated the badge beside the name only when it happened to fit,
+       so adjacent cards' names didn't line up. */
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.5rem;
     width: 100%;
     /* Room for a badge line reserved up front, so a card doesn't grow the
        moment a score is logged - and .transfer-list's align-items: stretch
@@ -3104,14 +3181,26 @@ body.menu-mode .main-view {
    .test-card__title once the popup opens) so every card in the grid stays
    the same short height, whatever its name length. */
 .test-card__name {
-    flex: 1 1 auto;
-    min-width: 0;
+    width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.test-card__badge {
+/* Always rendered, even empty on an untested card - reserving the row's
+   height keeps every card's name on the same line as its row neighbors'.
+   1.75rem ~ a real badge's rendered height (--step--2 line + 0.2rem pads),
+   so a card with badges and one without center to the same name position. */
+.test-card__badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    min-height: 1.75rem;
+}
+
+.test-card__badge,
+.study-card__badge {
     flex: 0 0 auto;
     font-family: "JetBrains Mono", monospace;
     font-size: var(--step--2);
@@ -3122,7 +3211,8 @@ body.menu-mode .main-view {
 
 .test-card__badge--right { color: var(--correct-color); }
 .test-card__badge--wrong { color: var(--wrong-color); }
-.test-card__badge--due { color: var(--accent-color); }
+.test-card__badge--due,
+.study-card__badge--accent { color: var(--accent-color); }
 .test-card__badge-warn { flex: 0 0 auto; cursor: help; }
 
 .test-card__title {
@@ -3163,9 +3253,9 @@ body.menu-mode .main-view {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.75rem 1rem;
+    gap: 0.85rem 1.5rem;
     background-color: var(--big-input-bg-color);
-    padding: 0.75rem 1rem;
+    padding: 1rem 1.25rem;
 }
 
 .test-card__log .inline-input__outer {
@@ -3175,22 +3265,33 @@ body.menu-mode .main-view {
     width: fit-content;
 }
 
-/* Desktop widths for the log form's inputs (mobile stretches them full-width) */
-#test-popup-note { width: 16ch; }
+/* The note row soaks up whatever's left of its line, so the free-text field
+   gets real room and the submit button lands at the line's right edge. */
+.test-card__log .inline-input__outer:has(#test-popup-note) { flex: 1 1 auto; }
+.test-card__log .inline-input__outer:has(#test-popup-note) .inline-input__inner { flex: 1; }
+#test-popup-note { width: 100%; }
+
+#test-popup-submit {
+    margin-left: auto;
+    padding: 0.5rem 1.5rem;
+}
 
 /* One row per metric (label + its own number input), a stable list that
    fills the same shape whether a test has one metric or several - filling
-   in five WAIS-IV Digit Span rows never means clicking between tabs. */
+   in five WAIS-IV Digit Span rows never means clicking between tabs.
+   A content-hugging grid, so every input sits right after its label (same
+   look as the Date row) and multi-metric inputs line up in one column just
+   past the longest label instead of raggedly trailing each name. */
 .test-popup-scores {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    width: 100%;
+    display: grid;
+    grid-template-columns: max-content max-content;
+    align-items: center;
+    gap: 0.6rem 1rem;
+    width: 100%; /* still claims its own line in the flex-wrap form */
 }
 
 .test-popup-scores .inline-input__outer {
-    width: 100%;
-    justify-content: space-between;
+    display: contents; /* label and input become the grid's two cells */
 }
 
 .test-popup-scores input[type="number"] {
@@ -3210,8 +3311,10 @@ body.menu-mode .main-view {
 /* A metric that's a sub-part of an earlier row in the same list (Subgroup in
    the catalog, e.g. Understand Myself's Intellect/Aesthetics under its
    Openness score) - indented with a connecting rule so it reads as nested
-   under that row, not a sibling metric of its own. */
-.test-popup-scores__row--sub {
+   under that row, not a sibling metric of its own. On the label cell, not
+   the row: the row is display: contents (paints nothing), and the input
+   stays in the shared aligned column. */
+.test-popup-scores__row--sub .test-popup-scores__label {
     padding-left: 1.25rem;
     border-left: 2px solid #333;
     margin-left: 0.25rem;
@@ -3291,7 +3394,7 @@ body.menu-mode .main-view {
 .test-card__history-delete {
     background: none;
     color: var(--preamble-color);
-    padding: 0 0.25rem;
+    padding: 0.25rem 0.5rem;
     line-height: 1;
 }
 
@@ -3461,6 +3564,10 @@ body.menu-mode .main-view {
     cursor: pointer;
 }
 
+.chart-add-option input {
+    accent-color: var(--accent-color); /* native grey checkboxes clash with the themed controls everywhere else */
+}
+
 .chart-add-option:has(input:disabled) {
     color: var(--preamble-color);
     cursor: not-allowed;
@@ -3539,8 +3646,15 @@ body.menu-mode .main-view {
     }
     /* Label (name + tooltip + badge) above its input, both full-width -
        side by side here squeezes the input down to whatever's left over
-       after the label wraps its own badge onto a second line. */
+       after the label wraps its own badge onto a second line. (Back from
+       the desktop grid/display: contents layout to stacked flex rows.) */
+    .test-popup-scores {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
     .test-popup-scores .inline-input__outer {
+        display: flex;
         flex-direction: column;
         align-items: stretch;
         gap: 0.35rem;
@@ -3574,8 +3688,7 @@ body.menu-mode .main-view {
         min-width: 0;
     }
     .test-card__log .inline-input__inner > input,
-    .test-card__log .inline-input__inner > select,
-    #test-popup-note {
+    .test-card__log .inline-input__inner > select {
         width: 100%;
         margin: 0;
         font-size: 16px; /* iOS auto-zoom threshold, not a type-scale step */
@@ -3587,6 +3700,17 @@ body.menu-mode .main-view {
     }
     .test-card__history-delete {
         padding: 0.4rem 0.6rem; /* finger-sized */
+    }
+    /* The desktop badge-room reservation stacks up: single-column here, so
+       20+ untested catalog entries at 6rem each read as a wall of hollow
+       slabs and double the scroll for nothing. The empty badge row goes
+       too - it only exists to align names across a desktop row's cards,
+       and a single column has no row neighbors to align with. */
+    .test-card {
+        min-height: 4rem;
+    }
+    .test-card__badges:empty {
+        display: none;
     }
 }
 
@@ -3600,11 +3724,11 @@ body.menu-mode .main-view {
     margin-bottom: 1.5rem;
 }
 
-.stats-filter input[type="date"] {
-    color-scheme: dark;
+input[type="date"] {
+    color-scheme: dark; /* native calendar icon stays visible on the dark theme */
 }
 
-.light-mode .stats-filter input[type="date"] {
+.light-mode input[type="date"] {
     color-scheme: light;
 }
 

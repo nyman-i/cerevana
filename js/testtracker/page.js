@@ -139,7 +139,13 @@ function badgeHtml(test, records, { showDue = true } = {}) {
     const sign = delta.deltaRaw > 0 ? '+' : ''
     const cls = deltaClass(delta.deltaRaw, test.direction)
     const warn = !delta.reliable ? ' <span class="test-card__badge-warn" title="Under 120 days between tests - see the reliability note">&#9888;</span>' : ''
-    parts.push(`<span class="test-card__badge${cls ? ' test-card__badge--' + cls : ''}">${delta.baseline.score} &rarr; ${delta.latest.score} (${sign}${delta.deltaRaw})</span>${warn}${neutralNote(test)}`)
+    // Surfaced on the badge itself (not just the single-metric overall summary)
+    // so a multi-metric group's per-row "+7" can't silently compare scores from
+    // two non-equivalent administration forms.
+    const variantWarn = delta.baseline.variant && delta.latest.variant && delta.baseline.variant !== delta.latest.variant
+      ? ` <span class="test-card__badge-warn" title="Baseline was ${escapeHtml(delta.baseline.variant)}, latest was ${escapeHtml(delta.latest.variant)} - different forms of the same test aren't guaranteed to be on the same scale">&#9888;</span>`
+      : ''
+    parts.push(`<span class="test-card__badge${cls ? ' test-card__badge--' + cls : ''}">${delta.baseline.score} &rarr; ${delta.latest.score} (${sign}${delta.deltaRaw})</span>${warn}${variantWarn}${neutralNote(test)}`)
   }
   if (showDue && isDueForRetest(records)) parts.push(`<span class="test-card__badge test-card__badge--due">&#9200; Retest ready</span>`)
   return parts.join(' ')
@@ -189,7 +195,7 @@ function testCardHtml(name, children, byTestId) {
     const due = isDueForRetest(records)
     return `<button type="button" class="test-card${due ? ' test-card--due' : ''}" data-test-id="${test.id}" title="${escapeHtml(test.name)}">
       <span class="test-card__name">${escapeHtml(test.name)}</span>
-      ${badgeHtml(test, records)}
+      <span class="test-card__badges">${badgeHtml(test, records)}</span>
     </button>`
   }
   const due = children.some(c => isDueForRetest(byTestId.get(c.id)))
@@ -211,7 +217,7 @@ function testCardHtml(name, children, byTestId) {
   ].filter(Boolean).join(' ')
   return `<button type="button" class="test-card${due ? ' test-card--due' : ''}" data-test-id="${children[0].id}" title="${escapeHtml(name)}">
     <span class="test-card__name">${escapeHtml(name)}</span>
-    ${badge}
+    <span class="test-card__badges">${badge}</span>
   </button>`
 }
 
@@ -394,6 +400,7 @@ function renderLinePicker(tests, scores) {
   }).join('')
 
   chartAddOptions.innerHTML = `${trainingChecks ? `<div class="panel-heading test-popup-section__heading">Training time</div>${trainingChecks}` : ''}${testGroups}`
+  chartAddBtn.disabled = true // a freshly rendered list has nothing checked - the change listener re-enables
 
   const metricChips = [...chartSelection.metrics].map(id => {
     const test = tests.find(t => t.id === id)
@@ -452,7 +459,7 @@ async function renderChart() {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
-        x: { type: 'time', time: { minUnit: 'day' }, ticks: { color: fg }, grid: { color: '#4444' } }, // minUnit: a single logged score otherwise collapses the axis to millisecond ticks
+        x: { type: 'time', time: { minUnit: 'day' }, ticks: { color: fg, maxTicksLimit: 8, maxRotation: 0 }, grid: { color: '#4444' } }, // minUnit: a single logged score otherwise collapses the axis to millisecond ticks; capped horizontal ticks: autoskip alone crams in ~40 rotated date labels
         y: { display: scoreDatasets.length > 0, position: 'left', title: { display: true, text: 'score', color: fg }, ticks: { color: fg }, grid: { color: '#4444' } },
         y1: { display: trainingDatasets.length > 0, position: 'right', title: { display: true, text: 'training time', color: fg }, ticks: { color: fg, callback: dedupedDuration }, grid: { drawOnChartArea: false } },
       },
@@ -610,6 +617,10 @@ chartAddOpenBtn.addEventListener('click', () => {
 })
 chartAddClose.addEventListener('click', closeChartAddPopup)
 chartAddBackdrop.addEventListener('click', closeChartAddPopup)
+
+chartAddOptions.addEventListener('change', () => {
+  chartAddBtn.disabled = !chartAddOptions.querySelector('input:checked')
+})
 
 chartAddBtn.addEventListener('click', () => {
   for (const cb of chartAddOptions.querySelectorAll('input[type="checkbox"]:checked')) {

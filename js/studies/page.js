@@ -14,7 +14,7 @@ const boldToHtml = s => escapeHtml(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</str
 
 // Category display order; also drives the filter dropdown. Any category a study
 // resolves to must appear here (else it sorts to the end of the dropdown).
-const CATEGORY_ORDER = ['Relational reasoning', 'Working memory', '3D MOT', 'Cognitive control', 'Brain endurance', 'Cognitive priming', 'Posner task', 'UFOV', 'Other'];
+const CATEGORY_ORDER = ['Relational reasoning', 'Working memory', 'Cognitive control', '3D MOT', 'Brain endurance', 'Cognitive priming', 'Posner task', 'UFOV', 'Other'];
 
 // Categories that map to one of Cerevana's own exercises (RRT, N-Back, CCT) sort first.
 const OWN_EXERCISE_CATEGORIES = new Set(['Relational reasoning', 'Working memory', 'Cognitive control']);
@@ -69,25 +69,27 @@ function parseStudies(md) {
         study.summary = study.summary.join(' ');
         study.category = deriveCategory(study.title + ' ' + study.summary);
         return study;
-    }).sort((a, b) => OWN_EXERCISE_CATEGORIES.has(b.category) - OWN_EXERCISE_CATEGORIES.has(a.category));
+    });
 }
 
 function cardHtml(study) {
-    const meta = [
-        study.sampleSize !== null ? 'n=' + study.sampleSize + (study.sampleNote ? ' ' + escapeHtml(study.sampleNote) : '') : null,
-        study.control ? study.control + ' control' + (study.controlDetail ? ' - ' + escapeHtml(study.controlDetail) : '') : null,
-        study.category,
-    ].filter(Boolean).join(' &middot; ');
+    const badges = [
+        study.sampleSize !== null ? `<span class="study-card__badge">n=${study.sampleSize}${study.sampleNote ? ' ' + escapeHtml(study.sampleNote) : ''}</span>` : null,
+        study.control ? `<span class="study-card__badge${study.control === 'active' ? ' study-card__badge--accent' : ''}"${study.controlDetail ? ` title="${escapeHtml(study.controlDetail)}"` : ''}>${study.control} control</span>` : null,
+    ].filter(Boolean).join('');
     const title = study.url
-        ? `<a href="${escapeHtml(study.url)}" target="_blank" rel="noopener">${escapeHtml(study.title)}</a>`
+        ? `<a href="${escapeHtml(study.url)}" target="_blank" rel="noopener">${escapeHtml(study.title)} <span class="study-card__ext">&#8599;</span></a>`
         : escapeHtml(study.title);
     const figures = study.images.length
         ? `<div class="study-card__figures">${study.images.map(img =>
-            `<img class="study-card__figure" src="${escapeHtml(img.src)}" alt="${escapeHtml(img.alt)}" loading="lazy">`).join('')}</div>`
+            `<a href="${escapeHtml(img.src)}" target="_blank" rel="noopener"><img class="study-card__figure" src="${escapeHtml(img.src)}" alt="${escapeHtml(img.alt)}" loading="lazy"></a>`).join('')}</div>`
         : '';
-    return `<article class="study-card">
+    const classes = 'study-card'
+        + (OWN_EXERCISE_CATEGORIES.has(study.category) ? ' study-card--own' : '')
+        + (study.url ? ' study-card--link' : '');
+    return `<article class="${classes}"${study.url ? ` data-url="${escapeHtml(study.url)}"` : ''}>
         <h2 class="study-card__title">${title}</h2>
-        <div class="study-card__meta">${meta}</div>
+        ${badges ? `<div class="study-card__badges">${badges}</div>` : ''}
         ${study.summary ? `<p class="study-card__summary">${boldToHtml(study.summary)}</p>` : ''}
         ${figures}
     </article>`;
@@ -100,10 +102,27 @@ function render() {
         && (categoryEl.value === 'all' || s.category === categoryEl.value)
         && (controlEl.value === 'all' || s.control === controlEl.value));
     countEl.textContent = `${shown.length} of ${studies.length} studies`;
+    const byCategory = new Map();
+    for (const s of shown) {
+        if (!byCategory.has(s.category)) byCategory.set(s.category, []);
+        byCategory.get(s.category).push(s);
+    }
+    const ordered = CATEGORY_ORDER.filter(c => byCategory.has(c))
+        .concat([...byCategory.keys()].filter(c => !CATEGORY_ORDER.includes(c)));
     listEl.innerHTML = shown.length
-        ? shown.map(cardHtml).join('')
-        : '<p class="studies-empty">No studies match.</p>';
+        ? ordered.map(cat =>
+            `<div class="panel-heading transfer-category">${escapeHtml(cat)} <span class="studies-count">${byCategory.get(cat).length}</span></div>`
+            + byCategory.get(cat).map(cardHtml).join('')).join('')
+        : '<p class="panel-empty">No studies match.</p>';
 }
+
+// Whole card opens the paper; real links inside (title, figures) and text
+// selection keep their native behavior.
+listEl.addEventListener('click', e => {
+    const card = e.target.closest('.study-card--link');
+    if (!card || e.target.closest('a') || getSelection().toString()) return;
+    window.open(card.dataset.url, '_blank', 'noopener');
+});
 
 searchEl.addEventListener('input', render);
 categoryEl.addEventListener('change', render);
