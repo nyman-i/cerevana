@@ -530,8 +530,7 @@ const syncPanel = () => {
 
   // visibility rules (GameSettings.svelte conditions)
   $('qb-row-variable').hidden = isTally || isJaeggi || !!gs.crab
-  $('qb-row-matchchance').hidden = isJaeggi
-  $('qb-row-interference').hidden = isJaeggi
+  $('qb-row-difficulty').hidden = isJaeggi
   $('qb-row-trialtime').hidden = !('trialTime' in gs)
   $('qb-row-grid').hidden = mode === 'vtally'
   $('qb-row-rotation').hidden = mode === 'vtally'
@@ -592,9 +591,13 @@ $('qb-reset-settings').addEventListener('click', () => {
 })
 
 $('qb-reset-all').addEventListener('click', async () => {
-  if (!confirm('Erase ALL Quad Box data (settings and game history)? This cannot be undone.')) return
+  if (!confirm('Erase ALL Quad Box data (profiles, settings and game history)? This cannot be undone.')) return
   await deleteDB()
   resetSettings()
+  // after resetSettings: its notify re-persists the profile list, so the
+  // removal has to come last or the old profiles survive the reload
+  localStorage.removeItem('sllgms-v3-nback-profiles')
+  localStorage.removeItem('sllgms-v3-nback-selected-profile')
   location.reload()
 })
 
@@ -647,8 +650,9 @@ const renderGames = async () => {
     const time = g.total?.averageTrialTime
       ? `${fmtElapsed(g.elapsedSeconds)} | ${(g.total.averageTrialTime / 1000).toFixed(2)}s/t`
       : fmtElapsed(g.elapsedSeconds)
-    return `<div class="hqli"><div class="qb-hist-card">
-      <div><strong>${name}</strong> ${total}</div>
+    const stripe = g.total?.possible > 0 ? ` style="border-left: 4px solid ${tierColor(g.total.percent)}"` : ''
+    return `<div class="hqli${g.status === 'cancelled' ? ' hqli--cancelled' : ''}"${stripe}><div class="qb-hist-card">
+      <div class="qb-hist-card__head"><strong>${name}</strong> ${total}</div>
       ${tags ? `<div class="qb-hist-tags">${tags}</div>` : ''}
       <div class="hqli-footer"><span>${date}</span><span>${time}</span></div>
     </div></div>`

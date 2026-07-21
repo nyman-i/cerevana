@@ -229,22 +229,25 @@ test('addScoreMetadata: ncalc is always set for non-tally games, even below the 
   assert.equal(tally.ncalc, undefined, 'tally games still opt out of ncalc entirely')
 })
 
-test('addScoreMetadata: avgReactionMs averaged from recorded reactionTimes, absent otherwise', async () => {
+test('addScoreMetadata: avg/fastest reaction from recorded reactionTimes, absent otherwise', async () => {
   const { addScoreMetadata } = await import('../js/quadbox/engine/gamedb.js')
 
   const withTimes = { nBack: 2, tags: ['position'], scores: { position: { hits: 3, misses: 1 } }, timestamp: 1000, start: 0, trialTime: 2500, completedTrials: 4, reactionTimes: [400, 500, 600] }
   addScoreMetadata(withTimes)
   assert.equal(withTimes.avgReactionMs, 500)
+  assert.equal(withTimes.fastestReactionMs, 400)
 
   // legacy record (saved before reaction times were recorded)
   const legacy = { nBack: 2, tags: ['position'], scores: { position: { hits: 3, misses: 1 } }, timestamp: 1000, start: 0, trialTime: 2500, completedTrials: 4 }
   addScoreMetadata(legacy)
   assert.equal(legacy.avgReactionMs, undefined)
+  assert.equal(legacy.fastestReactionMs, undefined)
 
   // no correct presses -> empty array never stored, but guard against it anyway
   const empty = { nBack: 2, tags: ['position'], scores: { position: { hits: 0, misses: 4 } }, timestamp: 1000, start: 0, trialTime: 2500, completedTrials: 4, reactionTimes: [] }
   addScoreMetadata(empty)
   assert.equal(empty.avgReactionMs, undefined)
+  assert.equal(empty.fastestReactionMs, undefined)
 })
 
 test('generateMatches: generates some true matches', () => {

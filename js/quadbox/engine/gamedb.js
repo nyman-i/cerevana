@@ -251,9 +251,10 @@ export const addScoreMetadata = (game) => {
   }
 
   // correct-press reaction times (recorded by game.js since 2026-07; older
-  // records simply lack the field and get no average)
+  // records simply lack the field and get no avg/fastest)
   if (Array.isArray(game.reactionTimes) && game.reactionTimes.length > 0) {
     game.avgReactionMs = game.reactionTimes.reduce((s, t) => s + t, 0) / game.reactionTimes.length
+    game.fastestReactionMs = Math.min(...game.reactionTimes)
   }
 }
 

@@ -224,9 +224,9 @@ export class QuadBoxGame {
   async endGame(status) {
     if (!this.isPlaying) return
     const gameInfoRecord = { ...this.gameMeta, timestamp: Date.now() }
-    // additive field: correct-press reaction times, for the Reaction Time
-    // graph (addScoreMetadata averages them at read time). Tally modes have
-    // no per-trial presses, so the array simply stays empty there.
+    // additive field: correct-press reaction times, for the Avg/Fastest
+    // Reaction graphs (addScoreMetadata derives both at read time). Tally
+    // modes have no per-trial presses, so the array simply stays empty there.
     if (this.reactionTimes?.length) gameInfoRecord.reactionTimes = this.reactionTimes
     // cleanup/regenerate must run even if persistence below throws (a
     // storage failure must not strand isPlaying=true with the STOP button

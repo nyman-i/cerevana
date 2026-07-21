@@ -1,7 +1,7 @@
 // <nback-graphs> - N-Back's chart views, shared between the game page's
 // graph popup (nback.html) and the stats overview page (stats.html).
 // One dedicated graph per metric (RRT's pattern): Progress (n-back level),
-// Accuracy, Reaction Time and Time Spent. Pure view: callers fetch the
+// Accuracy, Avg/Fastest Reaction and Time Spent. Pure view: callers fetch the
 // records and call update({ records, byDay }). The chart machinery lives in
 // the shared CvMetricGraphs base (js/components/metric-graphs.js); this file
 // only declares N-Back's tabs, metrics and record mapping.
@@ -42,12 +42,14 @@ class NbackGraphs extends CvMetricGraphs {
 		return [
 			{ view: 'progress', label: 'Progress' },
 			{ view: 'accuracy', label: 'Accuracy' },
-			{ view: 'reaction', label: 'Reaction Time' },
+			{ view: 'reaction', label: 'Avg Reaction' },
+			{ view: 'fastest', label: 'Fastest Reaction' },
 			{ view: 'time', label: 'Time Spent' },
 		];
 	}
 
 	metrics() {
+		const noReaction = "No reaction-time data yet - it's recorded for every game from now on.";
 		return {
 			progress: {
 				y: g => g.ncalc,
@@ -66,7 +68,14 @@ class NbackGraphs extends CvMetricGraphs {
 				has: g => typeof g.avgReactionMs === 'number',
 				axis: { title: { display: true, text: 'avg reaction on correct presses (ms)' } },
 				fmt: v => `${Math.round(v)} ms`,
-				empty: "No reaction-time data yet - it's recorded for every game from now on.",
+				empty: noReaction,
+			},
+			fastest: {
+				y: g => g.fastestReactionMs,
+				has: g => typeof g.fastestReactionMs === 'number',
+				axis: { title: { display: true, text: 'fastest reaction on correct presses (ms)' } },
+				fmt: v => `${Math.round(v)} ms`,
+				empty: noReaction,
 			},
 		};
 	}

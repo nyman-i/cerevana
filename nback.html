@@ -81,6 +81,7 @@
 						<switch-row input-id="qb-selfpaced" label="Self-paced" row-id="qb-row-selfpaced" tooltip="No trial clock:|advance with|Enter or the|NEXT button." tooltip-side="right"></switch-row>
 						<num-row input-id="qb-squares" label="Squares" min="2" max="4" step="1" width="4ch" row-id="qb-row-squares"></num-row>
 						<div id="qb-arith-rows" hidden>
+							<div class="mb-05 panel-heading">Arithmetic</div>
 							<switch-row input-id="qb-op-add" label="Addition"></switch-row>
 							<switch-row input-id="qb-op-sub" label="Subtraction"></switch-row>
 							<switch-row input-id="qb-op-mul" label="Multiplication"></switch-row>
@@ -88,9 +89,13 @@
 							<switch-row input-id="qb-negatives" label="Negative numbers"></switch-row>
 							<num-row input-id="qb-maxnumber" label="Max number" min="1" max="99" step="1" width="5ch"></num-row>
 						</div>
-						<num-row input-id="qb-matchchance" label="Match chance" min="5" max="75" step="1" width="5ch" suffix="%" row-id="qb-row-matchchance" tooltip="How often the|n-back stimulus|repeats." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
-						<num-row input-id="qb-interference" label="Interference" min="0" max="75" step="1" width="5ch" suffix="%" row-id="qb-row-interference" tooltip="Odds of repeats|from n&plusmn;1 trials|ago. Raises|difficulty." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
+						<div id="qb-row-difficulty">
+							<div class="mb-05 panel-heading">Difficulty</div>
+							<num-row input-id="qb-matchchance" label="Match chance" min="5" max="75" step="1" width="5ch" suffix="%" tooltip="How often the|n-back stimulus|repeats." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
+							<num-row input-id="qb-interference" label="Interference" min="0" max="75" step="1" width="5ch" suffix="%" tooltip="Odds of repeats|from n&plusmn;1 trials|ago. Raises|difficulty." tooltip-side="right" tooltip-wrap="ctrl"></num-row>
+						</div>
 						<div id="qb-tally-rows" hidden>
+							<div class="mb-05 panel-heading">Tally</div>
 							<div class="mb-1">
 								<div class="ctrl__inner">
 									<div>
@@ -304,17 +309,18 @@
 			</corner-panel>
 
 			<corner-panel name="history" side="right" body-class="hql-frame">
-					<div>Games this month: <span id="qb-hist-count"></span></div>
-					<div>Avg score, last 10: <span id="qb-hist-avg"></span></div>
-					<div>Play time today: <span id="qb-playtime"></span></div>
-					<div>Play time this week: <span id="qb-weektime"></span></div>
-					<div class="ctrl__inner" style="margin: 0.5rem 0;">
+					<div class="stat-row">Games this month <span id="qb-hist-count"></span></div>
+					<div class="stat-row">Avg score, last 10 <span id="qb-hist-avg"></span></div>
+					<div class="stat-row">Play time today <span id="qb-playtime"></span></div>
+					<div class="stat-row">Play time this week <span id="qb-weektime"></span></div>
+					<div class="ctrl__inner">
 						<div>
 							<input hidden id="qb-show-cancelled" type="checkbox">
 							<label class="switch" for="qb-show-cancelled"></label>
 						</div>
 						<label for="qb-show-cancelled">Show cancelled</label>
 					</div>
+					<div class="panel-heading hql-heading">Last 4 weeks</div>
 					<div id="qb-games-empty" class="panel-empty" hidden>No games yet - finish a session and your history appears here.</div>
 					<div id="qb-history-list" class="hql"></div>
 			</corner-panel>
