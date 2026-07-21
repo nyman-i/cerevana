@@ -1,6 +1,7 @@
 // <cct-graphs> - CCT's chart views, shared between the game page's graph
 // popup (cct.html) and the stats overview page (stats.html). One dedicated
-// graph per metric (RRT's pattern): Accuracy, Response Time and Time Spent.
+// graph per metric (RRT's pattern): Accuracy, Avg/Fastest Response, Best
+// Streak, Lowest Interval and Time Spent.
 // Pure view: callers fetch the records and call update({ records, byDay }).
 // The chart machinery lives in the shared CvMetricGraphs base
 // (js/components/metric-graphs.js); this file only declares CCT's tabs,
@@ -30,7 +31,10 @@ class CctGraphs extends CvMetricGraphs {
 	views() {
 		return [
 			{ view: 'accuracy', label: 'Accuracy' },
-			{ view: 'response', label: 'Response Time' },
+			{ view: 'response', label: 'Avg Response' },
+			{ view: 'fastest', label: 'Fastest Response' },
+			{ view: 'streak', label: 'Best Streak' },
+			{ view: 'interval', label: 'Lowest Interval' },
 			{ view: 'time', label: 'Time Spent' },
 		];
 	}
@@ -48,6 +52,24 @@ class CctGraphs extends CvMetricGraphs {
 				has: s => s.averageResponseTimeMs != null,
 				axis: { title: { display: true, text: 'avg response time (ms)' } },
 				fmt: v => `${Math.round(v)} ms`,
+			},
+			fastest: {
+				y: s => s.fastestResponseTimeMs,
+				has: s => s.fastestResponseTimeMs != null,
+				axis: { title: { display: true, text: 'fastest response time (ms)' } },
+				fmt: v => `${Math.round(v)} ms`,
+			},
+			streak: {
+				y: s => s.bestStreak,
+				has: s => s.bestStreak != null,
+				axis: { min: 0, title: { display: true, text: 'best streak' }, ticks: { precision: 0 } },
+				fmt: v => `${v}`,
+			},
+			interval: {
+				y: s => s.lowestIntervalMs / 1000,
+				has: s => s.lowestIntervalMs != null,
+				axis: { min: 0, title: { display: true, text: 'lowest interval reached (s)' } },
+				fmt: v => `${v.toFixed(1)} s`,
 			},
 		};
 	}

@@ -1401,6 +1401,42 @@ input[type="checkbox"]:checked + .switch::after {
     flex-direction: column;
 }
 
+/* label/value stat rows atop the history panels (RRT / N-Back / CCT) */
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    color: var(--preamble-color);
+}
+
+.stat-row span {
+    color: var(--text-color);
+    white-space: nowrap;
+}
+
+.hql-frame > button {
+    width: 100%;
+    margin-top: 0.75rem;
+}
+
+/* the list's window label (N-Back / CCT history panels) */
+.hql-heading {
+    font-size: var(--step--1);
+    color: var(--preamble-color);
+    margin-top: 0.5rem;
+}
+
+/* cancelled games/sessions read as ghosts of the completed ones */
+.hqli--cancelled {
+    opacity: 0.65;
+}
+
+/* the "Show cancelled" switch row in the history panels (N-Back, CCT) */
+.hql-frame .ctrl__inner {
+    margin: 0.5rem 0;
+}
+
 .hql {
     display: grid;
     gap: 1rem;

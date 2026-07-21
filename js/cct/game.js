@@ -39,6 +39,7 @@ export function startSession(callbacks) {
     correctAnswers: 0,
     totalQuestions: 0,
     streak: 0,
+    bestStreak: 0,
     responseTimes: [],
     expectedAnswer: null,
     questionStartedAt: 0,
@@ -50,6 +51,7 @@ export function startSession(callbacks) {
     pausedMs: 0,
     callbacks,
   }
+  session.lowestIntervalMs = session.intervalState.interval
   // still inside the START tap's gesture - unlock the voice clips and the
   // beep context now, or iOS Safari refuses every timer-driven play below.
   // tick() first: digit #1's real play() is itself the gesture blessing for
@@ -60,6 +62,10 @@ export function startSession(callbacks) {
 }
 
 export const isPaused = () => session !== null && session.pausedAt !== null
+
+// pause-aware: endsAt is shifted on resume, and pausedAt freezes the clock
+export const timeLeftMs = () =>
+  session?.endsAt ? session.endsAt - (session.pausedAt ?? Date.now()) : null
 
 export function pauseSession() {
   if (!session || session.pausedAt) return
@@ -151,9 +157,13 @@ function finalizeAnswer(value) {
     cctAudio.playBeep()
   }
   session.streak = isCorrect ? session.streak + 1 : 0
+  session.bestStreak = Math.max(session.bestStreak, session.streak)
+  const expectedAnswer = session.expectedAnswer
   session.intervalState = recordAnswer(session.intervalState, isCorrect)
+  session.lowestIntervalMs = Math.min(session.lowestIntervalMs, session.intervalState.interval)
   session.callbacks.onAnswer?.({
     isCorrect,
+    expectedAnswer,
     interval: session.intervalState.interval,
     correctAnswers: session.correctAnswers,
     totalQuestions: session.totalQuestions,
@@ -177,6 +187,8 @@ export function stopSession(outcome = 'exited') {
     durationMs: endedAt - session.startedAt - pausedMs,
     correctAnswers: session.correctAnswers,
     totalQuestionsAsked: session.totalQuestions,
+    bestStreak: session.bestStreak,
+    lowestIntervalMs: session.lowestIntervalMs,
     accuracy: session.totalQuestions ? (session.correctAnswers / session.totalQuestions) * 100 : 0,
     averageResponseTimeMs: session.responseTimes.length
       ? session.responseTimes.reduce((a, b) => a + b, 0) / session.responseTimes.length

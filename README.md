@@ -60,7 +60,11 @@ by default; multiplication, subtraction and difference are also available).
 The pace is adaptive: answer streaks speed the interval up, miss streaks
 slow it back down, clamped between a configurable floor and ceiling. Each
 session starts at the pace the last one ended on, so you pick up where you
-left off. Choose
+left off. The in-game HUD shows time (or answers) remaining, your streak
+and the current pace with its trend, each answer gets an instant ✓/✗
+verdict line, and a session ends on a summary card - accuracy, best
+streak, response times and how far the pace moved. The screen stays awake
+during a session. Choose
 from four pre-recorded voice packs and an adjustable playback speed. Core
 mechanics adapted from tim22dev22's CCT (see Credits).
 
