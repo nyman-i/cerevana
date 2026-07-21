@@ -82,7 +82,7 @@ function cardHtml(study) {
         : escapeHtml(study.title);
     const figures = study.images.length
         ? `<div class="study-card__figures">${study.images.map(img =>
-            `<a href="${escapeHtml(img.src)}" target="_blank" rel="noopener"><img class="study-card__figure" src="${escapeHtml(img.src)}" alt="${escapeHtml(img.alt)}" loading="lazy"></a>`).join('')}</div>`
+            `<a href="${escapeHtml(img.src)}" target="_blank" rel="noopener"><img class="study-card__figure" src="${escapeHtml(img.src)}" alt="${escapeHtml(img.alt)}" loading="lazy" onerror="this.parentElement.hidden = true"></a>`).join('')}</div>`
         : '';
     const classes = 'study-card'
         + (OWN_EXERCISE_CATEGORIES.has(study.category) ? ' study-card--own' : '')

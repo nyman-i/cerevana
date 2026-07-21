@@ -357,11 +357,11 @@ High school students with an average age of **16.5 years** underwent relational 
 
 https://www.researchgate.net/publication/325605561_Can_SMART_Training_Really_Increase_Intelligence_A_Replication_Study
 
-![alt text](image.png)
+![Table of mean IQ scores at baseline and follow-up: the training group's Full Scale IQ rose from 99.2 to 117.9 while the control group stayed flat](image.png)
 
-![alt text](image-1.png)
+![Bar chart of each participant's baseline and follow-up IQ - follow-up bars higher across all 12 participants](image-1.png)
 
-![alt text](image-2.png)
+![Bar charts comparing Full Scale, Verbal and Performance IQ for control vs SMART training groups - only the SMART group's follow-up scores rise](image-2.png)
 
 # Enhanced neural activity in frontal and cerebellar circuits after cognitive training in children
 
@@ -444,11 +444,11 @@ Control group: **none**
 
 https://www.researchgate.net/publication/298802337_A_relational_frame_skills_training_intervention_to_increase_general_intelligence_and_scholastic_aptitude
 
-![alt text](image-3.png)
+![Table of each participant's pre- and post-intervention Full Scale IQ with gains of 13 to 32 points and days spent in training](image-3.png)
 
-![alt text](image-4.png)
+![Bar chart of baseline vs follow-up Full Scale IQ for each of the 15 participants, with group-mean lines showing the overall rise](image-4.png)
 
-![alt text](image-5.png)
+![Table of per-participant WISC-III subtest scores at baseline and post-intervention across all 10 subtests](image-5.png)
 
 # Training spatial cognition enhances mathematical learning in a randomized study of 17,000 children
 
@@ -513,7 +513,7 @@ Control group: **passive**
 
 https://www.researchgate.net/publication/270343534_Enhancing_Cognitive_Function_Using_Perceptual-Cognitive_Training
 
-![alt text](image-6.png)
+![Table of pre/post scores on IVA, WAIS and D-KEFS measures: the 3D-MOT training group improves significantly on most measures, the control group on few](image-6.png)
 
 # 3D Multiple Object Tracking Boosts Working Memory Span: Implications for Cognitive Training in...
 
