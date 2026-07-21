@@ -202,11 +202,11 @@ function displayInit() {
         displayText.classList.remove('complicated-conclusion');
     }
 
-    if (q.premises.length > 12) {
-        displayText.classList.add('big-question');
-    } else {
-        displayText.classList.remove('big-question');
-    }
+    // Density steps, styled in styles.css: >=8 premises tighten spacing and
+    // leading, >12 also steps the type down - so a tall question keeps its
+    // conclusion on screen instead of scrolling it away with the premises.
+    displayText.classList.toggle('dense-question', q.premises.length >= 8);
+    displayText.classList.toggle('big-question', q.premises.length > 12);
 
     imagePromise = imagePromise.then(() => updateCustomStyles()).catch(console.error);
 
