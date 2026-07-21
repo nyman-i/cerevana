@@ -56,13 +56,19 @@ class CctAudioPlayer {
         if (!audio.paused) { audio.cvUnlocked = true; continue }
         audio.cvUnlocked = true
         audio.muted = true
+        // iOS Safari: muted doesn't reliably suppress the very first frame
+        // when ~18 clips all play() in the same synchronous burst - volume 0
+        // is a second, independent silencing path that closes the gap
+        audio.volume = 0
         audio.play().then(() => {
           if (!audio.muted) return // playDigit took over mid-warm-up
           audio.pause()
           audio.currentTime = 0
           audio.muted = false
+          audio.volume = 1
         }).catch(() => {
           audio.muted = false
+          audio.volume = 1
           audio.cvUnlocked = false // no gesture credit - retry next start
         })
       }
@@ -87,6 +93,7 @@ class CctAudioPlayer {
     // unmuting also signals a still-pending muted warm-up (slow load) in
     // unlock() to leave this clip alone instead of pausing it
     clip.muted = false
+    clip.volume = 1
     clip.currentTime = 0
     clip.play().catch(() => {})
   }

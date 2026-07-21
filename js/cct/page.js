@@ -344,10 +344,12 @@ const fmtPlayTime = (ms) => fmtElapsed(ms / 1000)
 const MODE_LABELS = window.cvCctDisplay.modeLabels
 
 const renderSessions = async () => {
-  const sessions = await getLastMonthSessions()
-  const completed = sessions.filter(s => s.status === 'Completed')
+  const showCancelled = $('cct-show-cancelled').checked
+  const all = await getLastMonthSessions()
+  const completed = all.filter(s => s.status === 'Completed')
+  const sessions = showCancelled ? all : completed
 
-  $('cct-hist-count').textContent = sessions.length
+  $('cct-hist-count').textContent = completed.length
   const last10 = completed.filter(s => s.totalQuestionsAsked > 0).slice(0, 10)
   $('cct-hist-avg').textContent = last10.length
     ? `${(last10.reduce((sum, s) => sum + s.accuracy, 0) / last10.length).toFixed(0)}%` : '-'
@@ -370,6 +372,7 @@ const renderSessions = async () => {
 $('offcanvas-history').addEventListener('change', (e) => {
   if (e.target.checked) renderSessions()
 })
+$('cct-show-cancelled').addEventListener('change', () => renderSessions())
 
 // 'H' opens History, like RRT/N-Back - guarded to skip while an input has
 // focus (CCT answers are numeric, so 'h' never reaches the answer field

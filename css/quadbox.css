@@ -511,6 +511,12 @@ body.light-mode .qb-variable-n {
     /* fixed neutral lattice by default - the original quad-box values
        (#d4d4d4 dark / #0a0a0a light, full opacity) */
     color: #d4d4d4;
+    /* the outer rect's stroke sits exactly on the viewBox boundary, so on
+       non-integer container sizes SVG's default viewport clipping shaves
+       part of it off - unevenly per edge, unlike the inset divider lines.
+       overflow:visible stops that clipping so every side renders as full
+       a stroke as the dividers do. */
+    overflow: visible;
 }
 
 body.light-mode .qb-frame {
