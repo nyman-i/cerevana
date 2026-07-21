@@ -741,9 +741,9 @@ function updateAverage(reverseChronological) {
     let times = questions.map(q => (q.answeredAt - q.startedAt) / 1000);
     if (times.length === 0) {
         totalDisplay.innerHTML = '0m 0s';
-        averageDisplay.innerHTML = 'None yet';
-        percentCorrectDisplay.innerHTML = 'None yet';
-        averageCorrectDisplay.innerHTML = 'None yet';
+        averageDisplay.innerHTML = '&mdash;';
+        percentCorrectDisplay.innerHTML = '&mdash;';
+        averageCorrectDisplay.innerHTML = '&mdash;';
         return;
     }
     const totalTime = times.reduce((a,b) => a + b, 0);
@@ -761,7 +761,7 @@ function updateAverage(reverseChronological) {
     percentCorrectDisplay.innerHTML = percentCorrect.toFixed(1) + '%';
     const correctTimes = correctQuestions.map(q => (q.answeredAt - q.startedAt) / 1000);
     if (correctTimes.length === 0) {
-        averageCorrectDisplay.innerHTML = 'None yet';
+        averageCorrectDisplay.innerHTML = '&mdash;';
         return;
     }
     const totalTimeBeingCorrect = correctTimes.reduce((a,b) => a + b, 0);

@@ -83,6 +83,11 @@ class RrtGraphs extends HTMLElement {
 		// only timed questions are graphed (matches the popup's footnote)
 		const data = (questions ?? []).filter(q => q.timeElapsed >= 1500);
 		this.querySelector('.panel-empty').hidden = data.length > 0;
+		// no data -> just the message, not a bare full-height chart box next to
+		// it (same behavior as CvMetricGraphs.setEmpty)
+		const selected = this.querySelector('.graph-select.selected').dataset.view;
+		this.querySelectorAll('.graph-popup-content').forEach(v =>
+			v.classList.toggle('visible', data.length > 0 && v.dataset.view === selected));
 		if (data.length === 0) return;
 
 		const token = name => getComputedStyle(document.body).getPropertyValue(name).trim();
@@ -149,7 +154,8 @@ class RrtGraphs extends HTMLElement {
 						type: 'time',
 						time: { unit: 'day', tooltipFormat: 'yyyy-MM-dd' },
 						title: { display: true, text: 'Day', color: fg },
-						ticks: { color: fg },
+						// autoskip alone crams in ~40 rotated date labels on a month of data
+						ticks: { color: fg, maxTicksLimit: 8, maxRotation: 0 },
 						grid: { color: '#4444' },
 					},
 					y: {
