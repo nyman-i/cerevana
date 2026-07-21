@@ -2513,8 +2513,8 @@ body.menu-mode .main-view {
         opacity: 0.85;
         pointer-events: none;
         background-color: var(--accent-color);
-        -webkit-mask: url(../img/icon-192.png) center / contain no-repeat;
-        mask: url(../img/icon-192.png) center / contain no-repeat;
+        -webkit-mask: url('../img/icon-192.png') center / contain no-repeat;
+        mask: url('../img/icon-192.png') center / contain no-repeat;
     }
 }
 
@@ -3316,8 +3316,7 @@ body.menu-mode .main-view {
     transform: translateX(-50%);
     width: min(92vw, 46rem);
     max-height: 86vh;
-    overflow-y: auto;
-    overflow-x: hidden; /* a hidden tooltip's nowrap text can still widen scrollable overflow - this popup only ever scrolls vertically */
+    overflow: hidden auto; /* x hidden, y auto - a hidden tooltip's nowrap text can still widen scrollable overflow, and this popup only ever scrolls vertically */
     background-color: var(--background-color);
     border-radius: 8px;
     box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
