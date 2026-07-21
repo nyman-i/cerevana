@@ -125,6 +125,13 @@
 					<div>Sessions this month: <span id="cct-hist-count"></span></div>
 					<div>Avg accuracy, last 10: <span id="cct-hist-avg"></span></div>
 					<div>Play time today: <span id="cct-playtime"></span></div>
+					<div class="ctrl__inner" style="margin: 0.5rem 0;">
+						<div>
+							<input hidden id="cct-show-cancelled" type="checkbox">
+							<label class="switch" for="cct-show-cancelled"></label>
+						</div>
+						<label for="cct-show-cancelled">Show cancelled</label>
+					</div>
 					<div id="cct-sessions-empty" class="panel-empty" hidden>No sessions yet - finish one and your history appears here.</div>
 					<div id="cct-history-list" class="hql"></div>
 			</corner-panel>
