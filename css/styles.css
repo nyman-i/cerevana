@@ -2996,7 +2996,7 @@ body.menu-mode .main-view {
 .studies-list {
     display: flex;
     flex-wrap: wrap;
-    align-items: stretch;
+    align-items: flex-start;
     gap: 0.75rem;
     width: 100%;
     padding-bottom: 2rem;
@@ -3028,6 +3028,16 @@ body.menu-mode .main-view {
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
+/* Keep hoverable cards on their own compositor layer permanently - promoting
+   one only while its hover transform runs makes the text re-rasterize and
+   shift a subpixel when the animation ends (visible flicker). Hover-capable
+   devices only, so touch devices don't pay the extra layer memory. */
+@media (hover: hover) {
+    .study-card--link {
+        will-change: transform;
+    }
+}
+
 .study-card--link:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 14px 5px #0004;
@@ -3044,7 +3054,6 @@ body.menu-mode .main-view {
     text-decoration: none;
 }
 
-.study-card__title a:hover,
 .study-card__title a:focus-visible {
     text-decoration: underline;
     text-underline-offset: 0.15em;
