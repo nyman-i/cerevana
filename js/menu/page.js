@@ -25,16 +25,29 @@ const CCT_MODE_LABEL = {
     multiplication: 'Multiplication', difference: 'Difference',
 };
 
+// active RRT profile's settings blob (shared by the stats card and readGoals)
+function rrtSavedata() {
+    try {
+        const profiles = JSON.parse(localStorage.getItem('sllgms-v3-profiles')) || [];
+        const sel = +localStorage.getItem('sllgms-v3-selected-profile') || 0;
+        return profiles[sel]?.savedata || {};
+    } catch (e) { return {}; }
+}
+
+// every card reads "settings context · stats" - the no-data tail is muted so
+// an empty state never shouts louder than real numbers
+const emptyTail = (msg) => ` &middot; <span class="panel-empty">${msg}</span>`;
+
 async function renderMenuStats() {
     // RRT: questions from appState
     const questions = appState.questions || [];
     const right = questions.filter(q => q.correctness === 'right').length;
     const accuracy = questions.length ? Math.round(100 * right / questions.length) : 0;
     const rrtStats = document.getElementById('menu-rrt-stats');
-    rrtStats.innerHTML = questions.length
-        ? `Answered ${questions.length} &middot; Accuracy ${accuracy}% &middot; Score ${appState.score}`
-        : 'No questions answered yet';
-    rrtStats.classList.toggle('panel-empty', !questions.length); // empty state reads muted, not louder than data
+    rrtStats.innerHTML = `Premises ${rrtSavedata().premises ?? 2}`
+        + (questions.length
+            ? ` &middot; Answered ${questions.length} &middot; Accuracy ${accuracy}% &middot; Score ${appState.score}`
+            : emptyTail('No questions answered yet'));
     document.getElementById('menu-rrt-recent').textContent = questions.length
         ? 'Recent: ' + questions.slice(-8).map(q => q.correctness === 'right' ? '✓' : '✗').join(' ')
         : '';
@@ -58,7 +71,7 @@ async function renderMenuStats() {
     const qbAvg = Math.round(qbLast10.reduce((s, g) => s + qbPct(g), 0) / (qbLast10.length || 1));
     document.getElementById('menu-nback-stats').innerHTML =
         `${NBACK_MODE_LABEL[qbMode] || qbMode} &middot; N = ${qbLevel}`
-        + (qbGames.length ? ` &middot; ${qbGames.length} games &middot; avg ${qbAvg}%` : ' &middot; no games yet');
+        + (qbGames.length ? ` &middot; ${qbGames.length} games &middot; avg ${qbAvg}%` : emptyTail('No games yet'));
     document.getElementById('menu-nback-recent').textContent = qbGames.length
         ? 'Recent: ' + qbGames.slice(-5).map(g => {
             const key = g.title?.startsWith('tally') ? 'tally' : (g.title?.startsWith('vtally') ? 'vtally' : g.title);
@@ -78,7 +91,7 @@ async function renderMenuStats() {
     const cctAvg = Math.round(cctLast10.reduce((s, r) => s + r.accuracy, 0) / (cctLast10.length || 1));
     document.getElementById('menu-cct-stats').innerHTML =
         `${CCT_MODE_LABEL[cctMode] || cctMode}`
-        + (cctSessions.length ? ` &middot; ${cctSessions.length} sessions &middot; avg ${cctAvg}%` : ' &middot; no sessions yet');
+        + (cctSessions.length ? ` &middot; ${cctSessions.length} sessions &middot; avg ${cctAvg}%` : emptyTail('No sessions yet'));
     document.getElementById('menu-cct-recent').textContent = cctSessions.length
         ? 'Recent: ' + cctSessions.slice(-5).map(s => Math.round(s.accuracy) + '%').join('  ')
         : '';
@@ -96,14 +109,9 @@ function readGoals() {
             return { daily: s.dailyProgressGoal ?? null, weekly: s.weeklyProgressGoal ?? null };
         } catch (e) { return { daily: null, weekly: null }; }
     };
-    let rrt = { daily: null, weekly: null };
-    try {
-        const profiles = JSON.parse(localStorage.getItem('sllgms-v3-profiles')) || [];
-        const sel = +localStorage.getItem('sllgms-v3-selected-profile') || 0;
-        const sd = profiles[sel]?.savedata || {};
-        // dGoal/wGoal: URL-imported profiles keep compressed keys until re-saved
-        rrt = { daily: sd.dailyProgressGoal ?? sd.dGoal ?? null, weekly: sd.weeklyProgressGoal ?? sd.wGoal ?? null };
-    } catch (e) {}
+    const sd = rrtSavedata();
+    // dGoal/wGoal: URL-imported profiles keep compressed keys until re-saved
+    const rrt = { daily: sd.dailyProgressGoal ?? sd.dGoal ?? null, weekly: sd.weeklyProgressGoal ?? sd.wGoal ?? null };
     return { rrt, qb: fromStore('quad-box-settings'), cct: fromStore('cct-settings') };
 }
 
