@@ -3083,6 +3083,9 @@ body.menu-mode .main-view {
 
 .transfer-category {
     width: 100%;
+    font-family: Oxanium, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
     font-size: var(--step--1);
     margin-top: 1.25rem;
     padding-bottom: 0.25rem;
@@ -3103,11 +3106,14 @@ body.menu-mode .main-view {
    popup just to see where you stand on it. */
 .test-card {
     display: flex;
-    align-items: center;
-    /* wrap, not nowrap: a delta badge + "Retest ready" side by side would
-       otherwise crush the flexible name to zero width in a ~19rem grid cell */
-    flex-wrap: wrap;
-    gap: 0.5rem 0.75rem;
+    /* Column, not a wrapping row: name line on top, badge line beneath, the
+       same geometry whether a card carries zero badges or two - a wrapping
+       row floated the badge beside the name only when it happened to fit,
+       so adjacent cards' names didn't line up. */
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.5rem;
     width: 100%;
     /* Room for a badge line reserved up front, so a card doesn't grow the
        moment a score is logged - and .transfer-list's align-items: stretch
@@ -3138,14 +3144,26 @@ body.menu-mode .main-view {
    .test-card__title once the popup opens) so every card in the grid stays
    the same short height, whatever its name length. */
 .test-card__name {
-    flex: 1 1 auto;
-    min-width: 0;
+    width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.test-card__badge {
+/* Always rendered, even empty on an untested card - reserving the row's
+   height keeps every card's name on the same line as its row neighbors'.
+   1.75rem ~ a real badge's rendered height (--step--2 line + 0.2rem pads),
+   so a card with badges and one without center to the same name position. */
+.test-card__badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    min-height: 1.75rem;
+}
+
+.test-card__badge,
+.study-card__badge {
     flex: 0 0 auto;
     font-family: "JetBrains Mono", monospace;
     font-size: var(--step--2);
@@ -3156,7 +3174,8 @@ body.menu-mode .main-view {
 
 .test-card__badge--right { color: var(--correct-color); }
 .test-card__badge--wrong { color: var(--wrong-color); }
-.test-card__badge--due { color: var(--accent-color); }
+.test-card__badge--due,
+.study-card__badge--accent { color: var(--accent-color); }
 .test-card__badge-warn { flex: 0 0 auto; cursor: help; }
 
 .test-card__title {
@@ -3338,7 +3357,7 @@ body.menu-mode .main-view {
 .test-card__history-delete {
     background: none;
     color: var(--preamble-color);
-    padding: 0 0.25rem;
+    padding: 0.25rem 0.5rem;
     line-height: 1;
 }
 
@@ -3508,6 +3527,10 @@ body.menu-mode .main-view {
     cursor: pointer;
 }
 
+.chart-add-option input {
+    accent-color: var(--accent-color); /* native grey checkboxes clash with the themed controls everywhere else */
+}
+
 .chart-add-option:has(input:disabled) {
     color: var(--preamble-color);
     cursor: not-allowed;
@@ -3640,6 +3663,17 @@ body.menu-mode .main-view {
     }
     .test-card__history-delete {
         padding: 0.4rem 0.6rem; /* finger-sized */
+    }
+    /* The desktop badge-room reservation stacks up: single-column here, so
+       20+ untested catalog entries at 6rem each read as a wall of hollow
+       slabs and double the scroll for nothing. The empty badge row goes
+       too - it only exists to align names across a desktop row's cards,
+       and a single column has no row neighbors to align with. */
+    .test-card {
+        min-height: 4rem;
+    }
+    .test-card__badges:empty {
+        display: none;
     }
 }
 
