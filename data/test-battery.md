@@ -63,6 +63,7 @@ https://canyone2015.github.io/WAIS-IV-Digit-Span/
 Category: Working memory
 Access: Free (community simulator)
 Time: 5-10 min
+Headline: true
 
 Combined score across Forwards, Backwards and Sequencing, as an IQ-equivalent (mean 100, SD 15) - the single best cross-session summary of the subtest.
 

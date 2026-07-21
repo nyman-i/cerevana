@@ -56,18 +56,25 @@ const fmtDate = ts => new Date(ts).toLocaleDateString()
 // than one non-equivalent administration form need it. Subgroup is optional too - only
 // a metric that's itself a sub-part of an earlier metric in the same group needs it
 // (e.g. Understand Myself's Intellect/Aesthetics aspects nest under its Openness score).
+// Headline (true/false, default false) marks the one metric in a multi-metric group
+// whose own score/delta badge should represent the whole test on the browse card -
+// only set it on a metric that's a genuine single-number summary of the group (e.g.
+// WAIS-IV Digit Span's Overall); a group with no one natural summary (CORE, IPIP,
+// Understand Myself) leaves every metric unmarked and the card falls back to a plain
+// "N sessions logged" count.
 function parseTests(md) {
   return md.split(/^# /m).slice(1).map(block => {
     const lines = block.split('\n')
-    const test = { name: lines[0].trim(), category: 'Other', access: '', time: '', direction: 'higher', variants: [], subgroup: '', summary: [], url: '' }
+    const test = { name: lines[0].trim(), category: 'Other', access: '', time: '', direction: 'higher', variants: [], subgroup: '', headline: false, summary: [], url: '' }
     for (const raw of lines.slice(1)) {
       const line = raw.trim()
       if (!line) continue
-      const m = line.match(/^(Category|Access|Time|Direction|Variants|Subgroup):\s*(.+)$/i)
+      const m = line.match(/^(Category|Access|Time|Direction|Variants|Subgroup|Headline):\s*(.+)$/i)
       if (m) {
         const key = m[1].toLowerCase()
         if (key === 'direction') test.direction = m[2].trim().toLowerCase()
         else if (key === 'variants') test.variants = m[2].split(',').map(v => v.trim()).filter(Boolean)
+        else if (key === 'headline') test.headline = m[2].trim().toLowerCase() === 'true'
         else test[key] = m[2].trim()
         continue
       }
@@ -118,7 +125,12 @@ const neutralNote = test => test.direction === 'neutral'
   ? ' <span class="test-card__badge-warn" title="No stated better/worse direction for this trait - tracked for information only">&#8776;</span>'
   : ''
 
-function badgeHtml(test, records) {
+// showDue defaults on (the browse-list cards need it) but is turned off for
+// a multi-metric popup's own per-row badges - if the whole test is due, every
+// sub-metric is due right along with it (same interval, same last-taken date),
+// so repeating "Retest ready" on all ten Understand Myself rows says nothing
+// the card you just clicked didn't already say once.
+function badgeHtml(test, records, { showDue = true } = {}) {
   const parts = []
   if (records && records.length === 1) {
     parts.push(`<span class="test-card__badge">Score: ${records[0].score}</span>`)
@@ -129,7 +141,7 @@ function badgeHtml(test, records) {
     const warn = !delta.reliable ? ' <span class="test-card__badge-warn" title="Under 120 days between tests - see the reliability note">&#9888;</span>' : ''
     parts.push(`<span class="test-card__badge${cls ? ' test-card__badge--' + cls : ''}">${delta.baseline.score} &rarr; ${delta.latest.score} (${sign}${delta.deltaRaw})</span>${warn}${neutralNote(test)}`)
   }
-  if (isDueForRetest(records)) parts.push(`<span class="test-card__badge test-card__badge--due">&#9200; Retest ready</span>`)
+  if (showDue && isDueForRetest(records)) parts.push(`<span class="test-card__badge test-card__badge--due">&#9200; Retest ready</span>`)
   return parts.join(' ')
 }
 
@@ -180,13 +192,22 @@ function testCardHtml(name, children, byTestId) {
       ${badgeHtml(test, records)}
     </button>`
   }
-  // Distinct sitting dates, not a raw sum of per-metric records - "5 traits
-  // logged from the same sitting" should read as 1 session, not 5 scores.
-  const sessions = new Set(children.flatMap(c => (byTestId.get(c.id) || []).map(r => r.timestamp))).size
   const due = children.some(c => isDueForRetest(byTestId.get(c.id)))
+  // A group with one metric marked Headline (e.g. WAIS-IV Digit Span's Overall)
+  // shows that metric's own score/delta badge, same as a single-metric card -
+  // otherwise there's no one number to lead with, so it falls back to a plain
+  // session count. Distinct sitting dates, not a raw sum of per-metric records:
+  // "5 traits logged from the same sitting" should read as 1 session, not 5 scores.
+  const headline = children.find(c => c.headline)
+  const headlineRecords = headline ? (byTestId.get(headline.id) || []) : []
+  // Empty when the headline metric itself has no records yet (e.g. only
+  // Forwards logged, never Overall) - fall through to the session count then,
+  // not to a blank card.
+  const headlineBadge = headline ? badgeHtml(headline, headlineRecords) : ''
+  const sessions = new Set(children.flatMap(c => (byTestId.get(c.id) || []).map(r => r.timestamp))).size
   const badge = [
-    sessions ? `<span class="test-card__badge">${sessions} session${sessions === 1 ? '' : 's'} logged</span>` : '',
-    due ? `<span class="test-card__badge test-card__badge--due">&#9200; Retest ready</span>` : '',
+    headlineBadge || (sessions ? `<span class="test-card__badge">${sessions} session${sessions === 1 ? '' : 's'} logged</span>` : ''),
+    due && !isDueForRetest(headlineRecords) ? `<span class="test-card__badge test-card__badge--due">&#9200; Retest ready</span>` : '',
   ].filter(Boolean).join(' ')
   return `<button type="button" class="test-card${due ? ' test-card--due' : ''}" data-test-id="${children[0].id}" title="${escapeHtml(name)}">
     <span class="test-card__name">${escapeHtml(name)}</span>
@@ -488,7 +509,7 @@ function fillPopupScores() {
     // given metric's own baseline/latest status appears. A single-metric test
     // already has that in the History section's "Overall:" line above - repeating
     // it (down to the "Retest ready" chip) on the plain "Score" row would be noise.
-    const badge = multi ? badgeHtml(c, byTestId.get(c.id) || []) : ''
+    const badge = multi ? badgeHtml(c, byTestId.get(c.id) || [], { showDue: false }) : ''
     const tip = multi ? `<help-tip text="${escapeHtml(c.summary)}"></help-tip>` : ''
     // A metric whose Subgroup names an earlier metric in this same group (e.g.
     // Understand Myself's Intellect/Aesthetics under its Openness score) renders
