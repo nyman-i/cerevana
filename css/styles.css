@@ -2959,6 +2959,18 @@ body.menu-mode .main-view {
     border-left: 4px solid var(--accent-color);
 }
 
+/* Cards with a paper URL are fully clickable (delegated handler in
+   js/studies/page.js) - a small lift + tint signals it on hover. */
+.study-card--link {
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.study-card--link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 14px 5px #0004;
+}
+
 .study-card__title {
     font-size: var(--step-0);
     margin: 0;

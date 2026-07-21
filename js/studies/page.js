@@ -84,7 +84,10 @@ function cardHtml(study) {
         ? `<div class="study-card__figures">${study.images.map(img =>
             `<a href="${escapeHtml(img.src)}" target="_blank" rel="noopener"><img class="study-card__figure" src="${escapeHtml(img.src)}" alt="${escapeHtml(img.alt)}" loading="lazy"></a>`).join('')}</div>`
         : '';
-    return `<article class="study-card${OWN_EXERCISE_CATEGORIES.has(study.category) ? ' study-card--own' : ''}">
+    const classes = 'study-card'
+        + (OWN_EXERCISE_CATEGORIES.has(study.category) ? ' study-card--own' : '')
+        + (study.url ? ' study-card--link' : '');
+    return `<article class="${classes}"${study.url ? ` data-url="${escapeHtml(study.url)}"` : ''}>
         <h2 class="study-card__title">${title}</h2>
         ${badges ? `<div class="study-card__badges">${badges}</div>` : ''}
         ${study.summary ? `<p class="study-card__summary">${boldToHtml(study.summary)}</p>` : ''}
@@ -112,6 +115,14 @@ function render() {
             + byCategory.get(cat).map(cardHtml).join('')).join('')
         : '<p class="panel-empty">No studies match.</p>';
 }
+
+// Whole card opens the paper; real links inside (title, figures) and text
+// selection keep their native behavior.
+listEl.addEventListener('click', e => {
+    const card = e.target.closest('.study-card--link');
+    if (!card || e.target.closest('a') || getSelection().toString()) return;
+    window.open(card.dataset.url, '_blank', 'noopener');
+});
 
 searchEl.addEventListener('input', render);
 categoryEl.addEventListener('change', render);
