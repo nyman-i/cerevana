@@ -2512,6 +2512,9 @@ body.menu-mode .main-view {
         height: clamp(3.5rem, 10vw, 6rem);
         opacity: 0.85;
         pointer-events: none;
+        background-color: var(--accent-color);
+        -webkit-mask: url(../img/icon-192.png) center / contain no-repeat;
+        mask: url(../img/icon-192.png) center / contain no-repeat;
     }
 }
 
@@ -3072,6 +3075,10 @@ body.menu-mode .main-view {
     flex-wrap: wrap;
     gap: 0.5rem 0.75rem;
     width: 100%;
+    /* Room for a badge line reserved up front, so a card doesn't grow the
+       moment a score is logged - and .transfer-list's align-items: stretch
+       doesn't then drag every other card in that row taller along with it. */
+    min-height: 6rem;
     text-align: left;
     font: inherit;
     font-size: var(--step-0);
@@ -3140,19 +3147,8 @@ body.menu-mode .main-view {
     line-height: 1.65;
 }
 
-/* Only rendered when a test has more than one metric (e.g. IPIP-120/300's
-   five Big Five traits) - picks which metric the rest of the popup (meta,
-   summary, delta, history, log form) is scoped to. The selected one gets the
-   accent left border, the app's usual "this is the active item" marker. */
-.test-popup-metrics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin: 0.5rem 0;
-}
-
-.test-popup-metrics .graph-select.selected {
-    border-left: 3px solid var(--accent-color);
+.test-card__summary-text:empty {
+    display: none; /* a multi-metric group has no single summary - its own margin shouldn't leave a phantom gap */
 }
 
 .test-popup-delta {
@@ -3170,7 +3166,6 @@ body.menu-mode .main-view {
     gap: 0.75rem 1rem;
     background-color: var(--big-input-bg-color);
     padding: 0.75rem 1rem;
-    margin-top: 0.75rem; /* sits full-width below the info | history columns */
 }
 
 .test-card__log .inline-input__outer {
@@ -3181,8 +3176,58 @@ body.menu-mode .main-view {
 }
 
 /* Desktop widths for the log form's inputs (mobile stretches them full-width) */
-#test-popup-score { width: 8ch; }
 #test-popup-note { width: 16ch; }
+
+/* One row per metric (label + its own number input), a stable list that
+   fills the same shape whether a test has one metric or several - filling
+   in five WAIS-IV Digit Span rows never means clicking between tabs. */
+.test-popup-scores {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.test-popup-scores .inline-input__outer {
+    width: 100%;
+    justify-content: space-between;
+}
+
+.test-popup-scores input[type="number"] {
+    width: 8ch;
+}
+
+/* Metric name + its own info tooltip + its own baseline/latest badge, all on
+   the row's label side - the delta a metric-picker tab used to gate behind a
+   click now sits right next to the field you're about to fill in. */
+.test-popup-scores__label {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+/* A metric that's a sub-part of an earlier row in the same list (Subgroup in
+   the catalog, e.g. Understand Myself's Intellect/Aesthetics under its
+   Openness score) - indented with a connecting rule so it reads as nested
+   under that row, not a sibling metric of its own. */
+.test-popup-scores__row--sub {
+    padding-left: 1.25rem;
+    border-left: 2px solid #333;
+    margin-left: 0.25rem;
+}
+
+/* Tooltip text is nowrap by default (this popup's per-metric descriptions
+   run long) - wrap it here so a tooltip never pushes past the
+   (overflow-x: hidden) popup's edge and gets silently clipped. A fixed
+   width, not max-width: the tooltip bubble's own positioning anchor
+   (.tooltip-container) is only 20px wide, so shrink-to-fit sizing against
+   that tiny box collapses wrapped text to an oddly narrow column instead of
+   filling out to the cap. */
+.test-popup-scores .tooltip-text {
+    white-space: normal;
+    width: 240px;
+}
 
 .test-card__note-hint {
     color: var(--preamble-color);
@@ -3231,6 +3276,7 @@ body.menu-mode .main-view {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    min-width: 0; /* grid tracks size to content by default - without this an unbroken word (a metric tag) forces the "1fr" column, and the whole row, wider than the popup instead of truncating/wrapping in place */
 }
 
 /* Which administration form was taken (e.g. "120-item" vs "300-item") - only
@@ -3256,7 +3302,11 @@ body.menu-mode .main-view {
 
 /* ---- Test detail popup (opened by clicking a test card or a "ready to
    retest" row) - same fixed/centered/rounded chrome as #graph-popup, at a
-   width suited to a form + history list rather than a full-width chart. */
+   width suited to a form + history list rather than a full-width chart.
+   One fixed width for every test, single column top to bottom (title, info,
+   History, New entry) - a side-by-side layout used to widen/narrow itself
+   depending on whether the open metric had history yet, which read as the
+   popup randomly resizing; a stable single column reads the same every time. */
 .test-popup {
     position: fixed;
     display: none;
@@ -3264,9 +3314,10 @@ body.menu-mode .main-view {
     top: 8%;
     left: 50%;
     transform: translateX(-50%);
-    width: min(92vw, 42rem);
+    width: min(92vw, 46rem);
     max-height: 86vh;
     overflow-y: auto;
+    overflow-x: hidden; /* a hidden tooltip's nowrap text can still widen scrollable overflow - this popup only ever scrolls vertically */
     background-color: var(--background-color);
     border-radius: 8px;
     box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
@@ -3289,29 +3340,22 @@ body.menu-mode .main-view {
     display: block;
 }
 
-/* Once a test has logged scores (.test-popup--wide, set by fillPopup) the
-   popup widens and splits: info + log form left, results (delta timeline +
-   score history) right - so real history doesn't push everything into one
-   long scroll. With nothing logged there are no results to show, and the
-   popup stays a narrow single column. */
-.test-popup-columns {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0 1.5rem;
-    align-items: start;
-}
-
-@media (width > 700px) {
-    .test-popup--wide {
-        width: min(94vw, 64rem);
-    }
-    .test-popup--wide .test-popup-columns {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
 .test-popup.visible {
     display: block;
+}
+
+/* History / New entry - a small underlined label above each block so the
+   popup reads as clearly bounded sections instead of meta text, a history
+   table and a form all just floating one after another. */
+.test-popup-section {
+    margin-top: 1.5rem;
+}
+
+.test-popup-section__heading {
+    font-size: var(--step--1);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid #333;
 }
 
 .test-popup-content {
@@ -3372,9 +3416,10 @@ body.menu-mode .main-view {
 .transfer-result__warning { color: var(--accent-color); }
 .transfer-result__ok { color: var(--preamble-color); }
 
-/* ---- Chart picker: one "Add to graph" dropdown (everything selectable,
-   grouped by test/category) plus one row of removable colored chips for the
-   lines actually plotted - the chips are the chart's legend. ---- */
+/* ---- Chart picker: an "Add to graph" button opens a popup with a
+   checkbox list (everything selectable, grouped by test/category - check
+   several, then "Add selected") plus one row of removable colored chips for
+   the lines actually plotted - the chips are the chart's legend. ---- */
 .transfer-chart-picker {
     display: flex;
     flex-direction: column;
@@ -3382,18 +3427,68 @@ body.menu-mode .main-view {
     margin-bottom: 0.75rem;
 }
 
-.transfer-chart-add {
-    width: fit-content; /* inline-input__outer is full-width by default */
-    max-width: 100%;
-    white-space: nowrap; /* keep the "Add to graph" label on one line when squeezed */
+/* A proper button, sized to be an easy, obvious tap target but no wider than
+   its own label - opens the #chart-add-popup below (same fixed/centered/
+   backdrop-blurred chrome as #test-popup, so the two popups on this page
+   feel like one system). Without align-self it'd stretch to fill its flex
+   column parent like every other row here. */
+.transfer-chart-add-open {
+    align-self: flex-start;
+    padding: 0.6rem 1.5rem;
+    font-size: var(--step--1);
 }
 
-.transfer-chart-add .inline-input__inner {
-    min-width: 0; /* let the select shrink instead of pushing past the viewport on narrow screens */
+/* Checkbox list grouped by category (training time, then each catalog
+   category, multi-metric families as their own labeled sub-group) - a
+   selectable option reads in the popup's normal (light) text color, an
+   already-logged-out option (no scores yet, so nothing to plot) dims to
+   --preamble-color, so which rows are pickable is a color, not a click away. */
+.chart-add-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    max-height: min(50vh, 26rem);
+    overflow-y: auto;
+    border: 1px solid #333;
+    padding: 0.5rem 0.75rem;
+    margin: 0.5rem 0 1rem;
 }
 
-.transfer-chart-add select {
-    max-width: 100%; /* long option names truncate natively instead of setting the box width */
+.chart-add-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.2rem 0;
+    cursor: pointer;
+}
+
+.chart-add-option:has(input:disabled) {
+    color: var(--preamble-color);
+    cursor: not-allowed;
+}
+
+.chart-add-option__hint {
+    font-size: var(--step--2);
+}
+
+/* Same nesting treatment as .test-popup-scores__row--sub - a sub-aspect
+   indented under its domain row instead of reading as a plain sibling. */
+.chart-add-option--sub {
+    padding-left: 1.25rem;
+    border-left: 2px solid #333;
+    margin-left: 0.25rem;
+}
+
+.chart-add-subheading {
+    font-size: var(--step--2);
+    color: var(--preamble-color);
+    margin: 0.3rem 0 0.1rem 0.75rem;
+}
+
+.chart-add-submit {
+    display: block;
+    width: 100%;
+    padding: 0.6rem;
 }
 
 .transfer-chart-lines {
@@ -3430,6 +3525,30 @@ body.menu-mode .main-view {
     .test-card__history-row {
         grid-template-columns: 5.5rem 3rem auto 1fr auto;
     }
+    /* The note column (metric tag + variant tag + free-text note) is too
+       narrow here to keep everything on one nowrap line without crushing the
+       metric tag itself down to 3-4 letters - let it wrap the row taller
+       instead of silently truncating the thing you're trying to identify.
+       overflow-wrap: the metric tag is one unbroken word (e.g. "Sequencing")
+       with no space to break at - without permission to break mid-word it'd
+       still overflow its own cell even with white-space: normal set. overflow
+       stays hidden (not visible): anything that still doesn't fit clips at
+       its own cell instead of visually spilling into the delete button next to it. */
+    .test-card__history-note {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+    /* Label (name + tooltip + badge) above its input, both full-width -
+       side by side here squeezes the input down to whatever's left over
+       after the label wraps its own badge onto a second line. */
+    .test-popup-scores .inline-input__outer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.35rem;
+    }
+    .test-popup-scores input[type="number"] {
+        width: 100%;
+    }
     .test-popup {
         top: 3%;
         width: 94vw;
@@ -3457,7 +3576,6 @@ body.menu-mode .main-view {
     }
     .test-card__log .inline-input__inner > input,
     .test-card__log .inline-input__inner > select,
-    #test-popup-score,
     #test-popup-note {
         width: 100%;
         margin: 0;

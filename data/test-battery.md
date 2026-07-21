@@ -11,22 +11,12 @@ https://www.cogn-iq.org/tests/culture-fair-iq-test/
 # TRI-52
 
 Category: Fluid intelligence
-Access: Free
+Access: Free (archived - needs a Flash player)
 Time: ~30 min
 
-The predecessor to JCTI from the same author - similar item style, often recommended as a high-quality alternative fluid-intelligence measure. It has since been folded into JCTI's computer-adaptive format on the same site; no separately hosted TRI-52 test could be confirmed as still live, so treat the JCTI link above as its current form.
+The predecessor to JCTI from the same author - similar item style, often recommended as a high-quality alternative fluid-intelligence measure. The original cerebrals.com hosting is gone; this is a Wayback Machine capture of the Flash (.swf) test, so it needs a Flash-capable player (e.g. Ruffle) to run.
 
-https://www.cogn-iq.org/tests/culture-fair-iq-test/
-
-# Sandia Matrices
-
-Category: Fluid intelligence
-Access: Free (research tool, no confirmed single public test link)
-Time: 15-20 min
-
-Scientifically validated matrices, often used as a pre/post pair (Form A and Form B) specifically so a retest doesn't reuse items. No single official "take it here" page could be confirmed as still live - search the psychometric review below for the current distribution link before your first session.
-
-https://www.researchgate.net/publication/347853079_Measuring_Intelligence_with_the_Sandia_Matrices_Psychometric_Review_and_Recommendations_for_Free_Raven-Like_Item_Sets
+https://web.archive.org/web/20110918040739/http://www.cerebrals.com/tests/tri/TRI52.swf
 
 # Raven's 2
 
@@ -38,13 +28,53 @@ The classic progressive-matrices test, current commercial (Clinical) edition. So
 
 https://www.pearsonassessments.com/en-us/Store/Professional-Assessments/Cognition-&-Neuro/Non-Verbal-Ability/Raven's-Progressive-Matrices-%7C-Clinical-Edition/p/100001960
 
-# WAIS-IV Digit Span
+# WAIS-IV Digit Span - Forwards
 
 Category: Working memory
 Access: Free (community simulator)
 Time: 5-10 min
 
-Repeat spoken digit sequences forward, backward, and in ascending order.
+Digit Span Forward: repeat spoken digit sequences in the order given. Log the raw score's IQ-equivalent (mean 100, SD 15) - the number that's comparable across sessions and ages, not the raw trial count.
+
+https://canyone2015.github.io/WAIS-IV-Digit-Span/
+
+# WAIS-IV Digit Span - Backwards
+
+Category: Working memory
+Access: Free (community simulator)
+Time: 5-10 min
+
+Digit Span Backward: repeat spoken digit sequences in reverse order. Log the raw score's IQ-equivalent (mean 100, SD 15).
+
+https://canyone2015.github.io/WAIS-IV-Digit-Span/
+
+# WAIS-IV Digit Span - Sequencing
+
+Category: Working memory
+Access: Free (community simulator)
+Time: 5-10 min
+
+Digit Span Sequencing: repeat spoken digit sequences in ascending order. Log the raw score's IQ-equivalent (mean 100, SD 15).
+
+https://canyone2015.github.io/WAIS-IV-Digit-Span/
+
+# WAIS-IV Digit Span - Overall
+
+Category: Working memory
+Access: Free (community simulator)
+Time: 5-10 min
+
+Combined score across Forwards, Backwards and Sequencing, as an IQ-equivalent (mean 100, SD 15) - the single best cross-session summary of the subtest.
+
+https://canyone2015.github.io/WAIS-IV-Digit-Span/
+
+# WAIS-IV Digit Span - Scaled
+
+Category: Working memory
+Access: Free (community simulator)
+Time: 5-10 min
+
+The subtest's scaled score (mean 10, SD 3) - the sum of the three conditions' scaled scores, as reported alongside the IQ breakdown.
 
 https://canyone2015.github.io/WAIS-IV-Digit-Span/
 
@@ -233,6 +263,181 @@ Direction: lower
 One of the Big Five traits from the IPIP inventory. The community's usual read on training effects is a drop in Neuroticism alongside a rise in Conscientiousness (see that entry). Take the 120-item version for speed, or 300-item for more precision at the same result page - not both.
 
 https://www.personalityassessor.com/ipip-120/
+
+# Understand Myself - Openness
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: neutral
+
+One of the Big Five Aspects Scale's five domain-level scores, from the 100-item Understand Myself assessment built by Colin DeYoung, Lena Quilty and Jordan Peterson - a different instrument and normative sample than the IPIP-120/300 entries above, so don't compare raw percentiles between the two. Reports as a percentile against a sample of ~10,000 prior test-takers. Called "Openness to Experience" in the original Big Five Aspects Scale model; the site uses "Openness" for clarity. Splits into the Intellect and Aesthetics aspects below.
+
+https://www.understandmyself.com
+
+# Understand Myself - Intellect
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: neutral
+Subgroup: Openness
+
+One of the Big Five Aspects Scale's ten aspect-level scores: Openness splits into Intellect (interest in abstract ideas, reasoning and problem-solving - not the same thing as IQ) and Aesthetics (below) - log this aspect's own percentile here, not the domain score above.
+
+https://www.understandmyself.com
+
+# Understand Myself - Aesthetics
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: neutral
+Subgroup: Openness
+
+One of the Big Five Aspects Scale's ten aspect-level scores: the other half of Openness - sensitivity to beauty, art and creative/imaginative experience. Named "Openness" in the original Big Five Aspects Scale model; the site renamed it Aesthetics for clarity, alongside its sibling aspect Intellect.
+
+https://www.understandmyself.com
+
+# Understand Myself - Conscientiousness
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: higher
+
+One of the Big Five Aspects Scale's five domain-level scores. Matches the IPIP-120/300 Conscientiousness entry's documented training-effect direction (a rise alongside a drop in Neuroticism), though it's a different instrument and normative sample - don't compare raw percentiles between the two. Splits into the Industriousness and Orderliness aspects below.
+
+https://www.understandmyself.com
+
+# Understand Myself - Industriousness
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: neutral
+Subgroup: Conscientiousness
+
+One of the Big Five Aspects Scale's ten aspect-level scores: Conscientiousness splits into Industriousness (work ethic, achievement striving) and Orderliness (below). No aspect-specific training-effect hypothesis is documented in this community - log it to track your own baseline.
+
+https://www.understandmyself.com
+
+# Understand Myself - Orderliness
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: neutral
+Subgroup: Conscientiousness
+
+One of the Big Five Aspects Scale's ten aspect-level scores: the other half of Conscientiousness - preference for structure, cleanliness and rule-following. No aspect-specific training-effect hypothesis is documented in this community - log it to track your own baseline.
+
+https://www.understandmyself.com
+
+# Understand Myself - Extraversion
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: neutral
+
+One of the Big Five Aspects Scale's five domain-level scores. No consistent training-effect hypothesis is documented for this trait - log it to track your own baseline. Splits into the Enthusiasm and Assertiveness aspects below.
+
+https://www.understandmyself.com
+
+# Understand Myself - Enthusiasm
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: neutral
+Subgroup: Extraversion
+
+One of the Big Five Aspects Scale's ten aspect-level scores: Extraversion splits into Enthusiasm (positive emotion, sociability) and Assertiveness (below).
+
+https://www.understandmyself.com
+
+# Understand Myself - Assertiveness
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: neutral
+Subgroup: Extraversion
+
+One of the Big Five Aspects Scale's ten aspect-level scores: the other half of Extraversion - social/agentic dominance, tendency to take charge and speak up.
+
+https://www.understandmyself.com
+
+# Understand Myself - Agreeableness
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: neutral
+
+One of the Big Five Aspects Scale's five domain-level scores. No consistent training-effect hypothesis is documented for this trait - log it to track your own baseline. Splits into the Compassion and Politeness aspects below.
+
+https://www.understandmyself.com
+
+# Understand Myself - Compassion
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: neutral
+Subgroup: Agreeableness
+
+One of the Big Five Aspects Scale's ten aspect-level scores: Agreeableness splits into Compassion (empathy, concern for others) and Politeness (below).
+
+https://www.understandmyself.com
+
+# Understand Myself - Politeness
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: neutral
+Subgroup: Agreeableness
+
+One of the Big Five Aspects Scale's ten aspect-level scores: the other half of Agreeableness - deference to authority and social norms, avoidance of interpersonal conflict.
+
+https://www.understandmyself.com
+
+# Understand Myself - Neuroticism
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: lower
+
+One of the Big Five Aspects Scale's five domain-level scores. Matches the IPIP-120/300 Neuroticism entry's documented training-effect direction (a drop alongside a rise in Conscientiousness), though it's a different instrument and normative sample - don't compare raw percentiles between the two. Splits into the Withdrawal and Volatility aspects below.
+
+https://www.understandmyself.com
+
+# Understand Myself - Withdrawal
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: neutral
+Subgroup: Neuroticism
+
+One of the Big Five Aspects Scale's ten aspect-level scores: Neuroticism splits into Withdrawal (anxiety, fear-driven avoidance) and Volatility (below). No aspect-specific training-effect hypothesis is documented in this community - log it to track your own baseline.
+
+https://www.understandmyself.com
+
+# Understand Myself - Volatility
+
+Category: Personality & emotional control
+Access: Paid ($9.95)
+Time: 10-20 min
+Direction: neutral
+Subgroup: Neuroticism
+
+One of the Big Five Aspects Scale's ten aspect-level scores: the other half of Neuroticism - irritability, anger-driven emotional reactivity. No aspect-specific training-effect hypothesis is documented in this community - log it to track your own baseline.
+
+https://www.understandmyself.com
 
 # CERQ - Self-blame
 
