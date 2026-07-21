@@ -80,7 +80,6 @@
 						<select-row select-id="cct-inputmethod" label="Input method"
 							options="physical=Physical keyboard|keypad=On-screen keypad"
 							tooltip="Type answers on|your keyboard, or|tap them on big|on-screen buttons." tooltip-side="right"></select-row>
-						<switch-row input-id="cct-intervaltiming" label="Track time per interval" tooltip="Records how long|each session spends|at every interval,|shown in History." tooltip-side="right"></switch-row>
 						</details>
 						<details class="panel-section">
 						<summary class="panel-heading">Reset</summary>
@@ -122,16 +121,17 @@
 			</corner-panel>
 
 			<corner-panel name="history" side="right" body-class="hql-frame">
-					<div>Sessions this month: <span id="cct-hist-count"></span></div>
-					<div>Avg accuracy, last 10: <span id="cct-hist-avg"></span></div>
-					<div>Play time today: <span id="cct-playtime"></span></div>
-					<div class="ctrl__inner" style="margin: 0.5rem 0;">
+					<div class="stat-row">Sessions this month <span id="cct-hist-count"></span></div>
+					<div class="stat-row">Avg accuracy, last 10 <span id="cct-hist-avg"></span></div>
+					<div class="stat-row">Play time today <span id="cct-playtime"></span></div>
+					<div class="ctrl__inner">
 						<div>
 							<input hidden id="cct-show-cancelled" type="checkbox">
 							<label class="switch" for="cct-show-cancelled"></label>
 						</div>
 						<label for="cct-show-cancelled">Show cancelled</label>
 					</div>
+					<div class="panel-heading hql-heading">Last 4 weeks</div>
 					<div id="cct-sessions-empty" class="panel-empty" hidden>No sessions yet - finish one and your history appears here.</div>
 					<div id="cct-history-list" class="hql"></div>
 			</corner-panel>
@@ -159,10 +159,11 @@
 					<div class="border-right"></div>
 					<div class="bracket-lip-bottom-right"></div>
 					<div class="cct-digit" id="cct-digit" hidden></div>
+					<div class="cct-verdict nback__answer" id="cct-verdict" hidden></div>
 					<input id="cct-answer" class="cct-answer-input" type="text" inputmode="numeric" autocomplete="off" autocapitalize="off" hidden>
 					<!-- one button per possible answer for the active operation, built by js/cct/page.js -->
 					<div id="cct-keypad" class="cct-keypad" hidden></div>
-					<div class="nback__result" id="cct-result" hidden></div>
+					<div class="cct-result" id="cct-result" hidden></div>
 				</div>
 				<div class="cct-actions">
 					<button type="button" id="cct-start" class="nback__start">START</button>

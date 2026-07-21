@@ -143,6 +143,7 @@ export const createProfileBridge = ({ profilesKey, selectedKey, liveKey, blobFie
     rename(newName) {
       this.current().name = newName
       this.persist()
+      this.renderDropdown()
     },
 
     renderDropdown() {

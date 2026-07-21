@@ -765,8 +765,34 @@ input[type="number"]::-moz-inner-spin-button {
     flex-grow: 1;
     font-size: var(--step-1);
     max-width: 10rem;
-    padding: 0.3rem 0.7rem;
+    padding: 0.45rem 0.7rem;
     touch-action: manipulation;
+    transition: filter 0.1s ease;
+}
+
+.confirmation-true:hover,
+.confirmation-false:hover {
+    filter: brightness(1.15);
+}
+
+.confirmation-true:active,
+.confirmation-false:active {
+    filter: brightness(0.85);
+}
+
+/* keyboard hint inside the answer buttons - hidden on touch devices,
+   matching the "pointer: coarse hides keyboard hints" convention */
+.key-hint {
+    font-family: "JetBrains Mono", monospace;
+    font-size: var(--step--2);
+    opacity: 0.7;
+    margin-left: 0.5em;
+}
+
+@media (pointer: coarse) {
+    .key-hint {
+        display: none;
+    }
 }
 
 .confirmation-true {
@@ -1399,6 +1425,42 @@ input[type="checkbox"]:checked + .switch::after {
 .hql-frame {
     display: flex;
     flex-direction: column;
+}
+
+/* label/value stat rows atop the history panels (RRT / N-Back / CCT) */
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    color: var(--preamble-color);
+}
+
+.stat-row span {
+    color: var(--text-color);
+    white-space: nowrap;
+}
+
+.hql-frame > button {
+    width: 100%;
+    margin-top: 0.75rem;
+}
+
+/* the list's window label (N-Back / CCT history panels) */
+.hql-heading {
+    font-size: var(--step--1);
+    color: var(--preamble-color);
+    margin-top: 0.5rem;
+}
+
+/* cancelled games/sessions read as ghosts of the completed ones */
+.hqli--cancelled {
+    opacity: 0.65;
+}
+
+/* the "Show cancelled" switch row in the history panels (N-Back, CCT) */
+.hql-frame .ctrl__inner {
+    margin: 0.5rem 0;
 }
 
 .hql {
@@ -2934,7 +2996,7 @@ body.menu-mode .main-view {
 .studies-list {
     display: flex;
     flex-wrap: wrap;
-    align-items: stretch;
+    align-items: flex-start;
     gap: 0.75rem;
     width: 100%;
     padding-bottom: 2rem;
@@ -2966,6 +3028,16 @@ body.menu-mode .main-view {
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
+/* Keep hoverable cards on their own compositor layer permanently - promoting
+   one only while its hover transform runs makes the text re-rasterize and
+   shift a subpixel when the animation ends (visible flicker). Hover-capable
+   devices only, so touch devices don't pay the extra layer memory. */
+@media (hover: hover) {
+    .study-card--link {
+        will-change: transform;
+    }
+}
+
 .study-card--link:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 14px 5px #0004;
@@ -2982,7 +3054,6 @@ body.menu-mode .main-view {
     text-decoration: none;
 }
 
-.study-card__title a:hover,
 .study-card__title a:focus-visible {
     text-decoration: underline;
     text-underline-offset: 0.15em;
@@ -3724,6 +3795,44 @@ body.menu-mode .main-view {
     margin-bottom: 1.5rem;
 }
 
+.stats-filter__label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Headline numbers above the charts - same panel chrome as the sections. */
+.stats-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 0.75rem;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.stats-tile {
+    background-color: var(--background-color);
+    border: 1px solid #333;
+    box-shadow: 0 1px 10px 5px #0004;
+    padding: 0.75rem 1rem;
+}
+
+.stats-tile__label {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: var(--step--2);
+    color: var(--preamble-color);
+    margin-bottom: 0.35rem;
+}
+
+.stats-tile__value {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: bold;
+    font-size: var(--step-1);
+    line-height: 1.1;
+}
+
 input[type="date"] {
     color-scheme: dark; /* native calendar icon stays visible on the dark theme */
 }
@@ -3737,6 +3846,19 @@ input[type="date"] {
        width each section (and its chart) shrinks to content width */
     width: 100%;
     margin-bottom: 2rem;
+    /* Same panel chrome as the browse cards: without a backdrop the axis
+       labels and legends sit straight on the background photo and get lost
+       in its texture. */
+    background-color: var(--background-color);
+    border: 1px solid #333;
+    box-shadow: 0 1px 10px 5px #0004;
+    padding: 1rem 1.25rem 1.25rem;
+}
+
+@media (width <= 500px) {
+    .stats-section {
+        padding: 0.75rem 0.5rem;
+    }
 }
 
 .stats-section .graph-popup-content {

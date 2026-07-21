@@ -55,10 +55,16 @@ class CvMetricGraphs extends HTMLElement {
 	tokens() {
 		const token = name => getComputedStyle(document.body).getPropertyValue(name).trim();
 		const accent = token('--accent-color');
-		// ponytail: fixed palette, colors repeat past this length (variant
-		// suffixes multiply series beyond one-per-mode) - widen further, or
-		// hash label->hue, if that's regularly hit in practice
 		return { accent, fg: token('--text-color'), palette: [accent, '#a6712c', '#8a5264', '#4c8434', '#4a6a7a', '#6f9440', '#7a4a9c', '#9c7a4a'] };
+	}
+
+	// Beyond the curated palette (variant suffixes can multiply series past
+	// one-per-mode), generate further colors by the golden angle - keeps hues
+	// well spread indefinitely instead of repeating.
+	paletteColor(i, curated) {
+		if (i < curated.length) return curated[i];
+		const hue = (i * 137.508) % 360;
+		return `hsl(${hue} 45% 55%)`;
 	}
 
 	canvas(view) { return this.querySelector(`[data-view="${view}"] canvas`); }
@@ -90,8 +96,8 @@ class CvMetricGraphs extends HTMLElement {
 		}
 		const { fg, palette } = this.tokens();
 		const datasets = Object.entries(groups).map(([label, data], i) => ({
-			label, data, borderColor: palette[i % palette.length],
-			backgroundColor: palette[i % palette.length], tension: 0.2, pointRadius: 3,
+			label, data, borderColor: this.paletteColor(i, palette),
+			backgroundColor: this.paletteColor(i, palette), tension: 0.2, pointRadius: 3,
 		}));
 		this.setEmpty(datasets.some(d => d.data.length > 0), empty);
 		this.chart = new Chart(this.canvas(this.view), {
@@ -101,8 +107,10 @@ class CvMetricGraphs extends HTMLElement {
 				responsive: true,
 				maintainAspectRatio: false,
 				scales: {
-					x: { type: 'time', ticks: { color: fg }, grid: { color: '#4444' } },
-					y: { ...axis, title: { ...axis.title, color: fg }, ticks: { color: fg }, grid: { color: '#4444' } },
+					// minUnit: a short date range otherwise drops to hourly ticks ("9PM 11PM 1AM...");
+					// capped horizontal labels: autoskip alone crams in ~40 rotated dates on a month of data
+					x: { type: 'time', time: { minUnit: 'day' }, ticks: { color: fg, maxTicksLimit: 8, maxRotation: 0 }, grid: { color: '#4444' } },
+					y: { ...axis, title: { ...axis.title, color: fg }, ticks: { ...axis.ticks, color: fg }, grid: { color: '#4444' } },
 				},
 				plugins: {
 					legend: { labels: { color: fg } },
@@ -137,7 +145,7 @@ class CvMetricGraphs extends HTMLElement {
 				responsive: true,
 				maintainAspectRatio: false,
 				scales: {
-					x: { type: 'time', time: { unit: 'day' }, ticks: { color: fg }, grid: { color: '#4444' } },
+					x: { type: 'time', time: { unit: 'day' }, ticks: { color: fg, maxTicksLimit: 8, maxRotation: 0 }, grid: { color: '#4444' } },
 					y: { title: { display: true, text: 'minutes', color: fg }, ticks: { color: fg }, grid: { color: '#4444' } },
 				},
 				plugins: {

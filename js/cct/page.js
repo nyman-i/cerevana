@@ -4,7 +4,7 @@
 // N-Back's qb-* three-table approach.
 import { getSettings, subscribe, updateSetting, resetSettings } from './settings.js'
 import './profiles.js'
-import { isRunning, isPaused, startSession, submitAnswer, stopSession, pauseSession, resumeSession } from './game.js'
+import { isRunning, isPaused, startSession, submitAnswer, stopSession, pauseSession, resumeSession, timeLeftMs } from './game.js'
 import { cctAudio } from './audio.js'
 import { getExpectedAnswer } from './engine/mechanics.js'
 import {
@@ -33,7 +33,6 @@ const keySettingMap = {
   'cct-playbackspeed': 'playbackSpeed',
   'cct-beepvolume': 'beepVolume',
   'cct-beepenabled': 'beepEnabled',
-  'cct-intervaltiming': 'showIntervalTiming',
   'cct-presentation': 'presentationMode',
   'cct-inputmethod': 'inputMethod',
   'cct-dailygoal': 'dailyProgressGoal',
@@ -147,9 +146,13 @@ $('cct-reset-settings').addEventListener('click', () => {
 })
 
 $('cct-reset-all').addEventListener('click', async () => {
-  if (!confirm('Erase ALL CCT data (settings and session history)? This cannot be undone.')) return
+  if (!confirm('Erase ALL CCT data (profiles, settings and session history)? This cannot be undone.')) return
   await deleteCctDB()
   resetSettings()
+  // after resetSettings: its notify re-persists the profile list, so the
+  // removal has to come last or the old profiles survive the reload
+  localStorage.removeItem('sllgms-v3-cct-profiles')
+  localStorage.removeItem('sllgms-v3-cct-selected-profile')
   location.reload()
 })
 
@@ -159,10 +162,44 @@ renderGoalTrackers()
 
 // ---- gameplay ----
 let stats = { correctAnswers: 0, totalQuestions: 0, streak: 0, interval: 0 }
+// end condition captured at session start (mid-session settings edits
+// shouldn't move the goalposts the HUD reports against)
+let hudGoal = { endCondition: 'timer', targetCorrect: 0 }
+let intervalTrend = '' // arrow for the last adaptive step, until the next one
+let hudTimer = null
 
 function renderHud() {
-  $('cct-hud').textContent = (isPaused() ? 'PAUSED · ' : '') +
-    `Correct: ${stats.correctAnswers}/${stats.totalQuestions} · Streak: ${stats.streak} · Interval: ${stats.interval}ms`
+  const parts = []
+  if (isPaused()) parts.push('PAUSED')
+  if (hudGoal.endCondition === 'timer') {
+    const left = timeLeftMs()
+    if (left != null) {
+      const s = Math.max(0, Math.ceil(left / 1000))
+      parts.push(`${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')} left`)
+    }
+  } else {
+    parts.push(`${stats.correctAnswers}/${hudGoal.targetCorrect} target`)
+  }
+  parts.push(`Correct ${stats.correctAnswers}/${stats.totalQuestions}`)
+  parts.push(`Streak ${stats.streak}`)
+  parts.push(`Interval ${stats.interval}ms${intervalTrend}`)
+  $('cct-hud').innerHTML = parts.map(p => `<div>${p}</div>`).join('')
+}
+
+// same green/amber flash N-Back's HUD gives on auto-progression
+// (js/quadbox/page.js onProgression) - here it marks an adaptive
+// interval step: green = pace went up, amber = pace dropped
+function flashHudIntervalChange(faster) {
+  const hud = $('cct-hud')
+  hud.style.backgroundColor = faster ? '#4c8434' : '#a6712c'
+  setTimeout(() => { hud.style.backgroundColor = '' }, 2500)
+}
+
+function setVerdict(isCorrect, expectedAnswer) {
+  const v = $('cct-verdict')
+  v.textContent = isCorrect ? `✓ ${expectedAnswer}` : `✗ was ${expectedAnswer}`
+  v.classList.remove('nback__answer--right', 'nback__answer--wrong')
+  v.classList.add(isCorrect ? 'nback__answer--right' : 'nback__answer--wrong')
 }
 
 // one button per answer the active operation can produce (e.g. 2-18 for
@@ -197,8 +234,35 @@ function flash(className) {
   }
 }
 
+// Keep the screen awake during a session - an audio-mode player may not
+// touch the screen for minutes. Best-effort: denial (battery saver) or an
+// unsupported browser just means the OS default wins.
+// ponytail: copied from js/quadbox/page.js syncWakeLock (js/shared/ is
+// classic scripts, both consumers are ES modules) - extract to a shared
+// module if a third game needs it
+let wakeLock = null
+let wakeLockBusy = false
+async function syncWakeLock() {
+  if (!('wakeLock' in navigator) || wakeLockBusy) return
+  wakeLockBusy = true
+  try {
+    if (isRunning() && !wakeLock && document.visibilityState === 'visible') {
+      wakeLock = await navigator.wakeLock.request('screen')
+      wakeLock.addEventListener('release', () => { wakeLock = null })
+    } else if (!isRunning() && wakeLock) {
+      await wakeLock.release()
+      wakeLock = null
+    }
+  } catch { /* not granted - fine */ } finally {
+    wakeLockBusy = false
+  }
+}
+// the OS releases the lock on tab switch; re-acquire when the game resumes view
+document.addEventListener('visibilitychange', () => syncWakeLock())
+
 function beginUi() {
-  const { inputMethod, presentationMode, startingInterval, arithmeticMode } = getSettings()
+  const { inputMethod, presentationMode, startingInterval, arithmeticMode,
+    endCondition, targetCorrect } = getSettings()
   $('cct-start').textContent = 'STOP'
   $('cct-pause').hidden = false
   $('cct-pause').textContent = 'PAUSE'
@@ -229,8 +293,16 @@ function beginUi() {
   answer.classList.toggle('cct-answer-input--hero',
     presentationMode === 'audio' && inputMethod === 'physical')
   if (inputMethod !== 'keypad') answer.focus()
+  const verdict = $('cct-verdict')
+  verdict.hidden = false
+  verdict.textContent = ''
+  verdict.classList.remove('nback__answer--right', 'nback__answer--wrong')
   stats = { correctAnswers: 0, totalQuestions: 0, streak: 0, interval: startingInterval }
+  hudGoal = { endCondition, targetCorrect }
+  intervalTrend = ''
+  if (endCondition === 'timer') hudTimer = setInterval(renderHud, 1000)
   renderHud()
+  syncWakeLock()
 }
 
 function endUi(record) {
@@ -238,16 +310,33 @@ function endUi(record) {
   $('cct-hud').hidden = true
   $('cct-keypad').hidden = true
   $('cct-answer').hidden = true
+  $('cct-verdict').hidden = true
   $('cct-start').textContent = 'START'
   $('cct-pause').hidden = true
+  clearInterval(hudTimer)
+  hudTimer = null
+  syncWakeLock()
   const result = $('cct-result')
   result.hidden = false
-  const timing = record.averageResponseTimeMs != null
-    ? ` · avg ${Math.round(record.averageResponseTimeMs)}ms · fastest ${Math.round(record.fastestResponseTimeMs)}ms`
-    : ''
-  result.textContent =
-    `${record.status} · ${record.correctAnswers}/${record.totalQuestionsAsked} correct ` +
-    `(${record.accuracy.toFixed(0)}%) · ${fmtElapsed(record.durationMs / 1000)}${timing}`
+  const tiles = [
+    [`${record.accuracy.toFixed(0)}%`, 'accuracy'],
+    [`${record.correctAnswers}/${record.totalQuestionsAsked}`, 'correct'],
+    [`${record.bestStreak}`, 'best streak'],
+    [fmtElapsed(record.durationMs / 1000), 'time'],
+  ]
+  if (record.averageResponseTimeMs != null) {
+    tiles.push([`${Math.round(record.averageResponseTimeMs)}ms`, 'avg response'])
+    tiles.push([`${Math.round(record.fastestResponseTimeMs)}ms`, 'fastest response'])
+  }
+  // "fastest" pace only earns a mention when the session ended slower than
+  // its best moment (and actually moved off the start)
+  const fastest = record.lowestIntervalMs < Math.min(record.startingInterval, record.finalIntervalMs)
+    ? ` · fastest ${record.lowestIntervalMs} ms` : ''
+  result.innerHTML = `
+    <div class="cct-result-status">${record.status.toUpperCase()}</div>
+    <div class="cct-result-grid">${tiles.map(([v, l]) =>
+      `<div><div class="cct-result-value">${v}</div><div class="cct-result-label">${l}</div></div>`).join('')}</div>
+    <div class="cct-result-interval">Interval ${record.startingInterval} → ${record.finalIntervalMs} ms${fastest}</div>`
 }
 
 function begin() {
@@ -255,13 +344,25 @@ function begin() {
   beginUi()
   startSession({
     onTick: ({ digit }) => {
-      $('cct-digit').textContent = digit
+      const d = $('cct-digit')
+      d.textContent = digit
+      if (!d.hidden) {
+        d.classList.remove('cct-digit--pop')
+        // reflow so a repeated class re-triggers the animation (same trick as flash())
+        void d.offsetWidth
+        d.classList.add('cct-digit--pop')
+      }
       $('cct-answer').value = ''
     },
-    onAnswer: ({ isCorrect, interval, correctAnswers, totalQuestions, streak }) => {
+    onAnswer: ({ isCorrect, expectedAnswer, interval, correctAnswers, totalQuestions, streak }) => {
+      if (interval !== stats.interval) {
+        intervalTrend = interval < stats.interval ? ' ↓' : ' ↑'
+        flashHudIntervalChange(interval < stats.interval)
+      }
       stats = { correctAnswers, totalQuestions, streak, interval }
       renderHud()
       flash(isCorrect ? 'cct-flash-right' : 'cct-flash-wrong')
+      setVerdict(isCorrect, expectedAnswer)
     },
     onEnd: async (record) => {
       // next session picks up at the pace this one ended on (same idea as
@@ -282,6 +383,9 @@ function begin() {
       if ($('offcanvas-history').checked) renderSessions()
     },
   })
+  // beginUi's render ran before the session existed - now the countdown has
+  // a clock to read
+  renderHud()
 }
 
 function end() {
@@ -361,9 +465,10 @@ const renderSessions = async () => {
     const name = `${MODE_LABELS[s.arithmeticMode] ?? s.arithmeticMode}${s.status !== 'Completed' ? ' ✕' : ''}`
     const chip = s.totalQuestionsAsked > 0
       ? `<span class="cct-chip" style="background:${tierColor(s.accuracy / 100)}">${s.accuracy.toFixed(0)}%</span>` : ''
-    return `<div class="hqli"><div class="cct-hist-card">
-      <div><strong>${name}</strong> ${chip}</div>
-      <div class="hqli-footer"><span>${date}</span><span>${s.correctAnswers}/${s.totalQuestionsAsked} · ${fmtElapsed(s.durationMs / 1000)}</span></div>
+    const stripe = s.totalQuestionsAsked > 0 ? ` style="border-left: 4px solid ${tierColor(s.accuracy / 100)}"` : ''
+    return `<div class="hqli${s.status !== 'Completed' ? ' hqli--cancelled' : ''}"${stripe}><div class="cct-hist-card">
+      <div class="cct-hist-card__head"><strong>${name}</strong> ${chip}</div>
+      <div class="hqli-footer"><span>${date}</span><span>${s.correctAnswers}/${s.totalQuestionsAsked} · ${fmtElapsed(s.durationMs / 1000)}${s.finalIntervalMs ? ` · ${s.finalIntervalMs}ms` : ''}</span></div>
     </div></div>`
   }).join('')
 }
