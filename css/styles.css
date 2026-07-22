@@ -648,6 +648,7 @@ input[type="number"]::-moz-inner-spin-button {
     align-items: center;
     background-color: var(--multi-input-bg);
     display: flex;
+    flex-wrap: wrap; /* rows wider than the panel wrap instead of clipping at its edge */
     gap: 0.2rem;
     justify-content: flex-start;
     padding: .25rem 0 .25rem .75rem;
@@ -1926,7 +1927,7 @@ table.distinction {
 
 #progression-dropdown {
     font-size: var(--step--2);
-    right: -2.5rem;
+    right: 0;
     width: 16rem;
     gap: 6px;
 }
@@ -2389,6 +2390,14 @@ table.distinction {
         white-space: normal;
         width: max-content;
         max-width: min(80vw, 22rem);
+    }
+
+    /* the 180° Mode "?" (the one riding a spinner's right edge) lands at
+       the far left when its multi-input row wraps on phones - flip its
+       bubble to open rightward */
+    .multi-input .inline-premise-spinner .tooltip-text.right {
+        left: 0;
+        right: auto;
     }
 
     /* [DECISION] the graph popup becomes a full-screen sheet - the 80vw

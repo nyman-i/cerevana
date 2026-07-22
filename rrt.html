@@ -63,7 +63,7 @@
 			<corner-panel name="settings" side="left">
 						<profile-picker share></profile-picker>
 						<goal-targets daily-id="p-63-optional" weekly-id="p-64-optional"
-							tooltip="Set your daily and weekly|time targets for training.|Progress bars will show on|the sides of the screen." tooltip-side="right"></goal-targets>
+							tooltip="Set your daily and|weekly time targets|for training.|Progress bars will|show on the sides|of the screen." tooltip-side="right"></goal-targets>
 						<details class="panel-section" open>
 						<summary class="panel-heading">Session</summary>
 						<num-row input-id="p-5" label="Global Premises" min="1" max="100" width="5ch" suffix="qty" outer-class="big-input"></num-row>
@@ -76,7 +76,7 @@
 								<label for="p-41">Enable Auto Progression</label>
 								<div class="tooltip-container" tabindex="0">
 									?
-									<div class="tooltip-text">
+									<div class="tooltip-text right">
 										Track any questions answered<br>
 										with the timer, and<br>
 										automatically update the<br>
@@ -330,15 +330,19 @@
 										<div class="tooltip-container" style="position: absolute; right: 0;" tabindex="0">
 											?
 											<div class="tooltip-text right">
-												Rather than only creating a<br>
-												straight line of relations,<br>
-												allow relations to flip<br>
-												directions, potentially<br>
-												creating overlap.<br>
+												Rather than only<br>
+												creating a straight<br>
+												line of relations,<br>
+												allow relations to<br>
+												flip directions,<br>
+												potentially creating<br>
+												overlap.<br>
 												<br>
-												For example, the relations may<br>
-												go left, then right, then left<br>
-												left left, then right again,<br>
+												For example, the<br>
+												relations may go<br>
+												left, then right,<br>
+												then left left left,<br>
+												then right again,<br>
 												randomly.<br>
 											</div>
 										</div>
@@ -494,16 +498,19 @@
 										<span class="inline-premise-spinner"><input id="p-4-premises" type="number" placeholder="" min="-100" max="100" value="" style="width: 5ch">ps</span>
 									</span>
 									<span class="single-input">
-										Time Offset
+										<div>
+											<span>Time Offset</span>
+											<div class="tooltip-container" tabindex="0">
+												?
+												<div class="tooltip-text">
+													Shifts the underlying<br>
+													question's premise/timer<br>
+													count. Try -1
+												</div>
+											</div>
+										</div>
 										<span class="inline-premise-spinner"><input id="p-4-time" type="number" placeholder="" min="-600" max="600" value="" style="width: 5ch">sec</span>
 									</span>
-									<div class="tooltip-container" tabindex="0">
-										?
-										<div class="tooltip-text right">
-											Shifts the underlying question's<br>
-											premise/timer count. Try -1
-										</div>
-									</div>
 								</div>
 							</div>
 							<div class="mb-1">
@@ -630,8 +637,9 @@
 								<div class="tooltip-container" tabindex="0">
 									?
 									<div class="tooltip-text shift-right">
-									Flips a word across another word,<br>
-									but only along one dimension (X/Y/Z).<br>
+									Flips a word across another<br>
+									word, but only along one<br>
+									dimension (X/Y/Z).<br>
 									<br>
 									A is Y-mirrored across B<br>
 									<br>
@@ -649,14 +657,16 @@
 									?
 									<div class="tooltip-text shift-left">
 										Shifts a word 2x away<br>
-										from another word, but only<br>
-										along one dimension (X/Y/Z).<br>
+										from another word,<br>
+										but only along one<br>
+										dimension (X/Y/Z).<br>
 										<br>
 										A is X-scaled 2x from B<br>
 										<br>
-										Means to shift A left/right<br>
-										until it doubles its<br>
-										X distance from B.<br>
+										Means to shift A<br>
+										left/right until it<br>
+										doubles its X distance<br>
+										from B.<br>
 									</div>
 								</div>
 							</div>
@@ -682,19 +692,22 @@
 								<div class="tooltip-container" tabindex="0">
 									?
 									<div class="tooltip-text shift-left-left">
-										Rotates a word clockwise or<br>
-										counterclockwise around another<br>
-										word.<br>
+										Rotates a word clockwise<br>
+										or counterclockwise<br>
+										around another word.<br>
 										<br>
-										In 3D mode, the word will<br>
-										need to rotate around the axis<br>
-										of the pivot word. For example,<br>
+										In 3D mode, the word<br>
+										will need to rotate<br>
+										around the axis of the<br>
+										pivot word. For example,<br>
 										<br>
-										A is XY-rotated 90°↻ around B<br>
+										A is XY-rotated 90°↻<br>
+										around B<br>
 										<br>
-										means that you find the Z-axis<br>
-										of B, and rotate A around that.<br>
-										(A will stay within the XY-plane)<br>
+										means that you find the<br>
+										Z-axis of B, and rotate<br>
+										A around that. (A will<br>
+										stay within the XY-plane)<br>
 									</div>
 								</div>
 							</div>
