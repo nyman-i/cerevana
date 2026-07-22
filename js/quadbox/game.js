@@ -431,7 +431,8 @@ export class QuadBoxGame {
         this.startGame()
         break
       case 'Enter':
-        this.advance()
+        if (this.isPlaying) this.advance()
+        else this.startGame()
         break
       case 'Escape':
         this.endGame('cancelled')

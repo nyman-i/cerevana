@@ -424,7 +424,7 @@ $('cct-pause').addEventListener('click', (e) => {
 
 document.addEventListener('keydown', (event) => {
   if (event.code === 'Escape' && isRunning()) { end(); return }
-  if (event.code === 'Space' && !isRunning() && !event.target.closest?.('input, select, textarea')) {
+  if ((event.code === 'Space' || event.code === 'Enter' || event.code === 'NumpadEnter') && !isRunning() && !event.target.closest?.('input, select, textarea')) {
     event.preventDefault()
     begin()
   }
