@@ -2391,6 +2391,14 @@ table.distinction {
         max-width: min(80vw, 22rem);
     }
 
+    /* the 180° Mode "?" (the one riding a spinner's right edge) lands at
+       the far left when its multi-input row wraps on phones - flip its
+       bubble to open rightward */
+    .multi-input .inline-premise-spinner .tooltip-text.right {
+        left: 0;
+        right: auto;
+    }
+
     /* [DECISION] the graph popup becomes a full-screen sheet - the 80vw
        window leaves unusable slivers on a phone (§5) */
     .graph-popup {
