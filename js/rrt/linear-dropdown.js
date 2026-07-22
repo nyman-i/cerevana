@@ -9,6 +9,7 @@ const linearContainsCheckbox = document.getElementById('p-contains');
 linearSettingsButton.addEventListener('click', (event) => {
   event.preventDefault();
   linearDropdown.style.display = linearDropdown.style.display === 'flex' ? 'none' : 'flex';
+  if (linearDropdown.style.display === 'flex') linearDropdown.scrollIntoView({ block: 'nearest' });
 });
 
 document.addEventListener('click', (event) => {
