@@ -67,6 +67,7 @@
 						<details class="panel-section" open>
 						<summary class="panel-heading">Session</summary>
 						<num-row input-id="p-5" label="Global Premises" min="1" max="100" width="5ch" suffix="qty" outer-class="big-input"></num-row>
+						<num-row input-id="timer-input-settings" label="Global Timer" min="1" width="5ch" suffix="sec" outer-class="big-input" tooltip="Used by any question type that has no Time set under Question Types. Toggle it on/off with the switch on the game screen (or the Space key)." tooltip-narrow></num-row>
 						<div class="mb-1">
 							<div class="ctrl__inner">
 								<div>
@@ -77,11 +78,18 @@
 								<div class="tooltip-container" tabindex="0">
 									?
 									<div class="tooltip-text right">
-										Track any questions answered<br>
-										with the timer, and<br>
-										automatically update the<br>
-										timer and premises based on<br>
-										accuracy.<br>
+										Track questions answered<br>
+										with the timer on, and<br>
+										automatically adjust the<br>
+										timer and premises from<br>
+										your accuracy.<br>
+										<br>
+										Each game type progresses<br>
+										on its own - it needs enough<br>
+										of its OWN answers ("Questions<br>
+										to track") before that type<br>
+										levels up. One type moving<br>
+										doesn't move the others.<br>
 										<br>
 										Only applies when the<br>
 										timer is active.<br>
@@ -116,8 +124,8 @@
 										</div>
 										<div class="dropdown-item">
 											<select id="p-52" name="progression-grouping" class="form-select ffmono">
-											  <option value="simple">Progress distinction and linear together</option>
-											  <option value="separate">Only progress linear questions together</option>
+											  <option value="simple">Group linear, distinction &amp; syllogism</option>
+											  <option value="separate">Progress each game type separately</option>
 											</select>
 										</div>
 										<div class="dropdown-item">
@@ -258,7 +266,7 @@
 									<span class="inline-premise-spinner"><input id="p-1-time" type="number" placeholder="" min="1" max="600" value="" style="width: 5ch">sec</span>
 								</span>
 								<span class="single-input">
-									Priority
+									<span>Priority <help-tip wrap text="How often this type shows up, as a share of all enabled types - not an absolute percent. A type at 150 while two others are 100 gets 150 of every 350 questions."></help-tip></span>
 									<span class="inline-premise-spinner"><input id="p-53" type="number" placeholder="" min="1" max="9999" value="100" style="width: 6ch">%</span>
 								</span>
 							</div>
@@ -372,7 +380,7 @@
 									<span class="inline-premise-spinner"><input id="p-6-time" type="number" placeholder="" min="1" max="600" value="" style="width: 5ch">sec</span>
 								</span>
 								<span class="single-input">
-									Priority
+									<span>Priority <help-tip wrap text="How often this type shows up, as a share of all enabled types - not an absolute percent. A type at 150 while two others are 100 gets 150 of every 350 questions."></help-tip></span>
 									<span class="inline-premise-spinner"><input id="p-59" type="number" placeholder="" min="1" max="9999" value="100" style="width: 6ch">%</span>
 								</span>
 							</div>
@@ -398,7 +406,7 @@
 									<span class="inline-premise-spinner"><input id="p-12-time" type="number" placeholder="" min="1" max="600" value="" style="width: 5ch">sec</span>
 								</span>
 								<span class="single-input">
-									Priority
+									<span>Priority <help-tip wrap text="How often this type shows up, as a share of all enabled types - not an absolute percent. A type at 150 while two others are 100 gets 150 of every 350 questions."></help-tip></span>
 									<span class="inline-premise-spinner"><input id="p-60" type="number" placeholder="" min="1" max="9999" value="100" style="width: 6ch">%</span>
 								</span>
 							</div>
@@ -855,9 +863,6 @@
 					</div>
 					<div class="inline-input__outer" style="width: fit-content; margin: 1rem auto 0;">
 						Timer
-						<span class="inline-input__inner">
-							<input id="timer-input" type="number" min="1" value="30" style="width: 6ch">sec
-						</span>
 						<input hidden id="timer-toggle" type="checkbox">
 						<label class="switch" for="timer-toggle" tabindex="0" aria-label="Enable timer"></label>
 					</div>

@@ -1768,6 +1768,10 @@ table.distinction {
    stay clear of a narrow sidebar's edges at any viewport width */
 .tooltip-text.wrap {
     white-space: normal;
+    /* width:max-content so the box fills to max-width instead of collapsing
+       to min-content (longest word) - the .tooltip-container containing block
+       is only 20px, which otherwise renders a tall skinny ribbon */
+    width: max-content;
     max-width: 180px;
 }
 
