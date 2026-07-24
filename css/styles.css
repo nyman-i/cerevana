@@ -1775,6 +1775,46 @@ table.distinction {
     max-width: 180px;
 }
 
+/* roomy, readable box for long explanatory copy (e.g. Auto Progression).
+   opens downward so a tall tooltip grows into the panel rather than off
+   the top of the viewport, and scrolls if it still outgrows the space */
+.tooltip-text.roomy {
+    white-space: normal;
+    width: max-content;
+    /* the panel body clips (overflow: hidden auto) and the "?" icon sits well
+       right of centre, so anchor the box's right edge near the icon and let it
+       grow leftward into the open space. width capped to still clear the left
+       edge on a narrow (mobile) panel. */
+    max-width: 290px;
+    right: 1px;
+    left: auto;
+    /* opens upward: this row sits low in a tall panel, so there is far more
+       room above than below. max-height keeps it on-screen on short viewports;
+       it scrolls internally if it still doesn't fit. */
+    bottom: 120%;
+    top: auto;
+    max-height: 60vh;
+    overflow-y: auto;
+    line-height: 1.45;
+}
+
+.tooltip-text.roomy p {
+    margin: 0 0 0.6em;
+}
+
+.tooltip-text.roomy p:last-child {
+    margin-bottom: 0;
+}
+
+.tooltip-text.roomy ul {
+    margin: 0 0 0.6em;
+    padding-left: 1.2em;
+}
+
+.tooltip-text.roomy strong {
+    color: var(--accent-color, inherit);
+}
+
 .tooltip-container:hover .tooltip-text,
 .tooltip-container:focus-within .tooltip-text,
 .tooltip-container.show .tooltip-text {
