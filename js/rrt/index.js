@@ -17,7 +17,7 @@ const nextLevelEl = document.querySelector(".next-level");
 const backgroundDiv = document.querySelector('.background-image');
 let imageChanged = true;
 
-const timerInput = document.querySelector("#timer-input");
+const timerInput = document.querySelector("#timer-input-settings");
 const timerToggle = document.querySelector("#timer-toggle");
 const timerBar = document.querySelector(".timer__bar");
 const customTimeInfo = document.querySelector(".custom-time-info");
@@ -848,12 +848,12 @@ function createHQLI(question, i) {
 }
 
 // Events
+// Universal timer, set in settings (Global Timer). The game screen keeps
+// only the on/off toggle + countdown bar.
 timerInput.addEventListener("input", evt => {
-    const el = evt.target;
-    timerTime = el.value;
+    timerTime = evt.target.value;
     timerCount = findStartingTimerCount();
-    el.style.width = (el.value.length + 4) + 'ch';
-    savedata.timer = +el.value;
+    savedata.timer = +evt.target.value;
     if (timerToggle.checked) {
         stopCountDown();
         startCountDown();

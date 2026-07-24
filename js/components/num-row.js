@@ -9,16 +9,17 @@
 //          [type="text" maxlength="1"] [row-id="qb-row-trialtime"]
 //          [row-hidden] [outer-class="big-input"]
 //          [tooltip="Line|line"] [tooltip-side="right"]
-//          [tooltip-wrap="ctrl"]></num-row>
+//          [tooltip-wrap="ctrl"] [tooltip-narrow]></num-row>
 //
 // tooltip placement: bare sibling after the label text (rrt style) by
 // default; tooltip-wrap="ctrl" wraps label+tip in span.ctrl__inner
-// (the cct adaptive-interval / qb-matchchance style).
+// (the cct adaptive-interval / qb-matchchance style). tooltip-narrow adds
+// the .wrap class so long copy stays clear of a narrow sidebar's edges.
 class NumRow extends HTMLElement {
 	connectedCallback() {
 		const a = (n, f = '') => this.getAttribute(n) ?? f;
 		const tooltip = this.getAttribute('tooltip');
-		const tip = tooltip ? cvTooltipHtml(tooltip, a('tooltip-side')) : '';
+		const tip = tooltip ? cvTooltipHtml(tooltip, a('tooltip-side'), this.hasAttribute('tooltip-narrow')) : '';
 		const label = a('tooltip-wrap') === 'ctrl'
 			? `<span class="ctrl__inner">${a('label')}${tip}</span>`
 			: `${a('label')}
