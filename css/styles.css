@@ -1776,8 +1776,10 @@ table.distinction {
 }
 
 /* roomy, readable box for long explanatory copy (e.g. Auto Progression).
-   opens downward so a tall tooltip grows into the panel rather than off
-   the top of the viewport, and scrolls if it still outgrows the space */
+   inherits position:absolute and bottom:120% from .tooltip-text, so it opens
+   upward - this row sits low in a tall panel, with far more room above than
+   below. max-height keeps it on-screen on short viewports; it scrolls
+   internally if it still doesn't fit. */
 .tooltip-text.roomy {
     white-space: normal;
     width: max-content;
@@ -1787,12 +1789,6 @@ table.distinction {
        edge on a narrow (mobile) panel. */
     max-width: 290px;
     right: 1px;
-    left: auto;
-    /* opens upward: this row sits low in a tall panel, so there is far more
-       room above than below. max-height keeps it on-screen on short viewports;
-       it scrolls internally if it still doesn't fit. */
-    bottom: 120%;
-    top: auto;
     max-height: 60vh;
     overflow-y: auto;
     line-height: 1.45;
