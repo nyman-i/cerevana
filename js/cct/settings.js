@@ -21,6 +21,7 @@ const defaultSettings = {
   targetCorrect: 500,
   arithmeticMode: 'addition', // 'addition' | 'multiplication' | 'subtraction' | 'difference'
   presentationMode: 'audiovisual', // 'audiovisual' | 'audio' | 'visual'
+  showStreak: true, // the "N in a row" line under the frame
   // 'physical' | 'keypad' - touch devices default to the on-screen keypad
   // so the OS keyboard never pops up over the play area
   inputMethod: (typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches)
