@@ -58,25 +58,27 @@ class CctGraphs extends CvMetricGraphs {
 				has: s => s.fastestResponseTimeMs != null,
 				axis: { title: { display: true, text: 'fastest response time (ms)' } },
 				fmt: v => `${Math.round(v)} ms`,
+				agg: 'min',
 			},
 			streak: {
 				y: s => s.bestStreak,
 				has: s => s.bestStreak != null,
 				axis: { min: 0, title: { display: true, text: 'best streak' }, ticks: { precision: 0 } },
 				fmt: v => `${v}`,
+				agg: 'max',
 			},
 			interval: {
 				y: s => s.lowestIntervalMs / 1000,
 				has: s => s.lowestIntervalMs != null,
 				axis: { min: 0, title: { display: true, text: 'lowest interval reached (s)' } },
 				fmt: v => `${v.toFixed(1)} s`,
+				agg: 'min',
 			},
 		};
 	}
 
 	includes(s) { return s.status === 'Completed' && s.totalQuestionsAsked > 0; }
 	groupKey(s) { return window.cvCctDisplay.variant(s); }
-	pointMeta(s) { return { minutes: Math.round((s.durationMs ?? 0) / 60000) }; }
-	tooltipSession(r) { return r.minutes > 0 ? ` (${r.minutes} min)` : ''; }
+	minutes(s) { return (s.durationMs ?? 0) / 60000; }
 }
 customElements.define('cct-graphs', CctGraphs);
