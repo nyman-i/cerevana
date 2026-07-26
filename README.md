@@ -60,8 +60,9 @@ by default; multiplication, subtraction and difference are also available).
 The pace is adaptive: answer streaks speed the interval up, miss streaks
 slow it back down, clamped between a configurable floor and ceiling. Each
 session starts at the pace the last one ended on, so you pick up where you
-left off. The in-game HUD shows time (or answers) remaining, your streak
-and the current pace with its trend, each answer gets an instant ✓/✗
+left off. The in-game HUD shows time (or answers) remaining and the current
+pace with its trend, a small green "N in a row" under the digit tracks your
+streak (switchable off), each answer gets an instant ✓/✗
 verdict line, and a session ends on a summary card - accuracy, best
 streak, response times and how far the pace moved. The screen stays awake
 during a session. Choose

@@ -80,6 +80,8 @@
 						<select-row select-id="cct-inputmethod" label="Input method"
 							options="physical=Physical keyboard|keypad=On-screen keypad"
 							tooltip="Type answers on|your keyboard, or|tap them on big|on-screen buttons." tooltip-side="right"></select-row>
+						<switch-row input-id="cct-showstreak" label="Show streak"
+							tooltip="Small green|&quot;N in a row&quot;|under the digit." tooltip-side="right"></switch-row>
 						</details>
 						<details class="panel-section">
 						<summary class="panel-heading">Reset</summary>
@@ -165,6 +167,8 @@
 					<div id="cct-keypad" class="cct-keypad" hidden></div>
 					<div class="cct-result" id="cct-result" hidden></div>
 				</div>
+				<!-- subtle "N in a row" under the frame, same treatment as RRT's -->
+				<div id="cct-streak" class="progress-tracker"></div>
 				<div class="cct-actions">
 					<button type="button" id="cct-start" class="nback__start">START</button>
 					<button type="button" id="cct-pause" class="nback__start" hidden>PAUSE</button>

@@ -75,6 +75,7 @@ class NbackGraphs extends CvMetricGraphs {
 				has: g => typeof g.fastestReactionMs === 'number',
 				axis: { title: { display: true, text: 'fastest reaction on correct presses (ms)' } },
 				fmt: v => `${Math.round(v)} ms`,
+				agg: 'min',
 				empty: noReaction,
 			},
 		};
@@ -82,7 +83,6 @@ class NbackGraphs extends CvMetricGraphs {
 
 	includes(g) { return g.status === 'completed'; }
 	groupKey(g) { return window.cvNbackDisplay.variant(g); }
-	pointMeta(g) { return { nBack: g.nBack, minutes: Math.round((g.elapsedSeconds ?? 0) / 60) }; }
-	tooltipSession(r) { return ` ${r.nBack}-back${r.minutes > 0 ? ` (${r.minutes} min)` : ''}`; }
+	minutes(g) { return (g.elapsedSeconds ?? 0) / 60; }
 }
 customElements.define('nback-graphs', NbackGraphs);

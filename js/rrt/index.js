@@ -358,21 +358,16 @@ function startCountDown() {
 function stopCountDown() {
     timerRunning = false;
     timerCount = findStartingTimerCount();
-    timerBar.style.width = '100%';
     clearTimeout(timerInstance);
+    renderTimerBar();
 }
 
 function renderTimerBar() {
     const [mode, startingTimerCount] = findStartingTimerState();
-    if (mode === 'override') {
-        timerBar.classList.add('override');
-        customTimeInfo.classList.add('visible');
-        customTimeInfo.innerHTML =  '' + startingTimerCount + 's';
-    } else {
-        timerBar.classList.remove('override');
-        customTimeInfo.classList.remove('visible');
-        customTimeInfo.innerHTML = '';
-    }
+    timerBar.classList.toggle('override', mode === 'override');
+    // seconds label shows for the global timer too, not just per-type overrides
+    customTimeInfo.classList.toggle('visible', timerRunning);
+    customTimeInfo.textContent = timerRunning ? startingTimerCount + 's' : '';
     timerBar.style.width = (timerCount / startingTimerCount * 100) + '%';
 }
 
@@ -512,8 +507,6 @@ function init() {
     stopCountDown();
     if (timerToggled) {
         startCountDown();
-    } else {
-        renderTimerBar();
     }
 
     carouselInit();

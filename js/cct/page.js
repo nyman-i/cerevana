@@ -35,6 +35,7 @@ const keySettingMap = {
   'cct-beepenabled': 'beepEnabled',
   'cct-presentation': 'presentationMode',
   'cct-inputmethod': 'inputMethod',
+  'cct-showstreak': 'showStreak',
   'cct-dailygoal': 'dailyProgressGoal',
   'cct-weeklygoal': 'weeklyProgressGoal',
 }
@@ -138,7 +139,8 @@ async function renderGoalTrackers() {
   }
 }
 
-subscribe(() => { populateSettings(); renderGoalTrackers() })
+// renderStreak too, so toggling "Show streak" mid-session lands right away
+subscribe(() => { populateSettings(); renderGoalTrackers(); renderStreak(stats.streak) })
 
 $('cct-reset-settings').addEventListener('click', () => {
   resetSettings()
@@ -181,9 +183,18 @@ function renderHud() {
     parts.push(`${stats.correctAnswers}/${hudGoal.targetCorrect} target`)
   }
   parts.push(`Correct ${stats.correctAnswers}/${stats.totalQuestions}`)
-  parts.push(`Streak ${stats.streak}`)
   parts.push(`Interval ${stats.interval}ms${intervalTrend}`)
   $('cct-hud').innerHTML = parts.map(p => `<div>${p}</div>`).join('')
+  renderStreak(stats.streak)
+}
+
+// streak lives under the frame instead of in the HUD - same subtle
+// "N in a row", hidden at 0, as RRT's progress tracker
+function renderStreak(streak) {
+  const show = streak > 0 && getSettings().showStreak
+  const el = $('cct-streak')
+  el.classList.toggle('visible', show)
+  el.textContent = show ? `${streak} in a row` : ''
 }
 
 // same green/amber flash N-Back's HUD gives on auto-progression
@@ -311,6 +322,7 @@ function endUi(record) {
   $('cct-keypad').hidden = true
   $('cct-answer').hidden = true
   $('cct-verdict').hidden = true
+  renderStreak(0)
   $('cct-start').textContent = 'START'
   $('cct-pause').hidden = true
   clearInterval(hudTimer)
