@@ -190,11 +190,13 @@ curl -fsSL https://cerevana.com/create-shortcut.sh | bash -s -- --browser=chrome
 
 ## Contributing
 
-Issues and pull requests are welcome. The codebase is deliberately simple:
-plain HTML/CSS/JS, no build step, no framework - clone, serve, edit, reload.
-Shared UI building blocks (settings rows, panels, tooltips) are native web
-components in `js/components/` - light-DOM custom elements, one small file
-each, no compiler involved.
+Issues and pull requests are welcome - see
+[`CONTRIBUTING.md`](CONTRIBUTING.md) for how to run the app, run the same
+checks CI runs, and the house rules a PR is reviewed against. The codebase
+is deliberately simple: plain HTML/CSS/JS, no build step, no framework -
+clone, serve, edit, reload. Shared UI building blocks (settings rows,
+panels, tooltips) are native web components in `js/components/` - light-DOM
+custom elements, one small file each, no compiler involved.
 Note the license below is **NonCommercial** (inherited from the Syllogimous
 lineage), so contributions land under CC BY-NC 3.0 too.
 
