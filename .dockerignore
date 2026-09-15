@@ -6,6 +6,7 @@ tests
 nback-spec.md
 CLAUDE.md
 README.md
+CONTRIBUTING.md
 Dockerfile
 .dockerignore
 fly.toml
